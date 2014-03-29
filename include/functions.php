@@ -1278,10 +1278,10 @@ function display_banner_selecton_form($BID, $order_id, $res) {
 
 	$action = $_SERVER['PHP_SELF'];
 
-	
-	$action = array_pop($a = explode('?', $action)); // strip parameters
-	
-	
+	// strip parameters
+	$a = explode('?', $action);
+	$action = array_pop($a);
+
 	?>
 <form name="bidselect" method="post" action="<?php echo htmlentities($action); ?>" >
 <input type="hidden" name="old_order_id" value="<?php echo $order_id;?>">

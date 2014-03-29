@@ -96,7 +96,7 @@ function bpCurl($url, $apiKey, $post = false) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC ) ;
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // verify certificate
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1); // verify certificate
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // check existence of CN and verify that it matches hostname
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);

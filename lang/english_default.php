@@ -509,8 +509,11 @@ $label['payment_authnet_description'] = "Authorize.Net - Secure credit card paym
 $label['pay_by_authnet_button']="Pay via Authorize.net";
 $label['payment_authnet_name'] = "Authorize.Net";
 
-## payment_manager.php
+# BitPay.com
+$label['payment_bitpay_name']='BitPay'; 
+$label['payment_bitpay_descr']='Bitcoin Payment Gateway'; 
 
+## payment_manager.php
 $label['payment_mab_btt']="Payment Button - Click to complete payment.";
 $label['payment_man_pt']="Payment Type";
 $label['payment_man_descr']="Description";

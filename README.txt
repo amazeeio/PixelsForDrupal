@@ -1,15 +1,17 @@
 #############################################################
 INSTALLATION.
 
-	Note: If you have CPanel based hosting, you may find these online
-	installation instructions useful: 
-	http://www.milliondollarscript.com/installation/tutorials/cpanel-install
+	Make sure your hosting service meets the requirements.
+	http://milliondollarscript.com/hosting/
+
+	You may find these online installation instructions useful:
+	http://milliondollarscript.com/docs/
 	
-	More help and support is available at the forum
-	http://www.milliondollarscript.com/forum/
+	More help and support is available at the forum.
+	http://milliondollarscript.com/forums/
 	
 	Knowledge Base / FAQ
-	http://www.milliondollarscript.com/faq/
+	http://milliondollarscript.com/category/faq/
 	
 #############################################################
 
@@ -82,7 +84,7 @@ INSTALLATION.
 
 4. Edit your configuration.
 	
-	Go to http://yourwebsite.com/admin/ and use 'ok' as the default password
+	Go to http://yourwebsite.com/admin/ and use 'ok' as the default password.
 	
 	Here is what should be configured:
 	
@@ -138,7 +140,7 @@ Knowledge Base / FAQ:
 
 - There are over 100 articles in the knowledge base covering many topics.
 
-http://www.milliondollarscript.com/faq/
+http://milliondollarscript.com/category/faq/
 
 -----------------------------
 
@@ -437,7 +439,7 @@ Please make sure to restart your web server after editing the php.ini file.
 
 UPGRADES
 
-Please check the website for updates.  http://www.milliondollarscript.com
+Please check the website for updates.  http://milliondollarscript.com
 
 Notices and instructions will be posted on the site when updates are released.
  

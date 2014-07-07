@@ -229,6 +229,7 @@ function check_selection_main() {
 			$upload_image = imagecreatefromjpeg ($upload_image_file);
 			break;
 		case 'gif':
+			// Note: Errors saying "not a valid GIF file" may mean there is no GIF support available in GD.
 			$upload_image = imagecreatefromgif ($upload_image_file);
 			break;
 		case 'png':
@@ -261,7 +262,7 @@ function check_selection_main() {
 			//echo "map_x: $map_x map_y: $map_y \n";
 
 			$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
-			$cb = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH)) ;
+			$cb = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH));
 
 
 			$in_str = $in_str."$comma$cb";

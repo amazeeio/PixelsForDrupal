@@ -250,7 +250,7 @@ function payment_option_list($order_id) {
 	<table border="0" cellpadding="3" cellspacing="0" bgcolor="#C0C0C0" width="95%" align="center" >
 	<tr bgcolor="#d9d9d9">
 	<td><b><?php echo $label['payment_mab_btt'];?></b></td>
-	<td><b><?php echo $label['payment_man_pt']; ?></b></font></td>
+	<td><b><?php echo $label['payment_man_pt']; ?></b></td>
 	<td><b><?php echo $label['payment_man_descr']; ?></b></td>
 	
 	</tr>
@@ -266,7 +266,7 @@ function payment_option_list($order_id) {
 
 			?>
 			<tr bgcolor="<?php echo $alt_color; ?>" onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);">
-			<td><p style="margin:5px;"><?php echo $obj->payment_button($order_id); ?></p></td>
+			<td style="margin:5px;"><?php echo $obj->payment_button($order_id); ?></td>
 			<td><font size="2"><?php echo $obj->name; ?></font></td>
 			<td><?php echo $obj->description; ?></td>
 			

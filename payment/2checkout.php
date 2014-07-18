@@ -30,7 +30,12 @@
  *
  */
 
+if (!defined('MDSROOT')) {
+	define("MDSROOT", dirname(".."));
+}
+
 require_once "../config.php";
+require_once("Twocheckout/Twocheckout.php");
 
 define (LOGGING, 'Y');
 $_PAYMENT_OBJECTS['_2CO'] =  new _2CO;
@@ -68,6 +73,7 @@ function _2co_log_entry ($entry_line) {
 
 
 }
+
 function format_number($str,$decimal_places='2',$decimal_padding="0"){
        /* firstly format number and shorten any extra decimal places */
        /* Note this will round off the number pre-format $str if you dont want this fucntionality */
@@ -78,16 +84,8 @@ function format_number($str,$decimal_places='2',$decimal_padding="0"){
        return (float) $number[0].'.'.$decimal;
 }
 
-
-
-
-
-
 ###########################################################################
 # Payment Object
-
-
-
 class _2CO {
 
 	//global $label;
@@ -104,9 +102,7 @@ class _2CO {
 
 		if ($this->is_installed()) {
 
-			
-
-			$sql = "SELECT * FROM config where `key`='_2CO_ENABLED' OR `key`='_2CO_SID' OR `key`='_2CO_DEMO' OR `key`='_2CO_SECRET_WORD' OR `key`='_2CO_PAYMENT_ROUTINE' OR `key`='_2CO_X_RECEIPT_LINK_URL'";
+			$sql = "SELECT * FROM config where `key`='_2CO_ENABLED' OR `key`='_2CO_PRIVATE_KEY' OR `key`='_2CO_PUBLISHABLE_KEY' OR `key`='_2CO_SID' OR `key`='_2CO_DEMO' OR `key`='_2CO_VERIFY_SSL' OR `key`='_2CO_SECRET_WORD' OR `key`='_2CO_X_RECEIPT_LINK_URL'";
 			$result = mysql_query($sql) or die (mysql_error().$sql);
 
 			while ($row=mysql_fetch_array($result)) {
@@ -122,15 +118,16 @@ class _2CO {
 	}
 
 	function get_currency() {
-
 		return 'USD';
-
 	}
-
 
 	function install() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_ENABLED', 'N')";
+		mysql_query($sql);
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '')";
+		mysql_query($sql);
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '')";
 		mysql_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '')";
@@ -139,13 +136,12 @@ class _2CO {
 		//mysql_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', 'Y')";
 		mysql_query($sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', 'Y')";
 		mysql_query($sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PAYMENT_ROUTINE', 'https://www2.2checkout.com/2co/buyer/purchase')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '')";
 		mysql_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '')";
-		echo $sql;
 		mysql_query($sql) or die(mysql_error());
 
 	}
@@ -156,9 +152,15 @@ class _2CO {
 		mysql_query($sql);
 		$sql = "DELETE FROM config where `key`='_2CO_SID'";
 		mysql_query($sql);
+		$sql = "DELETE FROM config where `key`='_2CO_PRIVATE_KEY'";
+		mysql_query($sql);
+		$sql = "DELETE FROM config where `key`='_2CO_PUBLISHABLE_KEY'";
+		mysql_query($sql);
 		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
 		//mysql_query($sql);
 		$sql = "DELETE FROM config where `key`='_2CO_DEMO'";
+		mysql_query($sql);
+		$sql = "DELETE FROM config where `key`='_2CO_VERIFY_SSL'";
 		mysql_query($sql);
 		$sql = "DELETE FROM config where `key`='_2CO_SECRET_WORD'";
 		mysql_query($sql);
@@ -178,110 +180,103 @@ class _2CO {
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
 		$result = mysql_query($sql) or die(mysql_error().$sql);
 		$order_row = mysql_fetch_array($result);
-
-//echo "c02 currency is"._2CO_CURRENCY;
-		?>
-
-		<center>
-		<form name="_2coform" action="<?php echo _2CO_PAYMENT_ROUTINE; ?>" method="post">
 		
-		<?php
-		/*
-		Optional parameters 
-		sh_cost - Shipping and handling cost, if any in your current currency. 
-		c_name or c_name_[:digit] - Required for new product creation. Name of new product limited to 128 characters. 
-		c_description or c_description_[:digit] - Required for new product creation. 
-		Short description of the product, limited to 255 characters.
-		Longer description will be stored in the 2Co product database 
-		as long description, and will not show up on checkout pages. 
-		c_price or c_price_[:digit] - Required for new product creation.
-		Price of the product in your current currency.
-		Numbers and decimal points only. Maximum value 999999.99 
-		c_tangible or c_tangible_[:digit] - Y or y indicates as tangible or physical product
-		N or n indicates an e-good or a service. 
-		*/
+		// https://github.com/2Checkout/2checkout-php/wiki
+
+		// Your sellerId(account number) and privateKey are required to make the Payment API Authorization call.
+		Twocheckout::privateKey(_2CO_PRIVATE_KEY);
+		Twocheckout::sellerId(_2CO_SID);
 		
-		?>
-		<!-- <input type="HIDDEN" name="x_receipt_link_url" value="<?php echo _2CO_X_RECEIPT_LINK_URL; ?>">
-		-->
+		// To use your sandbox account set sandbox to true
+		if (_2CO_DEMO == 'Y') {
+			$formUrl = "https://sandbox.2checkout.com/checkout/purchase";
+			$sandbox = true;
+		} else {
+			$formUrl = "https://www.2checkout.com/checkout/purchase";
+			$sandbox = false;
+		}
+		Twocheckout::sandbox($sandbox);
 
-		<input type="HIDDEN" name="x_receipt_link_url" value="<?php echo _2CO_X_RECEIPT_LINK_URL; ?>">
-		<input type="hidden" name="demo" value="<?php echo _2CO_DEMO; ?>">
-		<input type="hidden" name="sid" value="<?php echo _2CO_SID; ?>">
+		// If you want to turn off SSL verification (Please don't do this in your production environment)
+		$verifyssl = (_2CO_VERIFY_SSL == 'Y') ? true : false;
+		Twocheckout::verifySSL($verifyssl);  // this is set to true by default
 
-		<input type="hidden" name="total" value="<?php echo convert_to_currency($order_row[price], $order_row[currency], 'USD');?>">
-		<input type="hidden" name="cart_order_id" value="<?php echo $order_row[order_id];?>">
-		<!--input type="hidden" name="c_prod" value="<?php echo _2CO_PRODUCT_ID; ?>"--> 
-		<input type="hidden" name="id_type" value="1">
-		<input type="hidden" name="fixed" value="N">
-		<input type="hidden" name="c_description" value="<?php echo $order_row['quantity']; ?> pixels (<?php echo $order_row['quantity'];?> blocks)">
-		<input type="hidden" name="c_name" value="<?php echo SITE_NAME; ?>">
-		<input type="submit" value="<?php echo $label['payment_2co_submit_butt'];?>"><br>
+		// All methods return an Array by default or you can set the format to 'json' to get a JSON response.
+		Twocheckout::format('json');		
 
+		// output form
+		$params = array(
+			'mode' => '2CO',
+			'sid' => _2CO_SID,
+			'merchant_order_id' => $order_id,
+			'li_0_name' => 'Pixels',
+			'li_0_product_id' => 'Pixels',
+			'li_0_price' => convert_to_currency($order_row['price'], $order_row['currency'], 'USD'),
+			'li_0_type' => 'product',
+			'li_0_description' => 'Pixels at ' . BASE_HTTP_PATH,
+			'x_receipt_link_url' => _2CO_X_RECEIPT_LINK_URL
+		);
 
-		</form>
-		</center>
-		<center>
-		
-		<img border='0' onclick="document._2coform.submit();" src="http://www.2checkout.com/images/overview/btns/21.jpg">
-		
-		</center>
-
-		<?php
-
+		Twocheckout_Charge::form($params);
 	}
 
 	function config_form() {
 
 		if ($_REQUEST['action']=='save') {
 			$_2co_sid = $_REQUEST['_2co_sid'];
+			$_2co_private_key = $_REQUEST['_2co_private_key'];
+			$_2co_publishable_key = $_REQUEST['_2co_publishable_key'];
 			$_2co_payment_routine = $_REQUEST['_2co_payment_routine'];
 			$_2co_demo = $_REQUEST['_2co_demo'];
+			$_2co_verify_ssl = $_REQUEST['_2co_verify_ssl'];
 			$_2co_secret_word = $_REQUEST['_2co_secret_word'];
 			$_2co_x_receipt_link_url = $_REQUEST['_2co_x_receipt_link_url'];
 		} else {
 			$_2co_sid = _2CO_SID;
+			$_2co_private_key = _2CO_PRIVATE_KEY;
+			$_2co_publishable_key = _2CO_PUBLISHABLE_KEY;
 			$_2co_payment_routine = _2CO_PAYMENT_ROUTINE;
 			$_2co_demo = _2CO_DEMO;
+			$_2co_verify_ssl = _2CO_VERIFY_SSL;
 			$_2co_secret_word = _2CO_SECRET_WORD;
 			$_2co_x_receipt_link_url = _2CO_X_RECEIPT_LINK_URL;
 		}
 
 		$host = $_SERVER['SERVER_NAME']; // hostname
-		  $http_url = $_SERVER['PHP_SELF']; // eg /ojo/admin/edit_config.php
-		  $http_url = explode ("/", $http_url);
-		  array_pop($http_url); // get rid of filename
-		  array_pop($http_url); // get rid of /admin
-		  $http_url = implode ("/", $http_url);
+		$http_url = $_SERVER['PHP_SELF']; // eg /ojo/admin/edit_config.php
+		$http_url = explode ("/", $http_url);
+		array_pop($http_url); // get rid of filename
+		array_pop($http_url); // get rid of /admin
+		$http_url = implode ("/", $http_url);
+
+		$returnlink = (empty($_2co_x_receipt_link_url) ? "http://" . $host.$http_url."/users/thanks.php?m=".$this->className : $_2co_x_receipt_link_url);
 
 		?>
 <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
-		 <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
+	<table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
     <tr>
       <td colspan="2"  bgcolor="#e6f2ea">
-      <font face="Verdana" size="1"><b>2Chekout Payment Settings</b><br>
-	  Note: The script requires a C20 version 2 account.<br>
-	  C2O allows only 1 account per website, so if you do not have a C2O account for this website, you will need to register a new C2O account to use this payment option.<br>
-	  It is recommended that both of the return URLs are set to: <b>http://<?php echo $host.$http_url."/payment/2Checkout.php"; ?></b> (See the Look and Feel section of your C20 account)
+      <font face="Verdana" size="1"><b>2Checkout Payment Settings</b><br>
+	  Note: The script requires a 2Checkout version 2 account.<br>
+	  2Checkout allows only 1 account per website, so if you do not have a 2Checkout account for this website, you will need to register a new 2Checkout account to use this payment option.<br>
 	  
 	</font></td>
 
     </tr>
 	<tr>
-      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">2Chekout Seller ID</font></td>
+      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout Seller ID</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="_2co_sid" size="29" value="<?php echo $_2co_sid; ?>"></font></td>
+      <input type="text" name="_2co_sid" size="29" value="<?php echo $_2co_sid; ?>"><br>This is your Account ID</font></td>
     </tr>
 	<tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2CO Payment routine</font></td>
+      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout Publishable Key</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="_2co_payment_routine" size="50" value="<?php echo $_2co_payment_routine; ?>"><br>Recommended: <b>https://www.2checkout.com/2co/buyer/purchase</b></font></td>
+      <input type="text" name="_2co_publishable_key" size="50" value="<?php echo $_2co_publishable_key; ?>"><br>You can find your Publishable Key by going to API in your 2Checkout account.)</font></td>
     </tr>
-
 	<tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2Chekout receipt link URL.</font></td>
+      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout Private Key</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="_2co_x_receipt_link_url" size="50" value="<?php echo $_2co_x_receipt_link_url; ?>"><br> (Enter the return URL here. The return URL for should be: <b>http://<?php echo $host.$http_url."/users/thanks.php?m=".$this->className; ?></b>  <br>This setting overwrites the 'direct return' URL set in the Look and Feel section your 2CO account.)</font></td>
+      <input type="text" name="_2co_private_key" size="50" value="<?php echo $_2co_private_key; ?>"><br>You can find your Private Key by going to API in your 2Checkout account.)</font></td>
     </tr>
 	
 	<tr>
@@ -291,16 +286,27 @@ class _2CO {
 	  <input type="radio" name="_2co_demo" value="N"  <?php if ($_2co_demo=='N') { echo " checked "; } ?> >No<br></font></td>
     </tr>
 	<tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2CO 
-      Secret Word</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Verify SSL?</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="_2co_secret_word" size="50" value="<?php echo $_2co_secret_word; ?>"><br>(This is the secret word that is entered under the Look & Feel section of your 2CO account)</font></td>
+       <input type="radio" name="_2co_verify_ssl" value="Y"  <?php if ($_2co_verify_ssl=='Y') { echo " checked "; } ?> >Yes <br>
+	  <input type="radio" name="_2co_verify_ssl" value="N"  <?php if ($_2co_verify_ssl=='N') { echo " checked "; } ?> >No<br></font></td>
     </tr>
 	<tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout Currency is passed in as USD </font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2CO Secret Word</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+      <input type="text" name="_2co_secret_word" size="50" value="<?php echo $_2co_secret_word; ?>"><br>(This is the secret word that is entered under the Account > Site Management > Checkout Options section of your 2CO account)</font></td>
+    </tr>
+
+	<tr>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout receipt link URL.</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+      <input type="text" name="_2co_x_receipt_link_url" size="50" value="<?php echo $returnlink; ?>"><br> (Enter the return URL here. The return URL for should be: <b>http://<?php echo $host.$http_url."/users/thanks.php?m=".$this->className; ?></b>  <br>This setting overwrites the 'direct return' URL set in the Look and Feel section your 2CO account.)</font></td>
+    </tr>
+	<tr>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">2Checkout Currency is passed in as USD</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <select disabled name="_2co_currency" >
-	  <!--
+	  <?php /*
 	  2co supported currencies:
 Australian Dollar (AUD) 
 Canadian Dollar (CAD) 
@@ -315,8 +321,8 @@ New Zealand Dollar (NZD)
 Swedish Krona (SEK) 
 U.S. Dollar (USD)
 
-	  -->
-	  		<option value="USD" <?php define('_2CO_CURRENCY','USD'); if (_2CO_CURRENCY=='USD') { echo " selected "; }  ?> >USD</option>
+	  */ ?>
+	  	<option value="USD" <?php define('_2CO_CURRENCY','USD'); if (_2CO_CURRENCY=='USD') { echo " selected "; }  ?> >USD</option>
 		<option value="AUD" <?php if (_2CO_CURRENCY=='AUD') { echo " selected "; }  ?> >AUD</option>
 		<option value="EUR" <?php if (_2CO_CURRENCY=='EUR') { echo " selected "; }  ?> >EUR</option>
 		<option value="USD" selected <?php if (_2CO_CURRENCY=='USD') { echo " selected "; }  ?> >USD</option>
@@ -324,7 +330,7 @@ U.S. Dollar (USD)
 		<option value="JPY" <?php if (_2CO_CURRENCY=='JPY') { echo " selected "; }  ?> >JPY</option>
 		<option value="GBP" <?php if (_2CO_CURRENCY=='GBP') { echo " selected "; }  ?> >GBP</option>
 	  
-	  </select>(Disabled - Users select their preferred currency at chekout)</font></td>
+	  </select>(Disabled - Users select their preferred currency at checkout)</font></td>
     </tr>
 	</tr>
 	 <tr>
@@ -343,24 +349,20 @@ U.S. Dollar (USD)
 	}
 
 	function save_config() {
-
-		//print_r ($_REQUEST);
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '".$_REQUEST['_2co_private_key']."')";
+		mysql_query($sql) or die(mysql_error().$sql);
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '".$_REQUEST['_2co_publishable_key']."')";
+		mysql_query($sql) or die(mysql_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '".$_REQUEST['_2co_sid']."')";
 		mysql_query($sql) or die(mysql_error().$sql);
-		
-		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
-		//mysql_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', '".$_REQUEST['_2co_demo']."')";
+		mysql_query($sql);
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', '".$_REQUEST['_2co_verify_ssl']."')";
 		mysql_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '".$_REQUEST['_2co_secret_word']."')";
 		mysql_query($sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PAYMENT_ROUTINE', '".$_REQUEST['_2co_payment_routine']."')";
-		mysql_query($sql);
-
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '".$_REQUEST['_2co_x_receipt_link_url']."')";
 		mysql_query($sql);
-
-
 	}
 
 	// true or false
@@ -378,7 +380,6 @@ U.S. Dollar (USD)
 		}
 
 	}
-
 
 	function is_installed() {
 
@@ -401,7 +402,6 @@ U.S. Dollar (USD)
 		$sql = "UPDATE config set val='Y' where `key`='_2CO_ENABLED' ";
 		$result = mysql_query($sql) or die(mysql_error().$sql);
 
-
 	}
 
 	function disable() {
@@ -412,97 +412,80 @@ U.S. Dollar (USD)
 	}
 
 	function process_payment_return() {
+		$params = array();
+		foreach ($_REQUEST as $k => $v) {
+			$params[$k] = $v;
+		}
+		$passback = Twocheckout_Return::check($params, _2CO_SECRET_WORD);
+		if($passback['response_code'] == 'Success') {
 
-		global $label;
+			global $label;
 
-		if ($_REQUEST['key']!='') { 
+			if ($_REQUEST['key']!='') { 
 
-			$order_number = $_REQUEST['order_number'];
-			//$order_number = _2CO_SID."-".$order_number;
-			if (_2CO_DEMO=='Y') {
-				$order_number = 1;
-			}
-			$card_holder_name = $_REQUEST['card_holder_name'];
-			$street_address = $_REQUEST['street_address'];
-			$city = $_REQUEST['city'];
-			$state = $_REQUEST['state'];
-			$zip = $_REQUEST['zip'];
-			$country = $_REQUEST['country'];
-			$email = $_REQUEST['email'];
-			$phone = $_REQUEST['phone'];
-			$credit_card_processed = $_REQUEST['credit_card_processed']; // Y = successfull. K = pending
-			$total = $_REQUEST['total'];
-			$product_id = $_REQUEST['product_id']; // c2o product id
-			$quantity = $_REQUEST['quantity']; // quantity
-			$merchant_product_id = $_REQUEST['merchant_product_id']; //
-			$cart_order_id = $_REQUEST['cart_order_id'];
-			$product_description = $_REQUEST['product_description'];
-			$x_MD5_Hash = strtolower ( $_REQUEST['key']);  // md5 (secret word + vendor number + order number + total)
-			//.Demo mode:The order number used to create the Hash is forced to equal 1. This designates that the order is a demo order.
-			//$x_MD5_Hash = $_REQUEST['x_MD5_Hash']; // md5 (secret word + vendor number + order number + total)
-			//.Demo mode:The order number used to create the Hash is forced to equal 1. This designates that the order is a demo order.
+				$order_number = $_REQUEST['order_number'];
+				//$order_number = _2CO_SID."-".$order_number;
+				if (_2CO_DEMO=='Y') {
+					$order_number = 1;
+				}
+				$card_holder_name = $_REQUEST['card_holder_name'];
+				$street_address = $_REQUEST['street_address'];
+				$city = $_REQUEST['city'];
+				$state = $_REQUEST['state'];
+				$zip = $_REQUEST['zip'];
+				$country = $_REQUEST['country'];
+				$email = $_REQUEST['email'];
+				$phone = $_REQUEST['phone'];
+				$credit_card_processed = $_REQUEST['credit_card_processed']; // Y = successfull. K = pending
+				$total = $_REQUEST['total'];
+				$product_id = $_REQUEST['product_id']; // c2o product id
+				$quantity = $_REQUEST['quantity']; // quantity
+				$merchant_product_id = $_REQUEST['merchant_product_id']; //
+				$order_id = $_REQUEST['merchant_order_id'];
+				$product_description = $_REQUEST['product_description'];
+				$x_MD5_Hash = strtolower ( $_REQUEST['key']);  // md5 (secret word + vendor number + order number + total)
 
+				_2co_log_entry (json_encode($params));
 
-			//include ("header.php");
+				// process order
 
-			//print_r ($_REQUEST);
+				//$_2CO = new _2CO(); // load in the constants..
 
-			foreach ($_REQUEST as $key => $val) {
-
-				$req .= "&".$key."=".$val;
-
-			}
-			_2co_log_entry ($req);
-
-			// process order
-
-			$_2CO = new _2CO(); // load in the constants..
-
-			// get customer's order
-
-			$sql = "SELECT * FROM orders where order_id='".$cart_order_id."'";
-			$result = mysql_query ($sql) or die (mysql_error().$sql);
-			$order_row = mysql_fetch_array($result);
-
-			// md5 (secret word + vendor number + order number + total)
-			$md5_str = _2CO_SECRET_WORD . _2CO_SID . $order_number . format_number($order_row['price']);
-			$hash = md5 ($md5_str);
-
-
-
-			if (strcmp($hash, $x_MD5_Hash )==0) {
+				// get customer's order
+				$sql = "SELECT * FROM orders where order_id='".$order_id."'";
+				$result = mysql_query ($sql) or die (mysql_error().$sql);
+				$order_row = mysql_fetch_array($result);
 
 				if ($credit_card_processed=='Y') {
 					# Credit card processed OK
-					complete_order ($order_row['user_id'], $cart_order_id);
-					debit_transaction($cart_order_id, $total, 'USD', $order_number, $reason, '_2CO');
+					complete_order ($order_row['user_id'], $order_id);
+					debit_transaction($order_id, $total, 'USD', $order_number, $product_id, '_2CO');
 					?>
 					<center>
 
-					<img src="<?php echo SITE_LOGO_URL; ?>">
-					<h3>Thank you. Your order was sucessfully completed. You may <a href="<?php echo BASE_HTTP_PATH; ?>users/publish.php">manage your pixels</a> now.</h3>
+					<img src="<?php echo SITE_LOGO_URL; ?>" />
+					<h3>Thank you. Your order was successfully completed. You may <a href="<?php echo BASE_HTTP_PATH; ?>users/publish.php">manage your pixels</a> now.</h3>
 
 					</center>
 					<?php
 
 				} elseif ($credit_card_processed=='K') {
 					# credit card pending
-					pend_order ($order_row['user_id'], $cart_order_id);
+					pend_order ($order_row['user_id'], $order_id);
 					?>
 					<center>
-					<img src="<?php echo SITE_LOGO_URL; ?>">
+					<img src="<?php echo SITE_LOGO_URL; ?>" />
 					<h3>Thank you. Your order is pending while the funds are cleared by 2Checkout. Go to the <a href="<?php echo BASE_HTTP_PATH; ?>users/index.php">Main Menu.</a></h3>
 					</center>
 					<?php
 
 				}
-				
 
 			} else {
 
-				echo "Invalid.";
-				echo "Invalid. Was this a demo transaction?"."Has does not match...: [$hash] != [$x_MD5_Hash] (original string: ".$md5_str.") ";
-				_2co_mail_error ( "Has does not match...: [$hash] != [$x_MD5_Hash] (original string: ".$md5_str.") ");
+				$output = "Error processing payment: " . $response['response_code'] . "<br />Message: " . $response['response_message'];
+				echo $output;
+				_2co_mail_error ( $output );
 
 			}
 
@@ -510,10 +493,4 @@ U.S. Dollar (USD)
 
 	}
 
-
 }
-
-
-
-
-?>

@@ -33,7 +33,7 @@
 //if(!empty($_GET)) extract($_GET);
 //if(!empty($_POST)) extract($_POST);
 global $f2;
-if ($_REQUEST["lang"]!='') {
+if ($_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
 	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['lang']."'";
 	$result = mysql_query($sql) or die (mysql_error());
 	if (mysql_num_rows($result)>0) {
@@ -88,8 +88,6 @@ elseif ($_SESSION['MDS_LANG']=='') {
 global $AVAILABLE_LANGS;
 global $LANG_FILES;
 
-
-
 // check if db is setup yet
 if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 	if(!empty($dbhost) && !empty($dbusername) && !empty($database_name)) {
@@ -103,7 +101,6 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 				$AVAILABLE_LANGS [$row['lang_code']] = $row['name'];
 				$LANG_FILES [$row['lang_code']] = $row['lang_filename'];
 			}
-			
 			if (($_SESSION['MDS_LANG'] != '') ) {
 				include dirname(__FILE__)."/".$LANG_FILES[$_SESSION['MDS_LANG']];
 				

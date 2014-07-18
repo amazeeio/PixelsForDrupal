@@ -82,9 +82,9 @@ $dir = preg_split ('%[/\\\]%', $dir);
 $blank = array_pop($dir);
 $dir = implode('/', $dir);
 
+echo "<h2>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h2>";
+
 include $dir.'/payment/payment_manager.php';
-
-
 
 payment_option_list($_SESSION['MDS_order_id']);
 

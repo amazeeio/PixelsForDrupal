@@ -381,7 +381,7 @@ function complete_order ($user_id, $order_id) {
 		$result = mysql_query ($sql) or die (mysql_error().$sql);
 		$order_row = mysql_fetch_array ($result);
 
-		$blocks = explode (",", $order_row[blocks]);
+		$blocks = explode (",", $order_row['blocks']);
 		foreach ($blocks as $key => $val) {
 			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=".$order_row['banner_id'];
 			
@@ -2861,6 +2861,7 @@ function get_local_time($gmdate) {
 		$gmdate = $gmdate." GMT"; 
 
 	}
+	date_default_timezone_set("GMT");
 	$gmtime = strtotime($gmdate);
 
 	if ($gmtime==-1) { // out of range

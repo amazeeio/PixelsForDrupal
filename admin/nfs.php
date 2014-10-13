@@ -100,17 +100,27 @@ jQuery(function($){
 	var remnfs = [];
 	function processBlock(block) {
 		if(block.hasClass("nfs")) {
-			remnfs.push(block.attr("data-block"));
-			block.removeClass("nfs").addClass("free").removeClass("ui-selected");
+			block.removeClass("nfs").addClass("free");
+			var blockid = block.attr("data-block");
+			remnfs.push(blockid);
+			var index = addnfs.indexOf(blockid);
+			if(index != -1) {
+				addnfs.splice(index, 1);
+			}
+		} else if(block.hasClass("free")) {
+			block.removeClass("free").addClass("nfs");
+			var blockid = block.attr("data-block");
+			addnfs.push(blockid);
+			var index = remnfs.indexOf(blockid);
+			if(index != -1) {
+				remnfs.splice(index, 1);
+			}
 		} else if(!block.hasClass("free")) {
 			block.removeClass("ui-selected");
-		} else {
-			block.removeClass("free").addClass("nfs");
-			addnfs.push(block.attr("data-block"));
 		}
 	};
 	$('.grid').selectable({
-		delay: 150,
+		delay: 75,
 		distance: <?php echo BLK_WIDTH; ?>,
 		stop: function() {
 			$( ".ui-selected", this ).each(function() {
@@ -194,7 +204,7 @@ jQuery(function($){
 <body>
 <div class="outer_box">
 	<p>
-	Here you can mark blocks to be not for sale. You can drag to select an area. Hold CTRL/meta key to select multiple areas. Click 'Save' when done.
+	Here you can mark blocks to be not for sale. You can drag to select an area. Click 'Save' when done.
 	</p>
 	(Note: If you have a background image, the image is blended in using the browser's built-in filter - your alpha channel is ignored on this page)
 	<hr>

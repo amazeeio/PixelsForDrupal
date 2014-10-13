@@ -36,229 +36,245 @@ require ('admin_common.php');
 ini_set('max_execution_time', 10000);
 ini_set('max_input_vars', 10002);
 if ($_REQUEST['pass']!='') {
-
 	if ($_REQUEST['pass']==ADMIN_PASSWORD) {
-		$_SESSION[ADMIN] = '1';
-
+		$_SESSION['ADMIN'] = '1';
 	}
-
 }
-if ($_SESSION[ADMIN]=='') {
-
+if ($_SESSION['ADMIN']=='') {
 	?>
-Please input admin password:<br>
-<form method='post'>
-<input type="password" name='pass'>
-<input type="submit" value="OK">
-</form>
+	Please input admin password:<br>
+	<form method='post'>
+	<input type="password" name='pass'>
+	<input type="submit" value="OK">
+	</form>
 	<?php
-
 	die();
-
 }
 
 $BID = $f2->bid($_REQUEST['BID']);
 
 load_banner_constants($BID);
 
-if ($_REQUEST['action']!='') {
-	$sql = "delete from blocks where status='nfs' AND banner_id=$BID ";
-	mysql_query ($sql) or die (mysql_error().$sql);
-
-	$cell = "0";
-	$x="0"; $y="0";
-	for ($i=0; $i < G_HEIGHT; $i++) {
-		$x="0";
-		for ($j=0; $j < G_WIDTH; $j++) {
-			
-
-			if ($_REQUEST['cell'.$cell]!='') {
-			
-				$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
-				mysql_query ($sql) or die (mysql_error().$sql);
-
-			}
-			$x=$x+BLK_WIDTH;
-			$cell++;
-
-		}
-		$y=$y+BLK_HEIGHT;
-
+if ($_REQUEST['action']=='save') {
+	//$sql = "delete from blocks where status='nfs' AND banner_id=$BID ";
+	//mysql_query ($sql) or die (mysql_error().$sql);
+	
+	if(isset($_REQUEST['addnfs'])) {
+		$addnfs = explode("~", $_REQUEST['addnfs']);
+	} else {
+		unset($addnfs);
+	}
+	if(isset($_REQUEST['remnfs'])) {
+		$remnfs = explode("~", $_REQUEST['remnfs']);
+	} else {
+		unset($remnfs);
 	}
 
+	$cell = $x = $y = "0";
+		for ($i = 0; $i < G_HEIGHT; $i++) {
+			$x = "0";
+			for ($j = 0; $j < G_WIDTH; $j++) {
+				if (isset($addnfs) && in_array($cell, $addnfs)) {
+					$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
+					mysql_query($sql) or die(mysql_error() . $sql);
+				} else if (isset($remnfs) && in_array($cell, $remnfs)) {
+					$sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id=$BID AND block_id=$cell";
+					mysql_query($sql) or die(mysql_error() . $sql);
+				}
+				$x = $x + BLK_WIDTH;
+				$cell++;
+			}
+			$y = $y + BLK_HEIGHT;
+		}
+		echo "Success!";
+	exit();
 }
 ?>
-<p>
-Here you can mark blocks to be not for sale. Click 'Save' at the bottom of this page when done. (Blocks that are not for sale appear in green)
-</p>
-(Note: If you have a background image, the image is blended in using the browser's built-in filter - your alpha channel is ignored on this page)
-<hr>
-<?php
-$sql = "Select * from banners ";
-$res = mysql_query($sql);
-?>
+<script src="js/jquery.min.js"></script>
+<script src="jquery-ui/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="jquery-ui/jquery-ui.min.css" type="text/css" />
 
-<form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
-
-Select grid: <select name="BID" onchange="document.bidselect.submit()">
-		<option> </option>
-		<?php
-	while ($row=mysql_fetch_array($res)) {
-		
-		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
-			$sel = 'selected';
+<script type="text/javascript">
+jQuery(function($){
+	var addnfs = [];
+	var remnfs = [];
+	function processBlock(block) {
+		if(block.hasClass("nfs")) {
+			remnfs.push(block.attr("data-block"));
+			block.removeClass("nfs").addClass("free").removeClass("ui-selected");
+		} else if(!block.hasClass("free")) {
+			block.removeClass("ui-selected");
 		} else {
-			$sel ='';
-
+			block.removeClass("free").addClass("nfs");
+			addnfs.push(block.attr("data-block"));
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
-	}
-	?>
-</select>
-</form>
-<hr>
-<?php
-
-if ($BID !='') {
-
-	?>
-	<div style="position:absolute; background: url(temp/background<?php echo $BID; ?>.png); top:200px; left:10px;  z-index:0; width:<?php echo G_WIDTH*BLK_WIDTH; ?>px; height:<?php echo G_HEIGHT*BLK_HEIGHT; ?>px;">
-
-	</div>
+	};
+	$('.grid').selectable({
+		delay: 150,
+		distance: <?php echo BLK_WIDTH; ?>,
+		stop: function() {
+			$( ".ui-selected", this ).each(function() {
+				processBlock($(this));
+			});
+		}
+	});
+	$(".block").click(function() {
+		processBlock($(this));
+	});
+	$('.save').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$(this).after('<img class="loading" width="16" height="16" src="../images/ajax-loader.gif" alt="Loading..." />');
+		$('.save').prop('disabled', true);
+		var posting = $.post( "nfs.php", {
+			BID: <?php echo $BID; ?>,
+			action: "save",
+			addnfs: addnfs.join('~'),
+			remnfs: remnfs.join('~')
+		});
+		posting.done(function( data ) {
+			$('.loading').hide(function() {
+				$(this).remove();
+				$('<span class="message">'+data+'</span>').insertAfter('.save').fadeOut(10000, function() {$(this).remove();});
+			});
+			$('.save').prop('disabled', false);
+		});
+	});
+});
+</script>
+<style type="text/css">
 	<?php
-
-	$sql = "show columns from blocks ";
-	$result = mysql_query($sql);
-	while ($row=mysql_fetch_array($result)) {
-
-		if ($row['Field']=='status') {
-
-			if (strpos($row['Type'], 'nfs')==0) {
-			
-				$sql = "ALTER TABLE `blocks` CHANGE `status` `status` SET( 'reserved', 'sold', 'free', 'ordered', 'nfs' ) NOT NULL ";
-				 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
-
-			}
-
-		}
-
+	$grid_background = "";
+	if(file_exists(__DIR__ . "/temp/background$BID.png")) {
+		$grid_background = 'background: url("temp/background'.$BID.'.png");';
 	}
-
-	$sql = "select block_id, status, user_id FROM blocks WHERE banner_id=$BID";
-	$result = mysql_query ($sql) or die (mysql_error().$sql);
-	while ($row=mysql_fetch_array($result)) {
-		$blocks[$row[block_id]] = $row['status'];
-		
-	}
-
-
 	?>
-
-	<?php
-
-	?>
-	<script language="javascript">
-	function roundNumber(number) {
-		
-		newnumber = Math.round (<?php echo ($BLK_WIDTH * BLK_HEIGHT); ?> * number) / <?php echo ($BLK_WIDTH * BLK_HEIGHT); ?>;
-		return newnumber;
+	.grid {
+		<?php echo $grid_background; ?>
+		z-index:0;
+		width:<?php echo G_WIDTH*BLK_WIDTH; ?>px;
+		height:<?php echo G_HEIGHT*BLK_HEIGHT; ?>px;
 	}
-
-
-	function sb(t, cell) {
-		e=document.getElementById("select_status");
-		//alert(t.value);
-		if (t.value != '1') {
-			t.value = '1';
-			cell.setAttribute('src', 'not_for_sale_block.png');
-			
-
-		} else {
-			t.value = '';
-			cell.setAttribute('src', 'block.png', 0);
-			
-
-		}
-
+	.block_row {
+		clear:both;
+		display:block;
 	}
-
-	</script>
-
-
-	<form method="post" action="nfs.php" name="form1">
-	<input type="hidden" name="BID" value="<?php echo $BID; ?>">
-	<div style="position:absolute; top:200px; left:10px; z-index:1; filter:alpha(opacity=50);-moz-opacity:.50;opacity:.50;">
-	<input type="hidden" name="action" value="select">
-
-
-	<?php
-	$cell="0";
-	for ($i=0; $i < G_HEIGHT; $i++) {
-		//echo "<tr><td  nowrap>";
-		echo "<span style='white-space: nowrap; '>";
-		for ($j=0; $j < G_WIDTH; $j++) {
-			
-			
-			switch ($blocks[$cell]) {
-
-				case 'sold':
-					//echo "<td id='cell".$cell."' bgcolor='red' >";
-					echo '<IMG SRC="../users/sold_block.png" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="">';
-					break;
-				case 'reserved':
-					//echo "<td id='cell".$cell."' bgcolor='yellow'>";
-					echo '<IMG SRC="../users/reserved_block.png" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="">';
-					break;
-				case 'nfs':
-					//echo "<td id='cell".$cell."' bgcolor='yellow'>";
-					echo '<IMG id="cell'.$cell.'" SRC="not_for_sale_block.png" style="cursor: pointer;cursor: hand;" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="" onclick="sb(document.form1.cell'.$cell.', getElementById(\'cell'.$cell.'\'))">';
-					echo '<input type="hidden" name="cell'.$cell.'" value="1" >';
-					break;
-				case 'ordered':
-					//echo "<td id='cell".$cell."' bgcolor='orange'>";
-					echo '<IMG SRC="../users/ordered_block.png" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="">';
-					break;
-
-				case 'onorder':
-					//echo "<td id='cell".$cell."' bgcolor='green'>";
-					echo '<IMG id="cell'.$cell.'" SRC="not_for_sale_block.png" style="cursor: pointer;cursor: hand;" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="" onclick="sb(document.form1.cell'.$cell.', getElementById(\'cell'.$cell.'\'))">';
-
-					
-			
-					break;
-				case 'free':
-				case '':
-					
-					//echo "<input name='cell".$cell."' value='1' onclick='select_block(this, getElementById(\"cell".$cell."\"))' class='free' type='checkbox'>";
-
-					echo '<IMG id="cell'.$cell.'" SRC="block.png" style="cursor: pointer;cursor: hand;" WIDTH="'.BLK_WIDTH.'" HEIGHT="'.BLK_HEIGHT.'" BORDER="0" ALT="" onclick="sb(document.form1.cell'.$cell.', getElementById(\'cell'.$cell.'\'))">';
-
-					echo '<input type="hidden" name="cell'.$cell.'" value="" >';
-
-
-			}
-			
-			
-			$cell++;
-		}
-		//echo "</td></tr>";
-		echo "</span></br>";
-
+	.block {
+		white-space:nowrap;
+		width:<?php echo BLK_WIDTH; ?>px;
+		height:<?php echo BLK_HEIGHT; ?>px;
+		float:left;
 	}
-
-
-	?>
-
-
-	<!-- </table>-->
+	.sold {
+		background:url("../users/sold_block.png") no-repeat;
+	}
+	.reserved {
+		background:url("../users/reserved_block.png") no-repeat;
+	}
+	.nfs {
+		background:url("../users/not_for_sale_block.png") no-repeat;
+		cursor: pointer;
+	}
+	.ordered {
+		background:url("../users/ordered_block.png") no-repeat;
+	}
+	.ordered {
+		background:url("../users/ordered_block.png") no-repeat;
+	}
+	.onorder {
+		background:url("../users/not_for_sale_block.png") no-repeat;
+	}
+	.free {
+		background:url("../users/block.png") no-repeat;
+		cursor: pointer;
+	}
+	.grid .ui-selecting { background: #FECA40; }
+</style>
+</head>
+<body>
+<div class="outer_box">
+	<p>
+	Here you can mark blocks to be not for sale. You can drag to select an area. Hold CTRL/meta key to select multiple areas. Click 'Save' when done.
+	</p>
+	(Note: If you have a background image, the image is blended in using the browser's built-in filter - your alpha channel is ignored on this page)
 	<hr>
-	<input type="submit" value='Save Not for Sale'>
-	<hr>
-	</div>
+	<?php
+	$sql = "Select * from banners ";
+	$res = mysql_query($sql);
+	?>
+	<form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+		Select grid:
+		<select name="BID" onchange="document.bidselect.submit()">
+			<option> </option>
+			<?php
+			while ($row=mysql_fetch_array($res)) {
+				if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
+					$sel = 'selected';
+				} else {
+					$sel ='';
+				}
+				echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+			}
+			?>
+		</select>
 	</form>
+	<hr>
+	<?php
+	if ($BID !='') {
+		$sql = "show columns from blocks ";
+		$result = mysql_query($sql);
+		while ($row=mysql_fetch_array($result)) {
+			if ($row['Field']=='status') {
+				if (strpos($row['Type'], 'nfs')==0) {
+					$sql = "ALTER TABLE `blocks` CHANGE `status` `status` SET( 'reserved', 'sold', 'free', 'ordered', 'nfs' ) NOT NULL ";
+					 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
+				}
+			}
+		}
+		$sql = "select block_id, status, user_id FROM blocks WHERE banner_id=$BID";
+		$result = mysql_query ($sql) or die (mysql_error().$sql);
+		while ($row=mysql_fetch_array($result)) {
+			$blocks[$row["block_id"]] = $row['status'];
+
+		}
+	?>
+	<div class="container">
+		<input class="save" type="submit" value='Save Not for Sale' />
+		<div class="grid">
+			<?php
+			$cell="0";
+			for ($i=0; $i < G_HEIGHT; $i++) {
+				echo "<div class='block_row'>";
+				for ($j=0; $j < G_WIDTH; $j++) {
+					switch ($blocks[$cell]) {
+						case 'sold':
+							echo '<span class="block sold" data-block="'.$cell.'"></span>';
+							break;
+						case 'reserved':
+							echo '<span class="block reserved" data-block="'.$cell.'"></span>';
+							break;
+						case 'nfs':
+							echo '<span class="block nfs" data-block="'.$cell.'"></span>';
+							break;
+						case 'ordered':
+							echo '<span class="block ordered" data-block="'.$cell.'"></span>';
+							break;
+						case 'onorder':
+							echo '<span class="block onorder" data-block="'.$cell.'"></span>';
+							break;
+						case 'free':
+						case '':
+							echo '<span class="block free" data-block="'.$cell.'"></span>';
+					}
+					$cell++;
+				}
+				echo '</div>
+				';
+			}
+			?>
+		</div>
+		<input class="save" type="submit" value='Save Not for Sale' />
+	</div>
+</div>
 <?php
-
 }
-
-?>
-

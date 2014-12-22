@@ -33,7 +33,7 @@
 # Lists pacakes for advertiser to choose
 function display_package_options_table($banner_id, $selected='', $selection_ability) {
 	global $label, $f2;
-	echo $banner_id;
+
 	$banner_id = $banner_id;
 	
 	$sql = "SELECT * FROM packages WHERE banner_id='$banner_id' ORDER BY price ASC ";

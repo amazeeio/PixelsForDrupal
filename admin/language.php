@@ -105,31 +105,31 @@ function validate_input () {
 if ($_REQUEST['action']=='activate') {
 
 	$sql = "UPDATE lang set is_active='Y' where lang_code='".$_REQUEST['code']."' ";
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 }
 
 if ($_REQUEST['action']=='deactivate') {
 
 	$sql = "UPDATE lang set is_active='N' where lang_code='".$_REQUEST['code']."' ";
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 }
 
 if ($_REQUEST['action']=='default') {
 
 	$sql = "UPDATE lang set is_default='N' ";
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 	$sql = "UPDATE lang set is_default='Y' where lang_code='".$_REQUEST['code']."' ";
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 }
 
 if ($_REQUEST['action']=='delete') {
 
 	$sql = "DELETE FROM lang WHERE lang_code='".$_REQUEST['code']."' ";
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 	
 
@@ -166,7 +166,7 @@ if ($_REQUEST['submit']!='') {
 		//echo "Temp file is: ".$_FILES['lang_image']['tmp_name']."<br>";
 		//echo "$sql";
 
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 
 		$_REQUEST['new']='';
 		$_REQUEST['edit']='';
@@ -176,8 +176,8 @@ if ($_REQUEST['submit']!='') {
 		global $AVAILABLE_LANGS;
 		global $LANG_FILES;
 		$sql = "SELECT * FROM lang ";
-		$result = mysql_query ($sql) or die (mysql_error());
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+		$result = mysqli_query ($sql) or die (mysqli_error());
+		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 			$AVAILABLE_LANGS [$row['lang_code']] = $row['name'];
 			$LANG_FILES [$row['lang_code']] = $row['lang_filename'];
 		}
@@ -190,8 +190,8 @@ if ($_REQUEST['submit']!='') {
 		// (copy English to new lang)
 		
 		$sql = "SELECT * FROM form_fields WHERE `field_type`='RADIO' or `field_type`='CHECK' or `field_type`='MSELECT' or `field_type`='SELECT'  ";
-		$result = mysql_query($sql) or die (mysql_error().$sql);
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+		$result = mysqli_query($sql) or die (mysqli_error().$sql);
+		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 			format_codes_translation_table ($row[field_id]);
 		}
 
@@ -225,8 +225,8 @@ if ($_REQUEST['submit']!='') {
 				<td><b><font size="2">Tool</b></font></td>
 			</tr>
 <?php
-			$result = mysql_query("select * FROM lang ") or die (mysql_error());
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			$result = mysqli_query("select * FROM lang ") or die (mysqli_error());
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				?>
 
@@ -301,8 +301,8 @@ if ($_REQUEST['charset']=='') {
 if ($_REQUEST['action']=='edit') {
 
 	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['code']."' ";
-	$result = mysql_query($sql) or die (mysql_error());
-	$row = mysql_fetch_array($result, MYSQL_ASSOC);
+	$result = mysqli_query($sql) or die (mysqli_error());
+	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	
 	$_REQUEST['name'] = $row['name'];
 	$_REQUEST['lang_code'] = $row['lang_code'];

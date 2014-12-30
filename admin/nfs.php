@@ -57,7 +57,7 @@ load_banner_constants($BID);
 
 if ($_REQUEST['action']=='save') {
 	//$sql = "delete from blocks where status='nfs' AND banner_id=$BID ";
-	//mysql_query ($sql) or die (mysql_error().$sql);
+	//mysqli_query ($sql) or die (mysqli_error().$sql);
 	
 	if(isset($_REQUEST['addnfs'])) {
 		$addnfs = explode("~", $_REQUEST['addnfs']);
@@ -76,10 +76,10 @@ if ($_REQUEST['action']=='save') {
 			for ($j = 0; $j < G_WIDTH; $j++) {
 				if (isset($addnfs) && in_array($cell, $addnfs)) {
 					$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
-					mysql_query($sql) or die(mysql_error() . $sql);
+					mysqli_query($sql) or die(mysqli_error() . $sql);
 				} else if (isset($remnfs) && in_array($cell, $remnfs)) {
 					$sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id=$BID AND block_id=$cell";
-					mysql_query($sql) or die(mysql_error() . $sql);
+					mysqli_query($sql) or die(mysqli_error() . $sql);
 				}
 				$x = $x + BLK_WIDTH;
 				$cell++;
@@ -210,14 +210,14 @@ jQuery(function($){
 	<hr>
 	<?php
 	$sql = "Select * from banners ";
-	$res = mysql_query($sql);
+	$res = mysqli_query($sql);
 	?>
 	<form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 		Select grid:
 		<select name="BID" onchange="document.bidselect.submit()">
 			<option> </option>
 			<?php
-			while ($row=mysql_fetch_array($res)) {
+			while ($row=mysqli_fetch_array($res)) {
 				if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 					$sel = 'selected';
 				} else {
@@ -232,18 +232,18 @@ jQuery(function($){
 	<?php
 	if ($BID !='') {
 		$sql = "show columns from blocks ";
-		$result = mysql_query($sql);
-		while ($row=mysql_fetch_array($result)) {
+		$result = mysqli_query($sql);
+		while ($row=mysqli_fetch_array($result)) {
 			if ($row['Field']=='status') {
 				if (strpos($row['Type'], 'nfs')==0) {
 					$sql = "ALTER TABLE `blocks` CHANGE `status` `status` SET( 'reserved', 'sold', 'free', 'ordered', 'nfs' ) NOT NULL ";
-					 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
+					 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
 				}
 			}
 		}
 		$sql = "select block_id, status, user_id FROM blocks WHERE banner_id=$BID";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
-		while ($row=mysql_fetch_array($result)) {
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		while ($row=mysqli_fetch_array($result)) {
 			$blocks[$row["block_id"]] = $row['status'];
 
 		}

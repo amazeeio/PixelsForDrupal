@@ -58,17 +58,17 @@ if ($_REQUEST['email']!='') {
 	
 
 	$sql = "SELECT * FROM users where Email='".$_REQUEST['email']."' ";
-	$result = mysql_query($sql);
+	$result = mysqli_query($sql);
 
 
-	if ($row = mysql_fetch_array($result)) {
+	if ($row = mysqli_fetch_array($result)) {
 
 		$code = substr(md5($row[Email].$row[Password]),0, 8);
 
 		if ($_REQUEST['code']==$code) {
 
 			$sql = "UPDATE users SET Validated=1 WHERE Email='".$_REQUEST['email']."'";
-			mysql_query($sql);
+			mysqli_query($sql);
 
 			echo "<p>&nbsp;</p><center><h3><font color='green'>".$label[advertiser_valid_complete]."</font></h3></center>";
 

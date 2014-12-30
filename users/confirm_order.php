@@ -59,10 +59,10 @@ function display_edit_order_button ($order_id) {
 update_temp_order_timestamp();
 
 $sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
-$order_result = mysql_query ($sql) or die(mysql_error());
+$order_result = mysqli_query ($sql) or die(mysqli_error());
 
 
-if (mysql_num_rows($order_result)==0) {
+if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
 	?>
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
@@ -73,7 +73,7 @@ if (mysql_num_rows($order_result)==0) {
 	die();
 
 } else {
-	$order_row =mysql_fetch_array($order_result);
+	$order_row =mysqli_fetch_array($order_result);
 
 }
 
@@ -178,8 +178,8 @@ show_nav_status (3);
 
 			
 			$sql = "SELECT quantity FROM temp_orders WHERE session_id='".addslashes(session_id())."'";
-			$result = mysql_query ($sql) or die (mysql_error().$sql);
-			$row = mysql_fetch_array($result);
+			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$row = mysqli_fetch_array($result);
 			$quantity = $row['quantity'];
 
 			$block_count = $quantity / (BLK_WIDTH*BLK_HEIGHT);
@@ -195,7 +195,7 @@ show_nav_status (3);
 
 			$sql = "UPDATE temp_orders SET package_id='".$_REQUEST['pack']."', price='".$total."',  days_expire='".$pack['days_expire']."', currency='".get_default_currency()."' WHERE session_id='".addslashes(session_id())."'";
  
-			mysql_query ($sql) or die (mysql_error().$sql);
+			mysqli_query ($sql) or die (mysqli_error().$sql);
 
 			$order_row['price']=$total;
 			$order_row['pack']=$_REQUEST['pack'];
@@ -229,8 +229,8 @@ show_nav_status (3);
 		if ($cannot_get_package) {
 
 			$sql = "SELECT * from packages where package_id='".$selected_pack."'";
-			$p_result = mysql_query($sql) or die(mysql_error());
-		    $p_row = mysql_fetch_array($p_result);
+			$p_result = mysqli_query($sql) or die(mysqli_error());
+		    $p_row = mysqli_fetch_array($p_result);
 			$p_max_ord = $p_row['max_orders'];
 
 			$label['pack_cannot_select'] = str_replace ("%MAX_ORDERS%", $p_row['max_orders'], $label['pack_cannot_select']);
@@ -243,8 +243,8 @@ show_nav_status (3);
 		display_order(session_id(), $BID);
 
 		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
-		$u_row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$u_row = mysqli_fetch_array($result);
 
 		?>
 		<p>

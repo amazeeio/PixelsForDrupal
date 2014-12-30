@@ -41,8 +41,8 @@ ini_set('max_execution_time', 500);
 if ($_REQUEST['action']=='delall') {
 
 	$sql = "SELECT * FROM mail_queue ";
-	$result = mysql_query($sql) or die(mysql_error());
-	while ($row = mysql_fetch_array($result)) {
+	$result = mysqli_query($sql) or die(mysqli_error());
+	while ($row = mysqli_fetch_array($result)) {
 
 		if ($row[att1_name]!='') {
 			unlink($row[att1_name]);
@@ -57,15 +57,15 @@ if ($_REQUEST['action']=='delall') {
 		}
 
 		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
-		mysql_query($sql) or die(mysql_error());
+		mysqli_query($sql) or die(mysqli_error());
 
 	}
 	
 }
 if ($_REQUEST['action']=='delsent') {
 	$sql = "SELECT * from mail_queue where `status`='sent' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	while ($row = mysql_fetch_array($result)) {
+	$result = mysqli_query($sql) or die(mysqli_error());
+	while ($row = mysqli_fetch_array($result)) {
 
 		if ($row[att1_name]!='') {
 			unlink($row[att1_name]);
@@ -80,15 +80,15 @@ if ($_REQUEST['action']=='delsent') {
 		}
 
 		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
-		mysql_query($sql) or die(mysql_error());
+		mysqli_query($sql) or die(mysqli_error());
 
 	}
 	
 }
 if ($_REQUEST['action']=='delerror') {
 	$sql = "SELECT * from mail_queue where `status`='error' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	while ($row = mysql_fetch_array($result)) {
+	$result = mysqli_query($sql) or die(mysqli_error());
+	while ($row = mysqli_fetch_array($result)) {
 
 		if ($row[att1_name]!='') {
 			unlink($row[att1_name]);
@@ -103,7 +103,7 @@ if ($_REQUEST['action']=='delerror') {
 		}
 
 		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
-		mysql_query($sql) or die(mysql_error());
+		mysqli_query($sql) or die(mysqli_error());
 
 	}
 	
@@ -111,7 +111,7 @@ if ($_REQUEST['action']=='delerror') {
 if ($_REQUEST['action']=='resend') {
 
 	$sql = "UPDATE mail_queue SET status='queued' WHERE mail_id=".$_REQUEST['mail_id'];
-	mysql_query($sql) or die(mysql_error());
+	mysqli_query($sql) or die(mysqli_error());
 
 	process_mail_queue(1, $_REQUEST['mail_id']);
 
@@ -124,7 +124,7 @@ if ($EMAILS_PER_BATCH=='') {
 
 if ($_REQUEST['action']=='send') {
 	//$sql = "DELETE FROM mail_queue where `status`='sent' ";
-	//mysql_query($sql) or die(mysql_error());
+	//mysqli_query($sql) or die(mysqli_error());
 
 	
 	process_mail_queue($EMAILS_PER_BATCH);
@@ -140,23 +140,23 @@ $search = $_REQUEST['search'];
 $q_string = "&q_to_add=$q_to_add&q_subj=$q_subj&q_to_name=$q_to_name&q_msg=$q_msg&q_status=$q_status&q_type=$q_type&search=$search";
 
 $sql = "select count(*) as c from mail_queue  ";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 $total = $row['c'];
 
 $sql = "select count(*) as c from mail_queue where status='queued'  ";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 $queued = $row['c'];
 
 $sql = "select count(*) as c from mail_queue where status='sent'  ";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 $sent = $row['c'];
 
 $sql = "select count(*) as c from mail_queue where status='error'  ";
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 $error = $row['c'];
 
 ?>
@@ -285,12 +285,12 @@ if ($q_status !='') {
 
 $sql = "SELECT * FROM mail_queue where 1=1 $where_sql order by mail_date DESC";
 
-$result = mysql_query ($sql) or die (mysql_error());
-$count = mysql_num_rows($result);
+$result = mysqli_query ($sql) or die (mysqli_error());
+$count = mysqli_num_rows($result);
 $records_per_page = 40;
 if ($count > $records_per_page) {
 
-	mysql_data_seek($result, $_REQUEST['offset']);
+	mysqli_data_seek($result, $_REQUEST['offset']);
 
 }
 if ($count > $records_per_page)  {
@@ -334,7 +334,7 @@ if ($count > $records_per_page)  {
 
 
 $i=0;
-while (($row=mysql_fetch_array($result)) && ($i<$records_per_page)) {
+while (($row=mysqli_fetch_array($result)) && ($i<$records_per_page)) {
 
 	$i++;
 

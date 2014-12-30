@@ -61,15 +61,15 @@ Please input admin password:<br>
 }
 $BID = 1; # Banner ID. Change this later & allow users to select multiple banners
 $sql = "select * from banners where banner_id=$BID";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 if ($_REQUEST[order_id]) {
 	$_SESSION[MDS_order_id] = $_REQUEST[order_id];
 }
 
 $sql = "select block_id, status, user_id, url, alt_text FROM blocks where  status='sold' AND banner_id=$BID";
-$result = mysql_query ($sql) or die (mysql_error());
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query ($sql) or die (mysqli_error());
+while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	$owners[$row[block_id]] = $row['user_id'];
 	

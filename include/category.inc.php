@@ -42,13 +42,13 @@ function format_cat_translation_table ($cat) {
 	foreach  ($AVAILABLE_LANGS as $key => $val) {
 		$sql = "SELECT categories.category_id, categories.category_name, lang FROM cat_name_translations, categories WHERE categories.category_id=cat_name_translations.category_id AND categories.category_id='$cat' AND lang='$key' ";
 		//echo $sql;
-		$result = mysql_query($sql) or die(mysql_error());
-		//$row = mysql_fetch_row($result);
-		if (mysql_num_rows($result)==0) {
+		$result = mysqli_query($sql) or die(mysqli_error());
+		//$row = mysqli_fetch_row($result);
+		if (mysqli_num_rows($result)==0) {
 			$cat_row = get_category($cat);
 			$sql = "REPLACE INTO `cat_name_translations` (`category_id`, `lang`, `category_name`) VALUES ('".$cat."', '".$key."', '".addslashes($cat_row['category_name'])."')";
 			//echo "<b>$sql</b>";
-			 mysql_query($sql) or die (mysql_error().$sql);
+			 mysqli_query($sql) or die (mysqli_error().$sql);
 
 			
 		// echo "$sql<br>";
@@ -59,11 +59,11 @@ function format_cat_translation_table ($cat) {
 	}
 	$search_set = get_search_set($cat, $cat);
 	$sql = "update categories set search_set='$search_set' where category_id='$cat'";
-	mysql_query($sql) or die (mysql_error().$sql);
+	mysqli_query($sql) or die (mysqli_error().$sql);
 
 	$query ="SELECT * FROM categories WHERE parent_category_id='$cat' ";
-	$result = mysql_query ($query) or die(mysql_error().$query);  
-	while ($row= mysql_fetch_array($result)) {
+	$result = mysqli_query ($query) or die(mysqli_error().$query);  
+	while ($row= mysqli_fetch_array($result)) {
 		format_cat_translation_table ($row['category_id']);
 	}
 
@@ -81,8 +81,8 @@ function update_category_cache($cat_id) {
 	}
 
 	$query ="SELECT category_id FROM categories WHERE parent_category_id='$cat_id' ";
-	$result = mysql_query ($query) or die(mysql_error().$query);  
-	while ($row= mysql_fetch_array($result)) {
+	$result = mysqli_query ($query) or die(mysqli_error().$query);  
+	while ($row= mysqli_fetch_array($result)) {
 		update_category_cache ($row['category_id']);
 	}
 
@@ -114,8 +114,8 @@ function showAllCat($child, $cols, $subCat, $lang, $f_id)
 
    $x=0;
    # do the query
-   $result = mysql_query ($query) or die($query. mysql_error());
-   while ($row = mysql_fetch_row($result)) {
+   $result = mysqli_query ($query) or die($query. mysqli_error());
+   while ($row = mysqli_fetch_row($result)) {
       $cats[] = $row;
       $x++;
       if ($x==$cols) {
@@ -165,8 +165,8 @@ function get_cat_id_from_url($cat_name) {
 	$cat_name = ereg_replace("\.html", "", $cat_name);
 	$sql = "select category_id from categories where category_name like '$cat_name' ";
 	//echo $sql;
-	$result = mysql_query($sql);
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql);
+	$row = mysqli_fetch_array($result);
 	return $row['category_id'];
 
 }
@@ -219,11 +219,11 @@ function showSubcat ($c) {
    //$query = "SELECT t1.category_id, t1.category_name, t2.category_name, obj_count, allow_records FROM categories as t1, cat_name_translations as t2 WHERE t1.category_id=t2.category_id AND parent_category_id='$c' and t2.lang='".$_SESSION['MDS_LANG']."' order by t1.list_order,  t2.category_name ASC ";
    $query = "SELECT categories.category_id, categories.category_name, cat_name_translations.category_name, obj_count, allow_records FROM categories, cat_name_translations WHERE categories.category_id=cat_name_translations.category_id AND parent_category_id='$c' and cat_name_translations.lang='".$_SESSION['MDS_LANG']."' order by categories.list_order,  cat_name_translations.category_name ASC ";
    
-   $result = mysql_query ($query ) or die(mysql_error());
+   $result = mysqli_query ($query ) or die(mysqli_error());
 
    $x=0;
    echo "<br><div style='margin-left: 20px;'>";
-   while ($row = mysql_fetch_row($result)) {
+   while ($row = mysqli_fetch_row($result)) {
       $x++;
       if ($x > SHOW_SUBCATS) break;
 	  echo $row[2];
@@ -269,8 +269,8 @@ function get_search_set($c, $path) {
 
 	 # query that will get all the child nodes;
 	$query ="SELECT category_id, category_name FROM categories WHERE parent_category_id='$c' order by list_order , category_name  ";
-	$result = mysql_query ($query) or die(mysql_error().$query);  
-	while ($row = mysql_fetch_row($result)) {
+	$result = mysqli_query ($query) or die(mysqli_error().$query);  
+	while ($row = mysqli_fetch_row($result)) {
 		$path = "$path,$row[0]";
 		$path = get_search_set ( $row[0], $path);
 	}
@@ -290,9 +290,9 @@ function findPath($c, $path) {
 	//$query = "SELECT t1.category_name, t1.parent_category_id, t2.category_name FROM categories as t1, cat_name_translations as t2 WHERE t1.category_id=t2.category_id AND t1.category_id='$c' AND t2.lang = '".$_SESSION['MDS_LANG']."' ";
 	$query = "SELECT categories.category_name, categories.parent_category_id, cat_name_translations.category_name FROM categories, cat_name_translations WHERE categories.category_id=cat_name_translations.category_id AND categories.category_id='$c' AND cat_name_translations.lang = '".$_SESSION['MDS_LANG']."' ";
 //echo $query;
-	$result = mysql_query($query) or die("<b>$query</b>".mysql_error());
-	if (mysql_num_rows($result)>0) {
-		$row = mysql_fetch_row($result);
+	$result = mysqli_query($query) or die("<b>$query</b>".mysqli_error());
+	if (mysqli_num_rows($result)>0) {
+		$row = mysqli_fetch_row($result);
 
 		if ($path == "") {
 			 $path = "  $row[2]  "; // leaf
@@ -314,8 +314,8 @@ function findPath($c, $path) {
 function getCatName($c) {
 	if (!$c) return false;
    $query = "SELECT category_name FROM cat_name_translations WHERE category_id ='$c' and lang='".$_SESSION['MDS_LANG']."' ";
-   $result = mysql_query($query) or die(mysql_error());
-   $row = mysql_fetch_row($result);
+   $result = mysqli_query($query) or die(mysqli_error());
+   $row = mysqli_fetch_row($result);
    return $row[0];
 }
 
@@ -323,8 +323,8 @@ function getCatName($c) {
 
 function getCatParent($c) {
    $query = "SELECT parent_category_id FROM categories WHERE category_id ='$c'";
-   $result = mysql_query($query) or die(mysql_error().$query);
-   $row = mysql_fetch_row($result);
+   $result = mysqli_query($query) or die(mysqli_error().$query);
+   $row = mysqli_fetch_row($result);
    return $row[0];
 }
 
@@ -334,8 +334,8 @@ function showCatOptions ( $node, $path) {
 	
    # query that will get all the child nodes;
 $query ="SELECT category_id, category_name FROM categories WHERE parent_category_id=$node order by list_order ,  category_name  ";
-   $result = mysql_query ($query) or die(mysql_error());  
-      while ($row = mysql_fetch_row($result)) {
+   $result = mysqli_query ($query) or die(mysqli_error());  
+      while ($row = mysqli_fetch_row($result)) {
          $prev = $path;
          $path = "$path -- $row[1]";
          echo "<option value=$row[0]>$path</option>\n";
@@ -384,17 +384,17 @@ function add_cat ( $catname, $parent, $form_id, $allow_records) {
    $query = "INSERT INTO categories (category_id, category_name,
 parent_category_id, form_id, allow_records) VALUES ($id, '$catname', $parent, $form_id, '$allow_records')";
   // echo "doing query, id is: $query";
-   $result = mysql_query($query) or die($query.mysql_error());
+   $result = mysqli_query($query) or die($query.mysqli_error());
 
-   $cat_id = mysql_insert_id ();
+   $cat_id = mysqli_insert_id ();
 
    $sql = "REPLACE INTO `cat_name_translations` (`category_id`, `lang`, `category_name`) VALUES (".$id.", '".$_SESSION['MDS_LANG']."', '".$catname."')";
-	$result = mysql_query($sql) or die (mysql_error().$sql);
+	$result = mysqli_query($sql) or die (mysqli_error().$sql);
 
 	//echo "Updated to <b>$catname</b> ($sql)<br>";
 
   // $sql = "REPLACE INTO `cat_name_translations` (`category_id`, `lang`, `category_name`) VALUES (".$category_id.", '".$_SESSION['MDS_LANG']."', '".$new_name."')";
-	//mysql_query($sql) or die (mysql_error());
+	//mysqli_query($sql) or die (mysqli_error());
 
 
 }
@@ -405,8 +405,8 @@ parent_category_id, form_id, allow_records) VALUES ($id, '$catname', $parent, $f
 function del_cat_recursive ($category_id) {
 	
 	$query ="SELECT * FROM categories WHERE category_id='$category_id' ";
-	$result = mysql_query ($query) or die (mysql_error().$query);
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query ($query) or die (mysqli_error().$query);
+	$row = mysqli_fetch_array($result);
 	if (($row['obj_count'] > 0) && ($_REQUEST['confirm']=='')) {
 		
 		return -$row['obj_count'];
@@ -414,14 +414,14 @@ function del_cat_recursive ($category_id) {
 	}
 
 	$query ="DELETE	FROM categories WHERE category_id='$category_id' ";
-    mysql_query ($query) or die(mysql_error().$query);
+    mysqli_query ($query) or die(mysqli_error().$query);
 
 	$query ="DELETE	FROM cat_name_translations WHERE category_id='$category_id' ";
-    mysql_query ($query) or die(mysql_error().$query);
+    mysqli_query ($query) or die(mysqli_error().$query);
 	
 	$query ="SELECT * FROM categories WHERE parent_category_id='$category_id' ";
-	$result = mysql_query ($query) or die(mysql_error().$query);  
-	while ($row= mysql_fetch_array($result)) {
+	$result = mysqli_query ($query) or die(mysqli_error().$query);  
+	while ($row= mysqli_fetch_array($result)) {
 		del_cat_recursive ($row['category_id']);
 	}
 
@@ -438,8 +438,8 @@ function get_category($category_id) {
 	$sql = "select * FROM cat_name_translations, categories  ".
 		   "WHERE cat_name_translations.category_id=categories.category_id AND categories.category_id='$category_id' and lang='".$_SESSION['MDS_LANG']."'";
 
-	$result = mysql_query($sql) or die (mysql_error());
-	return mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die (mysqli_error());
+	return mysqli_fetch_array($result);
 
 
 }
@@ -456,21 +456,21 @@ function build_ad_count ($cat) {
 	// get number of posts for this category
 	$sql = search_category_for_ads($cat);
 	$sql = "SELECT * FROM ads WHERE 1=1 $sql ";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
-	$count = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$count = mysqli_num_rows($result);
 	$c_row = get_category($cat);
 	//echo "".$c_row['category_name']." --&gt; $count<br>";
 	
 	// are there more cats?
 	$sql = "SELECT * FROM categories WHERE parent_category_id='$cat' ";
-	$result = mysql_query ($sql) or die (mysql_error().$sql);
+	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysqli_fetch_array($result)) {
 		$count = $count + build_ad_count($row['category_id']);
 	}
 
 	$sql = "UPDATE categories SET obj_count='$count' WHERE category_id='$cat' AND form_id=3 ";
-	mysql_query ($sql) or die (mysql_error().$sql);
+	mysqli_query ($sql) or die (mysqli_error().$sql);
 
 	return $count;
 
@@ -509,9 +509,9 @@ function getCatStruct($cat_id, $lang, $f_id) {
 
    $x=0;
    
-   $result = mysql_query ($query) or die($query. mysql_error());
+   $result = mysqli_query ($query) or die($query. mysqli_error());
    $i=0;
-   while ($row = mysql_fetch_row($result)) {
+   while ($row = mysqli_fetch_row($result)) {
 	   //$children = array();
 	   $children = getCategoryChildrenStruct($row[0], $lang, $f_id);
 	   $category_table[$i]['category_id'] = $row[0];
@@ -540,10 +540,10 @@ function getCategoryChildrenStruct($cat_id, $lang, $f_id) {
 
 	 $query = "SELECT categories.category_id, categories.category_name, lang, cat_name_translations.category_name AS NAME, obj_count  FROM categories LEFT JOIN cat_name_translations  ON categories.category_id=cat_name_translations.category_id WHERE parent_category_id='$cat_id' AND (lang='".$lang."') and form_id='$f_id' ORDER BY list_order, NAME ASC "; // removed: obj_count DESC,
 
-	 $result = mysql_query ($query) or die($query. mysql_error());
+	 $result = mysqli_query ($query) or die($query. mysqli_error());
 
 	$i=0;
-	 while ($row = mysql_fetch_row($result)) {
+	 while ($row = mysqli_fetch_row($result)) {
 	   $children[$i]['category_id'] = $row[0];
 	   $children[$i]['category_type'] = "CHILD";
 	   $children[$i]['category_name'] = $row[3];

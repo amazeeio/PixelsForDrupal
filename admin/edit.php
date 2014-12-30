@@ -48,8 +48,8 @@ Here you can edit a user's name, email, company name and change their password.
 if ($_REQUEST[action]=='changepass') {
 
 	$sql = "select * from users where ID=".$user_id;
-	$result = mysql_query ($sql) or die (mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql) or die (mysqli_error());
+	$row = mysqli_fetch_array($result);
 
 	$oldpass = md5 ($_REQUEST['oldpass']);
 	$newpass = md5 ($_REQUEST['password']);
@@ -59,7 +59,7 @@ if ($_REQUEST[action]=='changepass') {
 		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
 
 			$sql = "UPDATE users set password='$newpass' where ID=".$user_id;
-			mysql_query ($sql) or die (mysql_error());
+			mysqli_query ($sql) or die (mysqli_error());
 			echo "<h3><font color=green>OK: Password was changed.</font></h3><br>";
 
 		} else {
@@ -103,7 +103,7 @@ if ($_REQUEST[action]=='update') {
 	//print_r ($_REQUEST);
 
 	$sql = "UPDATE users set FirstName='".$_REQUEST['firstname']."', LastName='".$_REQUEST['lastname']."', CompName='".$_REQUEST['compname']."', Email='".$_REQUEST['email']."' where ID=".$user_id;
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 //echo $sql;
 
 	echo "<h3><font color=green>OK: User's details were updated.</font></h3><br>";
@@ -113,7 +113,7 @@ if ($_REQUEST[action]=='update') {
 if ($_REQUEST['action']=='rank') {
 
 	$sql = "UPDATE users set Rank='".$_REQUEST['rank']."' where ID=".$user_id;
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 //echo $sql;
 
 	//echo "<h3><font color=green>OK: User's details were updated.</font></h3><br>";
@@ -121,8 +121,8 @@ if ($_REQUEST['action']=='rank') {
 }
 
 $sql = "select * from users where ID=".$_REQUEST['user_id'];
-$result = mysql_query ($sql) or die (mysql_error());
-$row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error());
+$row = mysqli_fetch_array($result);
 $lastname = $row['LastName'];
 $firstname = $row['FirstName'];
 $compname = $row['CompName'];

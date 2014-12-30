@@ -36,7 +36,7 @@ require('../include/ads.inc.php');
 
 function validate_advertiser ($user_id) {
 	$sql = "UPDATE users set Validated='1' where ID=".$user_id;
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 }
 
@@ -49,13 +49,13 @@ function delete_advertiser($user_id) {
 
 	
 	$sql = "SELECT * FROM orders where status<> 'new' AND user_id=".$user_id;
-	$result = mysql_query ($sql) or die (mysql_error().$sql);
-	//$row = mysql_fetch_array($result);
-	if (mysql_num_rows($result)>0) {
+	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	//$row = mysqli_fetch_array($result);
+	if (mysqli_num_rows($result)>0) {
 		echo "<font color='red'>Error: Cannot delete because this user has some orders. (<a href='customers.php?delete_anyway=1&user_id=".$user_id."'>Click here to delete anyway</a>)<br></font>";
 	} else {
 		$sql = "DELETE FROM users where ID=".$user_id;
-		mysql_query ($sql) or die (mysql_error().$sql);
+		mysqli_query ($sql) or die (mysqli_error().$sql);
 	}
 	
 }
@@ -68,22 +68,22 @@ if ($_REQUEST['action']=='delete') {
 if ($_REQUEST['delete_anyway']!='') {
 
 	$sql = "DELETE FROM orders where user_id=".$_REQUEST['user_id'];
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	$sql = "DELETE FROM blocks where user_id=".$_REQUEST['user_id'];
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	$sql = "DELETE FROM users where ID=".$_REQUEST['user_id'];
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	// DELETE ADS
 	$sql = "select * FROM ads where user_id='".$_REQUEST['user_id']."' ";
-	$res2 = mysql_query($sql) or die (mysql_error());
-	while ($row2=mysql_fetch_array($res2)) {
+	$res2 = mysqli_query($sql) or die (mysqli_error());
+	while ($row2=mysqli_fetch_array($res2)) {
 
 		delete_ads_files ($row2['ad_id']);
 		$sql = "DELETE from ads where ad_id='".$row2['ad_id']."' ";
-		mysql_query ($sql) or die (mysql_error().$sql);
+		mysqli_query ($sql) or die (mysqli_error().$sql);
 	}
 
 	echo "<p>User deleted. Please remember to process the image if the user had some pixels. </p>";
@@ -320,14 +320,14 @@ if ($q_news != '') {
 }
 
 $sql = "SELECT * FROM users WHERE 1=1 $where_sql ORDER BY Validated ASC, SignupDate DESC ";
-$result = mysql_query ($sql) or die (mysql_error());
+$result = mysqli_query ($sql) or die (mysqli_error());
 
-$count = mysql_num_rows($result);
+$count = mysqli_num_rows($result);
 $records_per_page = 40;
 
 if ($count > $records_per_page) {
 
-	mysql_data_seek($result, $_REQUEST['offset']);
+	mysqli_data_seek($result, $_REQUEST['offset']);
 
 }
 // calculate number of pages & current page
@@ -338,7 +338,7 @@ if ($count > $records_per_page) {
 ?>
 <form style="margin: 0px;" method="post" action="<?php echo $_SERVER['PHP_SELF']; echo "?offset=".$_REQUEST['offset'].$q_string; ?>" name="form1" >
 <input type="hidden" name="offset" value="<?php echo $_REQUEST['offset'];?>">
-<center><b><?php echo mysql_num_rows($result); ?> Advertiser's Accounts Returned (<?php echo $pages;?> pages) </b></center>
+<center><b><?php echo mysqli_num_rows($result); ?> Advertiser's Accounts Returned (<?php echo $pages;?> pages) </b></center>
 <?php
 	if ($count > $records_per_page)  {
 		// calculate number of pages & current page
@@ -376,16 +376,16 @@ if ($count > $records_per_page) {
 <?php
 
  $i=0;
-  while (($row = mysql_fetch_array($result, MYSQL_ASSOC)) && ($i<$records_per_page)) {
+  while (($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) && ($i<$records_per_page)) {
 	  $i++;
 
 	$sql = "SELECT SUM(quantity) as Pixels FROM orders where (status='completed' OR status='confirmed' OR status='pending') AND user_id=".$row['ID'];
-	$result2 = mysql_query ($sql) or die (mysql_error().$sql);
-	$order_row = mysql_fetch_array($result2);
+	$result2 = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$order_row = mysqli_fetch_array($result2);
 
 	$sql = "SELECT * FROM orders where user_id='".$row['ID']."' AND status <> 'new' ";
-	$result3 = mysql_query ($sql) or die (mysql_error());
-	//$row = mysql_fetch_array($result);
+	$result3 = mysqli_query ($sql) or die (mysqli_error());
+	//$row = mysqli_fetch_array($result);
 	
 
 	?>
@@ -398,7 +398,7 @@ if ($count > $records_per_page) {
 	<td><font face="Arial" size="1"><?php echo get_local_time($row[SignupDate]);?></font></td>
 	<td><font face="Arial" size="2"><?php  if ($row[Validated]==1){ echo "Yes"; } else { echo "No"; } ?><?php if ($row[Rank]==2) { echo "  <b>Privileged</b>"; }?></font></td>
 	<td><font face="Arial" size="1"><?php echo $row[IP];?></font></td>
-	<td><font face="Arial" size="1"><?php echo mysql_num_rows($result3); ?></font></td>
+	<td><font face="Arial" size="1"><?php echo mysqli_num_rows($result3); ?></font></td>
 	<td><font face="Arial" size="1"><?php echo $order_row[Pixels];?></font></td>
 	<td><font face="Arial" size="1"><?php echo $row[click_count];?></font></td>
 	<td><font face="Arial" size="1">

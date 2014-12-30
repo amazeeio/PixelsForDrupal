@@ -39,16 +39,16 @@ process_login();
 require ("header.php");
 
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='sold' ";
-$result = mysql_query($sql) or die(mysql_error());
-$pixels = mysql_num_rows($result) * 100;
+$result = mysqli_query($sql) or die(mysqli_error());
+$pixels = mysqli_num_rows($result) * 100;
 
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='ordered' ";
-$result = mysql_query($sql) or die(mysql_error());
-$ordered = mysql_num_rows($result) * 100;
+$result = mysqli_query($sql) or die(mysqli_error());
+$ordered = mysqli_num_rows($result) * 100;
 
 $sql = "select * from users where ID='".$_SESSION['MDS_ID']."' ";
-$result = mysql_query($sql) or die(mysql_error());
-$user_row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error());
+$user_row = mysqli_fetch_array($result);
 
 ?>
 <h3><?php echo $label['advertiser_home_welcome'];?></h3>

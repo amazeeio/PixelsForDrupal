@@ -43,13 +43,13 @@ if ($_REQUEST[action]=='install') {
 
 		 } else {
 
-			 echo "<p><font color='red'><b>Install failed: Cannot select database.  ".mysql_error()."</b></font></p>";
+			 echo "<p><font color='red'><b>Install failed: Cannot select database.  ".mysqli_error()."</b></font></p>";
 
 		 }
 	}
 	else {
 
-			 echo "<p><font color='red'><b>Install failed: Cannot connect to database. ".mysql_error()."</b></font></p>";
+			 echo "<p><font color='red'><b>Install failed: Cannot connect to database. ".mysqli_error()."</b></font></p>";
 
 	}
 
@@ -66,7 +66,7 @@ if(file_exists("../config.php")) {
 
 }
 $sql = "select * from users";
-if ($result = @mysql_query($sql)) {
+if ($result = @mysqli_query($sql)) {
 	echo "<h3>Database successfully Installed.</h3>";
 	echo "<p>";
 	echo "Next Steps:<br>";
@@ -79,7 +79,7 @@ if ($result = @mysql_query($sql)) {
 }
 
 function check_connection ($user, $pass,$host) {
-	if (!($connection = @mysql_connect("$host","$user", "$pass"))) {
+	if (!($connection = @mysqli_connect("$host","$user", "$pass"))) {
 
 		return false;
 
@@ -90,7 +90,7 @@ function check_connection ($user, $pass,$host) {
 }
 
 function check_db ( $db_name, $connection) {
-	if (!($db = @mysql_select_db( $db_name,  $connection))){
+	if (!($db = @mysqli_select_db( $db_name,  $connection))){
 	 return false;
 	}
 	return true;
@@ -352,9 +352,9 @@ function multiple_query($q){
 
    for($i=0;$i<$n;$i++)
        $results[$i]=array(
-           mysql_query($queries[$i]),
-           mysql_errno(),
-           mysql_error(),
+           mysqli_query($queries[$i]),
+           mysqli_errno(),
+           mysqli_error(),
 			$queries[$i]
        );
 
@@ -748,9 +748,9 @@ CREATE TABLE `codes` (
 ) 
 	";
 
-	mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS) or die(mysql_error());
+	mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS) or die(mysqli_error());
 	
-	mysql_select_db(MYSQL_DB) or die(mysql_error());
+	mysqli_select_db(MYSQL_DB) or die(mysqli_error());
 
 	/* You can use it like this */
 
@@ -763,8 +763,8 @@ CREATE TABLE `codes` (
 	else
 		echo "<pre>Error: ".$queries[$i][2]."(".$queries[$i][3].")<br>\n</pre>";
 
-	//$result = mysql_query ($sql) or die (mysql_error());
-	//$rows = mysql_affected_rows ($result);;;
+	//$result = mysqli_query ($sql) or die (mysqli_error());
+	//$rows = mysqli_affected_rows ($result);;;
 	echo count($queries)." Operations Completed.<br>";
 
 

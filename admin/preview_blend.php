@@ -41,8 +41,8 @@ if ($BID =='') {
 
 }
 $sql = "select * from banners where banner_id=$BID";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 
 if (function_exists("imagecreatetruecolor")) {
@@ -86,9 +86,9 @@ $i=0; $j=0; $x_pos=0; $y_pos=0;
 
 	$nfs_block = imagecreatefrompng ( $file_path."temp/not_for_sale_block.png" );
 	$sql = "select * from blocks where status='nfs' and banner_id=$BID ";
-	$result = mysql_query($sql) or die(mysql_error());
+	$result = mysqli_query($sql) or die(mysqli_error());
 
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysqli_fetch_array($result)) {
 		imagecopy ( $map, $nfs_block, $row['x'], $row['y'], 0, 0, 10, 10 );
 	}
 

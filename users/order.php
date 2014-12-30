@@ -40,8 +40,8 @@ $BID = $f2->bid($_REQUEST['BID']);
 $has_packages = banner_get_packages($BID);
 
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 
 
@@ -60,8 +60,8 @@ if ($has_packages && $_REQUEST['pack']!='') {
 
 
 		$sql = "SELECT quantity FROM orders WHERE order_id='".$_REQUEST['order_id']."'";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		$quantity = $row['quantity'];
 
 		$block_count = $quantity / 100;
@@ -77,7 +77,7 @@ if ($has_packages && $_REQUEST['pack']!='') {
 
 		$sql = "UPDATE orders SET package_id='".$_REQUEST['pack']."', price='".$total."',  days_expire='".$pack['days_expire']."', currency='".get_default_currency()."' WHERE order_id='".$_SESSION['MDS_order_id']."'";
 
-		mysql_query ($sql) or die (mysql_error().$sql);
+		mysqli_query ($sql) or die (mysqli_error().$sql);
 
 	} else {
 		$selected_pack = $_REQUEST['pack'];
@@ -93,8 +93,8 @@ if ($has_packages && $_REQUEST['pack']!='') {
 // check to make sure MIN_BLOCKS were selected.
 
 $sql = "SELECT block_id FROM blocks WHERE user_id='".$_SESSION['MDS_ID']."' AND status='reserved' AND banner_id='$BID' ";
-$res = mysql_query ($sql) or die (mysql_error().$sql);
-$count = mysql_num_rows($res);
+$res = mysqli_query ($sql) or die (mysqli_error().$sql);
+$count = mysqli_num_rows($res);
 if ($count < $b_row['min_blocks']) {
 	$not_enough_blocks = true;
 }
@@ -113,8 +113,8 @@ echo $label['advertiser_o_navmap'];
 
 $sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."' and banner_id='$BID'";
 
-$result = mysql_query($sql) or die(mysql_error().$sql);
-$order_row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error().$sql);
+$order_row = mysqli_fetch_array($result);
 
 
 ##############################
@@ -160,8 +160,8 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 		if ($cannot_get_package) {
 
 			$sql = "SELECT * from packages where package_id='".$selected_pack."'";
-			$result = mysql_query($sql) or die(mysql_error());
-			$row = mysql_fetch_array($result);
+			$result = mysqli_query($sql) or die(mysqli_error());
+			$row = mysqli_fetch_array($result);
 
 			$label['pack_cannot_select'] = str_replace ("%MAX_ORDERS%", $row['max_orders'], $label['pack_cannot_select']);
 
@@ -172,8 +172,8 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 	} else {
 		display_order($_SESSION['MDS_order_id'], $BID);
 		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
-		$u_row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$u_row = mysqli_fetch_array($result);
 
 		?>
 		<?php display_edit_order_button ($order_row['order_id']);?> &nbsp; &nbsp;

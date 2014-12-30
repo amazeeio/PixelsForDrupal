@@ -38,8 +38,8 @@ require ('../config.php');
 
 $sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' and banner_id='".$f2->bid($_REQUEST['BID'])."' ";
 
-$result = mysql_query($sql) or die(mysql_error());
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result);
 
 if ($row['image_data']=='') {
 	load_banner_constants($f2->bid($_REQUEST['BID']));

@@ -161,9 +161,9 @@ $database_name = MYSQL_DB;
 
 if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 	if(!empty($dbhost) && !empty($dbusername) && !empty($database_name)) {
-		$connection = mysql_connect("$dbhost","$dbusername", "$dbpassword") or die (mysql_error());
-		$db = mysql_select_db("$database_name", $connection) or die (mysql_error());
-		mysql_set_charset('utf8',$connection) or die (mysql_error());
+		$connection = mysqli_connect("$dbhost","$dbusername", "$dbpassword") or die (mysqli_error());
+		$db = mysqli_select_db("$database_name", $connection) or die (mysqli_error());
+		mysqli_set_charset('utf8',$connection) or die (mysqli_error());
 	}
 }
 

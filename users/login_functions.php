@@ -40,7 +40,7 @@ function process_login() {
 	}
    $now = (gmdate("Y-m-d H:i:s"));
    $sql = "UPDATE `users` SET `logout_date`='$now' WHERE UNIX_TIMESTAMP(DATE_SUB('$now', INTERVAL $session_duration SECOND)) > UNIX_TIMESTAMP(last_request_time) AND (`logout_date` ='0000-00-00 00:00:00')";
-   mysql_query($sql) or die ($sql.mysql_error());
+   mysqli_query($sql) or die ($sql.mysqli_error());
    
    if (!is_logged_in() || ($_SESSION['MDS_Domain'] != "ADVERTISER")) {
    	
@@ -84,7 +84,7 @@ die ();
       // update last_request_time
 	  $now = (gmdate("Y-m-d H:i:s"));
        $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='0' WHERE `Username`='".$_SESSION['MDS_Username']."'";
-       mysql_query($sql) or die($sql.mysql_error());
+       mysqli_query($sql) or die($sql.mysqli_error());
 	   
 
       
@@ -178,8 +178,8 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
 	$now = (gmdate("Y-m-d H:i:s"));
     // everything Ok, create account and send out emails.
     $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated) values('$REMOTE_ADDR', '$now', '$FirstName', '$LastName', '$CompName', '$Username', '$Password', '$Email', '$Newsletter', '$Notification1', '$Notification2', '$validated')";
-    mysql_query($sql) or die ($sql.mysql_error());
-    $res = mysql_affected_rows();
+    mysqli_query($sql) or die ($sql.mysqli_error());
+    $res = mysqli_affected_rows();
 
     if($res > 0) {
        $success=true; //succesfully added to the database
@@ -226,8 +226,8 @@ function validate_signup_form() {
 		$error .= $label["advertiser_signup_error_user"];
 	} else {
 		$sql = "SELECT * FROM `users` WHERE `Username`='".$_REQUEST['Username']."' ";
-		$result = mysql_query ($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result) ;
+		$result = mysqli_query ($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result) ;
 		if ($row['Username'] != '' ) {
 			$error .= str_replace ( "%username%", $username, $label['advertiser_signup_error_inuse']);
 
@@ -249,8 +249,8 @@ function validate_signup_form() {
 	} else {
 		$sql = "SELECT * from `users` WHERE `Email`='".$_REQUEST['Email']."'";
 		//echo $sql;
-		$result = mysql_query ($sql) or die(mysql_error());
-		$row=mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die(mysqli_error());
+		$row=mysqli_fetch_array($result);
 
 		//validate email ";
 
@@ -419,8 +419,8 @@ function do_login() {
 	$Password = md5($_REQUEST['Password']);
 
 		   
-	$result = mysql_query("Select * From `users` Where username='$Username'") or die (mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query("Select * From `users` Where username='$Username'") or die (mysqli_error());
+	$row = mysqli_fetch_array($result);
 	if (!$row['Username']) {
 		echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
 	} else {
@@ -439,7 +439,7 @@ function do_login() {
 
 			$now = (gmdate("Y-m-d H:i:s"));
 			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`=0, `login_count`=`login_count`+1 WHERE `Username`='".$row['Username']."' ";
-			mysql_query($sql) or die(mysql_error());
+			mysqli_query($sql) or die(mysqli_error());
 
 			if ($row['Validated']=="0") {
 				echo "<center><h1 >".$label["advertiser_login_disabled"]."</h1></center>";

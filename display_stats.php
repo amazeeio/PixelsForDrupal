@@ -39,17 +39,17 @@ $BID = $f2->bid($_REQUEST['BID']);
 load_banner_constants($BID);
 
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 $sql = "select count(*) AS COUNT FROM blocks where status='sold' and banner_id='$BID' ";
-$result = mysql_query ($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query ($sql);
+$row = mysqli_fetch_array($result);
 $sold = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
 
 $sql = "select count(*) AS COUNT FROM blocks where status='nfs' and banner_id='$BID' ";
-$result = mysql_query ($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query ($sql);
+$row = mysqli_fetch_array($result);
 $nfs = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
 
 $available = (($b_row[grid_width] * $b_row[grid_height] * (BLK_WIDTH*BLK_HEIGHT) )-$nfs ) - $sold;

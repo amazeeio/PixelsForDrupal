@@ -83,8 +83,8 @@ if ($_POST['PAYMENT_ID']!='') {
 	
 
 	$sql = "SELECT * FROM orders where order_id='".$_POST['PAYMENT_ID']."'";
-	$result = mysql_query ($sql) or die (mysql_error().$sql);
-	$order_row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$order_row = mysqli_fetch_array($result);
 
 	if ($hash == $_POST['HANDSHAKE_HASH']) {
 
@@ -130,9 +130,9 @@ class egold {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='EGOLD_ENABLED' OR `key`='EGOLD_PAYMENT_UNITS' OR `key`='EGOLD_PAYEE_ACCOUNT' OR `key`='EGOLD_PAYMENT_METAL_ID' OR `key`='EGOLD_STATUS_URL' OR `key`='EGOLD_PAYMENT_URL' OR `key`='EGOLD_NOPAYMENT_URL' OR `key`='EGOLD_ALTERNATE_PASSPHRASE' ";
-			$result = mysql_query($sql) or die (mysql_error().$sql);
+			$result = mysqli_query($sql) or die (mysqli_error().$sql);
 
-			while ($row=mysql_fetch_array($result)) {
+			while ($row=mysqli_fetch_array($result)) {
 
 				define ($row['key'], $row['val']);
 
@@ -196,29 +196,29 @@ class egold {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_ENABLED', 'N')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_UNITS', 'USD')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYEE_ACCOUNT', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_METAL_ID', '1')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_ALTERNATE_PASSPHRASE', '1')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_STATUS_URL', 'http://$host".$http_url."/payment/egold.php"."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_URL', 'http://$host".$http_url."/users/index.php"."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_NOPAYMENT_URL', 'http://$host".$http_url."/users/orders.php"."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 		
@@ -231,28 +231,28 @@ class egold {
 
 	
 		$sql = "DELETE FROM config where `key`='EGOLD_ENABLED'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		$sql = "DELETE FROM config where `key`='EGOLD_PAYMENT_UNITS'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_PAYEE_ACCOUNT'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_STATUS_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_PAYMENT_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_NOPAYMENT_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_PAYMENT_METAL_ID'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='EGOLD_ALTERNATE_PASSPHRASE'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		
 	}
@@ -262,8 +262,8 @@ class egold {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$order_row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$order_row = mysqli_fetch_array($result);
 		
 
 
@@ -440,19 +440,19 @@ class egold {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYEE_ACCOUNT', '".$_REQUEST['egold_payee_account']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_UNITS', '".$_REQUEST['egold_payment_units']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_METAL_ID', '".$_REQUEST['egold_payment_metal_id']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_STATUS_URL', '".$_REQUEST['egold_status_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_PAYMENT_URL', '".$_REQUEST['egold_payment_url']."')";
-		mysql_query($sql);	
+		mysqli_query($sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_NOPAYMENT_URL', '".$_REQUEST['egold_nopayment_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('EGOLD_ALTERNATE_PASSPHRASE', '".$_REQUEST['egold_alternate_passphrase']."')";
-		mysql_query($sql);	
+		mysqli_query($sql);	
 	
 
 	}
@@ -461,8 +461,8 @@ class egold {
 	function is_enabled() {
 
 		$sql = "SELECT val from config where `key`='EGOLD_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
 
@@ -477,10 +477,10 @@ class egold {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='EGOLD_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		//$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		//$row = mysqli_fetch_array($result);
 
-		if (mysql_num_rows($result)>0) {
+		if (mysqli_num_rows($result)>0) {
 			return true;
 
 		} else {
@@ -493,7 +493,7 @@ class egold {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='EGOLD_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 	}
@@ -501,7 +501,7 @@ class egold {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='EGOLD_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 	}
 

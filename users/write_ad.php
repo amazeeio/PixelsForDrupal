@@ -38,9 +38,9 @@ $BID = $f2->bid($_REQUEST['BID']);
 
 $sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
 
-$order_result = mysql_query ($sql) or die(mysql_error());
+$order_result = mysqli_query ($sql) or die(mysqli_error());
 
-if (mysql_num_rows($order_result)==0) {
+if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
 	?>
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
@@ -53,7 +53,7 @@ if (mysql_num_rows($order_result)==0) {
 }
 
 require ("header.php");
-$row = mysql_fetch_array($order_result);
+$row = mysqli_fetch_array($order_result);
 
 //print_r (unserialize( $row['block_info']));
 update_temp_order_timestamp();
@@ -61,8 +61,8 @@ update_temp_order_timestamp();
 $has_packages = banner_get_packages($BID);
 
 //$sql = "select * from banners where banner_id='$BID'";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$b_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$b_row = mysqli_fetch_array($result);
 
 
 ?>
@@ -95,7 +95,7 @@ if ($_REQUEST['save'] != "" ) {
 
 		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".addslashes(session_id())."' ";
 		//echo $sql;
-		$result = mysql_query($sql) or die(mysql_error());
+		$result = mysqli_query($sql) or die(mysqli_error());
 
 
 		$prams = load_ad_values ($ad_id);
@@ -112,8 +112,8 @@ if ($_REQUEST['save'] != "" ) {
 	// get the ad_id form the temp_orders table..
 
 	$sql = "SELECT ad_id FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$row = mysqli_fetch_array($result);
 	$ad_id = $row['ad_id'];
 	//echo "adid is: ".$ad_id;
 	$prams = load_ad_values ($ad_id); // user is not logged in

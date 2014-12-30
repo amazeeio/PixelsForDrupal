@@ -81,15 +81,15 @@ $mode = $_REQUEST['mode'];
 if ($_REQUEST['action']=='del') {
 
 	$sql = "DELETE FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysql_query ($sql);
+	$result = mysqli_query ($sql);
 
 
 }
 
 if ($_REQUEST['column_id']!='') {
 	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysql_query ($sql);
-	$col_row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql);
+	$col_row = mysqli_fetch_array($result);
 
 }
 
@@ -113,8 +113,8 @@ if ($_REQUEST['save_col']!='') {
 	if (is_numeric($_REQUEST['field_id'])) {
 
 		$sql = "SELECT * from form_fields WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'  ";
-		$result = mysql_query ($sql);
-		$field_row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql);
+		$field_row = mysqli_fetch_array($result);
 
 	} else {
 
@@ -153,7 +153,7 @@ if ($_REQUEST['save_col']!='') {
 		// update form field
 
 		$sql = "UPDATE form_fields SET `template_tag`='".$field_row['template_tag']."' WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'";
-		mysql_query ($sql);
+		mysqli_query ($sql);
 
 	}
 
@@ -170,7 +170,7 @@ if ($_REQUEST['save_col']!='') {
 
 	
 	if ($error=='') {
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 		//echo $sql;
 		if ((CACHE_ENABLED=='YES')) {
 			$CACHE_ENABLED = 'NO';
@@ -189,8 +189,8 @@ if ($_REQUEST['save_col']!='') {
 	// load new values
 
 	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysql_query ($sql);
-	$col_row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql);
+	$col_row = mysqli_fetch_array($result);
 
 }
 
@@ -245,8 +245,8 @@ if ($col_row['column_id']=='') {
 	if ($_REQUEST['column_id']=='') { // get the last sort order
 
 		$sql = "SELECT max(sort_order) FROM form_lists WHERE field_id=1 GROUP BY column_id ";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
-		$row = mysql_fetch_row($result);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$row = mysqli_fetch_row($result);
 		$sort_order = $row[0];
 
 	}

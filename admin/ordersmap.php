@@ -43,8 +43,8 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 load_banner_constants($BID);
 
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$b_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$b_row = mysqli_fetch_array($result);
 
 ?>
 The following screen shows a map of all the orders made on a grid. Move your mouse over the blocks to find who owns the order. Click on the block to manage the order.<br>
@@ -54,7 +54,7 @@ Red blocks are on order (Status can be: 'reserved', 'ordered', 'sold'), Green bl
 <?php
 
 $sql = "Select * from banners ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -62,7 +62,7 @@ $res = mysql_query($sql);
 Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<option> </option>
 		<?php
-	while ($row=mysql_fetch_array($res)) {
+	while ($row=mysqli_fetch_array($res)) {
 		
 		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';

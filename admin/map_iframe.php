@@ -45,8 +45,8 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 //print_r($_REQUEST);
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$b_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$b_row = mysqli_fetch_array($result);
 /*
 
 
@@ -615,7 +615,7 @@ if ($_REQUEST['move_type']!='') {
 }
 
 $sql = "SELECT * FROM blocks WHERE  banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error());
+$result = mysqli_query ($sql) or die (mysqli_error());
 
 
 
@@ -628,27 +628,27 @@ $result = mysql_query ($sql) or die (mysql_error());
 
 	<?php
 
-	while ($row=mysql_fetch_array($result)) {
+	while ($row=mysqli_fetch_array($result)) {
 
 		$sql = "select * from users where ID='".$row['user_id']."'";
-		$res = mysql_query($sql) or die (mysql_error().$sql);
-		$user_row = mysql_fetch_array($res);
+		$res = mysqli_query($sql) or die (mysqli_error().$sql);
+		$user_row = mysqli_fetch_array($res);
 
-		if (mysql_num_rows($res)==0) { 
+		if (mysqli_num_rows($res)==0) { 
 
 			//$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-			//mysql_query($sql);
+			//mysqli_query($sql);
 
 		}
 
 		$sql = "select * from orders where order_id='".$row['order_id']."'";
-		$res = mysql_query($sql) or die (mysql_error().$sql);
-		$order_row = mysql_fetch_array($res);
+		$res = mysqli_query($sql) or die (mysqli_error().$sql);
+		$order_row = mysqli_fetch_array($res);
 
-		if (mysql_num_rows($res)==0) {
+		if (mysqli_num_rows($res)==0) {
 
 			//$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-			//mysql_query($sql);
+			//mysqli_query($sql);
 
 		}
 

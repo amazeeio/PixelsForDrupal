@@ -51,20 +51,20 @@ if (!$_REQUEST['field_id']) {
 function can_delete_code ($field_id, $code) {
 
 	$sql = "SHOW TABLES";
-	$tables = mysql_query ($sql);
+	$tables = mysqli_query ($sql);
 
 	$tables = array ('ads');
 	foreach ($tables as $table ) {
 
 		$sql = "SHOW COLUMNS FROM ".$table;
-		$cols = mysql_query ($sql);
+		$cols = mysqli_query ($sql);
 
-		while ($c_row = mysql_fetch_row($cols)) {
+		while ($c_row = mysqli_fetch_row($cols)) {
 			if ($c_row[0] == $field_id) {
 
 				$sql = "SELECT * FROM ".$table." WHERE `$field_id` like '%$code%' ";
-				$result = mysql_query ($sql);
-				if (mysql_num_rows($result)==0) {
+				$result = mysqli_query ($sql);
+				if (mysqli_num_rows($result)==0) {
 					
 					return true;
 				} else {
@@ -105,10 +105,10 @@ if ($_REQUEST['action'] == 'delete' ) {
 	$code = $_REQUEST['code'];
 
 	$sql = "DELETE from `codes` where `field_id`=$field_id AND `code`='$code' ";
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	$sql = "DELETE from `codes_translations` where `field_id`=$field_id AND `code`='$code' ";
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	//echo $sql;
 
@@ -233,9 +233,9 @@ function validate_code ($field_id, $new_code, $new_description) {
 	if ($new_code != '') {
 
 		$sql = "SELECT * from codes where field_id=$field_id AND code like '%$new_code%' ";
-		$result = mysql_query ($sql) or die (mysql_error());
+		$result = mysqli_query ($sql) or die (mysqli_error());
 
-		if (mysql_num_rows($result)>0) {
+		if (mysqli_num_rows($result)>0) {
 			$error .= "- The new Code is too similar to an already existing code. Please try to come up with a different code.<br>";
 		}
 
@@ -279,9 +279,9 @@ if ($_SESSION['MDS_LANG'] == '' ) {
 
 
 
-$result = mysql_query ($sql) or die($sql.mysql_error());
+$result = mysqli_query ($sql) or die($sql.mysqli_error());
 
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
    if ($code == $row['code']) {
       echo '<tr bgcolor="FFFFCC">'."\n";

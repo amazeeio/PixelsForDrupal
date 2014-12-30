@@ -58,12 +58,12 @@ if ($_REQUEST['user_id']!='') {
 
 }
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 $sql = "select Rank from users where ID='$user_id'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$u_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$u_row = mysqli_fetch_array($result);
 
 if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
 		$max_orders=true;
@@ -75,9 +75,9 @@ if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
 // check the max pixels
 if (G_MAX_BLOCKS>0) {
 	$sql = "SELECT * from blocks where user_id='$user_id' and status='reserved' and banner_id='$BID' ";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
 	
-	$count = mysql_num_rows($result);
+	$count = mysqli_num_rows($result);
 	
 	if (($count) >= G_MAX_BLOCKS) {
 		//echo 'max_selected';
@@ -88,8 +88,8 @@ if (G_MAX_BLOCKS>0) {
 
 $sql = "select status, user_id from blocks where banner_id='$BID' AND block_id='$block_id'";
 
-$result = mysql_query($sql) or die(mysql_error());
-$row=mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error());
+$row=mysqli_fetch_array($result);
 
 //if ($row[user_id]!=$_SESSION['MDS_ID']) {
 //	echo 'error';
@@ -128,8 +128,8 @@ if (($row['status']=='reserved') && ($row[user_id]==$user_id)) {
 if ($update_order) {
 
 	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysql_query ($sql) or die (mysql_error().$sql);
-	$b_row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$b_row = mysqli_fetch_array($result);
 
 	select_block ('', '', $block_id);
 

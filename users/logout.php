@@ -36,7 +36,7 @@ require ("../config.php");
 $now = (gmdate("Y-m-d H:i:s"));
 $sql = "UPDATE `users` SET `logout_date`='$now' WHERE `Username`='".$_SESSION['MDS_Username']."'";
       //echo $sql;
- mysql_query($sql);
+ mysqli_query($sql);
       
 
 unset($_SESSION['MDS_ID']);

@@ -64,8 +64,8 @@ function place_temp_order($in_str, $price) {
 
 	// preserve ad_id & block info...
 	$sql = "SELECT ad_id, block_info  FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$row = mysqli_fetch_array($result);
 	$ad_id = $row['ad_id'];
 	$block_info = addslashes($row['block_info']);
 	
@@ -74,7 +74,7 @@ function place_temp_order($in_str, $price) {
 	// DAYS_EXPIRE comes form load_banner_constants()
 	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('".addslashes(session_id())."', '".$in_str."', '".$now."', '0', '".$quantity."', '".DAYS_EXPIRE."', '".$BID."', '".get_default_currency()."',  '$now', '$ad_id', '$block_info' );";
 	$f2->debug('Placed Temp order. '.$sql);
-	mysql_query($sql) or die (mysql_error());
+	mysqli_query($sql) or die (mysqli_error());
 
 }
 
@@ -95,8 +95,8 @@ function reserve_temp_order_pixels($block_info, $in_str) {
 
 	$sql = "select block_id from blocks where banner_id='".$BID."' and block_id IN($in_str) ";
 	
-	$result = mysql_query($sql) or die ($sql.mysql_error()); 
-	if (mysql_num_rows($result)>0) {
+	$result = mysqli_query($sql) or die ($sql.mysqli_error()); 
+	if (mysqli_num_rows($result)>0) {
 		echo js_out_prep($label['check_sel_notavailable']." (E432)");
 		//do_log_entry ($sql);
 		return; 
@@ -122,7 +122,7 @@ function reserve_temp_order_pixels($block_info, $in_str) {
 
 		$total += $price;
 
-		//mysql_query ($sql) or die (mysql_error().$sql);
+		//mysqli_query ($sql) or die (mysqli_error().$sql);
 		//echo $key.", ";
 
 	}
@@ -131,7 +131,7 @@ function reserve_temp_order_pixels($block_info, $in_str) {
 	//print_r($block_info);
 	//$block_info = serialize($block_info);
 	$sql = "UPDATE temp_orders set price='$total' where session_id='".session_id()."'  ";
-	mysql_query($sql);
+	mysqli_query($sql);
 	//echo $sql;
 	// save to file
 	$fh = fopen (SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt", 'wb');
@@ -139,7 +139,7 @@ function reserve_temp_order_pixels($block_info, $in_str) {
 	fclose($fh);
 	
 
-	mysql_query ($sql) or die (mysql_error().$sql);
+	mysqli_query ($sql) or die (mysqli_error().$sql);
 
 }
 
@@ -162,12 +162,12 @@ function check_selection_main() {
 	###################################################
 	if (USE_LOCK_TABLES == 'Y') {
 		$sql = "LOCK TABLES blocks WRITE, temp_orders WRITE, currencies READ, prices READ, banners READ";
-		$result = mysql_query ($sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
+		$result = mysqli_query ($sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
 	} else {
 		// poor man's lock
 		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysql_query($sql) or die(mysql_error());
-		if (mysql_affected_rows()==0) {
+		$result = mysqli_query($sql) or die(mysqli_error());
+		if (mysqli_affected_rows()==0) {
 			// make sure it cannot be locked for more than 30 secs 
 			// This is in case the proccess fails inside the lock
 			// and does not release it.
@@ -176,18 +176,18 @@ function check_selection_main() {
 
 			// get the time of last run
 			$sql = "SELECT * FROM `config` where `key` = 'LAST_SELECT_RUN' ";
-			$result = @mysql_query($sql);
-			$t_row = @mysql_fetch_array($result);
+			$result = @mysqli_query($sql);
+			$t_row = @mysqli_fetch_array($result);
 
 			if ($unix_time > $t_row['val']+30) {
 				// release the lock
 				
 				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = @mysql_query($sql) or die(mysql_error());
+				$result = @mysqli_query($sql) or die(mysqli_error());
 
 				// update timestamp
 				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysql_query($sql) or die (mysql_error());
+				$result = @mysqli_query($sql) or die (mysqli_error());
 			}
 			
 			usleep(5000000); // this function is executing in another process. sleep for half a second
@@ -304,18 +304,18 @@ function check_selection_main() {
 			
 	if (USE_LOCK_TABLES == 'Y') {
 		$sql = "UNLOCK TABLES";
-		$result = mysql_query ($sql) or die (mysql_error()." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
+		$result = mysqli_query ($sql) or die (mysqli_error()." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
 	} else {
 
 		// release the poor man's lock
 		$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$unix_time = time();
 
 		// update timestamp
 		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-		$result = @mysql_query($sql) or die (mysql_error());
+		$result = @mysqli_query($sql) or die (mysqli_error());
 
 
 	}

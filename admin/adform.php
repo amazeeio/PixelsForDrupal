@@ -126,9 +126,9 @@ if ($_REQUEST['delete'] != '') {
 
 	echo "Deleting...";
 	$sql = "SELECT * FROM form_fields WHERE form_id=1 and field_id='".intval($_REQUEST['field_id'])."'";
-	$result = mysql_query ($sql);
+	$result = mysqli_query ($sql);
 
-	$row = mysql_fetch_array($result) or die(mysql_error());
+	$row = mysqli_fetch_array($result) or die(mysqli_error());
 
 	if (is_reserved_template_tag($row['template_tag'])) {
 

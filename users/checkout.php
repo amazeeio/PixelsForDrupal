@@ -39,8 +39,8 @@ include ("../config.php");
 include ("login_functions.php");
 //$BID = 1; # Banner ID. Change this later & allow users to select multiple banners
 //$sql = "select * from banners where banner_id='$BID'";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$b_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$b_row = mysqli_fetch_array($result);
 
 
 process_login();
@@ -58,10 +58,10 @@ process_login();
 ########################################################
 
 $sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
-$order_result = mysql_query ($sql) or die(mysql_error());
+$order_result = mysqli_query ($sql) or die(mysqli_error());
 	
 
-if (mysql_num_rows($order_result)==0) { // no order id found...
+if (mysqli_num_rows($order_result)==0) { // no order id found...
 require ("header.php");
 	?>
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
@@ -71,7 +71,7 @@ require ("header.php");
 	die();
 
 } else {
-	$order_row = mysql_fetch_array($order_result);
+	$order_row = mysqli_fetch_array($order_result);
 }
 
 
@@ -93,8 +93,8 @@ if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
 
 		// check the user's rank
 		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-		$u_result = mysql_query ($sql) or die (mysql_error().$sql);
-		$u_row = mysql_fetch_array($u_result);
+		$u_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$u_row = mysqli_fetch_array($u_result);
 
 
 		if (($order_row['price']==0) || ($u_row['Rank']==2)) {
@@ -126,8 +126,8 @@ if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
 ##########################
 if ($_REQUEST['action']=='confirm') {
 	$sql = "SELECT * from orders where order_id='".$order_id."'";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
-	$order_row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$order_row = mysqli_fetch_array($result);
 
 	$dir = dirname(__FILE__);
 	$dir = preg_split ('%[/\\\]%', $dir);

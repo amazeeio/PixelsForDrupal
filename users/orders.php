@@ -71,7 +71,7 @@ function confirmLink(theLink, theConfirmMsg)
 
 <?php
 $sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".$_SESSION['MDS_ID']."' ORDER BY t1.order_date DESC ";
-$result = mysql_query ($sql) or die (mysql_error());
+$result = mysqli_query ($sql) or die (mysqli_error());
 
 
 ?>
@@ -89,11 +89,11 @@ $result = mysql_query ($sql) or die (mysql_error());
 	</tr>
 <?php
 
-if (mysql_num_rows($result)==0) {
+if (mysqli_num_rows($result)==0) {
 	echo '<td colspan="7">'.$label['advertiser_ord_noordfound'].' </td>';
 } else {
 
-	while ($row=mysql_fetch_array($result)) {
+	while ($row=mysqli_fetch_array($result)) {
 	?>
 <tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
     <td><font face="Arial" size="2"><?php echo get_local_time($row[order_date]);?></font></td>
@@ -104,8 +104,8 @@ if (mysql_num_rows($result)==0) {
 	<td><font face="Arial" size="2"><?php 
 
 			$sql = "select * from banners where banner_id=".$row['banner_id'];
-			$b_result = mysql_query ($sql) or die (mysql_error().$sql);
-			$b_row = mysql_fetch_array($b_result);
+			$b_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$b_row = mysqli_fetch_array($b_result);
 		
 			echo $b_row['name'];
 			
@@ -169,8 +169,8 @@ if (mysql_num_rows($result)==0) {
 			// check to see if there is a renew_wait or renew_paid order
 
 			$sql = "select order_id from orders where (status = 'renew_paid' OR status = 'renew_wait') AND original_order_id='".$row['original_order_id']."' ";
-			$res_c = mysql_query($sql);
-			if (mysql_num_rows($res_c)==0) {
+			$res_c = mysqli_query($sql);
+			if (mysqli_num_rows($res_c)==0) {
  
 				$label['advertiser_ord_renew'] = str_replace("%DAYS_TO_RENEW%", $days, $label['advertiser_ord_renew']);
 				echo "<a href='payment.php?order_id=".$row['order_id']."&BID=".$row['banner_id']."'><font color='red' size='1'>(".$label['advertiser_ord_renew'].")</font></a>";

@@ -40,8 +40,8 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 
 $sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' ";
-$result  = mysql_query ($sql) or die(mysql_error());
-$row = mysql_fetch_array($result, MYSQL_ASSOC);
+$result  = mysqli_query ($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
 

@@ -35,8 +35,8 @@
 global $f2;
 if ($_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
 	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['lang']."'";
-	$result = mysql_query($sql) or die (mysql_error());
-	if (mysql_num_rows($result)>0) {
+	$result = mysqli_query($sql) or die (mysqli_error());
+	if (mysqli_num_rows($result)>0) {
 		$_SESSION['MDS_LANG'] = $_REQUEST["lang"];
 		// save the requested language
 		@setcookie("MDS_SAVED_LANG", $_REQUEST["lang"], 2147483647);
@@ -44,8 +44,8 @@ if ($_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
 	} else {
 
 		$sql = "SELECT * FROM lang WHERE `is_default`='Y'";
-		$result = mysql_query($sql) or die (mysql_error());
-		$row = mysql_fetch_array($result, MYSQL_ASSOC);
+		$result = mysqli_query($sql) or die (mysqli_error());
+		$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		$_SESSION['MDS_LANG'] = $row["lang_code"];
 		// save the requested language
 		@setcookie("MDS_SAVED_LANG", $row["lang_code"], 2147483647);
@@ -67,8 +67,8 @@ elseif ($_SESSION['MDS_LANG']=='') {
 				
 				// set lang and locale
 				$sql = "SELECT * FROM lang WHERE `is_default`='Y' ";
-				if ($result = mysql_query ($sql)) {
-					$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				if ($result = mysqli_query ($sql)) {
+					$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 					$_SESSION['MDS_LANG'] = $row['lang_code'];
 					if ($row['charset']!='') {
 						setlocale(LC_TIME, $row['charset']);
@@ -96,8 +96,8 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 		// if mapping didn't work, default to english..
 		
 		$sql = "SELECT * FROM lang ";
-		if ($result = mysql_query ($sql)) {
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+		if ($result = mysqli_query ($sql)) {
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 				$AVAILABLE_LANGS [$row['lang_code']] = $row['name'];
 				$LANG_FILES [$row['lang_code']] = $row['lang_filename'];
 			}
@@ -109,7 +109,7 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 			}
 		
 		} else {
-			$DB_ERROR = mysql_error();
+			$DB_ERROR = mysqli_error();
 		
 		}
 

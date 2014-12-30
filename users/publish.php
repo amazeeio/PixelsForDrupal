@@ -52,8 +52,8 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 	
 } elseif ($_REQUEST['ad_id']!='') {
 	$sql = "select banner_id from ads where ad_id='".$_REQUEST['ad_id']."'";
-	$res = mysql_query($sql);
-	$row = mysql_fetch_array($res);
+	$res = mysqli_query($sql);
+	$row = mysqli_fetch_array($res);
 	$BID = $row['banner_id'];
 } else {
 	// get the banner_id of one if the blocks the customer owns
@@ -61,8 +61,8 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 	
 	$sql = "select *, banners.banner_id AS BID FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id order by orders.banner_id ";
 
-	$res = mysql_query($sql);
-	if ($row = mysql_fetch_array($res)) {
+	$res = mysqli_query($sql);
+	if ($row = mysqli_fetch_array($res)) {
 		$BID = $row['BID'];
 	} else {
 		$BID = 1; # this should not happen unless the above queries failed.
@@ -70,14 +70,14 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 }
 
 //$sql = "select * from banners where banner_id='".$BID."'";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$banner_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$banner_row = mysqli_fetch_array($result);
 
 load_banner_constants($BID);
 
 $sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$user_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$user_row = mysqli_fetch_array($result);
 
 ##################################################
 # Entry point for completion of orders which are made by super users or if the order was for free
@@ -88,9 +88,9 @@ if ($_REQUEST['action']=='complete') {
 	if ($_REQUEST['order_id']=='temp') { // convert the temp order to an order.
 
 		$sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
-		$order_result = mysql_query ($sql) or die(mysql_error());
+		$order_result = mysqli_query ($sql) or die(mysqli_error());
 
-		if (mysql_num_rows($order_result)==0) { // no order id found...
+		if (mysqli_num_rows($order_result)==0) { // no order id found...
 		//require ("header.php");
 			?>
 		<h1><?php echo $label['no_order_in_progress']; ?></h1>
@@ -99,7 +99,7 @@ if ($_REQUEST['action']=='complete') {
 			require ("footer.php");
 			die();
 
-		} elseif($order_row = mysql_fetch_array($order_result)) {
+		} elseif($order_row = mysqli_fetch_array($order_result)) {
 
 			$_REQUEST['order_id'] = reserve_pixels_for_temp_order($order_row);
 
@@ -124,8 +124,8 @@ if ($_REQUEST['action']=='complete') {
 	}
 
 	$sql="select * from orders where order_id='".$_REQUEST['order_id']."' AND user_id='".$_SESSION['MDS_ID']."' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$row = mysqli_fetch_array($result);
 	if (($row['price']==0)||($user_row['Rank']==2)) {
 		complete_order ($row['user_id'], $row['order_id']);
 		// no transaction for this order
@@ -149,15 +149,15 @@ if ($_REQUEST['action']=='complete') {
 
 $sql = "select * FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id order by `name`";
 
-$res = mysql_query($sql) or die(mysql_error().$sql);
+$res = mysqli_query($sql) or die(mysqli_error().$sql);
 
-if (mysql_num_rows($res)>1) {
+if (mysqli_num_rows($res)>1) {
 	?>
 	<p>
 	<div class="fancy_heading" width="85%"><?php echo $label['advertiser_publish_pixinv_head']; ?></div>
 
 	<?php
-	$label['advertiser_publish_select_init2'] = str_replace("%GRID_COUNT%", mysql_num_rows($res),  $label['advertiser_publish_select_init2']);
+	$label['advertiser_publish_select_init2'] = str_replace("%GRID_COUNT%", mysqli_num_rows($res),  $label['advertiser_publish_select_init2']);
 	echo $label['advertiser_publish_select_init2'];
 	?>
 	</p>
@@ -176,8 +176,8 @@ if (mysql_num_rows($res)>1) {
 if ($_REQUEST['block_id']!='') {
 
 	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."'";
-	$result = mysql_query ($sql) or die (mysql_error());
-	$blk_row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql) or die (mysqli_error());
+	$blk_row = mysqli_fetch_array($result);
 
 
 	if (!$blk_row['ad_id']) { // no ad exists, create a new ad_id
@@ -191,9 +191,9 @@ if ($_REQUEST['block_id']!='') {
 		$ad_id = insert_ad_data();
 
 		$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
-		$result = mysql_query ($sql) or die (mysql_error());
+		$result = mysqli_query ($sql) or die (mysqli_error());
 		$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
-		$result = mysql_query ($sql) or die (mysql_error());
+		$result = mysqli_query ($sql) or die (mysqli_error());
 
 		$_REQUEST['ad_id'] = $ad_id;
 
@@ -202,9 +202,9 @@ if ($_REQUEST['block_id']!='') {
 	// make sure the ad exists..
 
 		$sql = "select * from ads where ad_id='".$blk_row['ad_id']."' ";
-		$result = mysql_query ($sql) or die (mysql_error());
+		$result = mysqli_query ($sql) or die (mysqli_error());
 		//echo $sql;
-		if (mysql_num_rows($result)==0) {
+		if (mysqli_num_rows($result)==0) {
 			echo "No ad exists..";
 			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='http://';
 			$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
@@ -214,9 +214,9 @@ if ($_REQUEST['block_id']!='') {
 			$ad_id = insert_ad_data();
 
 			$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 			$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 
 			$_REQUEST['ad_id'] = $ad_id;
 		} else {
@@ -227,7 +227,7 @@ if ($_REQUEST['block_id']!='') {
 		// bug in previous versions resulted in saving the ad's user_id with a session_id
 		// fix user_id here
 		$sql = "UPDATE ads SET user_id='".$blk_row['user_id']."' WHERE order_id='".$blk_row['order_id']."' AND user_id <> '".$_SESSION['MDS_ID']."' limit 1 ";
-		mysql_query ($sql) or die (mysql_error());
+		mysqli_query ($sql) or die (mysqli_error());
 
 		
 
@@ -242,10 +242,10 @@ function disapprove_modified_order($order_id, $BID) {
 
 	$sql = "UPDATE orders SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
 	//echo $sql;
-	mysql_query($sql) or die(mysql_error());
+	mysqli_query($sql) or die(mysqli_error());
 	$sql = "UPDATE blocks SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
 	///echo $sql;
-	mysql_query($sql) or die(mysql_error());
+	mysqli_query($sql) or die(mysqli_error());
 
 }
 
@@ -256,9 +256,9 @@ if ($_REQUEST['ad_id']) {
 	//print_r($_REQUEST);
 
 	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=".$_SESSION['MDS_ID']." and t1.banner_id='$BID' and t1.ad_id='".$_REQUEST['ad_id']."' AND t1.order_id=t2.order_id ";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 	//echo $sql."<br>";
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	$order_id = $row['order_id'];
 	$blocks = explode(',',$row['blocks']);
 
@@ -269,7 +269,7 @@ if ($_REQUEST['ad_id']) {
 	//echo "$sql<br>";
 
 	$sql = "SELECT * from blocks WHERE order_id='".$order_id."'";
-	$blocks_result = mysql_query($sql) or die (mysql_error());
+	$blocks_result = mysqli_query($sql) or die (mysqli_error());
 
 
 	if ($_REQUEST['change_pixels']) {
@@ -312,7 +312,7 @@ if ($_REQUEST['ad_id']) {
 
 					// create the new img...
 
-					while ($block_row = mysql_fetch_array($blocks_result)) {
+					while ($block_row = mysqli_fetch_array($blocks_result)) {
 
 						//
 
@@ -420,10 +420,10 @@ if ($_REQUEST['ad_id']) {
 							$data = base64_encode($data);
 
 							$sql = "UPDATE blocks SET image_data='$data' where block_id='".$cb."' AND banner_id='".$BID."' ";
-							mysql_query($sql);
+							mysqli_query($sql);
 							
 
-							//echo $sql."------>".mysql_affected_rows()."<br>";
+							//echo $sql."------>".mysqli_affected_rows()."<br>";
 
 						}
 
@@ -593,9 +593,9 @@ if ($count > 0) {
 	// infrom the user about the approval status of the iamges.
 
 	$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='N' and banner_id='$BID' ";
-	$result4 = mysql_query ($sql) or die (mysql_error()); 
+	$result4 = mysqli_query ($sql) or die (mysqli_error()); 
 
-	if (mysql_num_rows($result4)>0) {	
+	if (mysqli_num_rows($result4)>0) {	
 		?>
 		<p><div width='100%' style="border-color:#FF9797; border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_pixwait']; ?></div></p>
 		<?php
@@ -603,9 +603,9 @@ if ($count > 0) {
 
 		$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='Y' and published='Y' and banner_id='$BID' ";
 		//echo $sql;
-		$result4 = mysql_query ($sql) or die (mysql_error()); 
+		$result4 = mysqli_query ($sql) or die (mysqli_error()); 
 
-		if (mysql_num_rows($result4)>0) {	
+		if (mysqli_num_rows($result4)>0) {	
 			?>
 			<p><div width='100%' style="border-color:green;border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_published']; ?></div></p>
 			<?php
@@ -613,9 +613,9 @@ if ($count > 0) {
 
 			$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='Y' and published='N' and banner_id='$BID' ";
 			
-			$result4 = mysql_query ($sql) or die (mysql_error()); 
+			$result4 = mysqli_query ($sql) or die (mysqli_error()); 
 
-			if (mysql_num_rows($result4)>0) {	
+			if (mysqli_num_rows($result4)>0) {	
 				?>
 				<p><div width='100%' style="border-color:yellow;border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_waiting']; ?></div></p>
 				<?php
@@ -635,7 +635,7 @@ if ($count > 0) {
 	// Generate the Area map form the current sold blocks.
 
 	$sql = "SELECT * FROM blocks WHERE user_id='".$_SESSION['MDS_ID']."' AND status='sold' and banner_id='$BID' ";
-	$result = mysql_query ($sql) or die (mysql_error());
+	$result = mysqli_query ($sql) or die (mysqli_error());
 
 	?>
 	</div>
@@ -644,7 +644,7 @@ if ($count > 0) {
 
 	<?php
 
-	while ($row=mysql_fetch_array($result)) {
+	while ($row=mysqli_fetch_array($result)) {
 
 		//if (strlen($row['image_data'])>0) {
 	?>

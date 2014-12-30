@@ -58,8 +58,8 @@ Stats HTML - Copy and paste into your html file to display the stats<br>
 				
 			</tr>
 <?php
-			$result = mysql_query("select * FROM banners") or die (mysql_error());
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			$result = mysqli_query("select * FROM banners") or die (mysqli_error());
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				?>
 

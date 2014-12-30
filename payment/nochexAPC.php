@@ -117,8 +117,8 @@ if ($_POST['transaction_id']!='') {
 	if ($order_id!='') {
 		//$invoice_row = get_product_invoice_row ($order_id);
 		$sql = "select user_id FROM orders where order_id='".$order_id."'";
-		$result = mysql_query ($sql) or nc_mail_error(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or nc_mail_error(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 	}
 	$user_id=$row['user_id'];
 	
@@ -157,8 +157,8 @@ if ($_POST['transaction_id']!='') {
 				// check so that transactrion id cannot be reused
 
 				$sql = "SELECT * FROM transactions WHERE txn_id='$txn_id' ";
-				$result = mysql_query($sql) or die (mysql_error().$sql); 
-				if (mysql_num_rows($result)>0) {
+				$result = mysqli_query($sql) or die (mysqli_error().$sql); 
+				if (mysqli_num_rows($result)>0) {
 					nc_mail_error ("Possible fraud. Transaction id: $txn_id is already in the database. \n");
 					log_entry("Possible fraud. Transaction id: $txn_id is already in the database.");
 					$VERIFIED = false;	
@@ -221,9 +221,9 @@ class NOCHEX {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='NOCHEX__ENABLED' OR `key`='NOCHEX_LOGO_URL' OR `key`='NOCHEX_CANCEL_RETURN_URL' OR `key`='NOCHEX_RETURN_URL' OR `key`='NOCHEX_APC_URL' OR `key`='NOCHEX_BUTTON_URL' OR `key`='NOCHEX_EMAIL' OR `key`='NOCHEX_CURRENCY'";
-			$result = mysql_query($sql) or die (mysql_error().$sql);
+			$result = mysqli_query($sql) or die (mysqli_error().$sql);
 
-			while ($row=mysql_fetch_array($result)) {
+			while ($row=mysqli_fetch_array($result)) {
 
 				define ($row['key'], $row['val']);
 
@@ -250,53 +250,53 @@ class NOCHEX {
 		$http_url = implode ("/", $http_url);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_EMAIL', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_ENABLED', 'N')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_LOGO_URL', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
-		//mysql_query($sql);
+		//mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_CANCEL_RETURN_URL', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_RETURN_URL', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_APC_URL', 'http://". $host.$http_url."/payment/nochexAPC.php')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_BUTTON_URL', 'http://support.nochex.com/web/images/cardsboth2.gif')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_CURRENCY', 'GBP')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 	}
 
 	function uninstall() {
 
 		$sql = "DELETE FROM config where `key`='NOCHEX_EMAIL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='NOCHEX_ENABLED'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "DELETE FROM config where `key`='NOCHEX_LOGO_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
-		//mysql_query($sql);
+		//mysqli_query($sql);
 		$sql = "DELETE FROM config where `key`='NOCHEX_CANCEL_RETURN_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "DELETE FROM config where `key`='NOCHEX_RETURN_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "DELETE FROM config where `key`='NOCHEX_APC_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='NOCHEX_BUTTON_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='NOCHEX_CURRENCY'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 	}
@@ -304,8 +304,8 @@ class NOCHEX {
 	function payment_button($order_id) {
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$order_row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$order_row = mysqli_fetch_array($result);
 
 		
 		?>
@@ -437,18 +437,18 @@ class NOCHEX {
 	function save_config() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_EMAIL', '".$_REQUEST['nochex_email']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_LOGO_URL', '".$_REQUEST['nochex_logo_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_CANCEL_RETURN_URL', '".$_REQUEST['nochex_cancel_return_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_RETURN_URL', '".$_REQUEST['nochex_return_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_APC_URL', '".$_REQUEST['nochex_apc_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('NOCHEX_BUTTON_URL', '".$_REQUEST['nochex_button_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 	}
@@ -457,8 +457,8 @@ class NOCHEX {
 	function is_enabled() {
 
 		$sql = "SELECT val from `config` where `key`='NOCHEX_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
 
@@ -473,10 +473,10 @@ class NOCHEX {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='NOCHEX_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		//$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		//$row = mysqli_fetch_array($result);
 
-		if (mysql_num_rows($result)>0) {
+		if (mysqli_num_rows($result)>0) {
 			return true;
 
 		} else {
@@ -489,7 +489,7 @@ class NOCHEX {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='NOCHEX_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 	}
@@ -497,7 +497,7 @@ class NOCHEX {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='NOCHEX_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 	}
 

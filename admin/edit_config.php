@@ -267,10 +267,10 @@ if (defined('MEMORY_LIMIT')) {
 \$dbpassword = MYSQL_PASS;
 \$database_name = MYSQL_DB;
 
-\$connection = @mysql_connect(\"\$dbhost\",\"\$dbusername\", \"\$dbpassword\")
+\$connection = @mysqli_connect(\"\$dbhost\",\"\$dbusername\", \"\$dbpassword\")
 	or \$DB_ERROR = \"Couldn't connect to server.\";
 	
-\$db = @mysql_select_db(\"\$database_name\", \$connection)
+\$db = @mysqli_select_db(\"\$database_name\", \$connection)
 	or \$DB_ERROR = \"Couldn't select database.\";
 
 if (\$DB_ERROR=='') {

@@ -35,8 +35,8 @@ include ("../config.php");
 include ("login_functions.php");
 $BID = 1; # Banner ID. Change this later & allow users to select multiple banners
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 if ($_REQUEST['order_id']) {
 	$_SESSION['MDS_order_id'] = $_REQUEST['order_id'];
 }
@@ -59,8 +59,8 @@ if ($_REQUEST['order_id']!='') {
 }
 
 $sql = "SELECT * from orders where banner_id='$BID' AND order_id='".$order_id."'";
-$result = mysql_query($sql) or die(mysql_error().$sql);
-$order_row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error().$sql);
+$order_row = mysqli_fetch_array($result);
 
 ########################
 # Proceess confirmation
@@ -74,8 +74,8 @@ if ($_REQUEST['action']=='confirm') {
 ##########################
 
 $sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."'";
-$result = mysql_query($sql) or die(mysql_error().$sql);
-$order_row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error().$sql);
+$order_row = mysqli_fetch_array($result);
 
 $dir = dirname(__FILE__);
 $dir = preg_split ('%[/\\\]%', $dir);

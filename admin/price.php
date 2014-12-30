@@ -69,7 +69,7 @@ $BID = $f2->bid($_REQUEST['BID']);
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -77,7 +77,7 @@ $res = mysql_query($sql);
 Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<option> </option>
 		<?php
-	while ($row=mysql_fetch_array($res)) {
+	while ($row=mysqli_fetch_array($res)) {
 		
 		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';
@@ -160,8 +160,8 @@ if ($BID!='') {
 						}
 						$sql = "SELECT * FROM prices where row_from <= ".$_REQUEST['row_to']." AND row_to >=".$_REQUEST['row_from']." AND col_from <= ".$_REQUEST['col_to']." AND col_to >=".$_REQUEST['col_from']." $and_price AND banner_id=$BID";
 						//echo "$sql<br>";
-						$result = mysql_query ($sql) or die (mysql_error());
-						if (mysql_num_rows($result)>0) {
+						$result = mysqli_query ($sql) or die (mysqli_error());
+						if (mysqli_num_rows($result)>0) {
 							$error .= "<b> - Cannot create: Price zones cannot overlap other price zones!</b><br>";
 
 							$o_o_r=true;
@@ -203,7 +203,7 @@ if ($BID!='') {
 	if ($_REQUEST['action'] == 'delete') {
 		
 		$sql = "DELETE FROM prices WHERE price_id='".$_REQUEST['price_id']."' ";
-		mysql_query($sql) or die(mysql_error().$sql);
+		mysqli_query($sql) or die(mysqli_error().$sql);
 		
 	}
 
@@ -233,7 +233,7 @@ if ($BID!='') {
 
 			//echo $sql;
 
-			mysql_query ($sql) or die (mysql_error());
+			mysqli_query ($sql) or die (mysqli_error());
 
 			$_REQUEST['new'] ='';
 			$_REQUEST['action'] = '';
@@ -249,9 +249,9 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysql_query("select * FROM prices  where banner_id=$BID") or die (mysql_error());
+	$result = mysqli_query("select * FROM prices  where banner_id=$BID") or die (mysqli_error());
 
-	if (mysql_num_rows($result)>0) {
+	if (mysqli_num_rows($result)>0) {
 	?>
 
 	<table width="800" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" border="0">
@@ -269,7 +269,7 @@ if ($BID!='') {
 
 	<?php
 				
-				while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 					?>
 
@@ -318,8 +318,8 @@ if ($BID!='') {
 		echo "<h4>Edit Price Zone:</h4>";
 
 		$sql = "SELECT * FROM prices WHERE `price_id`='".$_REQUEST['price_id']."' ";
-		$result = mysql_query ($sql) or die (mysql_error());
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die (mysqli_error());
+		$row = mysqli_fetch_array($result);
 
 		if ($error=='') {
 		$_REQUEST['color'] = $row['color'];

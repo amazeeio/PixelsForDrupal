@@ -160,9 +160,9 @@ class ccAvenue {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='CCAVENUE_ENABLED' OR `key`='CCAVENUE_CURRENCY' OR `key`='CCAVENUE_MERCHANT_ID' OR `key`='CCAVENUE_REDIRECT_URL' OR `key`='CCAVENUE_WORKING_KEY'";
-			$result = mysql_query($sql) or die (mysql_error().$sql);
+			$result = mysqli_query($sql) or die (mysqli_error().$sql);
 
-			while ($row=mysql_fetch_array($result)) {
+			while ($row=mysqli_fetch_array($result)) {
 
 				define ($row['key'], $row['val']);
 
@@ -193,19 +193,19 @@ class ccAvenue {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_ENABLED', 'N')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_CURRENCY', 'USD')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_MERCHANT_ID', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_REDIRECT_URL', '"."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_WORKING_KEY', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		
 	}
@@ -216,19 +216,19 @@ class ccAvenue {
 
 	
 		$sql = "DELETE FROM config where `key`='CCAVENUE_ENABLED'";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		$sql = "DELETE FROM config where `key`='CCAVENUE_CURRENCY'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='CCAVENUE_MERCHANT_ID'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='CCAVENUE_REDIRECT_URL'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='CCAVENUE_WORKING_KEY'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		
 		
@@ -239,8 +239,8 @@ class ccAvenue {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$order_row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$order_row = mysqli_fetch_array($result);
 		
 
 		$Checksum = cc_getCheckSum(CCAVENUE_MERCHANT_ID, convert_to_currency($order_row[price], $order_row[currency], CCAVENUE_CURRENCY), $order_id ,CCAVENUE_REDIRECT_URL, CCAVENUE_WORKING_KEY);
@@ -369,14 +369,14 @@ class ccAvenue {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_MERCHANT_ID', '".$_REQUEST['ccavenue_merchant_id']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_CURRENCY', '".$_REQUEST['ccavenue_currency']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_REDIRECT_URL', '".$_REQUEST['ccavenue_redirect_url']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CCAVENUE_WORKING_KEY', '".$_REQUEST['ccavenue_working_key']."')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 	}
 
@@ -384,8 +384,8 @@ class ccAvenue {
 	function is_enabled() {
 
 		$sql = "SELECT val from config where `key`='CCAVENUE_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
 
@@ -400,10 +400,10 @@ class ccAvenue {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='CCAVENUE_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		//$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		//$row = mysqli_fetch_array($result);
 
-		if (mysql_num_rows($result)>0) {
+		if (mysqli_num_rows($result)>0) {
 			return true;
 
 		} else {
@@ -416,7 +416,7 @@ class ccAvenue {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='CCAVENUE_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 	}
@@ -424,7 +424,7 @@ class ccAvenue {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='CCAVENUE_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 	}
 
@@ -435,8 +435,8 @@ class ccAvenue {
 		if ($_POST['Merchant_Id']!='') { 
 
 			$sql = "SELECT * FROM orders where order_id='".$_POST['Order_Id']."'";
-			$result = mysql_query ($sql) or die (mysql_error().$sql);
-			$order_row = mysql_fetch_array($result);
+			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$order_row = mysqli_fetch_array($result);
 
 			//$WorkingKey = "" ; //put in the 32 bit working key in the quotes provided here
 			

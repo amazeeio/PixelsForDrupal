@@ -61,8 +61,8 @@ if ($_REQUEST['mass_complete']!='') {
 	foreach ($_REQUEST[orders] as $oid) {
 
 		$sql = "SELECT * from orders where order_id=".$oid;
-		$result = mysql_query ($sql) or die (mysql_error());
-		$order_row = mysql_fetch_array ($result);
+		$result = mysqli_query ($sql) or die (mysqli_error());
+		$order_row = mysqli_fetch_array ($result);
 		
 		if ($order_row['status']!='completed') {
 			complete_order ($order_row['user_id'], $oid);
@@ -78,8 +78,8 @@ if ($_REQUEST['mass_complete']!='') {
 if ($_REQUEST['action']=='complete') {
 
 	$sql = "SELECT * from orders where order_id=".$_REQUEST[order_id];
-	$result = mysql_query ($sql) or die (mysql_error());
-	$order_row = mysql_fetch_array ($result);
+	$result = mysqli_query ($sql) or die (mysqli_error());
+	$order_row = mysqli_fetch_array ($result);
 
 	complete_order ($_REQUEST['user_id'], $_REQUEST[order_id]);
 	debit_transaction($_REQUEST[order_id],  $order_row[price], $order_row[currency], $order_row[order_id], $reason_code, 'Admin');
@@ -92,7 +92,7 @@ if ($_REQUEST['action']=='cancel') {
 	/*
 
 	$sql = "UPDATE orders set status='cancelled' WHERE order_id=".$_REQUEST[order_id];
-	mysql_query ($sql) or die (mysql_error());
+	mysqli_query ($sql) or die (mysqli_error());
 
 	*/
 
@@ -342,14 +342,14 @@ $sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID $where_sq
 
 //echo $sql;
 
-$result = mysql_query ($sql) or die (mysql_error());
-$count = mysql_num_rows($result);
+$result = mysqli_query ($sql) or die (mysqli_error());
+$count = mysqli_num_rows($result);
 
 $records_per_page = 40;
 
 if ($count > $records_per_page) {
 
-	mysql_data_seek($result, $_REQUEST['offset']);
+	mysqli_data_seek($result, $_REQUEST['offset']);
 
 }
 
@@ -392,7 +392,7 @@ $pages = ceil($count / $records_per_page);
 <form style="margin: 0px;" method="post" action="<?php echo $_SERVER['PHP_SELF']; echo "?offset=".$_REQUEST['offset'].$q_string; ?>" name="form1" >
 <input type="hidden" name="show" value="<?php echo $_REQUEST['show'];?>">
 <input type="hidden" name="offset" value="<?php echo $_REQUEST['offset'];?>">
-<center><b><?php echo mysql_num_rows($result); ?> Orders Returned (<?php echo $pages;?> pages) </b></center>
+<center><b><?php echo mysqli_num_rows($result); ?> Orders Returned (<?php echo $pages;?> pages) </b></center>
 <?php
 	if ($count > $records_per_page)  {
 		// calculate number of pages & current page
@@ -429,7 +429,7 @@ $pages = ceil($count / $records_per_page);
 </tr>
 <?php
  $i=0;
-  while (($row = mysql_fetch_array($result, MYSQL_ASSOC)) && ($i<$records_per_page)) {
+  while (($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) && ($i<$records_per_page)) {
 	  $i++;
 
 	?>
@@ -443,8 +443,8 @@ $pages = ceil($count / $records_per_page);
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];
-$b_result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($b_result);
+$b_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($b_result);
 		
 		echo $b_row['name'];
 		
@@ -455,8 +455,8 @@ $b_row = mysql_fetch_array($b_result);
 	<?php
 	if ($row[status]=='cancelled') {
 		$sql = "select * from transactions where type='CREDIT' and order_id=".$row[order_id];
-		$r1 = mysql_query($sql) or die(mysql_error());
-		if (mysql_num_rows($r1)>0){
+		$r1 = mysqli_query($sql) or die(mysqli_error());
+		if (mysqli_num_rows($r1)>0){
 			$refunded = true;
 			echo "(Refunded)";
 

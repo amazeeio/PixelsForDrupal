@@ -76,8 +76,8 @@ $tmp_image_file = get_tmp_img_name();
 
  $sql = "SELECT * from orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
- $order_result = mysql_query($sql);
- $order_row = mysql_fetch_array($order_result);
+ $order_result = mysqli_query($sql);
+ $order_row = mysqli_fetch_array($order_result);
 
  if (($order_row['user_id']!='') && $order_row['user_id']!=$_SESSION['MDS_ID']) { // do a test, just in case.
 	 
@@ -100,8 +100,8 @@ update_temp_order_timestamp();
 ###############################
 
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID' ";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	//if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
 	//	$blocks[$row[block_id]] = 'onorder';
@@ -623,8 +623,8 @@ $low_y = G_HEIGHT*BLK_HEIGHT;
 $sql = "SELECT block_info FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
 
 //echo $sql;
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 
 
 $filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt";
@@ -815,15 +815,15 @@ show_nav_status (1);
 <?php
 
 $sql = "SELECT * FROM banners order by `name` ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 
-if (mysql_num_rows($res)>1) {
+if (mysqli_num_rows($res)>1) {
 ?>
 <div class="fancy_heading" style="width:85%;"><?php echo $label['advertiser_sel_pixel_inv_head']; ?></div>
 <p >
 <?php
 
-$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysql_num_rows($res), $label['advertiser_sel_select_intro']);
+$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysqli_num_rows($res), $label['advertiser_sel_select_intro']);
 
 //echo $label['advertiser_sel_select_intro'];
 

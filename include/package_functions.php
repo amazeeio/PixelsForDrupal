@@ -37,9 +37,9 @@ function display_package_options_table($banner_id, $selected='', $selection_abil
 	$banner_id = $banner_id;
 	
 	$sql = "SELECT * FROM packages WHERE banner_id='$banner_id' ORDER BY price ASC ";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 
-	if (mysql_num_rows($result)> 0) {
+	if (mysqli_num_rows($result)> 0) {
 		?>
 		
 		<div class='fancy_heading' width="85%"><?php echo $label['advertiser_package_table'];?></div>
@@ -67,7 +67,7 @@ function display_package_options_table($banner_id, $selected='', $selection_abil
 		</tr>
 
 		<?php
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 
 			if ($selected!='') {
 
@@ -145,8 +145,8 @@ $pack['days_expire']
 function get_package($package_id) {
 
 	$sql = "SELECT * FROM packages where package_id='$package_id'";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$row = mysqli_fetch_array($result);
 
 	$pack['max_orders'] = $row['max_orders'];
 	$pack['price'] = $row['price'];
@@ -169,8 +169,8 @@ function can_user_get_package($user_id, $package_id) {
 
 
 	$sql = "SELECT max_orders, banner_id FROM packages WHERE package_id='".$package_id."'";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
-	$p_row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$p_row = mysqli_fetch_array($result);
 //echo $sql;
 	if ($p_row['max_orders']==0) {
 
@@ -182,8 +182,8 @@ function can_user_get_package($user_id, $package_id) {
 
 	$sql = "SELECT count(*) AS order_count, banner_id FROM orders WHERE status <> 'deleted' AND status <> 'new' AND package_id='".$package_id."' AND user_id='$user_id' GROUP BY user_id LIMIT 1";
 	//echo " $sql ";
-	$result = mysql_query($sql) or die(mysql_error().$sql);
-	$u_row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$u_row = mysqli_fetch_array($result);
 
 	if ($u_row['order_count'] < $p_row['max_orders']) {
 		
@@ -208,8 +208,8 @@ function banner_get_packages($banner_id) {
 	$banner_id = $f2->bid($banner_id);
 
 	$sql = "SELECT * FROM packages WHERE banner_id=$banner_id";
-	$result = mysql_query($sql) or die (mysql_error().$sql);
-	if (mysql_num_rows($result)>0) {
+	$result = mysqli_query($sql) or die (mysqli_error().$sql);
+	if (mysqli_num_rows($result)>0) {
 		return $result;
 	}
 		
@@ -224,8 +224,8 @@ function get_default_package($banner_id) {
 	$banner_id = $f2->bid($banner_id);
 	
 	$sql = "SELECT package_id FROM packages WHERE banner_id=$banner_id AND is_default='Y' ";
-	$result = mysql_query($sql) or die (mysql_error().$sql);
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die (mysqli_error().$sql);
+	$row = mysqli_fetch_array($result);
 	return $row['package_id'];
 
 }
@@ -240,8 +240,8 @@ function add_package_to_order($order_id, $package_id) {
 	//user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stam
 
 	$sql = "SELECT * FROM orders WHERE order_id='$order_id'";
-	$result = mysql_query($sql) or die (mysql_error().$sql);
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die (mysqli_error().$sql);
+	$row = mysqli_fetch_array($result);
 
 	$total = ($row['quantity'] / 100) * $pack['price'];
 	$total = convert_to_default_currency($pack['currency'], $total);

@@ -46,7 +46,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 }
 
 $sql = "Select * from banners ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -54,7 +54,7 @@ $res = mysql_query($sql);
 Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<option> </option>
 		<?php
-	while ($row=mysql_fetch_array($res)) {
+	while ($row=mysqli_fetch_array($res)) {
 		
 		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';
@@ -222,7 +222,7 @@ $sql = "SELECT *, SUM(clicks) as CLICKSUM FROM clicks WHERE banner_id='$BID' AND
 
 
 
-$result = mysql_query ($sql);
+$result = mysqli_query ($sql);
 
 
 
@@ -240,9 +240,9 @@ Showing Report for grid:<?php echo $BID; ?>
 
 <?php
 
-if (mysql_num_rows($result)>0) {
+if (mysqli_num_rows($result)>0) {
 
-	while ($row=mysql_fetch_array($result)) {
+	while ($row=mysqli_fetch_array($result)) {
 
 ?>
 <tr>

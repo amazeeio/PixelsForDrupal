@@ -81,9 +81,9 @@ class bank {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='BANK_ENABLED' OR `key`='BANK_NAME' OR `key`='BANK_ADDRESS' OR `key`='BANK_ACCOUNT_NAME' or `key`='BANK_BRANCH_NUMBER' OR `key`='BANK_ACCOUNT_NUMBER' OR `key`='BANK_SWIFT' OR `key`='BANK_ENABLED' OR `key`='BANK_CURRENCY' OR `key`='BANK_EMAIL_CONFIRM'";
-			$result = mysql_query($sql) or die (mysql_error().$sql);
+			$result = mysqli_query($sql) or die (mysqli_error().$sql);
 
-			while ($row=mysql_fetch_array($result)) {
+			while ($row=mysqli_fetch_array($result)) {
 				define ($row['key'], $row['val']);
 			}
 
@@ -101,30 +101,30 @@ class bank {
 	function install() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ENABLED', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', 'USD')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '')";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 
@@ -136,29 +136,29 @@ class bank {
 	function uninstall() {
 
 		$sql = "DELETE FROM config where `key`='BANK_ENABLED'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_NAME'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ADDRESS'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ACCOUNT_NAME'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ACCOUNT_NUMBER'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_SWIFT'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 
 		$sql = "DELETE FROM config where `key`='BANK_CURRENCY'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_EMAIL_CONFIRM'";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 	
 		
@@ -172,8 +172,8 @@ class bank {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$order_row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$order_row = mysqli_fetch_array($result);
 	
 				
 			?>
@@ -286,23 +286,23 @@ class bank {
 
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '".$_REQUEST['bank_name']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '".$_REQUEST['bank_address']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '".$_REQUEST['bank_account_name']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '".$_REQUEST['bank_branch_number']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '".$_REQUEST['bank_account_number']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', '".$_REQUEST['bank_currency']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '".$_REQUEST['bank_swift']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '".$_REQUEST['bank_email_confirm']."')";
-		mysql_query($sql) or die (mysql_error().$sql);
+		mysqli_query($sql) or die (mysqli_error().$sql);
 
 
 	}
@@ -311,8 +311,8 @@ class bank {
 	function is_enabled() {
 
 		$sql = "SELECT val from `config` where `key`='BANK_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
 
@@ -327,10 +327,10 @@ class bank {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='BANK_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		//$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		//$row = mysqli_fetch_array($result);
 
-		if (mysql_num_rows($result)>0) {
+		if (mysqli_num_rows($result)>0) {
 			return true;
 
 		} else {
@@ -343,7 +343,7 @@ class bank {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='BANK_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 	}
@@ -351,7 +351,7 @@ class bank {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='BANK_ENABLED' ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
 
 	}
 
@@ -378,8 +378,8 @@ class bank {
 				<?php
 
 				$sql = "SELECT * from orders where order_id='".$_REQUEST['order_id']."' and user_id='".$_SESSION['MDS_ID']."'";
-				$result = mysql_query($sql) or die(mysql_error().$sql);
-				$order_row = mysql_fetch_array($result);
+				$result = mysqli_query($sql) or die(mysqli_error().$sql);
+				$order_row = mysqli_fetch_array($result);
 
 					
 				$bank_amount = convert_to_currency($order_row['price'], $order_row['currency'], BANK_CURRENCY);

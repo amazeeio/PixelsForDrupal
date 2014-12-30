@@ -42,8 +42,8 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 }
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysql_query ($sql) or die (mysql_error().$sql);
-//$b_row = mysql_fetch_array($result);
+//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$b_row = mysqli_fetch_array($result);
 
 load_banner_constants($BID);
 
@@ -57,8 +57,8 @@ if ($_REQUEST[user_id]!='') {
 
 }
 
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	/*
 	if (($row[user_id] == $_REQUEST[user_id]) && ($row['status']!='ordered') && ($row['status']!='sold')) {
@@ -133,10 +133,10 @@ if (function_exists("imagecreatetruecolor")) {
 	/*
 	
 	$sql = "select * from blocks where approved='Y' and status='sold' AND image_data <> ''";
-	$result = mysql_query($sql) or die(mysql_error());
+	$result = mysqli_query($sql) or die(mysqli_error());
 	
 	$i=0;
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysqli_fetch_array($result)) {
 
 		$data = $row[image_data];
 		

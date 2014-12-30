@@ -39,26 +39,26 @@ require_once("../include/category.inc.php");
 require_once("../include/dynamic_forms.php");
 
 	$sql = "SELECT ID FROM users  ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$advertisers = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$advertisers = mysqli_num_rows($result);
 
 	$sql = "SELECT order_id FROM orders WHERE (status ='confirmed' OR status='pending')  ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$orders_waiting = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$orders_waiting = mysqli_num_rows($result);
 
 	$sql = "SELECT order_id FROM orders WHERE  (status ='cancelled')  ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$orders_cancelled = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$orders_cancelled = mysqli_num_rows($result);
 
 	$sql = "SELECT order_id FROM orders WHERE (status ='completed')  ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$orders_completed = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$orders_completed = mysqli_num_rows($result);
 
 	
 
 	$sql = "SELECT block_id FROM blocks where approved='N' and image_data <> '' ";
-	$result = mysql_query($sql) or die(mysql_error());
-	$waiting = mysql_num_rows($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$waiting = mysqli_num_rows($result);
 ?>
 
 <p align="left"><h3>Main Summary</h3></p>
@@ -110,15 +110,15 @@ require_once("../include/dynamic_forms.php");
 <?php
 
 $sql = "show columns from blocks ";
-$result = mysql_query($sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query($sql);
+while ($row=mysqli_fetch_array($result)) {
 
 	if ($row['Field']=='status') {
 
 		if (strpos($row['Type'], 'nfs')==0) {
 		
 			$sql = "ALTER TABLE `blocks` CHANGE `status` `status` SET( 'reserved', 'sold', 'free', 'ordered', 'nfs' ) NOT NULL ";
-			 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
+			 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
 		}
 
 	}
@@ -126,22 +126,22 @@ while ($row=mysql_fetch_array($result)) {
 }
 
 $sql = "show columns from orders ";
-$result = mysql_query($sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query($sql);
+while ($row=mysqli_fetch_array($result)) {
 
 	if ($row['Field']=='status') {
 
 		if (strpos($row['Type'], 'expired')==0) {
 		
 		//	$sql = "ALTER TABLE `orders` CHANGE `status` `status`  set('pending','completed','cancelled','confirmed','new', 'expired') NOT NULL ";
-		//	 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysql_error());
+		//	 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysqli_error());
 
 		}
 
 		if (strpos($row['Type'], 'deleted')==0) {
 		
 			$sql = "ALTER TABLE `orders` CHANGE `status` `status`  set('pending','completed','cancelled','confirmed','new', 'expired', 'deleted') NOT NULL ";
-			 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysql_error());
+			 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysqli_error());
 
 		}
 
@@ -152,8 +152,8 @@ while ($row=mysql_fetch_array($result)) {
 
 function does_field_exist($table, $field) {
 
-	$result = mysql_query("show columns from `$table`");
-	while ($row = @mysql_fetch_row($result)) {
+	$result = mysqli_query("show columns from `$table`");
+	while ($row = @mysqli_fetch_row($result)) {
 		//echo $row[0]." ";
 		if ($row[0] == $field) {
 
@@ -169,7 +169,7 @@ function does_field_exist($table, $field) {
 
 	if (!does_field_exist("blocks", "published")) {
 		$sql = "ALTER TABLE `blocks` ADD `published` SET( 'Y', 'N') NOT NULL ";
-		 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
+		 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
 	}
 
 	if (!does_field_exist("lang", "lang_code")) {
@@ -185,11 +185,11 @@ function does_field_exist($table, $field) {
   `is_default` char(1) NOT NULL default 'N',
   PRIMARY KEY  (`lang_code`)) ";
 
-		 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		 $sql = "INSERT INTO `lang` VALUES ('EN', 'english.php', 'english.gif', 'Y', 'English', '', 'R0lGODlhGQARAMQAAAURdBYscgNNfrUOEMkMBdAqE9UTMtItONNUO9w4SdxmaNuObhYuh0Y5lCxVlFJcpqN2ouhfjLCrrOeRmeHKr/Wy3Lje4dPW3PDTz9/q0vXm1ffP7MLt5/f0+AAAAAAAACwAAAAAGQARAAAF02AAMIDDkOgwEF3gukCZIICI1jhFDRmOS4dF50aMVSqEjehFIWQ2kJLUMRoxCCsNzDFBZDCuh1RMpQY6HZYIiOlIYqKy9JZIqHeZTqMWnvoZCgosCkIXDoeIAGJkfmgEB3UHkgp1dYuKVWJXWCsEnp4qAwUcpBwWphapFhoanJ+vKxOysxMRgbcDHRlfeboZF2mvwp+5Eh07YC9naMzNzLmKuggTDy8G19jZ2NAiFB0LBxYuC+TlC7Syai8QGU0TAs7xaNxLDLoDdsPDuS98ABXfQgAAOw==', 'image/gif', 'Y')";
 
-		mysql_query($sql) or die ();
+		mysqli_query($sql) or die ();
 
 	}
 
@@ -205,11 +205,11 @@ function does_field_exist($table, $field) {
 		PRIMARY KEY  (`banner_id`)
 		) ;";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 		$sql = "INSERT INTO `banners` VALUES (1, 100, 100, 0, 100, 'Million Pixels (1000x1000)');";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -221,7 +221,7 @@ function does_field_exist($table, $field) {
 		PRIMARY KEY ( `key` ) 
 		)";
 		
-		 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 	if (!does_field_exist("currencies", "code")) {
 
@@ -239,39 +239,39 @@ function does_field_exist($table, $field) {
 		  PRIMARY KEY  (`code`)
 		) ";
 
-		 mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		 mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.3228, 'N', '$', 2, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 1.1998, 'N', '$', 2, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.8138, 'N', '�', 2, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.5555, 'N', '�', 2, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 110.1950, 'N', '�', 0, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('KRW', 'Korean Won', 1028.8000, 'N', '&#8361;', 0, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `currencies` VALUES ('USD', 'U.S. Dollar', 1.0000, 'Y', '$', 2, '.', ',')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("blocks", "banner_id")) {
 
 		$sql = "ALTER TABLE `blocks` ADD `banner_id` INT DEFAULT '1' NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "ALTER TABLE `blocks` DROP PRIMARY KEY , ADD PRIMARY KEY ( `block_id` , `banner_id` )";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("orders", "banner_id")) {
 
 		$sql = "ALTER TABLE `orders` ADD `banner_id` INT DEFAULT '1' NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -279,21 +279,21 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("banners", "currency")) {
 
 		$sql = "ALTER TABLE `banners` ADD `currency` CHAR(3) DEFAULT 'USD' NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysql_error());
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysqli_error());
 
 	}
 
 	if (!does_field_exist("blocks", "currency")) {
 
 		$sql = "ALTER TABLE `blocks` ADD `currency` VARCHAR(3) DEFAULT 'USD' NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysql_error());
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>".mysqli_error());
 
 	}
 
 	if (!does_field_exist("blocks", "price")) {
 
 		$sql = "ALTER TABLE `blocks` ADD `price` float  NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		
 		
@@ -302,11 +302,11 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "currency")) {
 
 		$sql = "ALTER TABLE `orders` ADD `currency` CHAR(3) DEFAULT 'USD' NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "select *, banners.price_per_block AS PPB, banners.currency BAC, orders.currency ORC from orders, banners where orders.banner_id=banners.banner_id ";
-		$result = mysql_query ($sql) or die (mysql_error());
-		while ($row=mysql_fetch_array($result)) {
+		$result = mysqli_query ($sql) or die (mysqli_error());
+		while ($row=mysqli_fetch_array($result)) {
 
 			$blocks = explode (",", $row[blocks]);
 
@@ -317,7 +317,7 @@ function does_field_exist($table, $field) {
 					require_once("../include/currency_functions.php");
 
 					$sql = "UPDATE blocks set price=".convert_to_currency($row[PPB], $row['BAC'], $row['ORC'])." WHERE block_id=".$block_id;
-					mysql_query ($sql) or die (mysql_error().$sql);
+					mysqli_query ($sql) or die (mysqli_error().$sql);
 				}
 			}
 		}
@@ -328,7 +328,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "date_published")) {
 
 		$sql = "ALTER TABLE `orders` ADD date_published DATETIME  NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -336,7 +336,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "date_stamp")) {
 
 		$sql = "ALTER TABLE `orders` ADD `date_stamp` DATETIME;";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -344,21 +344,21 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "days_expire")) {
 
 		$sql = "ALTER TABLE `orders` ADD `days_expire` INT DEFAULT 0;";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	/*if (!does_field_exist("banners", "publish_date")) {
 
 		$sql = "ALTER TABLE `banners` ADD publish_date DATETIME default NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}*/
 
 	if (!does_field_exist("banners", "time_stamp")) {
 
 		$sql = "ALTER TABLE `banners` ADD `time_stamp` INT NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -367,11 +367,11 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("blocks", "order_id")) {
 
 		$sql = "ALTER TABLE `blocks` ADD order_id INT NOT NULL";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "select * from orders ";
-		$result = mysql_query ($sql);
-		while ($row=mysql_fetch_array($result)) {
+		$result = mysqli_query ($sql);
+		while ($row=mysqli_fetch_array($result)) {
 
 			$blocks = explode (",", $row[blocks]);
 
@@ -382,7 +382,7 @@ function does_field_exist($table, $field) {
 				if ($block_id != '') {
 
 				$sql = "UPDATE blocks set order_id=".$row[order_id]." WHERE block_id=".$block_id;
-				mysql_query ($sql) or die (mysql_error().$sql);
+				mysqli_query ($sql) or die (mysqli_error().$sql);
 
 				}
 
@@ -407,7 +407,7 @@ function does_field_exist($table, $field) {
 		`origin` varchar(32) NOT NULL default '',
 		PRIMARY KEY  (`transaction_id`))";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -426,7 +426,7 @@ function does_field_exist($table, $field) {
 		  PRIMARY KEY  (`price_id`)
 		)";
 
-		  mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		  mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 
 	if (!does_field_exist('mail_queue', 'mail_id')) {
@@ -451,20 +451,20 @@ function does_field_exist($table, $field) {
 		`date_stamp` datetime NOT NULL default '0000-00-00 00:00:00',
 		PRIMARY KEY  (`mail_id`)) ";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 
 	if (!does_field_exist("prices", "col_from")) {
 
 		$sql = "ALTER TABLE `prices` ADD col_from int(11) default 0";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("prices", "col_to")) {
 
 		$sql = "ALTER TABLE `prices` ADD col_to int(11) default 100";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -473,7 +473,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("blocks", "click_count")) {
 
 		$sql = "ALTER TABLE `blocks` ADD `click_count` INT NOT NULL ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 
@@ -482,21 +482,21 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "expiry_notice_sent")) {
 
 		$sql = "ALTER TABLE `orders` ADD `expiry_notice_sent` SET( 'Y', 'N' ) NOT NULL ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("banners", "max_orders")) {
 
 		$sql = "ALTER TABLE `banners` ADD `max_orders` INT(11) NOT NULL DEFAULT 5 ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("orders", "package_id")) {
 
 		$sql = "ALTER TABLE `orders` ADD `package_id` INT(11) NOT NULL default 0";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -516,7 +516,7 @@ function does_field_exist($table, $field) {
 			PRIMARY KEY ( `banner_id` , `block_id` ,  `date` ) 
 			)";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -535,28 +535,28 @@ function does_field_exist($table, $field) {
 		PRIMARY KEY ( `package_id` ) 
 		)"; 
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("packages", "max_orders")) {
 
 		$sql = "ALTER TABLE `packages` ADD `max_orders` mediumint(9) NOT NULL default '0'";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("packages", "description")) {
 
 		$sql = "ALTER TABLE `packages` ADD `description` varchar(255) NOT NULL default ''";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	
 
 	//$sql = "drop table form_fields ";
-	//mysql_query($sql);
+	//mysqli_query($sql);
 
 	
 	if (!does_field_exist("form_fields", "field_id")) {
@@ -592,13 +592,13 @@ function does_field_exist($table, $field) {
 		`is_prefill` char(1) NOT NULL default 'N',
 		PRIMARY KEY  (`field_id`)
 		) ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_fields` VALUES (1, 1, 1, 'not_empty', 'Ad Text', 'TEXT', 1, 'Y', '', '', 'was not filled in', '', 80, 0, 0, 0, 'ALT_TEXT', '', '', '', 0, '', 0, '', '', '')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_fields` VALUES (1, 2, 1, 'url', 'URL', 'TEXT', 2, 'Y', '', '', 'is not valid.', 'http://', 80, 0, 0, 0, 'URL', '', '', '', 0, '', 0, '', '', '')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_fields` VALUES (1, 3, 1, '', 'Additional Image', 'IMAGE', 3, '', '', '', '', '', 0, 0, 0, 0, 'IMAGE', '', '', '(This image will be displayed when a mouse pointer is placed over your ad)', 0, '', 0, '', '', '')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -612,14 +612,14 @@ function does_field_exist($table, $field) {
 		PRIMARY KEY  (`field_id`,`lang`),
 		KEY `field_id` (`field_id`)
 		)";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "INSERT INTO `form_field_translations` VALUES (1, 'EN', 'Ad Text', 'was not filled in', '')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_field_translations` VALUES (2, 'EN', 'URL', 'is not valid.', '')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_field_translations` VALUES (3, 'EN', 'Additional Image', '', '(This image will be displayed when a mouse pointer is placed over your ad)')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		
 		format_field_translation_table (1);
@@ -642,14 +642,14 @@ function does_field_exist($table, $field) {
 		`no_wrap` set('Y','N') NOT NULL default '',
 		PRIMARY KEY  (`column_id`)
 		)  ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "INSERT INTO `form_lists` VALUES (1, 'TIME', 1, 'ad_date', 'DATE', 1, 'N', 0, 'N', 'N', 'N', 'Y', 'N')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_lists` VALUES (1, 'EDITOR', 2, '1', 'ALT_TEXT', 2, 'N', 0, 'Y', 'N', 'N', 'Y', 'N')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "INSERT INTO `form_lists` VALUES (1, 'TEXT', 3, '2', 'URL', 3, 'N', 0, 'N', 'N', 'N', 'N', 'N')";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 
 	if (!does_field_exist("banners", "block_height")) {
@@ -667,35 +667,35 @@ function does_field_exist($table, $field) {
 		ADD `max_blocks` INT NOT NULL default 10,
 		ADD `min_blocks` INT NOT NULL default 0;";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("banners", "date_updated")) {
 
 		$sql = "ALTER TABLE `banners` ADD `date_updated` DATETIME NOT NULL ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("banners", "bgcolor")) {
 
 		$sql = "ALTER TABLE `banners` ADD `bgcolor` VARCHAR(7) NOT NULL default '#FFFFFF' ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("banners", "auto_publish")) {
 
 		$sql = "ALTER TABLE `banners` ADD `auto_publish` CHAR(1) NOT NULL default 'N' ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("banners", "auto_approve")) {
 
 		$sql = "ALTER TABLE `banners` ADD `auto_approve` CHAR(1) NOT NULL default 'N' ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -716,22 +716,22 @@ function does_field_exist($table, $field) {
 			 `block_info` TEXT NOT NULL,
 		  PRIMARY KEY  (`session_id`)
 		)";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 
 	if (!does_field_exist("orders", "ad_id")) {
 
 		$sql = "ALTER TABLE `orders` ADD `ad_id` INT";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("orders", "original_order_id")) {
 
 		$sql = "ALTER TABLE `orders` ADD `original_order_id` INT";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 		$sql = "ALTER TABLE `orders` CHANGE `status` `status` SET( 'pending', 'completed', 'cancelled', 'confirmed', 'new', 'expired', 'deleted', 'renew_wait', 'renew_paid') NOT NULL ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -739,7 +739,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "subscr_status")) {
 
 		$sql = "ALTER TABLE `orders` ADD `subscr_status` VARCHAR( 32 ) NOT NULL ;";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -748,7 +748,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("blocks", "ad_id")) {
 
 		$sql = "ALTER TABLE `blocks` ADD `ad_id` INT(11) NOT NULL default '0'";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -761,7 +761,7 @@ function does_field_exist($table, $field) {
   PRIMARY KEY  (`category_id`,`lang`),
   KEY `category_id` (`category_id`)
 )";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -773,7 +773,7 @@ function does_field_exist($table, $field) {
 				  `description` varchar(30) NOT NULL default '',
 				  PRIMARY KEY  (`field_id`,`code`)
 				)";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
@@ -786,21 +786,21 @@ function does_field_exist($table, $field) {
   `lang` char(2) NOT NULL default '',
   PRIMARY KEY  (`field_id`,`code`,`lang`)
 )";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
 
 	if (!does_field_exist("orders", "approved")) {
 
 		$sql = "ALTER TABLE `orders` ADD `approved` SET('Y','N') NOT NULL default 'N'";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "select * from blocks group by order_id ";
-		$res = mysql_query($sql);
+		$res = mysqli_query($sql);
 
-		while ($row = mysql_fetch_array($res)) {
+		while ($row = mysqli_fetch_array($res)) {
 			$sql = "UPDATE orders SET approved='".$row['approved']."' WHERE order_id='".$row['order_id']."' ";
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 
 		}
 
@@ -809,15 +809,15 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist("orders", "published")) {
 
 		$sql = "ALTER TABLE `orders` ADD `published` set('Y','N') NOT NULL default ''";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		$sql = "select * from blocks group by order_id ";
-		$res = mysql_query($sql);
+		$res = mysqli_query($sql);
 
-		while ($row = mysql_fetch_array($res)) {
+		while ($row = mysqli_fetch_array($res)) {
 
 			$sql = "UPDATE orders SET published='".$row['published']."' WHERE order_id='".$row['order_id']."' ";
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 
 
 		}
@@ -844,7 +844,7 @@ function does_field_exist($table, $field) {
   PRIMARY KEY  (`category_id`),
   KEY `composite_index` (`parent_category_id`,`category_id`))";
 
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 
 	}
@@ -864,7 +864,7 @@ function does_field_exist($table, $field) {
 			`3` varchar(255) NOT NULL default '',
 			PRIMARY KEY  (`ad_id`)
 			) ";
-		mysql_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+		mysqli_query($sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		// populate the ads table
 
@@ -874,9 +874,9 @@ function does_field_exist($table, $field) {
 
 
 		$sql = "select * from blocks group by order_id ";
-		$res = mysql_query($sql);
+		$res = mysqli_query($sql);
 		//echo $sql."<br>";
-		while ($row = mysql_fetch_array($res)) {
+		while ($row = mysqli_fetch_array($res)) {
 
 			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]=addslashes($row['url']);
 			$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = addslashes($row['alt_text']);
@@ -892,21 +892,21 @@ function does_field_exist($table, $field) {
 
 			$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$row['order_id']."' ";
 			
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 			$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$row['order_id']."' ";
-			$result = mysql_query ($sql) or die (mysql_error());
+			$result = mysqli_query ($sql) or die (mysqli_error());
 			
 			
 		}
 	}
 
 	$sql = "SELECT * FROM `config` WHERE `key`='DELETE_CHECKED' ";
-	$res = mysql_query($sql) or die(mysql_error());
-	$row = mysql_fetch_array($res) ;
+	$res = mysqli_query($sql) or die(mysqli_error());
+	$row = mysqli_fetch_array($res) ;
 	if ($row['val']=='') {
 		$sql = "SELECT * from orders where status='deleted' ";
-		$result = mysql_query($sql);
-		while ($order_row=mysql_fetch_array($result)) {
+		$result = mysqli_query($sql);
+		while ($order_row=mysqli_fetch_array($result)) {
 
 			if ($order_row['blocks']!='') {
 
@@ -915,7 +915,7 @@ function does_field_exist($table, $field) {
 				foreach ($blocks as $key => $val) {
 					if ($val!='') {
 						$sql = "DELETE FROM blocks where block_id='$val' and banner_id='".$order_row['banner_id']."'";
-						mysql_query ($sql) or die (mysql_error().$sql);
+						mysqli_query ($sql) or die (mysqli_error().$sql);
 					}
 
 				}
@@ -925,36 +925,36 @@ function does_field_exist($table, $field) {
 		echo "Database Fixed.";
 
 		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('DELETE_CHECKED','Y') ";
-		mysql_query($sql);
+		mysqli_query($sql);
 
 	}
 
 
 	$sql = "SELECT * FROM `config` WHERE `key`='EXPIRE_RUNNING' ";
-	$res = mysql_query($sql);
-	$row = mysql_fetch_array($res);
+	$res = mysqli_query($sql);
+	$row = mysqli_fetch_array($res);
 	if ($row['val']=='') {
 		$sql = "REPLACE INTO `config` (`key`, `val`) VALUES ('EXPIRE_RUNNING', 'NO') ";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 	}
 
 	$sql = "SELECT * FROM `config` WHERE `key`='SELECT_RUNNING' ";
-	$res = mysql_query($sql);
-	$row = mysql_fetch_array($res);
+	$res = mysqli_query($sql);
+	$row = mysqli_fetch_array($res);
 	if ($row['val']=='') {
 		$sql = "REPLACE INTO `config` (`key`, `val`) VALUES ('SELECT_RUNNING', 'NO') ";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		
 	}
 
 	$sql = "SELECT * FROM `config` WHERE `key`='MAIL_QUEUE_RUNNING' ";
-	$res = mysql_query($sql);
-	$row = mysql_fetch_array($res);
+	$res = mysqli_query($sql);
+	$row = mysqli_fetch_array($res);
 	if ($row['val']=='') {
 		$sql = "REPLACE INTO `config` (`key`, `val`) VALUES ('MAIL_QUEUE_RUNNING', 'NO') ";
-		mysql_query($sql);
+		mysqli_query($sql);
 		
 		
 	}
@@ -963,9 +963,9 @@ function does_field_exist($table, $field) {
 $lang_filename = "english.php";
 
 $sql = "SELECT * FROM lang  ";
-$result = mysql_query ($sql) or die (mysql_error());
+$result = mysqli_query ($sql) or die (mysqli_error());
 
-while ($row = mysql_fetch_array($result)) {
+while ($row = mysqli_fetch_array($result)) {
 
 	$lang_filename=$row['lang_filename'];
 

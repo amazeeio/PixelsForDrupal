@@ -38,8 +38,8 @@ require_once ('../config.php');
 <?php
 
 $sql = "SELECT * FROM `form_fields` where form_id=1 AND field_type != 'BLANK' AND field_type !='SEPERATOR' AND field_type !='NOTE' ";
-$result = mysql_query($sql) or die (mysql_error());
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+$result = mysqli_query($sql) or die (mysqli_error());
+while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 	$fields[$row[field_id]]['field_id'] = $row['field_id'];
 	$fields[$row[field_id]]['field_type'] = $row['field_type'];
 
@@ -57,8 +57,8 @@ $fields['ad_date']['field_id'] = 'ad_date';
 
 
 $sql = " show columns from ads ";
-$result = mysql_query($sql) or die (mysql_error());
-while ($row = mysql_fetch_row($result)) {
+$result = mysqli_query($sql) or die (mysqli_error());
+while ($row = mysqli_fetch_row($result)) {
 	$columns[$row[0]] = $row[0];
 
 
@@ -126,7 +126,7 @@ foreach ($columns as $key=>$val) {
 if ($change == 'Y') {
 	
 	echo "<br />";
-	mysql_query ($sql) or die ("SQL: ".$sql."  ERROR: ".mysql_error());
+	mysqli_query ($sql) or die ("SQL: ".$sql."  ERROR: ".mysqli_error());
 
 	echo "Database Structure Updated.";
 	if ((CACHE_ENABLED=='YES')) {

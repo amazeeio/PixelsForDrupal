@@ -43,8 +43,8 @@ require ('../config.php');
 
 
 $sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' banner_id='$BID' ";
-$result  = mysql_query ($sql) or die(mysql_error());
-$row = mysql_fetch_array($result, MYSQL_ASSOC);
+$result  = mysqli_query ($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
 

@@ -69,7 +69,7 @@ Packages: Here you can add different price / expiry / max orders combinations to
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -77,7 +77,7 @@ $res = mysql_query($sql);
 Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<option> </option>
 		<?php
-	while ($row=mysql_fetch_array($res)) {
+	while ($row=mysqli_fetch_array($res)) {
 		
 		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';
@@ -155,14 +155,14 @@ if ($BID!='') {
 	if ($_REQUEST['action'] == 'delete') {
 
 		$sql = "SELECT * FROM orders where package_id='".$_REQUEST['package_id']."'";
-		$result = mysql_query ($sql);
-		if ((mysql_num_rows($result)>0) && ($_REQUEST['really']=='')) {
+		$result = mysqli_query ($sql);
+		if ((mysqli_num_rows($result)>0) && ($_REQUEST['really']=='')) {
 			echo "<font color='red'>Cannot delete package: This package is a part of another order</font> (<a href='packs.php?BID=$BID&package_id=".$_REQUEST['package_id']."&action=delete&really=yes'>Click here to delete anyway</a>)";
 
 		} else {
 		
 			$sql = "DELETE FROM packages WHERE package_id='".$_REQUEST['package_id']."' ";
-			mysql_query($sql) or die(mysql_error().$sql);
+			mysqli_query($sql) or die(mysqli_error().$sql);
 		}
 		
 	}
@@ -172,15 +172,15 @@ if ($BID!='') {
 		global $BID;
 
 		$sql = "SELECT * FROM packages where is_default='Y' and banner_id=$BID ";
-		$result = mysql_query($sql) or die(mysql_error().$sql);
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$row = mysqli_fetch_array($result);
 		$old_default = $row['package_id'];
 
 		$sql = "UPDATE packages SET is_default='N' WHERE banner_id=$BID ";
 		
-		mysql_query($sql) or die(mysql_error().$sql);
+		mysqli_query($sql) or die(mysqli_error().$sql);
 		$sql = "UPDATE packages SET is_default='Y' WHERE package_id='".$package_id."' AND banner_id=$BID";
-		mysql_query($sql) or die(mysql_error().$sql);
+		mysqli_query($sql) or die(mysqli_error().$sql);
 
 		if ($old_default == '') {
 
@@ -188,7 +188,7 @@ if ($BID!='') {
 			// in the 1.7.0 database, all orders must have packages
 
 			$sql = "UPDATE orders SET package_id='".$package_id."' WHERE package_id='' AND banner_id='".$BID."' ";
-			mysql_query($sql) or die(mysql_error().$sql);
+			mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 		}
@@ -225,7 +225,7 @@ if ($BID!='') {
 
 			//echo $sql;
 
-			mysql_query ($sql) or die (mysql_error());
+			mysqli_query ($sql) or die (mysqli_error());
 
 			$_REQUEST['new'] ='';
 			$_REQUEST['action'] = '';
@@ -234,7 +234,7 @@ if ($BID!='') {
 			// if no default package exists, set the last inserted banner to default
 
 			if (!get_default_package($BID)) {
-				set_to_default(mysql_insert_id());
+				set_to_default(mysqli_insert_id());
 			}
 
 
@@ -248,9 +248,9 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysql_query("select * FROM packages  where banner_id=$BID") or die (mysql_error());
+	$result = mysqli_query("select * FROM packages  where banner_id=$BID") or die (mysqli_error());
 
-	if (mysql_num_rows($result)>0) {
+	if (mysqli_num_rows($result)>0) {
 	?>
 
 	<table width="800" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" border="0">
@@ -265,7 +265,7 @@ if ($BID!='') {
 		<td><b><font face="Arial" size="2">Action</font></b></td>
 	</tr>
 	<?php		
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 				?>
 
 				<tr bgcolor="#ffffff">
@@ -307,8 +307,8 @@ if ($BID!='') {
 		echo "<h4>Edit Package:</h4>";
 
 		$sql = "SELECT * FROM packages WHERE `package_id`='".$_REQUEST['package_id']."' ";
-		$result = mysql_query ($sql) or die (mysql_error());
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query ($sql) or die (mysqli_error());
+		$row = mysqli_fetch_array($result);
 
 		if ($error=='') {
 			$_REQUEST['banner_id'] = $row['banner_id'];

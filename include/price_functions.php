@@ -43,9 +43,9 @@ function load_price_zones($banner_id) {
 	}
 
 	$sql = "SELECT * FROM prices where banner_id='$banner_id' ";
-	$result = mysql_query($sql) or die (mysql_error().$sql);
+	$result = mysqli_query($sql) or die (mysqli_error().$sql);
 	$key=0;
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysqli_fetch_array($result)) {
 		$price_table[$key]['row_from']=$row['row_from'];
 		$price_table[$key]['row_to']=$row['row_to'];
 		$price_table[$key]['col_from']=$row['col_from'];
@@ -92,14 +92,14 @@ function get_block_color($banner_id, $block_id) {
 	// Returns as default currency.
 
 	$sql = "select color from prices where block_id_from <= '$block_id' AND block_id_to >= '$block_id' AND banner_id='$banner_id' ";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 
-	if (mysql_num_rows($result)==0) {
+	if (mysqli_num_rows($result)==0) {
 		// get default price 
 
 		$row[color] = "white";
 	} else {
-		$row = mysql_fetch_array($result);
+		$row = mysqli_fetch_array($result);
 	}
 
 	//echo "curr".$row['currency']." price".$row['price']."<br>";
@@ -114,8 +114,8 @@ function get_block_price($banner_id, $block_id) {
 	// get co-ords of the block
 
 	$sql = "select x, y from blocks where block_id='$block_id' and banner_id='$banner_id' ";
-	$result = mysql_query($sql) or die (mysql_error());
-	$block_row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die (mysqli_error());
+	$block_row = mysqli_fetch_array($result);
 
 	$row = $block_row['x'];
 	$col = $block_row['y'];
@@ -159,8 +159,8 @@ function get_zone_price($banner_id, $row, $col) {
 	// if not found..
 
 	$sql = "select price_per_block as price, currency from banners where  banner_id='$banner_id' ";
-	$result2 = mysql_query($sql) or die (mysql_error());
-	$block_row = mysql_fetch_array($result2);
+	$result2 = mysqli_query($sql) or die (mysqli_error());
+	$block_row = mysqli_fetch_array($result2);
 		
 	//echo "curr".$row['currency']." price".$row['price']."<br>";
 	$price = convert_to_default_currency($block_row['currency'],$block_row['price']);
@@ -176,13 +176,13 @@ function get_zone_price($banner_id, $row, $col) {
 function show_price_area($banner_id) {
 
 	$sql = "select grid_width, grid_height from banners where  banner_id='$banner_id' ";
-	$result = mysql_query($sql) or die (mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die (mysqli_error());
+	$row = mysqli_fetch_array($result);
 	$grid_width = $row['grid_width'];
 	$grid_height = $row['grid_height'];
 
 	$sql = "SELECT * FROM prices where banner_id='$banner_id'";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 
 	?>
 
@@ -190,7 +190,7 @@ function show_price_area($banner_id) {
 
 <?php
 
-while ($row=mysql_fetch_array($result)) {
+while ($row=mysqli_fetch_array($result)) {
 	$row['row_from'] = $row['row_from']-1;
 	$row['row_to'] = $row['row_to']-1;
 
@@ -233,16 +233,15 @@ function display_price_table ($banner_id) {
 
 	// get the default price
 	$sql = "select price_per_block as price, currency from banners where  banner_id='$banner_id' ";
-	$result2 = mysql_query($sql) or die (mysql_error());
-	$row = mysql_fetch_array($result2);
+	$result2 = mysqli_query($sql) or die (mysqli_error());
+	$row = mysqli_fetch_array($result2);
 	$price=$row['price'];
 
 	$sql = "SELECT * FROM prices where banner_id='$banner_id' order by row_from";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 
-	if (mysql_num_rows($result)> 0) {
+	if (mysqli_num_rows($result)> 0) {
 		?>
-		<p>
 		<div class='fancy_heading' width="85%"><?php echo $label['advertiser_pf_table'];?></div>
 		<p>
 		<?php echo $label['advertiser_pf_intro']; ?>&nbsp;
@@ -261,7 +260,7 @@ function display_price_table ($banner_id) {
 		</tr>
 
 		<?php
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 ?>
 <tr bgcolor="#ffffff">
 			<td ><font face="Arial" size="2"><?php if ($row['price']==0) { echo $label['free'];} else { echo convert_to_default_currency_formatted($row['currency'], $row['price'], true) ; } ?></font></td>
@@ -285,7 +284,6 @@ function display_price_table ($banner_id) {
 		?>
 
 		</table>
-		</p>
 
 		<?php
 
@@ -305,8 +303,8 @@ function calculate_price($banner_id, $blocks_str) {
 	foreach ($blocks as $block_id) {
 		
 		$sql = "SELECT price, currency FROM blocks where block_id='".$block_id."'";
-		$result = mysql_query($sql) or die(mysql_error());
-		$row = mysql_fetch_array($result);
+		$result = mysqli_query($sql) or die(mysqli_error());
+		$row = mysqli_fetch_array($result);
 		
 		//echo "call to get_block_price";
 

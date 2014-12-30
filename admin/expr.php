@@ -50,9 +50,9 @@ require ('admin_common.php');
 
 		echo $sql;
 
-		$result = mysql_query($sql) or die (mysql_error());
+		$result = mysqli_query($sql) or die (mysqli_error());
 
-		echo "Advertisers to email: ".mysql_num_rows($result);
+		echo "Advertisers to email: ".mysqli_num_rows($result);
 
 		?>
 <table width="100%" cellSpacing="1" cellPadding="3" align="center" bgColor="#d9d9d9" border="0">
@@ -70,7 +70,7 @@ require ('admin_common.php');
 
 		<?php
 
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 
 			?>
 
@@ -83,8 +83,8 @@ require ('admin_common.php');
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];
-$b_result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($b_result);
+$b_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($b_result);
 		
 		echo $b_row['name'];
 		

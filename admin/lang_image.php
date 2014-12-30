@@ -35,8 +35,8 @@ require ('admin_common.php');
 
 
 $sql = "SELECT * FROM lang where lang_code='".$_REQUEST['code']."' ";
-$result  = mysql_query ($sql) or die(mysql_error());
-$row = mysql_fetch_array($result, MYSQL_ASSOC);
+$result  = mysqli_query ($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
 header ("Content-type: ".$row[mime_type]);

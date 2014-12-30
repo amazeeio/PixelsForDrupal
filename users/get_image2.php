@@ -42,8 +42,8 @@ if ($BID=='') {
 
 
 $sql = "SELECT * FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."' ";
-$result  = mysql_query ($sql) or die(mysql_error());
-$row = mysql_fetch_array($result, MYSQL_ASSOC);
+$result  = mysqli_query ($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 if ($row['status']=="sold") {
 

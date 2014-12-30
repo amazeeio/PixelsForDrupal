@@ -66,14 +66,14 @@ if (($_REQUEST['banner_change']!='')) {
 	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
 //	echo $sql;
 	
-	$res = mysql_query ($sql) or die (mysql_error().$sql);
-//		echo "here:".mysql_num_rows($result);
-	while ($row=mysql_fetch_array($res, MYSQL_ASSOC)) {
+	$res = mysqli_query ($sql) or die (mysqli_error().$sql);
+//		echo "here:".mysqli_num_rows($result);
+	while ($row=mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
 		$sql = "delete from orders where order_id=".$row['order_id'];
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 		$sql = "delete from blocks where order_id=".$row['order_id'];
-		$result = mysql_query ($sql) or die (mysql_error().$sql);
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 	}
 
 	//echo "deleted pixels";
@@ -84,8 +84,8 @@ if (($_REQUEST['banner_change']!='')) {
 
  $sql = "SELECT * from orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
- $order_result = mysql_query($sql);
- $order_row = mysql_fetch_array($order_result);
+ $order_result = mysqli_query($sql);
+ $order_row = mysqli_fetch_array($order_result);
 
  if (($order_row['user_id']!='') && $order_row['user_id']!=$_SESSION['MDS_ID']) { // do a test, just in case.
 	 
@@ -116,13 +116,13 @@ if ($_REQUEST['banner_change']!='') {
 		$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
 //	echo $sql;
 		
-		$res = mysql_query ($sql) or die (mysql_error().$sql);
-//		echo "here:".mysql_num_rows($result);
-		while ($row=mysql_fetch_array($res, MYSQL_ASSOC)) {
+		$res = mysqli_query ($sql) or die (mysqli_error().$sql);
+//		echo "here:".mysqli_num_rows($result);
+		while ($row=mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 			$sql = "delete from orders where order_id=".$row['order_id'];
-			$result = mysql_query ($sql) or die (mysql_error().$sql);
+			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 			$sql = "delete from blocks where order_id=".$row['order_id'];
-			$result = mysql_query ($sql) or die (mysql_error().$sql);
+			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
 		}
 
 	//	echo "deleted pixels";
@@ -130,12 +130,12 @@ if ($_REQUEST['banner_change']!='') {
 
 
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID' ";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	//if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
 	//	$blocks[$row[block_id]] = 'onorder';
@@ -862,15 +862,15 @@ function show_pointer2 (block, e) {
 <?php
 
 $sql = "SELECT * FROM banners order by `name`";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 
-if (mysql_num_rows($res)>1) {
+if (mysqli_num_rows($res)>1) {
 ?>
 <div class="fancy_heading" width="85%"><?php echo $label['advertiser_sel_pixel_inv_head']; ?></div>
 <p >
 <?php
 
-$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysql_num_rows($res), $label['advertiser_sel_select_intro']);
+$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysqli_num_rows($res), $label['advertiser_sel_select_intro']);
 
 echo $label['advertiser_sel_select_intro'];
 

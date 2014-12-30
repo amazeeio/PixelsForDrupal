@@ -43,8 +43,8 @@ if ($_REQUEST['process']=='1') {
 	if (($_REQUEST['banner_list'][0])=='all') {
 		// process all
 		$sql = "select * from banners ";
-		$result = mysql_query ($sql) or die (mysql_error().$sql);	
-		while ($row = mysql_fetch_array($result)) {
+		$result = mysqli_query ($sql) or die (mysqli_error().$sql);	
+		while ($row = mysqli_fetch_array($result)) {
 			echo process_image($row['banner_id']);
 			publish_image($row['banner_id']);
 			process_map($row['banner_id']);
@@ -125,9 +125,9 @@ if (!is_writable($file_path.$BANNER_DIR)) {
 <?php
 
 $sql = "SELECT * FROM orders where approved='N' and status='completed' ";
-$r = mysql_query($sql) or die(mysql_error());
-$result = mysql_fetch_array($r);
-$c = mysql_num_rows($r);
+$r = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_fetch_array($r);
+$c = mysqli_num_rows($r);
 
 if ($c >0) {
 	echo "<h3>Note: There are/is $c pixel ads waiting to be approved. <a href='approve.php'>Approve pixel ads here.</a></h3>";
@@ -145,9 +145,9 @@ Here you can process the images. This is where the script gets all the user's ap
 <?php
 
 $sql = "Select * from banners";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 
-while ($row=mysql_fetch_array($res)) {
+while ($row=mysqli_fetch_array($res)) {
 	echo '<option value="'.$row['banner_id'].'">#'.$row['banner_id'].' - '.$row["name"].'</option>'."\n";
 }
 ?>

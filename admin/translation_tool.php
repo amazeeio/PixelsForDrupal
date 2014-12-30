@@ -76,8 +76,8 @@ function confirmLink(theLink, theConfirmMsg)
 $label = array();
 
 $sql = "SELECT * FROM lang WHERE lang_code='".$_REQUEST['target_lang']."' ";
-$result = mysql_query ($sql) or die (mysql_error());
-$row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error());
+$row = mysqli_fetch_array($result);
 
 $lang_filename = $row['lang_filename'];
 $lang_name = $row['name'];

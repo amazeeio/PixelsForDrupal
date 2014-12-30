@@ -44,14 +44,14 @@ if ($BID=='') {
 }
 
 $sql = "SELECT url, user_id from blocks where block_id='$block_id' AND banner_id='$BID' ";
-$result = @mysql_query($sql);
-$row = @mysql_fetch_array($result);
+$result = @mysqli_query($sql);
+$row = @mysqli_fetch_array($result);
 
 // basic click count.
 
 $sql = "UPDATE users SET click_count = click_count + 1 where ID='".$row[user_id]."'  ";
 
-$result = @mysql_query($sql);
+$result = @mysqli_query($sql);
 
 
 //	echo "$BID - $date : $result :  $x :$sql";
@@ -59,13 +59,13 @@ if (ADVANCED_CLICK_COUNT=='YES') {
 
 	$date = gmdate(Y)."-".gmdate(m)."-".gmdate(d);
 	$sql = "UPDATE clicks set clicks = clicks + 1 where banner_id='$BID' AND `date`='$date' AND `block_id`='".$block_id."'";
-	$result = mysql_query($sql) ;
-	$x = @mysql_affected_rows();
+	$result = mysqli_query($sql) ;
+	$x = @mysqli_affected_rows();
 	
 	if (!$x) {
 
 		$sql = "INSERT into clicks (`banner_id`, `date`, `clicks`, `block_id`, `user_id`) VALUES('$BID', '$date', '1', '$block_id', '".$row[user_id]."') ";
-		$result = @mysql_query($sql) ;
+		$result = @mysqli_query($sql) ;
 	}
 
 
@@ -75,7 +75,7 @@ if (ADVANCED_CLICK_COUNT=='YES') {
 
 $sql = "UPDATE blocks SET click_count = click_count + 1 where block_id='".$block_id."' AND banner_id='$BID' ";
 //echo $sql;
-$result = mysql_query($sql);
+$result = mysqli_query($sql);
 
 header ("Location: http://".$row[url]);
 

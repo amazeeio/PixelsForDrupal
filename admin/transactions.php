@@ -50,14 +50,14 @@ if ($_REQUEST['action']=='refund') {
 
 	$sql = "SELECT * from transactions, orders, users where transactions.order_id=orders.order_id AND orders.user_id=users.ID and transactions.transaction_id=$t_id";
 
-	$result = mysql_query($sql) or die(mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query($sql) or die(mysqli_error());
+	$row = mysqli_fetch_array($result);
 	
 	if ($row[status]!='completed') {
 		// check that there's no other refund...
 		$sql = "SELECT * FROM transactions where txn_id='".$row['txn_id']."' AND type='CREDIT' ";
-		$r = mysql_query($sql) or die(mysql_error());
-		if (mysql_num_rows($r)==0) {
+		$r = mysqli_query($sql) or die(mysqli_error());
+		if (mysqli_num_rows($r)==0) {
 			// do the refund
 			cancel_order($row[order_id]);
 			credit_transaction($row[order_id], $row[price], $row[currency], $row[txn_id], 'Refund', 'Admin');
@@ -110,9 +110,9 @@ The transaction log helps you manage the money transfers. Note: Refunds are proc
 // calculate the balance
 $sql = "SELECT SUM(amount) as mysum, type, currency from transactions group by type, currency";
 
-$result = mysql_query($sql) or die(mysql_error());
+$result = mysqli_query($sql) or die(mysqli_error());
 
-while ($row=mysql_fetch_array($result)) {
+while ($row=mysqli_fetch_array($result)) {
 
 	if ($row[type]=='CREDIT') {
 		$credits = $credits + convert_to_default_currency($row[currency],$row[mysum]);
@@ -312,9 +312,9 @@ Balance: <?php echo $bal; ?><br>
 		$where_date = " (`date` >= '$from_date' AND `date` <= '$to_date' ) ";
 
 $sql = "SELECT * from transactions, orders, users where $where_date AND transactions.order_id=orders.order_id AND orders.user_id=users.ID order by transactions.date desc ";
-$result = mysql_query($sql) or die(mysql_error());
+$result = mysqli_query($sql) or die(mysqli_error());
 //echo $sql;
-while ($row=mysql_fetch_array($result)) {
+while ($row=mysqli_fetch_array($result)) {
 
 ?>
 	<tr bgcolor="#ffffff" >

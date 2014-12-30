@@ -91,8 +91,8 @@ if ($email != '') {
 
 $sql = "select * from users where `Email`='$email'";
 //echo $sql;
-$result=mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result=mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 
 if ($row[Email] != '') {
 
@@ -107,11 +107,11 @@ if ($row[Email] != '') {
       //echo " $pass";
       $md5pass = md5 ($pass);
       $sql = "update `users` SET `Password`='$md5pass' where `ID`='".$row[ID]."'";
-      mysql_query($sql) or die(mysql_error().$sql);
+      mysqli_query($sql) or die(mysqli_error().$sql);
 
 
 	 //$result = get_email_template (3, $_SESSION['MDS_LANG']);
-	 //$e_row = mysql_fetch_array($result);
+	 //$e_row = mysqli_fetch_array($result);
 	 //$EmailMessage = $e_row[EmailText];
 	 $EmailMessage = $label["forget_pass_email_template"];
 	 $from = SITE_CONTACT_EMAIL;// $e_row[EmailFromAddress];

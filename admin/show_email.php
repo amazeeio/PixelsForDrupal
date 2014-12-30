@@ -36,8 +36,8 @@ require ('admin_common.php');
 
 
 $sql ="SELECT * FROM mail_queue where mail_id=".$_REQUEST[mail_id];
-$result = mysql_query($sql);
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql);
+$row = mysqli_fetch_array($result);
 ?>
 
 <table border="1" id="table1" width="600">

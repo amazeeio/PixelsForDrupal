@@ -127,7 +127,7 @@ if ($_REQUEST['action'] == 'delete') {
 		if (!is_reserved_currency ($_REQUEST['code'])) {
 
 			$sql = "DELETE FROM currencies WHERE code='".$_REQUEST['code']."' ";
-			mysql_query($sql) or die(mysql_error().$sql);
+			mysqli_query($sql) or die(mysqli_error().$sql);
 		} else {
 
 			echo "<p><b>Cannot delete currency: reserved by the system</b></p>";
@@ -139,10 +139,10 @@ if ($_REQUEST['action'] == 'delete') {
 
 if ($_REQUEST['action'] == 'set_default') {
 	$sql = "UPDATE currencies SET is_default = 'N' WHERE code <> '".$_REQUEST['code']."' ";
-	mysql_query($sql) or die(mysql_error().$sql);
+	mysqli_query($sql) or die(mysqli_error().$sql);
 
 	$sql = "UPDATE currencies SET is_default = 'Y' WHERE code = '".$_REQUEST['code']."' ";
-	mysql_query($sql) or die(mysql_error().$sql);
+	mysqli_query($sql) or die(mysqli_error().$sql);
 
 }
 
@@ -161,7 +161,7 @@ if ($_REQUEST['submit']!='') {
 
 		//echo $sql;
 
-		mysql_query ($sql) or die (mysql_error());
+		mysqli_query ($sql) or die (mysqli_error());
 
 		$_REQUEST['new'] ='';
 		$_REQUEST['action'] = '';
@@ -202,8 +202,8 @@ All prices will be displayed in the default currency.<br>
 			    return $returnvalue;
 			}
 
-			$result = mysql_query("select * FROM currencies order by name") or die (mysql_error());
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			$result = mysqli_query("select * FROM currencies order by name") or die (mysqli_error());
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				$row['sign'] = umlaute($row['sign']);
 				?>
@@ -239,8 +239,8 @@ if ($_REQUEST['action']=='edit') {
 	echo "<h4>Edit Currency:</h4>";
 
 	$sql = "SELECT * FROM currencies WHERE `code`='".$_REQUEST['code']."' ";
-	$result = mysql_query ($sql) or die (mysql_error());
-	$row = mysql_fetch_array($result);
+	$result = mysqli_query ($sql) or die (mysqli_error());
+	$row = mysqli_fetch_array($result);
 	$_REQUEST['name'] = $row['name'];
 	$_REQUEST['rate'] = $row['rate'];
 	$_REQUEST['sign'] = $row['sign'];

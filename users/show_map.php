@@ -38,16 +38,16 @@ require ("../config.php");
 $BID = $f2->bid($_REQUEST['BID']);
 
 $sql = "select * from banners where banner_id='".$BID."'";
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-$b_row = mysql_fetch_array($result);
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_row = mysqli_fetch_array($result);
 
 load_banner_constants($BID);
 
 # Preload all block
 $sql = "select block_id, status, user_id, image_data FROM blocks where status='sold' AND user_id='".$_SESSION['MDS_ID']."' and banner_id='$BID'";
 //echo $sql;
-$result = mysql_query ($sql) or die (mysql_error().$sql);
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
 		$blocks[$row[block_id]] = 'onorder';
@@ -109,9 +109,9 @@ if (function_exists("imagecreatetruecolor")) {
 
 	$nfs_block = imagecreatefrompng ( "not_for_sale_block.png" );
 	$sql = "select * from blocks where status='nfs' and banner_id='$BID' ";
-	$result = mysql_query($sql) or die(mysql_error());
+	$result = mysqli_query($sql) or die(mysqli_error());
 
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysqli_fetch_array($result)) {
 		imagecopy ( $map, $nfs_block, $row['x'], $row['y'], 0, 0, BLK_WIDTH, BLK_HEIGHT );
 	}
 

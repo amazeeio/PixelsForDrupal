@@ -131,14 +131,14 @@ Image Blending - Allows you to specify an image to blend in with your grid in th
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysql_query($sql);
+$res = mysqli_query($sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 
 Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<?php
-	while ($row=mysql_fetch_array($res)) {
+	while ($row=mysqli_fetch_array($res)) {
 		
 		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';

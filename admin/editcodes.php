@@ -71,13 +71,13 @@ body {
 function list_code_groups ($form_id) {
 
 	$sql = "select * FROM `form_fields` WHERE form_id='$form_id' AND (field_type='CHECK' OR field_type='RADIO' OR field_type='SELECT' OR field_type='MSELECT' ) ";
-	$result = mysql_query ($sql) or die (mysql_error());
+	$result = mysqli_query ($sql) or die (mysqli_error());
 	//echo $sql;
-	if (mysql_num_rows($result)==0) {
+	if (mysqli_num_rows($result)==0) {
 		echo " (0 codes)";
 	}
 	echo "<ul>";
-	while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		format_codes_translation_table ($row[field_id]);
 ?>

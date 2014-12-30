@@ -47,17 +47,17 @@ if ($_REQUEST['block_id']!='') {
 
 }
 
-$result = mysql_query($sql) or die(mysql_error());
-$row = mysql_fetch_array($result);
+$result = mysqli_query($sql) or die(mysqli_error());
+$row = mysqli_fetch_array($result);
 // load all the blocks wot
 $sql = "select * from blocks where order_id='".$row['order_id']."' ";
-$result3 = mysql_query($sql) or die(mysql_error());
+$result3 = mysqli_query($sql) or die(mysqli_error());
 //echo $sql;
 
 load_banner_constants($f2->bid($_REQUEST['BID']));
 $blocks = array();
 
-while ($block_row = mysql_fetch_array($result3)) {
+while ($block_row = mysqli_fetch_array($result3)) {
 
 	if ($high_x=='') {
 		$high_x = $block_row['x'];

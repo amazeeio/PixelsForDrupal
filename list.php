@@ -66,11 +66,11 @@ include_once (MDSROOT . "/html/header.php");
 require_once ("include/ads.inc.php");
 
 $sql = "SELECT *, MAX(order_date) as max_date, sum(quantity) AS pixels FROM orders where status='completed' AND approved='Y' AND published='Y' AND banner_id='$BID' GROUP BY user_id, banner_id order by pixels desc ";
-$result = mysql_query($sql) or die(mysql_error());
-while ($row=mysql_fetch_array($result)) {
+$result = mysqli_query($sql) or die(mysqli_error());
+while ($row=mysqli_fetch_array($result)) {
 	$q = "SELECT FirstName, LastName FROM users WHERE ID=" . $row['user_id'];
-	$q = mysql_query($q) or die(mysql_error());
-	$user = mysql_fetch_row($q);
+	$q = mysqli_query($q) or die(mysqli_error());
+	$user = mysqli_fetch_row($q);
 ?>
 	<tr bgcolor="#ffffff" >
 	<td>
@@ -83,8 +83,8 @@ while ($row=mysql_fetch_array($result)) {
 	<font face="arial" size="2"><?php
 		
 		$sql = "Select * FROM  `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id > 0 AND t1.user_id='".$row['user_id']."' AND status='completed' AND approved='Y' ORDER BY `ad_date`";
-		$m_result = mysql_query ($sql) or die(mysql_error());
-		while ($prams=mysql_fetch_array($m_result, MYSQL_ASSOC)) {
+		$m_result = mysqli_query ($sql) or die(mysqli_error());
+		while ($prams=mysqli_fetch_array($m_result, MYSQLI_ASSOC)) {
 			
 			$ALT_TEXT = get_template_value('ALT_TEXT', 1);
 			$ALT_TEXT = str_replace("'", "", $ALT_TEXT);

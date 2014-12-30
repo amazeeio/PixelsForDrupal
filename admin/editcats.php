@@ -157,12 +157,12 @@ if ($action=='edit') {
 	}
 
 	$sql = "update categories set allow_records='$allow_records', list_order='".$_REQUEST['list_order']."' Where category_id='$category_id' ";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 		
 	// update language
 
 	$sql = "REPLACE INTO `cat_name_translations` (`category_id`, `lang`, `category_name`) VALUES (".$category_id.", '".$_SESSION['MDS_LANG']."', '".$new_name."')";
-	$result = mysql_query($sql) or die (mysql_error());
+	$result = mysqli_query($sql) or die (mysqli_error());
 
 	if (($_REQUEST['save']!='') && (CACHE_ENABLED=='YES')) {
 		  $CACHE_ENABLED = 'NO';

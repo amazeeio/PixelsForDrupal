@@ -33,6 +33,7 @@
 session_start();
 
 require ('../config.php');
+
 require ("admin_common.php");
 require_once ('../include/category.inc.php');
 require_once ('../include/ads.inc.php');
@@ -81,14 +82,14 @@ $mode = $_REQUEST['mode'];
 if ($_REQUEST['action']=='del') {
 
 	$sql = "DELETE FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysqli_query ($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 
 
 }
 
 if ($_REQUEST['column_id']!='') {
 	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysqli_query ($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$col_row = mysqli_fetch_array($result);
 
 }
@@ -113,7 +114,7 @@ if ($_REQUEST['save_col']!='') {
 	if (is_numeric($_REQUEST['field_id'])) {
 
 		$sql = "SELECT * from form_fields WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'  ";
-		$result = mysqli_query ($sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql);
 		$field_row = mysqli_fetch_array($result);
 
 	} else {
@@ -153,7 +154,7 @@ if ($_REQUEST['save_col']!='') {
 		// update form field
 
 		$sql = "UPDATE form_fields SET `template_tag`='".$field_row['template_tag']."' WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'";
-		mysqli_query ($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 	}
 
@@ -170,7 +171,7 @@ if ($_REQUEST['save_col']!='') {
 
 	
 	if ($error=='') {
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		//echo $sql;
 		if ((CACHE_ENABLED=='YES')) {
 			$CACHE_ENABLED = 'NO';
@@ -189,7 +190,7 @@ if ($_REQUEST['save_col']!='') {
 	// load new values
 
 	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
-	$result = mysqli_query ($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$col_row = mysqli_fetch_array($result);
 
 }
@@ -245,7 +246,7 @@ if ($col_row['column_id']=='') {
 	if ($_REQUEST['column_id']=='') { // get the last sort order
 
 		$sql = "SELECT max(sort_order) FROM form_lists WHERE field_id=1 GROUP BY column_id ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_row($result);
 		$sort_order = $row[0];
 

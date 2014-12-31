@@ -35,6 +35,7 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ('../config.php');
 
+
 $row = load_banner_constants($f2->bid($_REQUEST['BID']));
 
 $image = $row[$_REQUEST['image_name']];

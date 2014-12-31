@@ -35,20 +35,20 @@ function format_codes_translation_table ($field_id) {
 
 	$sql = "SELECT * FROM codes WHERE `field_id`=$field_id ";
 	//echo $sql;
-	$f_result = mysqli_query ($sql) or die ($sql.mysqli_error());
+	$f_result = mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection']));
 	while ($f_row = mysqli_fetch_array($f_result)) { 
 
 		foreach  ($AVAILABLE_LANGS as $key => $val) {
 
 			$sql = "SELECT t2.code, t2.field_id, t2.description AS FLABEL, lang FROM codes_translations as t1, codes as t2 WHERE t2.code=t1.code AND t2.code='".$f_row[code]."' AND t2.field_id=".$f_row['field_id']." AND lang='$key' ";
 			//echo $sql."<br>";
-			$result = mysqli_query($sql) or die($sql.mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 			//$row = mysqli_fetch_row($result);
 			if (mysqli_num_rows($result)==0) {
 				//$cat_row = get_category($cat);
 				$sql = "REPLACE INTO `codes_translations` (`field_id`, `code`, `lang`, `description`) VALUES ('".$f_row['field_id']."', '".$f_row[code]."', '".$key."', '".addslashes($f_row[description])."')";
 				//echo "<b>$sql</b>";
-				mysqli_query($sql) or die (mysqli_error());
+				mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 			}
 
@@ -66,16 +66,16 @@ function change_code_id ($field_id, $code, $new_code) {
 	// find which form the field_id is from
 
 	$sql = "SELECT form_id FROM form_fields where field_id='".$field_id."' ";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$form_id = $row['form_id'];
 
 	$sql = "UPDATE codes SET code='$new_code' where field_id='$field_id' and code='$code' ";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	//echo "$sql<br>";
 
 	$sql = "UPDATE codes_translations SET code='$new_code' where field_id='$field_id' and code='$code' ";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	//echo "$sql<br>";
 
 	switch ($form_id) {
@@ -88,7 +88,7 @@ function change_code_id ($field_id, $code, $new_code) {
 
 	}
 
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		$new_codes = array();
@@ -113,7 +113,7 @@ function change_code_id ($field_id, $code, $new_code) {
 		$codes = implode(',', $new_codes);
 
 		$sql = "UPDATE $table SET `$field_id`='".$codes."' WHERE $id = '".$row['ID']."' ";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//echo $sql."<br>";
 
 	}
@@ -137,7 +137,7 @@ function getCodeDescription ($field_id, $code) {
 	}
    
    global $f2;
-   $result = mysqli_query($sql) or die($sql.mysqli_error());
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
    if ($row = mysqli_fetch_array($result)) {
        return $row[description];
    }
@@ -149,7 +149,7 @@ function getCodeDescription ($field_id, $code) {
 function insert_code ($field_id, $code, $description) {
 
    $sql = "SELECT `code` FROM `codes` WHERE field_id='$field_id' AND `code` = '$code'";
-   $result = mysqli_query($sql) or die($sql.mysqli_error());
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
    if (mysqli_num_rows($result) > 0 ) {
       echo '<font color="#FF0000">';
@@ -161,12 +161,12 @@ function insert_code ($field_id, $code, $description) {
 
    $sql = "INSERT INTO `codes` ( `field_id` , `code` , `description` )  VALUES ('$field_id', '$code', '$description')";
 
-    mysqli_query($sql) or die($sql.mysqli_error());
+    mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
    if ($_SESSION['MDS_LANG'] != '') {
 
 		$sql = "INSERT INTO `codes_translations` ( `field_id` , `code` , `description`, `lang` )  VALUES ('$field_id', '$code', '$description', '".$SESSION['lang']."')";
-		mysqli_query($sql) or die($sql.mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
    }
 
@@ -179,13 +179,13 @@ function insert_code ($field_id, $code, $description) {
 function modify_code ($field_id, $code, $description) {
    $sql = "UPDATE `codes` SET `description` = '$description' ".
           "WHERE `field_id` = '$field_id' AND `code` = '$code'";
-   mysqli_query($sql) or die($sql.mysqli_error());
+   mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
    if ($_SESSION['MDS_LANG'] != '') {
 
 		$sql = "UPDATE `codes_translations` SET `description` = '$description' ".
           "WHERE `field_id` = '$field_id' AND `code` = '$code' AND `lang`='".$_SESSION['MDS_LANG']."' ";
-		mysqli_query($sql) or die($sql.mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
    }
 
@@ -199,7 +199,7 @@ function modify_code ($field_id, $code, $description) {
 function getCodeFromDescription ($field_id, $description) {
    $sql = "SELECT `code` FROM `codes` WHERE field_id='$field_id' AND `description` = '$description'";
    //echo "$sql <br>";
-   $result = mysqli_query($sql) or die($sql.mysqli_error());
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
    if ($row = mysqli_fetch_array($result)) {
        return $row[code];
    }

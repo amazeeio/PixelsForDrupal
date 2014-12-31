@@ -31,6 +31,7 @@
  */
 session_start();
 require("../config.php");
+
 require('admin_common.php');
 require_once ("../include/ads.inc.php");
 
@@ -38,10 +39,10 @@ function disapprove_modified_order($order_id, $BID) {
 /*
 	$sql = "UPDATE orders SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
 	//echo $sql;
-	mysqli_query($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$sql = "UPDATE blocks SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
 	///echo $sql;
-	mysqli_query($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	// send pixel change notification
 
@@ -86,7 +87,7 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 
 	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=".$prams['user_id']." and t1.banner_id='".$prams['banner_id']."' and t1.ad_id='".$prams['ad_id']."' AND t1.order_id=t2.order_id ";
 	//echo $sql."<br>";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	
 	$row = mysqli_fetch_array($result);
 	$order_id = $row['order_id'];
@@ -99,7 +100,7 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 	//echo "$sql<br>";
 
 	$sql = "SELECT * from blocks WHERE order_id='".$order_id."'";
-	$blocks_result = mysqli_query($sql) or die (mysqli_error().$sql);
+	$blocks_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 	if ($_REQUEST['change_pixels']) {
@@ -236,10 +237,10 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 							$data = base64_encode($data);
 
 							$sql = "UPDATE blocks SET image_data='$data' where block_id='".$cb."' AND banner_id='".$prams['banner_id']."' ";
-							mysqli_query($sql);
+							mysqli_query($GLOBALS['connection'], $sql);
 							
 
-							//echo $sql."------>".mysqli_affected_rows()."<br>";
+							//echo $sql."------>".mysqli_affected_rows($GLOBALS['connection'])."<br>";
 
 						}
 
@@ -355,7 +356,7 @@ if ($_REQUEST['ad_id']!='') {
 	}
 	$prams = load_ad_values ($_REQUEST['ad_id']);
 	$sql = "select * FROM users where ID='".$prams['user_id']."' ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$u_row = mysqli_fetch_array($result);
 	
 	
@@ -383,7 +384,7 @@ if ($_REQUEST['ad_id']!='') {
 	}
 
 	$sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">

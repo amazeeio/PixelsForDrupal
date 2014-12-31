@@ -31,6 +31,7 @@
  */
 require_once "../config.php";
 
+
 $_PAYMENT_OBJECTS['check'] =  new check;
 
 define (IPN_LOGGING, 'Y');
@@ -81,7 +82,7 @@ class check {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='CHECK_ENABLED' OR `key`='CHECK_PAYABLE' OR `key`='CHECK_ADDRESS'  OR `key`='CHECK_CURRENCY' OR `key`='CHECK_EMAIL_CONFIRM'";
-			$result = mysqli_query($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			while ($row=mysqli_fetch_array($result)) {
 				define ($row['key'], $row['val']);
@@ -101,20 +102,20 @@ class check {
 	function install() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_ENABLED', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_CURRENCY', 'USD')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_PAYABLE', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_ADDRESS', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_EMAIL_CONFIRM', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 
@@ -126,19 +127,19 @@ class check {
 	function uninstall() {
 
 		$sql = "DELETE FROM config where `key`='CHECK_ENABLED'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='CHECK_CURRENCY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='CHECK_PAYABLE'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='CHECK_ADDRESS'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='CHECK_EMAIL_CONFIRM'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 	}
 
@@ -148,7 +149,7 @@ class check {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id=".$order_id;
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 	
 				
@@ -235,19 +236,19 @@ class check {
 
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_NAME', '".$_REQUEST['check_name']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_PAYABLE', '".$_REQUEST['check_payable']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_ADDRESS', '".$_REQUEST['check_address']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_CURRENCY', '".$_REQUEST['check_currency']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_EMAIL_CONFIRM', '".$_REQUEST['check_email_confirm']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -256,7 +257,7 @@ class check {
 	function is_enabled() {
 
 		$sql = "SELECT val from `config` where `key`='CHECK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
@@ -272,7 +273,7 @@ class check {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='CHECK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//$row = mysqli_fetch_array($result);
 
 		if (mysqli_num_rows($result)>0) {
@@ -288,7 +289,7 @@ class check {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='CHECK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -296,7 +297,7 @@ class check {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='CHECK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 
@@ -322,7 +323,7 @@ class check {
 				<?php
 
 				$sql = "SELECT * from orders where order_id='".$_REQUEST['order_id']."' and user_id='".$_SESSION['MDS_ID']."'";
-				$result = mysqli_query($sql) or die(mysqli_error().$sql);
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 			
 				$check_amount = convert_to_currency($order_row['price'], $order_row['currency'], CHECK_CURRENCY);

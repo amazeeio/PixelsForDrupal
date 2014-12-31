@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 require_once ('../include/dynamic_forms.php');
 require_once ('../include/code_functions.php');
@@ -105,31 +106,31 @@ function validate_input () {
 if ($_REQUEST['action']=='activate') {
 
 	$sql = "UPDATE lang set is_active='Y' where lang_code='".$_REQUEST['code']."' ";
-	mysqli_query($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
 if ($_REQUEST['action']=='deactivate') {
 
 	$sql = "UPDATE lang set is_active='N' where lang_code='".$_REQUEST['code']."' ";
-	mysqli_query($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
 if ($_REQUEST['action']=='default') {
 
 	$sql = "UPDATE lang set is_default='N' ";
-	mysqli_query($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	$sql = "UPDATE lang set is_default='Y' where lang_code='".$_REQUEST['code']."' ";
-	mysqli_query($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
 if ($_REQUEST['action']=='delete') {
 
 	$sql = "DELETE FROM lang WHERE lang_code='".$_REQUEST['code']."' ";
-	mysqli_query($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	
 
@@ -166,7 +167,7 @@ if ($_REQUEST['submit']!='') {
 		//echo "Temp file is: ".$_FILES['lang_image']['tmp_name']."<br>";
 		//echo "$sql";
 
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$_REQUEST['new']='';
 		$_REQUEST['edit']='';
@@ -176,7 +177,7 @@ if ($_REQUEST['submit']!='') {
 		global $AVAILABLE_LANGS;
 		global $LANG_FILES;
 		$sql = "SELECT * FROM lang ";
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 			$AVAILABLE_LANGS [$row['lang_code']] = $row['name'];
 			$LANG_FILES [$row['lang_code']] = $row['lang_filename'];
@@ -190,7 +191,7 @@ if ($_REQUEST['submit']!='') {
 		// (copy English to new lang)
 		
 		$sql = "SELECT * FROM form_fields WHERE `field_type`='RADIO' or `field_type`='CHECK' or `field_type`='MSELECT' or `field_type`='SELECT'  ";
-		$result = mysqli_query($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 			format_codes_translation_table ($row[field_id]);
 		}
@@ -225,7 +226,7 @@ if ($_REQUEST['submit']!='') {
 				<td><b><font size="2">Tool</b></font></td>
 			</tr>
 <?php
-			$result = mysqli_query("select * FROM lang ") or die (mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], "select * FROM lang ") or die (mysqli_error($GLOBALS['connection']));
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				?>
@@ -301,7 +302,7 @@ if ($_REQUEST['charset']=='') {
 if ($_REQUEST['action']=='edit') {
 
 	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['code']."' ";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	
 	$_REQUEST['name'] = $row['name'];

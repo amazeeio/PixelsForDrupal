@@ -35,6 +35,7 @@ require("../config.php");
 
 
 
+
 if ($_REQUEST['key']!='') {
 
 	$mykey = substr(md5(ADMIN_PASSWORD),1,15);
@@ -62,10 +63,10 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 load_banner_constants($BID);
 
 $sql = "select * from banners where banner_id=$BID";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($result);
 $sql = "select * from users where ID=".$_REQUEST['user_id'];
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $u_row = mysqli_fetch_array($result);
 
 if ($_REQUEST['approve_links']!='') {
@@ -78,7 +79,7 @@ if ($_REQUEST['approve_links']!='') {
 		foreach ($_REQUEST['urls'] as $url) {
 			$sql = "UPDATE blocks SET url='".$_REQUEST['new_urls'][$i]."', alt_text='".$_REQUEST['new_alts'][$i]."' WHERE user_id='".$_REQUEST['user_id']."' and url='$url' and banner_id='".$f2->bid($_REQUEST['BID'])."'  ";
 			//echo $sql."<br>";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$i++;
 		}
 		
@@ -87,10 +88,10 @@ if ($_REQUEST['approve_links']!='') {
 	}
 	// approve pixels
 	$sql = "UPDATE blocks set approved='Y' WHERE user_id=".$_REQUEST['user_id']." AND banner_id=".$BID;
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	$sql = "UPDATE orders set approved='Y' WHERE user_id=".$_REQUEST['user_id']." AND banner_id=".$BID;
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	// process the image
 
@@ -105,10 +106,10 @@ if ($_REQUEST['approve_links']!='') {
 if ($_REQUEST['disapprove_links']!='') {
 
 	$sql = "UPDATE blocks set approved='N' WHERE user_id=".$_REQUEST[user_id]." and banner_id=$BID";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	$sql = "UPDATE orders set approved='N' WHERE user_id=".$_REQUEST[user_id]." and banner_id=$BID";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	echo process_image($BID);
 	publish_image($BID);
@@ -135,7 +136,7 @@ if ($_REQUEST['disapprove_links']!='') {
 
 $sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=".$_REQUEST['user_id']."  $bid_sql group by url ";
 
-$m_result = mysqli_query ($sql);
+$m_result = mysqli_query($GLOBALS['connection'], $sql);
 $i=0;
 while ($m_row=mysqli_fetch_array($m_result)) {
 	$i++;

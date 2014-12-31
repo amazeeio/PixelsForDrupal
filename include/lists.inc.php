@@ -63,7 +63,7 @@ function echo_list_head_data($form_id, $admin) {
 	$colspan = 0;
 
 	$sql = "SELECT * FROM form_lists where form_id='$form_id' ORDER BY sort_order ASC ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$colspan++;
 		$column_list[$row['template_tag']]=$row['template_tag'];
@@ -256,7 +256,7 @@ function field_type_option_list ($form_id, $selected) {
 	}
 
 	$sql = "SELECT *, t2.field_label AS NAME FROM form_fields AS t1, form_field_translations AS t2 WHERE t1.field_id=t2.field_id AND lang='".$_SESSION['MDS_LANG']."' AND t1.form_id='".$form_id."' AND  field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' and t2.field_label <>'' " ;
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		if ($row['field_id']==$selected) {
@@ -284,7 +284,7 @@ function echo_list_head_data_admin($form_id) {
 
 
 	$sql = "SELECT * FROM form_lists where form_id='$form_id' ORDER BY sort_order ASC ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$column_list[$row['field_id']]=$row['template_tag'];
 		//echo $row['template_tag'];

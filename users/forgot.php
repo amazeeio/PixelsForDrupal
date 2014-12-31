@@ -31,6 +31,7 @@
  */
 session_start();
 require "../config.php";
+
 include('login_functions.php');
 /*
 COPYRIGHT 2008 - see www.milliondollarscript.com for a list of authors
@@ -91,7 +92,7 @@ if ($email != '') {
 
 $sql = "select * from users where `Email`='$email'";
 //echo $sql;
-$result=mysqli_query($sql);
+$result=mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 
 if ($row[Email] != '') {
@@ -107,7 +108,7 @@ if ($row[Email] != '') {
       //echo " $pass";
       $md5pass = md5 ($pass);
       $sql = "update `users` SET `Password`='$md5pass' where `ID`='".$row[ID]."'";
-      mysqli_query($sql) or die(mysqli_error().$sql);
+      mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 	 //$result = get_email_template (3, $_SESSION['MDS_LANG']);

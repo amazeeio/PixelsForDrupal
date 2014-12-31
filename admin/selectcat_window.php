@@ -32,6 +32,7 @@
 
 session_start();
 require ("../config.php");
+
 require ("admin_common.php");
 //require_once ("../include/posts.inc.php");
 require_once ("../include/category.inc.php");

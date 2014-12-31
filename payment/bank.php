@@ -31,6 +31,7 @@
  */
 require_once "../config.php";
 
+
 $_PAYMENT_OBJECTS['bank'] =  new bank;
 define (IPN_LOGGING, 'Y');
 
@@ -81,7 +82,7 @@ class bank {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='BANK_ENABLED' OR `key`='BANK_NAME' OR `key`='BANK_ADDRESS' OR `key`='BANK_ACCOUNT_NAME' or `key`='BANK_BRANCH_NUMBER' OR `key`='BANK_ACCOUNT_NUMBER' OR `key`='BANK_SWIFT' OR `key`='BANK_ENABLED' OR `key`='BANK_CURRENCY' OR `key`='BANK_EMAIL_CONFIRM'";
-			$result = mysqli_query($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			while ($row=mysqli_fetch_array($result)) {
 				define ($row['key'], $row['val']);
@@ -101,30 +102,30 @@ class bank {
 	function install() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ENABLED', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', 'USD')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 
@@ -136,29 +137,29 @@ class bank {
 	function uninstall() {
 
 		$sql = "DELETE FROM config where `key`='BANK_ENABLED'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_NAME'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ADDRESS'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ACCOUNT_NAME'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_ACCOUNT_NUMBER'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_SWIFT'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "DELETE FROM config where `key`='BANK_CURRENCY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='BANK_EMAIL_CONFIRM'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 	
 		
@@ -172,7 +173,7 @@ class bank {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 	
 				
@@ -286,23 +287,23 @@ class bank {
 
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '".$_REQUEST['bank_name']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '".$_REQUEST['bank_address']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '".$_REQUEST['bank_account_name']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '".$_REQUEST['bank_branch_number']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '".$_REQUEST['bank_account_number']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', '".$_REQUEST['bank_currency']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '".$_REQUEST['bank_swift']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '".$_REQUEST['bank_email_confirm']."')";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -311,7 +312,7 @@ class bank {
 	function is_enabled() {
 
 		$sql = "SELECT val from `config` where `key`='BANK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
@@ -327,7 +328,7 @@ class bank {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='BANK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//$row = mysqli_fetch_array($result);
 
 		if (mysqli_num_rows($result)>0) {
@@ -343,7 +344,7 @@ class bank {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='BANK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -351,7 +352,7 @@ class bank {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='BANK_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 
@@ -378,7 +379,7 @@ class bank {
 				<?php
 
 				$sql = "SELECT * from orders where order_id='".$_REQUEST['order_id']."' and user_id='".$_SESSION['MDS_ID']."'";
-				$result = mysqli_query($sql) or die(mysqli_error().$sql);
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 
 					

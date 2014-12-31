@@ -35,21 +35,20 @@ if ($_REQUEST[action]=='install') {
 	save_db_config();
 	require("../config.php");
 
-	if ($conn=check_connection ($_REQUEST[mysql_user], $_REQUEST[mysql_pass],$_REQUEST[mysql_host])) {
-		 if (check_db ( $_REQUEST[mysql_db], $conn)) {
-
+	if ($conn=check_connection ($_REQUEST['mysql_user'], $_REQUEST['mysql_pass'],$_REQUEST['mysql_host'])) {
+		 if (check_db ($conn, $_REQUEST['mysql_db'])) {
 
 			 install_db();
 
 		 } else {
 
-			 echo "<p><font color='red'><b>Install failed: Cannot select database.  ".mysqli_error()."</b></font></p>";
+			 echo "<p><font color='red'><b>Install failed: Cannot select database.  ".mysqli_error($conn)."</b></font></p>";
 
 		 }
 	}
 	else {
 
-			 echo "<p><font color='red'><b>Install failed: Cannot connect to database. ".mysqli_error()."</b></font></p>";
+			 echo "<p><font color='red'><b>Install failed: Cannot connect to database. ".mysqli_error($conn)."</b></font></p>";
 
 	}
 
@@ -62,11 +61,11 @@ if(file_exists("../config.php")) {
 	die();
 }
 
-
+require_once("../include/database.php");
 
 }
 $sql = "select * from users";
-if ($result = @mysqli_query($sql)) {
+if ($result = mysqli_query($conn, $sql)) {
 	echo "<h3>Database successfully Installed.</h3>";
 	echo "<p>";
 	echo "Next Steps:<br>";
@@ -77,25 +76,6 @@ if ($result = @mysqli_query($sql)) {
 	die();
 
 }
-
-function check_connection ($user, $pass,$host) {
-	if (!($connection = @mysqli_connect("$host","$user", "$pass"))) {
-
-		return false;
-
-	}
-
-	return $connection;
-	
-}
-
-function check_db ( $db_name, $connection) {
-	if (!($db = @mysqli_select_db( $db_name,  $connection))){
-	 return false;
-	}
-	return true;
-}
-
 
 ?>
 <h3>Million Dollar Script - Database Installation</h3>
@@ -352,9 +332,9 @@ function multiple_query($q){
 
    for($i=0;$i<$n;$i++)
        $results[$i]=array(
-           mysqli_query($queries[$i]),
-           mysqli_errno(),
-           mysqli_error(),
+           mysqli_query($GLOBALS['connection'], $queries[$i]),
+           mysqli_errno($GLOBALS['connection']),
+           mysqli_error($GLOBALS['connection']),
 			$queries[$i]
        );
 
@@ -748,9 +728,9 @@ CREATE TABLE `codes` (
 ) 
 	";
 
-	mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS) or die(mysqli_error());
+	$GLOBALS['connection'] = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS) or die(mysqli_error($GLOBALS['connection']));
 	
-	mysqli_select_db(MYSQL_DB) or die(mysqli_error());
+	mysqli_select_db($GLOBALS['connection'], MYSQL_DB) or die(mysqli_error($GLOBALS['connection']));
 
 	/* You can use it like this */
 
@@ -763,7 +743,7 @@ CREATE TABLE `codes` (
 	else
 		echo "<pre>Error: ".$queries[$i][2]."(".$queries[$i][3].")<br>\n</pre>";
 
-	//$result = mysqli_query ($sql) or die (mysqli_error());
+	//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//$rows = mysqli_affected_rows ($result);;;
 	echo count($queries)." Operations Completed.<br>";
 

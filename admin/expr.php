@@ -30,6 +30,7 @@
  *
  */
 require("../config.php");
+
 require ('admin_common.php');
 
 // email expiration warnings?
@@ -50,7 +51,7 @@ require ('admin_common.php');
 
 		echo $sql;
 
-		$result = mysqli_query($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 		echo "Advertisers to email: ".mysqli_num_rows($result);
 
@@ -83,7 +84,7 @@ require ('admin_common.php');
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];
-$b_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($b_result);
 		
 		echo $b_row['name'];

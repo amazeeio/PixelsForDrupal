@@ -30,6 +30,7 @@
  *
  */
 require("../config.php");
+
 require ('admin_common.php');
 
 if ($_REQUEST['pass']!='') {
@@ -57,17 +58,17 @@ Please input admin password:<br>
 // select all the blocks...
 
 $sql = "SELECT order_id, block_id, banner_id FROM blocks WHERE status <> 'nfs'"; // nfs blocks do not have an order.
-$result = mysqli_query($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 
 while ($row=mysqli_fetch_array($result)) {
 
 	$sql = "SELECT order_id FROM orders WHERE banner_id='".$row['banner_id']."' AND  order_id='".$row['order_id']."'";
-	$result2 = mysqli_query($sql) or die (mysqli_error());
+	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result2)==0) { // there is no order matching
 		// delete the blocks.
 		echo "Deleting block #".$row['block_id']."<br>";
 		$sql = "DELETE from blocks WHERE block_id='".$row['block_id']."' AND banner_id='".$row['banner_id']."' ";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 
 	}

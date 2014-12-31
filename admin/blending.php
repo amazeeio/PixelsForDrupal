@@ -32,6 +32,7 @@
 ini_set('max_execution_time', 6000);
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -131,7 +132,7 @@ Image Blending - Allows you to specify an image to blend in with your grid in th
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">

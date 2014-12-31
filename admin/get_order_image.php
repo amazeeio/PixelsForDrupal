@@ -33,6 +33,7 @@ session_start();
 define ('NO_HOUSE_KEEP', 'YES');
 
 require ('../config.php');
+
 //include ("login_functions.php");
 require ('admin_common.php');
 
@@ -47,11 +48,11 @@ if ($_REQUEST['block_id']!='') {
 
 }
 
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 // load all the blocks wot
 $sql = "select * from blocks where order_id='".$row['order_id']."' ";
-$result3 = mysqli_query($sql) or die(mysqli_error());
+$result3 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
 load_banner_constants($f2->bid($_REQUEST['BID']));

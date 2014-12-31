@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 ?>
@@ -58,7 +59,7 @@ Stats HTML - Copy and paste into your html file to display the stats<br>
 				
 			</tr>
 <?php
-			$result = mysqli_query("select * FROM banners") or die (mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], "select * FROM banners") or die (mysqli_error($GLOBALS['connection']));
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				?>

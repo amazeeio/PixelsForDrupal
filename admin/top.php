@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 $BID = $f2->bid($_REQUEST['BID']);
@@ -44,7 +45,7 @@ if (($BID=='all') || ($BID=='')) {
 } 
 
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 <input type="hidden" name="old_order_id" value="<?php echo $order_id;?>">
@@ -93,7 +94,7 @@ $sql = "SELECT *, sum(click_count) as clicksum, count(order_id) as b from blocks
 
 //echo $sql;
 
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 
 while ($row=mysqli_fetch_array($result)) {
@@ -109,7 +110,7 @@ while ($row=mysqli_fetch_array($result)) {
 	
 $sql = "SELECT alt_text, url, count(alt_text) AS COUNT FROM blocks WHERE user_id=".$row[user_id]." and banner_id=".$row[banner_id]." group by url ";
 
-		$m_result = mysqli_query ($sql);
+		$m_result = mysqli_query($GLOBALS['connection'], $sql);
 		while ($m_row=mysqli_fetch_array($m_result)) {
 			if ($m_row[url] !='') {
 				echo "<a href='".$m_row[url]."' target='_blank' >".$m_row[alt_text]."</a> <br>";

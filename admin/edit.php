@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -48,7 +49,7 @@ Here you can edit a user's name, email, company name and change their password.
 if ($_REQUEST[action]=='changepass') {
 
 	$sql = "select * from users where ID=".$user_id;
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	$oldpass = md5 ($_REQUEST['oldpass']);
@@ -59,7 +60,7 @@ if ($_REQUEST[action]=='changepass') {
 		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
 
 			$sql = "UPDATE users set password='$newpass' where ID=".$user_id;
-			mysqli_query ($sql) or die (mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			echo "<h3><font color=green>OK: Password was changed.</font></h3><br>";
 
 		} else {
@@ -103,7 +104,7 @@ if ($_REQUEST[action]=='update') {
 	//print_r ($_REQUEST);
 
 	$sql = "UPDATE users set FirstName='".$_REQUEST['firstname']."', LastName='".$_REQUEST['lastname']."', CompName='".$_REQUEST['compname']."', Email='".$_REQUEST['email']."' where ID=".$user_id;
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
 	echo "<h3><font color=green>OK: User's details were updated.</font></h3><br>";
@@ -113,7 +114,7 @@ if ($_REQUEST[action]=='update') {
 if ($_REQUEST['action']=='rank') {
 
 	$sql = "UPDATE users set Rank='".$_REQUEST['rank']."' where ID=".$user_id;
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
 	//echo "<h3><font color=green>OK: User's details were updated.</font></h3><br>";
@@ -121,7 +122,7 @@ if ($_REQUEST['action']=='rank') {
 }
 
 $sql = "select * from users where ID=".$_REQUEST['user_id'];
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 $lastname = $row['LastName'];
 $firstname = $row['FirstName'];

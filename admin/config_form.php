@@ -596,6 +596,16 @@ NOTES<br>
 	</font></td>
 
 	</tr>
+	<tr>
+      <td bgcolor="#e6f2ea" width="20%"><font face="Verdana" size="1">Error Reporting</font></td>
+      <td bgcolor="#e6f2ea">
+		<font face="Verdana" size="1">
+			<input type="text" name="error_reporting" size="40" value="<?php echo ERROR_REPORTING; ?>"> (PHP error_reporting value)<br />
+			More information: <a target="_blank" href="http://php.net/manual/en/function.error-reporting.php">http://php.net/manual/en/function.error-reporting.php</a>
+		</font>
+	  </td>
+    </tr>
+
 
 <?php
 

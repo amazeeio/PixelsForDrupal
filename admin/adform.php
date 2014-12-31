@@ -123,12 +123,13 @@ if ($save != '') {
 }
 
 if ($_REQUEST['delete'] != '') {
-
+	
+	
 	echo "Deleting...";
 	$sql = "SELECT * FROM form_fields WHERE form_id=1 and field_id='".intval($_REQUEST['field_id'])."'";
-	$result = mysqli_query ($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 
-	$row = mysqli_fetch_array($result) or die(mysqli_error());
+	$row = mysqli_fetch_array($result) or die(mysqli_error($GLOBALS['connection']));
 
 	if (is_reserved_template_tag($row['template_tag'])) {
 

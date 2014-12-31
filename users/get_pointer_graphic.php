@@ -35,6 +35,7 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ('../config.php');
 
+
 $BID = $f2->bid($_REQUEST['BID']);
 
 load_banner_constants($BID);

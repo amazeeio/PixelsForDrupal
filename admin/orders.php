@@ -32,6 +32,7 @@
 
 @set_time_limit ( 180 );
 require("../config.php");
+
 require ('admin_common.php');
 
 if ($_REQUEST['pass']!='') {
@@ -61,7 +62,7 @@ if ($_REQUEST['mass_complete']!='') {
 	foreach ($_REQUEST[orders] as $oid) {
 
 		$sql = "SELECT * from orders where order_id=".$oid;
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$order_row = mysqli_fetch_array ($result);
 		
 		if ($order_row['status']!='completed') {
@@ -78,7 +79,7 @@ if ($_REQUEST['mass_complete']!='') {
 if ($_REQUEST['action']=='complete') {
 
 	$sql = "SELECT * from orders where order_id=".$_REQUEST[order_id];
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array ($result);
 
 	complete_order ($_REQUEST['user_id'], $_REQUEST[order_id]);
@@ -92,7 +93,7 @@ if ($_REQUEST['action']=='cancel') {
 	/*
 
 	$sql = "UPDATE orders set status='cancelled' WHERE order_id=".$_REQUEST[order_id];
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	*/
 
@@ -342,7 +343,7 @@ $sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID $where_sq
 
 //echo $sql;
 
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $count = mysqli_num_rows($result);
 
 $records_per_page = 40;
@@ -443,7 +444,7 @@ $pages = ceil($count / $records_per_page);
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];
-$b_result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$b_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($b_result);
 		
 		echo $b_row['name'];
@@ -455,7 +456,7 @@ $b_row = mysqli_fetch_array($b_result);
 	<?php
 	if ($row[status]=='cancelled') {
 		$sql = "select * from transactions where type='CREDIT' and order_id=".$row[order_id];
-		$r1 = mysqli_query($sql) or die(mysqli_error());
+		$r1 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($r1)>0){
 			$refunded = true;
 			echo "(Refunded)";

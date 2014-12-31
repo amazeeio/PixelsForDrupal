@@ -34,6 +34,7 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ('../config.php');
 
+
 $BID = $f2->bid($_REQUEST['BID']);
 
 if ($BID=='') {
@@ -42,7 +43,7 @@ if ($BID=='') {
 
 
 $sql = "SELECT * FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."' ";
-$result  = mysqli_query ($sql) or die(mysqli_error());
+$result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 if ($row['status']=="sold") {

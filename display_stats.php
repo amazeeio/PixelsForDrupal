@@ -34,21 +34,23 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ('config.php');
 
+
+
 $BID = $f2->bid($_REQUEST['BID']);
 
 load_banner_constants($BID);
 
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($result);
 
 $sql = "select count(*) AS COUNT FROM blocks where status='sold' and banner_id='$BID' ";
-$result = mysqli_query ($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 $sold = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
 
 $sql = "select count(*) AS COUNT FROM blocks where status='nfs' and banner_id='$BID' ";
-$result = mysqli_query ($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 $nfs = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
 

@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -52,7 +53,7 @@ if (($BID=='all') || ($BID=='')) {
 } 
 
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
 <input type="hidden" name="old_order_id" value="<?php echo $order_id;?>">

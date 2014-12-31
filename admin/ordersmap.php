@@ -32,6 +32,7 @@
 
 ini_set('max_execution_time', 10000);
 require("../config.php");
+
 require ('admin_common.php');
 
 if ($f2->bid($_REQUEST['BID'])!='') {
@@ -43,7 +44,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 load_banner_constants($BID);
 
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$b_row = mysqli_fetch_array($result);
 
 ?>
@@ -54,7 +55,7 @@ Red blocks are on order (Status can be: 'reserved', 'ordered', 'sold'), Green bl
 <?php
 
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">

@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 include ("login_functions.php");
 include ("../payment/payment_manager.php");
 //process_login();

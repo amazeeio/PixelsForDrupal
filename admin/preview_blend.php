@@ -33,6 +33,7 @@
 define ('NO_HOUSE_KEEP', 'YES');
 
 require("../config.php");
+
 require ('admin_common.php');
 
 $BID = $f2->bid($_REQUEST['BID']);
@@ -41,7 +42,7 @@ if ($BID =='') {
 
 }
 $sql = "select * from banners where banner_id=$BID";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($result);
 
 
@@ -86,7 +87,7 @@ $i=0; $j=0; $x_pos=0; $y_pos=0;
 
 	$nfs_block = imagecreatefrompng ( $file_path."temp/not_for_sale_block.png" );
 	$sql = "select * from blocks where status='nfs' and banner_id=$BID ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result)) {
 		imagecopy ( $map, $nfs_block, $row['x'], $row['y'], 0, 0, 10, 10 );

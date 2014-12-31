@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 include ("login_functions.php");
 
 //process_login();
@@ -76,7 +77,7 @@ $tmp_image_file = get_tmp_img_name();
 
  $sql = "SELECT * from orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
- $order_result = mysqli_query($sql);
+ $order_result = mysqli_query($GLOBALS['connection'], $sql);
  $order_row = mysqli_fetch_array($order_result);
 
  if (($order_row['user_id']!='') && $order_row['user_id']!=$_SESSION['MDS_ID']) { // do a test, just in case.
@@ -100,7 +101,7 @@ update_temp_order_timestamp();
 ###############################
 
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID' ";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	//if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
@@ -623,7 +624,7 @@ $low_y = G_HEIGHT*BLK_HEIGHT;
 $sql = "SELECT block_info FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
 
 //echo $sql;
-$result = mysqli_query($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 
 
@@ -815,7 +816,7 @@ show_nav_status (1);
 <?php
 
 $sql = "SELECT * FROM banners order by `name` ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 
 if (mysqli_num_rows($res)>1) {
 ?>

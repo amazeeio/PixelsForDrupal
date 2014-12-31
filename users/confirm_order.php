@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 require_once ("../include/ads.inc.php");
 
 $BID = $f2->bid($_REQUEST['BID']);
@@ -59,7 +60,7 @@ function display_edit_order_button ($order_id) {
 update_temp_order_timestamp();
 
 $sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
-$order_result = mysqli_query ($sql) or die(mysqli_error());
+$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 
 if (mysqli_num_rows($order_result)==0) {
@@ -178,7 +179,7 @@ show_nav_status (3);
 
 			
 			$sql = "SELECT quantity FROM temp_orders WHERE session_id='".addslashes(session_id())."'";
-			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$row = mysqli_fetch_array($result);
 			$quantity = $row['quantity'];
 
@@ -195,7 +196,7 @@ show_nav_status (3);
 
 			$sql = "UPDATE temp_orders SET package_id='".$_REQUEST['pack']."', price='".$total."',  days_expire='".$pack['days_expire']."', currency='".get_default_currency()."' WHERE session_id='".addslashes(session_id())."'";
  
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			$order_row['price']=$total;
 			$order_row['pack']=$_REQUEST['pack'];
@@ -229,7 +230,7 @@ show_nav_status (3);
 		if ($cannot_get_package) {
 
 			$sql = "SELECT * from packages where package_id='".$selected_pack."'";
-			$p_result = mysqli_query($sql) or die(mysqli_error());
+			$p_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		    $p_row = mysqli_fetch_array($p_result);
 			$p_max_ord = $p_row['max_orders'];
 
@@ -243,7 +244,7 @@ show_nav_status (3);
 		display_order(session_id(), $BID);
 
 		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$u_row = mysqli_fetch_array($result);
 
 		?>

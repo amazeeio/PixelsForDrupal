@@ -33,6 +33,7 @@ session_start();
 ini_set('max_execution_time', 10000);
 require ('../include/code_functions.php');
 require ('../config.php');
+
 require ("admin_common.php");
 $field_id = $_REQUEST['field_id'];
 $code = $_REQUEST['code'];
@@ -51,19 +52,19 @@ if (!$_REQUEST['field_id']) {
 function can_delete_code ($field_id, $code) {
 
 	$sql = "SHOW TABLES";
-	$tables = mysqli_query ($sql);
+	$tables = mysqli_query($GLOBALS['connection'], $sql);
 
 	$tables = array ('ads');
 	foreach ($tables as $table ) {
 
 		$sql = "SHOW COLUMNS FROM ".$table;
-		$cols = mysqli_query ($sql);
+		$cols = mysqli_query($GLOBALS['connection'], $sql);
 
 		while ($c_row = mysqli_fetch_row($cols)) {
 			if ($c_row[0] == $field_id) {
 
 				$sql = "SELECT * FROM ".$table." WHERE `$field_id` like '%$code%' ";
-				$result = mysqli_query ($sql);
+				$result = mysqli_query($GLOBALS['connection'], $sql);
 				if (mysqli_num_rows($result)==0) {
 					
 					return true;
@@ -105,10 +106,10 @@ if ($_REQUEST['action'] == 'delete' ) {
 	$code = $_REQUEST['code'];
 
 	$sql = "DELETE from `codes` where `field_id`=$field_id AND `code`='$code' ";
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	$sql = "DELETE from `codes_translations` where `field_id`=$field_id AND `code`='$code' ";
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	//echo $sql;
 
@@ -233,7 +234,7 @@ function validate_code ($field_id, $new_code, $new_description) {
 	if ($new_code != '') {
 
 		$sql = "SELECT * from codes where field_id=$field_id AND code like '%$new_code%' ";
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 		if (mysqli_num_rows($result)>0) {
 			$error .= "- The new Code is too similar to an already existing code. Please try to come up with a different code.<br>";
@@ -279,7 +280,7 @@ if ($_SESSION['MDS_LANG'] == '' ) {
 
 
 
-$result = mysqli_query ($sql) or die($sql.mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 
 while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 

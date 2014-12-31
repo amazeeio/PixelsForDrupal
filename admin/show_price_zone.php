@@ -33,6 +33,7 @@
 define ('NO_HOUSE_KEEP', 'YES');
 
 require("../config.php");
+
 require ('admin_common.php');
 
 session_start();
@@ -42,7 +43,7 @@ $BID = $f2->bid($_REQUEST['BID']);
 if ($BID=='') { $BID='1'; }
 
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$b_row = mysqli_fetch_array($result);
 load_banner_constants($BID);
 
@@ -53,7 +54,7 @@ $currency = get_default_currency();
 #
 # Preload all block
 $sql = "select block_id, status, user_id, image_data FROM blocks where status='sold' AND banner_id=$BID ";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	if (($row[user_id] == $_REQUEST[user_id]) && ($row['status']!='ordered') && ($row['status']!='sold')) {
@@ -173,7 +174,7 @@ if (function_exists("imagecreatetruecolor")) {
 	/*
 	
 	$sql = "select * from blocks where approved='Y' and status='sold' AND image_data <> ''";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 	$i=0;
 	while ($row = mysqli_fetch_array($result)) {

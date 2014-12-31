@@ -50,6 +50,7 @@ if(!file_exists(MDSROOT . "/config.php")) {
 // include the config file
 include_once (MDSROOT . "/config.php");
 
+
 // include the header
 include_once (MDSROOT . "/html/header.php");
 

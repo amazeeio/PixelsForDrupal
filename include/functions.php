@@ -85,21 +85,23 @@ if ($_REQUEST['time']=='') {
 }
 
 function expire_orders() {
+	
+	
 
 	$now = (gmdate("Y-m-d H:i:s"));
 	$unix_time = time();
 
 	// get the time of last run
 	$sql = "SELECT * FROM `config` where `key` = 'LAST_EXPIRE_RUN' ";
-	$result = @mysqli_query($sql) or $DB_ERROR = mysqli_error();
+	$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
 	$t_row = @mysqli_fetch_array($result);
 
 	if ($DB_ERROR!='') return $DB_ERROR;
 
 	// Poor man's lock
 	$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='EXPIRE_RUNNING' AND `val`='NO' ";
-	$result = @mysqli_query($sql) or $DB_ERROR = mysqli_error();
-	if (@mysqli_affected_rows()==0) {
+	$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
+	if (@mysqli_affected_rows($GLOBALS['connection'])==0) {
 
 		// make sure it cannot be locked for more than 30 secs 
 		// This is in case the proccess fails inside the lock
@@ -109,11 +111,11 @@ function expire_orders() {
 			// release the lock
 			
 			$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='EXPIRE_RUNNING' ";
-			$result = @mysqli_query($sql) or $DB_ERROR = mysqli_error();
+			$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
 
 			// update timestamp
 			$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_EXPIRE_RUN', '$unix_time')  ";
-			$result = @mysqli_query($sql) or $DB_ERROR = mysqli_error();
+			$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
 		}
 
 		// this function is already executing in another process.
@@ -130,7 +132,7 @@ function expire_orders() {
 		
 		$sql = "SELECT session_id, order_date FROM `temp_orders` WHERE  DATE_SUB('$now', INTERVAL $session_duration SECOND) >= temp_orders.order_date AND session_id <> '".addslashes(session_id())."' ";
 
-		$result=mysqli_query($sql);
+		$result=mysqli_query($GLOBALS['connection'], $sql);
 		
 		while ($row = @mysqli_fetch_array($result)) {
 		
@@ -145,7 +147,7 @@ function expire_orders() {
 
 		//echo $sql;
 
-		$result = mysqli_query ($sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql);
 
 		$affected_BIDs = array();
 
@@ -174,7 +176,7 @@ function expire_orders() {
 
 			$sql = "SELECT * from orders where (status='new') AND DATE_SUB('$now',INTERVAL ".HOURS_UNCONFIRMED." HOUR) >= date_stamp AND date_stamp IS NOT NULL ";
 
-			$result = @mysqli_query ($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
 			while ($row=@mysqli_fetch_array($result)) {
 				delete_order ($row['order_id']) ;
@@ -182,7 +184,7 @@ function expire_orders() {
 				// Now really delete the order.
 
 				$sql = "delete from orders where order_id='".$row['order_id']."'";
-				@mysqli_query ($sql);
+				@mysqli_query($GLOBALS['connection'], $sql);
 				global $f2;
 				$f2->debug("Deleted unconfirmed order - ".$sql);
 
@@ -195,7 +197,7 @@ function expire_orders() {
 		if (DAYS_CONFIRMED!=0) {
 			$sql = "SELECT * from orders where (status='new' OR status='confirmed') AND DATE_SUB('$now',INTERVAL ".DAYS_CONFIRMED." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
 			
-			$result = @mysqli_query($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
 			while ($row=@mysqli_fetch_array($result)) {
 				expire_order($row['order_id']) ;
@@ -210,7 +212,7 @@ function expire_orders() {
 
 			$sql = "SELECT * from orders where status='expired' AND DATE_SUB('$now',INTERVAL ".DAYS_RENEW." DAY) >= date_stamp AND date_stamp IS NOT NULL";
 
-			$result = @mysqli_query($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
 			while ($row=@mysqli_fetch_array($result)) {
 				cancel_order($row['order_id']) ;
@@ -225,7 +227,7 @@ function expire_orders() {
 
 			$sql = "SELECT * from orders where status='cancelled' AND DATE_SUB('$now',INTERVAL ".DAYS_CANCEL." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
 
-			$result = @mysqli_query ($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
 			while ($row=@mysqli_fetch_array($result)) {
 				delete_order ($row['order_id']) ;
@@ -237,7 +239,7 @@ function expire_orders() {
 
 		// update timestamp
 		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_EXPIRE_RUN', '$unix_time')  ";
-		$result = @mysqli_query($sql) or die (mysqli_error());
+		$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		
 
 
@@ -245,7 +247,7 @@ function expire_orders() {
 
 	// release the poor man's lock
 	$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='EXPIRE_RUNNING' ";
-	@mysqli_query($sql) or die(mysqli_error());
+	@mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	
 
@@ -254,22 +256,23 @@ function expire_orders() {
 #################################################
 
 function delete_temp_order($sid, $delete_ad=true) {
+	
 
 	$sid = addslashes($sid);
 
 	$sql = "select * from temp_orders where session_id='".$sid."' ";
-	$order_result = mysqli_query ($sql) or die(mysqli_error());
+	$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($order_result);
 
 	//$sql = "DELETE FROM blocks WHERE session_id='".$sid."' ";
-	//mysqli_query($sql) ;
+	//mysqli_query($GLOBALS['connection'], $sql) ;
 
 	$sql = "DELETE FROM temp_orders WHERE session_id='".$sid."' ";
-	mysqli_query ($sql);
+	mysqli_query($GLOBALS['connection'], $sql);
 
 	if ($delete_ad) {
 		$sql = "DELETE FROM ads WHERE ad_id='".$order_row['ad_id']."' ";
-		mysqli_query ($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 	}
 	
 	
@@ -300,13 +303,14 @@ $order_id = the corresponding order id.
 */
 
 function credit_transaction($order_id, $amount, $currency, $txn_id, $reason, $origin) {
+	
 
 	$type = "CREDIT";
 
 	$date = (gmdate("Y-m-d H:i:s"));
 
 	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='CREDIT' ";
-	$result = mysqli_query($sql) or die(mysqli_error($sql));
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($sql));
 	if (mysqli_num_rows($result)!=0) {
 		return; // there already is a credit for this txn_id
 	}
@@ -314,12 +318,12 @@ function credit_transaction($order_id, $amount, $currency, $txn_id, $reason, $or
 // check to make sure that there is a debit for this transaction
 
 	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='DEBIT' ";
-	$result = mysqli_query($sql) or die(mysqli_error($sql));
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($sql));
 	if (mysqli_num_rows($result)>0) {
 
 		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('$txn_id', '$date', '$order_id', '$type', '$amount', '$currency', '$reason', '$origin')";
 
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	}
 
 
@@ -340,18 +344,18 @@ $order_id = the corresponding order id.
 */
 
 function debit_transaction($order_id, $amount, $currency, $txn_id, $reason, $origin) {
+		
 
-	
 	$type = "DEBIT";
 	$date = (gmdate("Y-m-d H:i:s"));
 // check to make sure that there is no debit for this transaction already
 
 	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='DEBIT' ";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	if (mysqli_fetch_array($result)==0) {
 		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('$txn_id', '$date', '$order_id', '$type', '$amount', '$currency', '$reason', '$origin')";
 
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 
 
@@ -362,7 +366,7 @@ function complete_order ($user_id, $order_id) {
 	global $label;
 
 	$sql = "SELECT * from orders where order_id='$order_id' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array ($result);
 
 	if ($order_row['status']!='completed') {
@@ -370,7 +374,7 @@ function complete_order ($user_id, $order_id) {
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id='".$order_id."'";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// insert a transaction
 
@@ -378,20 +382,20 @@ function complete_order ($user_id, $order_id) {
 		
 
 		$sql = "SELECT * from orders where order_id='$order_id' ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
 
 		$blocks = explode (",", $order_row['blocks']);
 		foreach ($blocks as $key => $val) {
 			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=".$order_row['banner_id'];
 			
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 		}
 
 		$sql = "SELECT * from users where ID='$user_id' ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array ($result);
 
 		if ($order_row[days_expire]==0) {
@@ -463,7 +467,7 @@ function confirm_order ($user_id, $order_id) {
 	global $label;
 
 	$sql = "SELECT *, t1.blocks as BLK FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id=t2.ID AND order_id='$order_id' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	//echo $sql;
 
@@ -473,7 +477,7 @@ function confirm_order ($user_id, $order_id) {
 
 		$sql = "UPDATE orders set status='confirmed', date_stamp='$now' WHERE order_id='".$order_id."' ";
 		//echo $sql."<br>";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		//echo "User id: ".$_SESSION['MDS_ID'];
 
@@ -481,7 +485,7 @@ function confirm_order ($user_id, $order_id) {
 
 		$sql = "UPDATE blocks set status='ordered' WHERE order_id='".$order_id."' and banner_id='".$row['banner_id']."'";
 
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		/*
 
@@ -493,7 +497,7 @@ function confirm_order ($user_id, $order_id) {
 
 			//echo $sql."<br>";
 			
-			mysqli_query($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		}
 
 		*/
@@ -557,7 +561,7 @@ function pend_order ($user_id, $order_id) {
 	global $label;
 	$sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".$user_id."' AND order_id='$order_id' ";
 	
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 
 	if ($row['status']!='pending') {
@@ -566,7 +570,7 @@ function pend_order ($user_id, $order_id) {
 
 		$sql = "UPDATE orders set status='pending', date_stamp='$now' WHERE order_id='".$order_id."' ";
 		//echo $sql;
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$blocks = explode (',', $row['blocks']);
 		//echo $order_row['blocks'];
@@ -574,7 +578,7 @@ function pend_order ($user_id, $order_id) {
 
 			$sql = "UPDATE blocks set status='ordered' WHERE block_id='".$val."' and banner_id='".$row['banner_id']."'";
 			//echo $sql;
-			mysqli_query($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		}
 
 
@@ -654,7 +658,7 @@ function expire_order ($order_id) {
 	//days_expire
 
 	//func_mail_error($sql." expire order");
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	if (($row['status']!='expired') || ($row['status']!='pending')) {
@@ -664,11 +668,11 @@ function expire_order ($order_id) {
 
 		$sql = "UPDATE orders set status='expired', date_stamp='$now' WHERE order_id='".$order_id."' ";
 		//echo "$sql<br>";
-		mysqli_query($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".$order_id."' and banner_id='".$row['BID']."'";
 			//echo "$sql<br>";
-		mysqli_query($sql) or die (mysqli_error().$sql." (expire order)");
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql." (expire order)");
 
 		/*
 
@@ -678,7 +682,7 @@ function expire_order ($order_id) {
 
 			$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE block_id='".$val."' and banner_id='".$row['BID']."'";
 			//echo "$sql<br>";
-			mysqli_query($sql) or die (mysqli_error().$sql." (expire order)");
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql." (expire order)");
 			
 
 		}
@@ -689,7 +693,7 @@ function expire_order ($order_id) {
 
 		$sql = "UPDATE orders SET `approved`='N' WHERE order_id='".$order_id."'";
 		//echo "$sql<br>";
-		mysqli_query($sql) or die (mysqli_error().$sql." (expire order)");
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql." (expire order)");
 
 		if ($row['status']=='new') {
 			return;// do not send email
@@ -751,7 +755,7 @@ function delete_order ($order_id) {
 
 	global $label;
 	$sql = "SELECT * FROM orders where order_id='$order_id' ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($result);
 
 	if ($order_row['status']!='deleted') {
@@ -759,14 +763,14 @@ function delete_order ($order_id) {
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		$sql = "UPDATE orders set status='deleted', date_stamp='$now' WHERE order_id='".$order_id."'";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// DELETE BLOCKS
 
 		if ($order_row['blocks']!='') {
 
 			$sql = "DELETE FROM blocks where order_id='$order_id' and banner_id=".$order_row['banner_id'];
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 			/*
@@ -774,7 +778,7 @@ function delete_order ($order_id) {
 			foreach ($blocks as $key => $val) {
 				if ($val!='') {
 					$sql = "DELETE FROM blocks where block_id='$val' and banner_id=".$order_row['banner_id'];
-					mysqli_query ($sql) or die (mysqli_error().$sql);
+					mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 				}
 
 			}
@@ -788,7 +792,7 @@ function delete_order ($order_id) {
 		}
 		delete_ads_files ($order_row['ad_id']);
 		$sql = "DELETE from ads where ad_id='".$order_row['ad_id']."' ";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		
 
 	}
@@ -802,7 +806,7 @@ function cancel_order ($order_id) {
 
 	global $label;
 	$sql = "SELECT * FROM orders where order_id='$order_id' ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	//echo $sql."<br>";
 	if ($row['status']!='cancelled') {
@@ -810,11 +814,11 @@ function cancel_order ($order_id) {
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		$sql = "UPDATE orders set status='cancelled', date_stamp='$now', approved='N' WHERE order_id='".$order_id."'";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		//echo $sql."<br>";
 		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".$order_id."' and banner_id='".$row['banner_id']."'";
 			//echo $sql."<br>";
-		mysqli_query($sql) or die (mysqli_error().$sql. " (cancel order) ");
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql. " (cancel order) ");
 
 		/*
 		$blocks = explode (',', $row['blocks']);
@@ -824,7 +828,7 @@ function cancel_order ($order_id) {
 		foreach ($blocks as $key => $val) {
 			$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE block_id='".$val."' and banner_id='".$row['banner_id']."'";
 			//echo $sql."<br>";
-			mysqli_query($sql) or die (mysqli_error().$sql. " (cancel order) ");
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql. " (cancel order) ");
 		}
 		*/
 
@@ -849,8 +853,9 @@ function cancel_order ($order_id) {
 # is the renewal order already paid?
 # (Orders can be paid and cont be completed until the previous order expires)
 function is_renew_order_paid($original_order_id) {
+	
 	$sql = "SELECT * from orders WHERE original_order_id='$original_order_id' AND status='renew_paid' ";
-	$result = mysqli_query ($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)>0) {
 		return true;
 	} else {
@@ -864,6 +869,7 @@ function is_renew_order_paid($original_order_id) {
 # only one 'renew_wait' wait order allowed for each $original_order_id
 # and there must be no 'renew_paid' orders
 function allocate_renew_order($original_order_id) {
+	
 	# if no waiting renew order, insert a new one
 	$now = (gmdate("Y-m-d H:i:s"));
 	
@@ -873,17 +879,17 @@ function allocate_renew_order($original_order_id) {
 	// are there any 
 	// renew_wait orders?
 	$sql = "SELECT * FROM orders WHERE original_order_id='$original_order_id' and status='renew_wait' ";
-	$result = mysqli_query ($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (($row = mysqli_fetch_array($result))==false) {
 		// copy the original order to create a new renew_wait order
 		$sql = "SELECT * FROM orders WHERE order_id='$original_order_id' ";
-		$result = mysqli_query ($sql) or die(mysqli_error()); 
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection'])); 
 		$row = mysqli_fetch_array($result);
 
 		$sql = "INSERT INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved, original_order_id) VALUES ('".$row['user_id']."', '', '".$row['blocks']."', 'renew_wait', NOW(), '".$row['price']."', '".$row['quantity']."', '".$row['banner_id']."', '".$row['currency']."', ".$row['days_expire'].", '$now', '".$row['approved']."', '".$original_order_id."') ";
 
-		$result = mysqli_query ($sql) or die(mysqli_error());
-		$order_id = mysqli_insert_id();
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
+		$order_id = mysqli_insert_id($GLOBALS['connection']);
 		return $order_id;
 
 	} else {
@@ -902,15 +908,15 @@ function allocate_renew_order($original_order_id) {
 # allocate renew_wait, set it to renew_paid
 
 function pay_renew_order($original_order_id) {
-
+	
 	$wait_order_id = allocate_renew_order($original_order_id);
 	if ($wait_order_id !== false) {
 		$sql = "UPDATE orders set status='renew_paid' WHERE order_id='$wait_order_id' and status='renew_wait' ";
-		mysqli_query($sql) or die(mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		
 	}
 
-	if (mysqli_affected_rows()>0) { 
+	if (mysqli_affected_rows($GLOBALS['connection'])>0) { 
 		return true;
 		# this order will now wait until the old one expires so it can be completed
 	} else { 
@@ -923,7 +929,7 @@ function pay_renew_order($original_order_id) {
 #################################
 
 function process_paid_renew_orders() {
-
+	
 	/*
 
 	Complete: Only expired orders that have status as 'renew_paid'
@@ -932,7 +938,7 @@ function process_paid_renew_orders() {
 	*/
 
 	$sql = "SELECT * FROM orders WHERE status='renew_paid' ";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 		// if expired 
 		complete_renew_order ($row['order_id']) ;
@@ -945,7 +951,7 @@ function complete_renew_order ($order_id) {
 	global $label;
 
 	$sql = "SELECT * from orders where order_id='$order_id' and status='renew_paid' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array ($result);
 
 	if ($order_row['status']!='completed') {
@@ -953,33 +959,33 @@ function complete_renew_order ($order_id) {
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id=".$order_id;
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// update pixel's order_id
 
 		$sql = "UPDATE blocks SET order_id='".$order_row['order_id']."' WHERE order_id='".$order_row['original_order_id']."' AND banner_id='".$row['banner_id']."' ";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// update ads' order id
 
 		$sql = "UPDATE ads SET order_id='".$order_row['order_id']."' WHERE order_id='".$order_row['original_order_id']."' AND banner_id='".$row['banner_id']."' ";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// mark pixels as sold.
 		
 		$sql = "SELECT * from orders where order_id='$order_id' ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
 		$blocks = explode (",", $order_row['blocks']);
 		foreach ($blocks as $key => $val) {
 			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=".$order_row['banner_id'];
 			
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		}
 
 		$sql = "SELECT * from users where ID='$user_id' ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array ($result);
 
 		if ($order_row['days_expire']==0) {
@@ -1050,7 +1056,7 @@ function send_confirmation_email($email) {
 	global $label;
 
 	$sql = "SELECT * FROM users where Email='$email' ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$row = mysqli_fetch_array($result);
 
 	$code = substr(md5($row['Email'].$row['Password']),0, 8);
@@ -1113,15 +1119,15 @@ function send_published_pixels_notification($user_id, $BID) {
 	$subject  = str_replace ("%SITE_NAME%", SITE_NAME, $subject );
 
 	$sql = "SELECT * from banners where banner_id='$BID'";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$b_row = mysqli_fetch_array($result);
 
 	$sql = "SELECT * from users where ID='$user_id'";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$u_row = mysqli_fetch_array($result);
 
 	$sql = "SELECT  url, alt_text FROM blocks where user_id='$user_id' AND banner_id='$BID' GROUP by url ";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 
 		$url_list .= $row['url']." - ".$row['alt_text']."\n";
@@ -1167,7 +1173,7 @@ function display_order ($order_id, $BID) {
 	global $label;
 	$order_id = addslashes($order_id);
 	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	if (is_numeric($order_id)) {
@@ -1176,7 +1182,7 @@ function display_order ($order_id, $BID) {
 		$sql = "SELECT * from temp_orders where session_id='".$order_id."' and banner_id='$BID'";
 	}
 	
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 
 ?>
@@ -1225,11 +1231,11 @@ function display_packages ($order_id, $BID) {
 	$BID 		= $BID;
 
 	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	$sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."' and banner_id='$BID'";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 
 ?>
@@ -1252,7 +1258,7 @@ Please choose the duration of the campaign you desire:<p>
 // viday pricing dropdown
 	?> <select name="packages"> <?php
         $sql = "SELECT * from packages where banner_id='$BID' order by price asc";
-        $result = mysqli_query($sql) or die(mysqli_error().$sql);
+        $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
          while ($packages_row=mysqli_fetch_array($result)) {
 		echo "<option value=\"".$packages_row['days_expire']."-".$packages_row['price']."\">".$packages_row['days_expire']." days - $".$packages_row['price']."</option>";
 	}	
@@ -1413,10 +1419,10 @@ $html_message='', $template_id=0) {
 	$now = (gmdate("Y-m-d H:i:s"));
 
 	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".addslashes($to_address)."', '".addslashes($to_name)."', '".addslashes($from_address)."', '".addslashes($from_name)."', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($html_message)."', '$attachments', 'sent', '', 0, '$template_id', '$now')"; $s='copyr1ght two thousand & 6 Jam1t softwar3 ';
+	
+	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
 
-	mysqli_query ($sql) or q_mail_error (mysqli_error().$sql);
-
-	$mail_id = mysqli_insert_id();
+	$mail_id = mysqli_insert_id($GLOBALS['connection']);
 
 
 
@@ -1641,7 +1647,7 @@ function select_block ($map_x, $map_y) {
 	}
 
 	$sql = "select Rank from users where ID=".$_SESSION['MDS_ID'];
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);
 
 	//Check if max_orders < order count
@@ -1659,12 +1665,12 @@ function select_block ($map_x, $map_y) {
 	###################################################
 	if (USE_LOCK_TABLES == 'Y') {
 		$sql = "LOCK TABLES blocks WRITE, orders WRITE, ads WRITE, form_fields READ, currencies READ, prices READ, banners READ, packages READ";
-		$result = mysqli_query ($sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
 	} else {
 		// poor man's lock
 		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysqli_query($sql) or die(mysqli_error());
-		if (mysqli_affected_rows()==0) {
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
+		if (mysqli_affected_rows($GLOBALS['connection'])==0) {
 			// make sure it cannot be locked for more than 30 secs 
 			// This is in case the proccess fails inside the lock
 			// and does not release it.
@@ -1673,18 +1679,18 @@ function select_block ($map_x, $map_y) {
 
 			// get the time of last run
 			$sql = "SELECT * FROM `config` where `key` = 'LAST_SELECT_RUN' ";
-			$result = @mysqli_query($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 			$t_row = @mysqli_fetch_array($result);
 
 			if ($unix_time > $t_row['val']+30) {
 				// release the lock
 				
 				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = @mysqli_query($sql) or die(mysqli_error());
+				$result = @mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 				// update timestamp
 				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($sql) or die (mysqli_error());
+				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			}
 			
 			usleep(5000000); // this function is executing in another process. sleep for half a second
@@ -1698,7 +1704,7 @@ function select_block ($map_x, $map_y) {
 	//$sql = "SELECT status, user_id FROM blocks where `x`=$map_x AND `y`=$map_y and banner_id=$BID ";
 	
 	$sql = "SELECT status, user_id, ad_id FROM blocks where block_id='$clicked_block' AND banner_id='$BID' ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 
@@ -1708,7 +1714,7 @@ function select_block ($map_x, $map_y) {
 	
 		// put block on order
 		$sql = "SELECT * FROM orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 		if ($row['blocks']!='') {
 			$blocks = explode ( ",", $row['blocks']);
@@ -1757,12 +1763,12 @@ function select_block ($map_x, $map_y) {
 
 			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('".$_SESSION['MDS_ID']."', '".$row['order_id']."', '".$blocks."', 'new', NOW(), '".$price."', '".$quantity."', '".$BID."', '".get_default_currency()."', ".$b_row['days_expire'].", '$now', '".AUTO_APPROVE."') ";
 		
-			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
-			$_SESSION['MDS_order_id'] = mysqli_insert_id();
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+			$_SESSION['MDS_order_id'] = mysqli_insert_id($GLOBALS['connection']);
 			$order_id = $_SESSION['MDS_order_id'];
 
 			$sql = "delete from blocks where user_id='".$_SESSION['MDS_ID']."' AND status = 'reserved' AND banner_id='$BID' ";
-			mysqli_query($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			
 
 			$cell="0";			
@@ -1780,7 +1786,7 @@ function select_block ($map_x, $map_y) {
 
 						$total += $price;
 					
-						mysqli_query ($sql) or die (mysqli_error().$sql);
+						mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 					}
 					$cell++;
@@ -1791,11 +1797,11 @@ function select_block ($map_x, $map_y) {
 
 
 			$sql = "UPDATE orders SET price='$total' WHERE order_id='".$_SESSION['MDS_order_id']."'";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			
 			$sql = "UPDATE orders SET original_order_id='".$_SESSION['MDS_order_id']."' WHERE order_id='".$_SESSION['MDS_order_id']."'";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			// check that we have ad_id, if not then create an ad for this order.
 
@@ -1812,9 +1818,9 @@ function select_block ($map_x, $map_y) {
 				$ad_id = insert_ad_data();
 
 				$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$_SESSION['MDS_order_id']."' ";
-				$result = mysqli_query ($sql) or die (mysqli_error());
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 				$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$_SESSION['MDS_order_id']."' ";
-				$result = mysqli_query ($sql) or die (mysqli_error());
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 				$_REQUEST['ad_id'] = $ad_id;
 
@@ -1825,18 +1831,18 @@ function select_block ($map_x, $map_y) {
 			
 			if (USE_LOCK_TABLES == 'Y') {
 				$sql = "UNLOCK TABLES";
-				$result = mysqli_query ($sql) or die (mysqli_error()." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
 			} else {
 
 				// release the poor man's lock
 				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				mysqli_query($sql);
+				mysqli_query($GLOBALS['connection'], $sql);
 
 				$unix_time = time();
 
 				// update timestamp
 				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($sql) or die (mysqli_error());
+				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 
 			}
@@ -1889,12 +1895,12 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	###################################################
 	if (USE_LOCK_TABLES == 'Y') {
 		$sql = "LOCK TABLES blocks WRITE, orders WRITE, ads WRITE, temp_orders WRITE,  currencies READ, prices READ, banners READ, form_fields READ, form_field_translations READ";
-		$result = mysqli_query ($sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
 	} else {
 		// poor man's lock
 		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysqli_query($sql) or die(mysqli_error());
-		if (mysqli_affected_rows()==0) {
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
+		if (mysqli_affected_rows($GLOBALS['connection'])==0) {
 			// make sure it cannot be locked for more than 30 secs 
 			// This is in case the proccess fails inside the lock
 			// and does not release it.
@@ -1903,18 +1909,18 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 			// get the time of last run
 			$sql = "SELECT * FROM `config` where `key` = 'LAST_SELECT_RUN' ";
-			$result = @mysqli_query($sql);
+			$result = @mysqli_query($GLOBALS['connection'], $sql);
 			$t_row = @mysqli_fetch_array($result);
 
 			if ($unix_time > $t_row['val']+30) {
 				// release the lock
 				
 				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = @mysqli_query($sql) or die(mysqli_error());
+				$result = @mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 				// update timestamp
 				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($sql) or die (mysqli_error());
+				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			}
 			
 			usleep(5000000); // this function is executing in another process. sleep for half a second
@@ -1940,7 +1946,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 	$sql = "select block_id from blocks where banner_id='".$temp_order_row['banner_id']."' and block_id IN(".$in_str.") ";
 //echo $sql."<br>";
-	$result = mysqli_query($sql) or die ($sql.mysqli_error()); 
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection'])); 
 	if (mysqli_num_rows($result)>0) {
 		return false;  // the pixels are not available!
 	}
@@ -1953,8 +1959,8 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 	$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, package_id, ad_id, approved) VALUES ('".$_SESSION['MDS_ID']."', '', '".$in_str."', 'new', '".$now."', '".$temp_order_row['price']."', '".$temp_order_row['quantity']."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', ".$temp_order_row['days_expire'].", '".$now."', ".$temp_order_row['package_id'].", ".$temp_order_row['ad_id'].", '".$approved."') ";
 		
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
-	$order_id = mysqli_insert_id(); 
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+	$order_id = mysqli_insert_id($GLOBALS['connection']); 
 	
 	global $f2;
 	$f2->debug("Changed temp order to a real order - ".$sql);
@@ -1962,11 +1968,11 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	
 	$sql = "UPDATE ads SET user_id='".$_SESSION['MDS_ID']."', order_id='".$order_id."' where ad_id='".$temp_order_row['ad_id']."' ";
 	//echo $sql;
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	$sql = "UPDATE orders SET original_order_id='".$order_id."' where order_id='".$order_id."' ";
 	//echo $sql;
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 	
 	global $prams;
@@ -1983,7 +1989,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 		
 		global $f2;
 		$f2->debug("Updated block - ".$sql);
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -1994,18 +2000,18 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 			
 	if (USE_LOCK_TABLES == 'Y') {
 		$sql = "UNLOCK TABLES";
-		$result = mysqli_query ($sql) or die (mysqli_error()." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to 'No' in the Main Config section in the Admin.<b>");
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to 'No' in the Main Config section in the Admin.<b>");
 	} else {
 
 		// release the poor man's lock
 		$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$unix_time = time();
 
 		// update timestamp
 		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-		$result = @mysqli_query($sql) or die (mysqli_error());
+		$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 
 	}
@@ -2043,10 +2049,10 @@ function get_block_position($block_id) {
 ########################
 
 function is_block_free($block_id, $banner_id) {
-
+	
 	$sql = "SELECT * from blocks where block_id='$block_id' AND banner_id='$banner_id' ";
 	//echo "$sql<br>";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)==0) {
 
 		return true;
@@ -2066,7 +2072,7 @@ function is_block_free($block_id, $banner_id) {
 # *** assuming that the grid constants were loaded!
 
 function move_block($block_from, $block_to, $banner_id) {
-
+	
 	# reserve block_to
 	if (!is_block_free($block_to, $banner_id)) {
 		echo "<font color='red'>Cannot move the block - the space chosen is not empty!</font><br>";
@@ -2077,7 +2083,7 @@ function move_block($block_from, $block_to, $banner_id) {
 	#load block_from
 	$sql = "SELECT * from blocks where block_id='$block_from' AND banner_id='$banner_id' ";
 	//echo "$sql<br>";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$source_block = mysqli_fetch_array($result);
 
 
@@ -2109,13 +2115,13 @@ function move_block($block_from, $block_to, $banner_id) {
 	global $f2;
 	$f2->debug("Moved Block - ".$sql);
 
-	mysqli_query ($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	# delete 'from' block
 
 	$sql = "DELETE from blocks WHERE block_id='".$block_from."' AND banner_id='".$banner_id."' ";
 //echo "<p>$sql</p>";
-	mysqli_query ($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 	$f2->debug("Deleted block_from - ".$sql);
 
@@ -2123,7 +2129,7 @@ function move_block($block_from, $block_to, $banner_id) {
 
 	$sql = "SELECT * from orders WHERE order_id='".$source_block['order_id']."' AND banner_id='$banner_id' ";
 	//echo "$sql<br>";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($result);
 	$blocks = array();
 	$new_blocks = array();
@@ -2139,7 +2145,7 @@ function move_block($block_from, $block_to, $banner_id) {
 
 	$sql = "UPDATE orders set blocks='".implode(',', $new_blocks)."' WHERE order_id='".$source_block['order_id']."' ";
 	# update the customer's order
-	mysqli_query($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 	$f2->debug("Updated order - ".$sql);
 
@@ -2155,7 +2161,7 @@ function move_block($block_from, $block_to, $banner_id) {
 ######################################################
 
 function move_order($block_from, $block_to, $banner_id) {
-
+	
 	//move_block($block_from, $block_to, $banner_id);
 
 	// get the block_to x,y
@@ -2180,12 +2186,12 @@ function move_order($block_from, $block_to, $banner_id) {
 
 	$sql = "SELECT * from blocks where block_id='$block_from' AND banner_id='$banner_id' ";
 	//echo "$sql<br>";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$source_block = mysqli_fetch_array($result);
 
 	$sql = "SELECT * from blocks WHERE order_id='".$source_block['order_id']."' AND banner_id='$banner_id' ";
 	//echo "$sql<br>";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	$grid_width = G_WIDTH*BLK_WIDTH;
 
@@ -2253,11 +2259,11 @@ function get_required_size($x, $y) {
 ######################################################
 # If $user_id is null then return for all banners
 function get_clicks_for_today($BID, $user_id=0) {
-
+	
 	$date = gmDate(Y)."-".gmDate(m)."-".gmDate(d);
 	
 	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID' AND `date`='$date' GROUP BY banner_id";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	return $row['clk'];
@@ -2268,9 +2274,9 @@ function get_clicks_for_today($BID, $user_id=0) {
 #######################################################
 # If $BID is null then return for all banners
 function get_clicks_for_banner($BID='') {
-
+	
 	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID'  GROUP BY banner_id";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	return $row['clk'];
@@ -2287,9 +2293,9 @@ then check how many orders the user had.
 
 function can_user_order($b_row, $user_id, $package_id=0) {
 	// check rank
-
+	
 	$sql = "select Rank from users where ID='".$user_id."'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);
 
 	if ($u_row['Rank']=='2') {
@@ -2317,7 +2323,7 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 
 			$sql = "SELECT order_id FROM orders where `banner_id`='".$b_row['banner_id']."' and `status` <> 'deleted' and `status` <> 'new' AND user_id='".$user_id."'";
 			
-			$result = mysqli_query($sql) or die(mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 			$count = mysqli_num_rows($result);
 			if ($count >= $b_row['max_orders']) {
 				return false;
@@ -2337,14 +2343,14 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 //////
 
 function get_blocks_min_max($block_id, $banner_id) {
-
+	
 	$sql = "SELECT * FROM blocks where block_id='".$block_id."' and banner_id='".$banner_id."' ";
 
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	$sql = "select * from blocks where order_id='".$row['order_id']."' ";
-	$result3 = mysqli_query($sql) or die(mysqli_error());
+	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	//echo $sql;
 
@@ -2612,8 +2618,9 @@ function saveImage($field_id) {
 ###########################################################
 
 function deleteImage($table_name, $object_name, $object_id, $field_id) {
+	
    $sql = "SELECT `$field_id` FROM `$table_name` WHERE `$object_name`='$object_id'";
-   $result = mysqli_query($sql) or die (mysqli_error().$sql);
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
    $row = mysqli_fetch_array ($result, MYSQLI_ASSOC);
    if ($row[$field_id] != '') {
 	  // delete the original
@@ -2664,8 +2671,9 @@ function saveFile($field_id) {
 #####################################################################
 
 function deleteFile($table_name, $object_name, $object_id, $field_id) {
+	
    $sql = "SELECT `$field_id` FROM `$table_name` WHERE `$object_name`='$object_id'";
-   $result = mysqli_query($sql) or die (mysqli_error());
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
    $row = mysqli_fetch_array ($result, MYSQLI_ASSOC);
    if ($row[$field_id] != '') {
 	  // delete the original
@@ -2741,9 +2749,10 @@ function get_tmp_img_name ($session_id='') {
 ////////////////////////////
 
 function update_temp_order_timestamp() {
+	
 	$now = (gmdate("Y-m-d H:i:s")); 
 	$sql = "UPDATE temp_orders SET order_date='$now' WHERE session_id='".addslashes(session_id())."' ";
-	mysqli_query($sql);
+	mysqli_query($GLOBALS['connection'], $sql);
 
 }
 
@@ -2986,10 +2995,10 @@ function truncate_html_str ($s, $MAX_LENGTH, &$trunc_str_len) {
 
 // assumming that load_banner_constants($_REQUEST['BID']); was called...
 function get_pixel_image_size($order_id) {
-
+	
 	$sql = "SELECT * FROM blocks WHERE order_id='$order_id' ";
 
-	$result3 = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	
 //echo $sql;
 	// find high x, y & low x, y

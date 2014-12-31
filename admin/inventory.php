@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -72,7 +73,7 @@ if ($_REQUEST['reset_image']!='') {
 
 	$sql = "UPDATE banners SET `".$_REQUEST['reset_image']."`='".$default."' WHERE banner_id='".$_REQUEST['banner_id']."' ";
 
-	mysqli_query ($sql);
+	mysqli_query($GLOBALS['connection'], $sql);
 
 	//echo $sql;
 
@@ -227,26 +228,26 @@ if ($_REQUEST['action'] == 'delete') {
 
 		$sql = "SELECT * FROM orders where status <> 'deleted' and banner_id=".$_REQUEST['banner_id'];
 		//echo $sql;
-		$res = mysqli_query($sql) or die (mysqli_error());
+		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($res)==0) {
 
 			$sql = "DELETE FROM blocks WHERE banner_id='".$_REQUEST['banner_id']."' ";
-			mysqli_query($sql) or die(mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 			$sql = "DELETE FROM prices WHERE banner_id='".$_REQUEST['banner_id']."' ";
-			mysqli_query($sql) or die(mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 			$sql = "DELETE FROM banners WHERE banner_id='".$_REQUEST['banner_id']."' ";
-			mysqli_query($sql) or die(mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 			// DELETE ADS
 			$sql = "select * FROM ads where banner_id='".$_REQUEST['banner_id']."' ";
-			$res2 = mysqli_query($sql) or die (mysqli_error());
+			$res2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			while ($row2=mysqli_fetch_array($res2)) {
 
 				delete_ads_files ($row2['ad_id']);
 				$sql = "DELETE from ads where ad_id='".$row2['ad_id']."' ";
-				mysqli_query ($sql) or die (mysqli_error().$sql);
+				mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			}
 
 			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$_REQUEST['banner_id'].".jpg");
@@ -301,7 +302,7 @@ function get_banner_image_sql_values($BID) {
 	if ($BID) {
 		$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
 		//echo "<p>$sql</p>";
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 		//print_r($row);
 	}
@@ -333,11 +334,11 @@ if ($_REQUEST['submit']!='') {
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		$sql = "REPLACE INTO `banners` ( `banner_id` , `grid_width` , `grid_height` , `days_expire` , `price_per_block`, `name`, `currency`, `max_orders`, `block_width`, `block_height`, `max_blocks`, `min_blocks`, `date_updated`, `bgcolor`, `auto_publish`, `auto_approve` $image_sql_fields ) VALUES ('".$_REQUEST['banner_id']."', '".$_REQUEST['grid_width']."', '".$_REQUEST['grid_height']."', '".$_REQUEST['days_expire']."', '".$_REQUEST['price_per_block']."', '".$_REQUEST['name']."', '".$_REQUEST['currency']."', '".$_REQUEST['max_orders']."', '".$_REQUEST['block_width']."', '".$_REQUEST['block_height']."', '".$_REQUEST['max_blocks']."', '".$_REQUEST['min_blocks']."', '".$now."', '".$_REQUEST['bgcolor']."', '".$_REQUEST['auto_publish']."', '".$_REQUEST['auto_approve']."' $image_sql_values);";
-		mysqli_query ($sql) or die (mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 		// TODO: Add individual order expiry dates
 		$sql = "UPDATE `orders` SET days_expire=".(int)$_REQUEST['days_expire']." WHERE banner_id=".(int)$_REQUEST['banner_id'];
-		mysqli_query ($sql) or die (mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		
 		$_REQUEST['new'] ='';
 	//	$_REQUEST['action'] = '';
@@ -371,7 +372,7 @@ if ($_REQUEST['action']=='edit') {
 	echo "<h4>Edit Grid:</h4>";
 
 	$sql = "SELECT * FROM banners WHERE `banner_id`='".$_REQUEST['banner_id']."' ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	$_REQUEST['banner_id'] = $row['banner_id'];
 	$_REQUEST['grid_width'] = $row['grid_width'];
@@ -438,7 +439,7 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 <?php
 				
 				$sql = "SELECT * FROM blocks where banner_id=".$row[banner_id]." AND status <> 'nfs' limit 1 ";
-				$b_res = mysqli_query($sql);
+				$b_res = mysqli_query($GLOBALS['connection'], $sql);
 				
 				if (($row[banner_id]!='') && (mysqli_num_rows($b_res)>0)) {
 					$locked = true;
@@ -541,7 +542,7 @@ function validate_block_size($image_name) {
 	$block_h = $_REQUEST['block_height'];
 
 	$sql = "SELECT * FROM banners where banner_id=$BID ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$b_row = mysqli_fetch_array($result);
 
 	if ($b_row[$image_name] == '') { // no data, assume that the default image will be loaded..
@@ -698,7 +699,7 @@ function render_offer ($price, $currency, $max_orders, $days_expire, $package_id
 				<td><b><font size="2">Total Clicks</b></font></td>
 			</tr>
 <?php
-			$result = mysqli_query("select * FROM banners") or die (mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], "select * FROM banners") or die (mysqli_error($GLOBALS['connection']));
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 				?>

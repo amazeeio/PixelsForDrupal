@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -50,13 +51,13 @@ if ($_REQUEST['action']=='refund') {
 
 	$sql = "SELECT * from transactions, orders, users where transactions.order_id=orders.order_id AND orders.user_id=users.ID and transactions.transaction_id=$t_id";
 
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	
 	if ($row[status]!='completed') {
 		// check that there's no other refund...
 		$sql = "SELECT * FROM transactions where txn_id='".$row['txn_id']."' AND type='CREDIT' ";
-		$r = mysqli_query($sql) or die(mysqli_error());
+		$r = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($r)==0) {
 			// do the refund
 			cancel_order($row[order_id]);
@@ -110,7 +111,7 @@ The transaction log helps you manage the money transfers. Note: Refunds are proc
 // calculate the balance
 $sql = "SELECT SUM(amount) as mysum, type, currency from transactions group by type, currency";
 
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 while ($row=mysqli_fetch_array($result)) {
 
@@ -312,7 +313,7 @@ Balance: <?php echo $bal; ?><br>
 		$where_date = " (`date` >= '$from_date' AND `date` <= '$to_date' ) ";
 
 $sql = "SELECT * from transactions, orders, users where $where_date AND transactions.order_id=orders.order_id AND orders.user_id=users.ID order by transactions.date desc ";
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 //echo $sql;
 while ($row=mysqli_fetch_array($result)) {
 

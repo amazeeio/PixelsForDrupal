@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 require_once ("../include/ads.inc.php");
 
 if ($f2->bid($_REQUEST['BID'])!='') {

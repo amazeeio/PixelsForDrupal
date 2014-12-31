@@ -31,12 +31,13 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
 
 $sql ="SELECT * FROM mail_queue where mail_id=".$_REQUEST[mail_id];
-$result = mysqli_query($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 ?>
 

@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 include ("login_functions.php");
 
 process_login();
@@ -39,15 +40,15 @@ process_login();
 require ("header.php");
 
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='sold' ";
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $pixels = mysqli_num_rows($result) * 100;
 
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='ordered' ";
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $ordered = mysqli_num_rows($result) * 100;
 
 $sql = "select * from users where ID='".$_SESSION['MDS_ID']."' ";
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $user_row = mysqli_fetch_array($result);
 
 ?>

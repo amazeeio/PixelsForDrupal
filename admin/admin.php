@@ -33,6 +33,7 @@
 define ('MAIN_PHP', '1');
 
 require("../config.php");
+
 require ('admin_common.php');
 
 echo $f2->get_doc();

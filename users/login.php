@@ -32,6 +32,7 @@
 session_start();
 require "../config.php";
 
+
 $target_page = $_REQUEST['target_page'];
 
 if ($target_page=='') $target_page='select.php';

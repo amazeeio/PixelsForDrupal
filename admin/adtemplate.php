@@ -31,6 +31,7 @@
  */
  session_start();
 require ('../config.php');
+
 require ("admin_common.php");
 require_once ("../include/ads.inc.php");
 

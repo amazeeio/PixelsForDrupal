@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 ?>
@@ -69,7 +70,7 @@ $BID = $f2->bid($_REQUEST['BID']);
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -160,7 +161,7 @@ if ($BID!='') {
 						}
 						$sql = "SELECT * FROM prices where row_from <= ".$_REQUEST['row_to']." AND row_to >=".$_REQUEST['row_from']." AND col_from <= ".$_REQUEST['col_to']." AND col_to >=".$_REQUEST['col_from']." $and_price AND banner_id=$BID";
 						//echo "$sql<br>";
-						$result = mysqli_query ($sql) or die (mysqli_error());
+						$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 						if (mysqli_num_rows($result)>0) {
 							$error .= "<b> - Cannot create: Price zones cannot overlap other price zones!</b><br>";
 
@@ -203,7 +204,7 @@ if ($BID!='') {
 	if ($_REQUEST['action'] == 'delete') {
 		
 		$sql = "DELETE FROM prices WHERE price_id='".$_REQUEST['price_id']."' ";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		
 	}
 
@@ -233,7 +234,7 @@ if ($BID!='') {
 
 			//echo $sql;
 
-			mysqli_query ($sql) or die (mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 			$_REQUEST['new'] ='';
 			$_REQUEST['action'] = '';
@@ -249,7 +250,7 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysqli_query("select * FROM prices  where banner_id=$BID") or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], "select * FROM prices  where banner_id=$BID") or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)>0) {
 	?>
@@ -318,7 +319,7 @@ if ($BID!='') {
 		echo "<h4>Edit Price Zone:</h4>";
 
 		$sql = "SELECT * FROM prices WHERE `price_id`='".$_REQUEST['price_id']."' ";
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 
 		if ($error=='') {

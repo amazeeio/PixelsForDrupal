@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 include ("login_functions.php");
 
 
@@ -58,7 +59,7 @@ if ($_REQUEST['email']!='') {
 	
 
 	$sql = "SELECT * FROM users where Email='".$_REQUEST['email']."' ";
-	$result = mysqli_query($sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql);
 
 
 	if ($row = mysqli_fetch_array($result)) {
@@ -68,7 +69,7 @@ if ($_REQUEST['email']!='') {
 		if ($_REQUEST['code']==$code) {
 
 			$sql = "UPDATE users SET Validated=1 WHERE Email='".$_REQUEST['email']."'";
-			mysqli_query($sql);
+			mysqli_query($GLOBALS['connection'], $sql);
 
 			echo "<p>&nbsp;</p><center><h3><font color='green'>".$label[advertiser_valid_complete]."</font></h3></center>";
 

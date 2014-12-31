@@ -32,6 +32,7 @@
 
 ini_set('max_execution_time', 500);
 require("../config.php");
+
 require ('admin_common.php');
 
 
@@ -43,7 +44,7 @@ if ($_REQUEST['process']=='1') {
 	if (($_REQUEST['banner_list'][0])=='all') {
 		// process all
 		$sql = "select * from banners ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);	
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);	
 		while ($row = mysqli_fetch_array($result)) {
 			echo process_image($row['banner_id']);
 			publish_image($row['banner_id']);
@@ -125,7 +126,7 @@ if (!is_writable($file_path.$BANNER_DIR)) {
 <?php
 
 $sql = "SELECT * FROM orders where approved='N' and status='completed' ";
-$r = mysqli_query($sql) or die(mysqli_error());
+$r = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $result = mysqli_fetch_array($r);
 $c = mysqli_num_rows($r);
 
@@ -145,7 +146,7 @@ Here you can process the images. This is where the script gets all the user's ap
 <?php
 
 $sql = "Select * from banners";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 
 while ($row=mysqli_fetch_array($res)) {
 	echo '<option value="'.$row['banner_id'].'">#'.$row['banner_id'].' - '.$row["name"].'</option>'."\n";

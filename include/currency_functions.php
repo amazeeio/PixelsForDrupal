@@ -33,7 +33,7 @@
 function currency_option_list ($selected) {
 
 	$sql = "SELECT * FROM currencies ORDER by name ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	while ($row = mysqli_fetch_array($result)) {
 		if ($row['code']==$selected) {
 			$sel = " selected ";
@@ -51,7 +51,7 @@ function currency_option_list ($selected) {
 function get_default_currency() {
 
 	$sql = "SELECT code from currencies WHERE is_default='Y' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$ret = $row['code'];
 	if ($ret=='') {
@@ -67,7 +67,7 @@ function get_default_currency() {
 function get_currency_rate($code) {
 
 	$sql = "SELECT rate from currencies WHERE code='$code' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	return $row['rate'];
 
@@ -89,12 +89,12 @@ function convert_to_currency($amount, $from_currency, $to_currency) {
 	//echo "$amount, $from_currency, $to_currency";
 
 	$sql = "SELECT rate from currencies WHERE code='$from_currency' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$from_rate = $row['rate'];
 
 	$sql = "SELECT rate, decimal_places from currencies WHERE code='$to_currency' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$to_rate = $row['rate'];
 	$to_decimal_places = $row['decimal_places'];
@@ -125,14 +125,14 @@ function convert_to_default_currency($cur_code, $amount) {
 
 	if ($from_rate == '') {
 		$sql = "SELECT * from currencies WHERE code='$cur_code' ";
-		$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		$from_rate = $row['rate'];
 	}
 	
 
 	$sql = "SELECT * from currencies WHERE is_default='Y' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$to_rate = $row['rate'];
 	$to_decimal_places = $row['decimal_places'];
@@ -163,7 +163,7 @@ function convert_to_default_currency_formatted($cur_code, $amount) {
 	// load default currency
 
 	$sql = "SELECT * from currencies WHERE is_default='Y' ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	$to_rate = $row['rate'];
 	$to_code = $row['code'];
@@ -179,7 +179,7 @@ function convert_to_default_currency_formatted($cur_code, $amount) {
 			//load from rate
 
 			$sql = "SELECT * from currencies WHERE code='$cur_code' ";
-			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$row = mysqli_fetch_array($result);
 			$from_rate = $row['rate'];
 		}
@@ -205,7 +205,7 @@ function format_currency($amount, $cur_code) {
 
 	}
 	$sql = "SELECT * FROM currencies WHERE code='$cur_code' ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//format_currency($row['price'], $row['currency_code']);
 	$row = mysqli_fetch_array($result);
 	if ($show_code) {

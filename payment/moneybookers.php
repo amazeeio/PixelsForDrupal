@@ -31,6 +31,7 @@
  */
 require_once "../config.php";
 
+
 $_PAYMENT_OBJECTS['moneybookers'] = new moneybookers;
 
 define (IPN_LOGGING, 'Y');
@@ -85,7 +86,7 @@ if ($_POST['merchant_id']!='') {
 	$working_sig = strtoupper (md5($merchant_id.$transaction_id.$secret.$mb_amount.$mb_currency.$status));
 
 	$sql = "SELECT * FROM orders where order_id='".$_POST['transaction_id']."'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 
 	if ($working_sig == $md5sig) {
@@ -146,7 +147,7 @@ class moneybookers {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='MONEYBOOKERS_ENABLED' OR `key`='MONEYBOOKERS_CURRENCY' OR `key`='MONEYBOOKERS_EMAIL' OR `key`='MONEYBOOKERS_STATUS_URL' OR `key`='MONEYBOOKERS_RETURN_URL' OR `key`='MONEYBOOKERS_CANCEL_URL' OR `key`='MONEYBOOKERS_SECRET_WORD' OR `key`='MONEYBOOKERS_LANGUAGE'";
-			$result = mysqli_query($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			while ($row=mysqli_fetch_array($result)) {
 
@@ -181,30 +182,30 @@ class moneybookers {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_ENABLED', 'N')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_CURRENCY', 'USD')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_LANGUAGE', 'EN')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_EMAIL', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_STATUS_URL', 'http://$host".$http_url."/payment/moneybookers.php"."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_RETURN_URL', 'http://$host".$http_url."/users/index.php"."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_CANCEL_URL', 'http://$host".$http_url."/users/orders.php"."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_SECRET_WORD', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 		
 	}
@@ -215,28 +216,28 @@ class moneybookers {
 
 	
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_ENABLED'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_CURRENCY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_EMAIL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_LANGUAGE'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_STATUS_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_RETURN_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_CANCEL_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='MONEYBOOKERS_SECRET_WORD'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		
 		
@@ -247,7 +248,7 @@ class moneybookers {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 		
 
@@ -391,19 +392,19 @@ class moneybookers {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_EMAIL', '".$_REQUEST['moneybookers_email']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_LANGUAGE', '".$_REQUEST['moneybookers_language']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_CURRENCY', '".$_REQUEST['moneybookers_currency']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_STATUS_URL', '".$_REQUEST['moneybookers_status_url']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_RETURN_URL', '".$_REQUEST['moneybookers_return_url']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_CANCEL_URL', '".$_REQUEST['moneybookers_cancel_url']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('MONEYBOOKERS_SECRET_WORD', '".$_REQUEST['moneybookers_secret_word']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 
 	}
 
@@ -411,7 +412,7 @@ class moneybookers {
 	function is_enabled() {
 
 		$sql = "SELECT val from config where `key`='MONEYBOOKERS_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
@@ -427,7 +428,7 @@ class moneybookers {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='MONEYBOOKERS_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//$row = mysqli_fetch_array($result);
 
 		if (mysqli_num_rows($result)>0) {
@@ -443,7 +444,7 @@ class moneybookers {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='MONEYBOOKERS_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -451,7 +452,7 @@ class moneybookers {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='MONEYBOOKERS_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 

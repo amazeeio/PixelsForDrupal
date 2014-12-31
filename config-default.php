@@ -30,7 +30,7 @@
  *
  */
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(0);
 
 #########################################################################
 # CONFIGURATION
@@ -154,18 +154,10 @@ if (defined('MEMORY_LIMIT')) {
 	ini_set('memory_limit', '64M');
 }
 
-$dbhost = MYSQL_HOST;
-$dbusername = MYSQL_USER;
-$dbpassword = MYSQL_PASS;
-$database_name = MYSQL_DB;
+define('ERROR_REPORTING', 0);
 
-if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
-	if(!empty($dbhost) && !empty($dbusername) && !empty($database_name)) {
-		$connection = mysqli_connect("$dbhost","$dbusername", "$dbpassword") or die (mysqli_error());
-		$db = mysqli_select_db("$database_name", $connection) or die (mysqli_error());
-		mysqli_set_charset('utf8',$connection) or die (mysqli_error());
-	}
-}
+	// database connection
+	require_once(dirname(__FILE__).'/include/database.php');
 
 	// load HTMLPurifier
     require_once dirname(__FILE__).'/library/HTMLPurifier.auto.php';

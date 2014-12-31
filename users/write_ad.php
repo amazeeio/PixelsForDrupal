@@ -32,13 +32,14 @@
 
 session_start();
 include ("../config.php");
+
 require_once ("../include/ads.inc.php");
 
 $BID = $f2->bid($_REQUEST['BID']);
 
 $sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
 
-$order_result = mysqli_query ($sql) or die(mysqli_error());
+$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
@@ -61,7 +62,7 @@ update_temp_order_timestamp();
 $has_packages = banner_get_packages($BID);
 
 //$sql = "select * from banners where banner_id='$BID'";
-//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$b_row = mysqli_fetch_array($result);
 
 
@@ -95,7 +96,7 @@ if ($_REQUEST['save'] != "" ) {
 
 		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".addslashes(session_id())."' ";
 		//echo $sql;
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 
 		$prams = load_ad_values ($ad_id);
@@ -112,7 +113,7 @@ if ($_REQUEST['save'] != "" ) {
 	// get the ad_id form the temp_orders table..
 
 	$sql = "SELECT ad_id FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	$ad_id = $row['ad_id'];
 	//echo "adid is: ".$ad_id;

@@ -32,6 +32,7 @@
 
 session_start();
 require_once ('../config.php');
+
 require ("admin_common.php");
 require_once ('../include/category.inc.php');
 
@@ -157,12 +158,12 @@ if ($action=='edit') {
 	}
 
 	$sql = "update categories set allow_records='$allow_records', list_order='".$_REQUEST['list_order']."' Where category_id='$category_id' ";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		
 	// update language
 
 	$sql = "REPLACE INTO `cat_name_translations` (`category_id`, `lang`, `category_name`) VALUES (".$category_id.", '".$_SESSION['MDS_LANG']."', '".$new_name."')";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	if (($_REQUEST['save']!='') && (CACHE_ENABLED=='YES')) {
 		  $CACHE_ENABLED = 'NO';

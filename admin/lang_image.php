@@ -31,11 +31,12 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 
 $sql = "SELECT * FROM lang where lang_code='".$_REQUEST['code']."' ";
-$result  = mysqli_query ($sql) or die(mysqli_error());
+$result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 

@@ -49,8 +49,6 @@ if ($CACHE_ENABLED=='YES') {
 	$ad_tag_to_field_id = ad_tag_to_field_id_init();
 }
 
-
-
 #####################################
 
 function ad_tag_to_field_id_init () {
@@ -65,7 +63,7 @@ function ad_tag_to_field_id_init () {
 
 	//$sql = "SELECT *, t2.field_label AS NAME FROM `form_fields` as t1, form_field_translations as t2 where t1.field_id = t2.field_id AND t2.lang='".$_SESSION['MDS_LANG']."' AND form_id=1 ORDER BY list_sort_order ";
 	$sql = "SELECT * FROM `form_fields`, form_field_translations where form_fields.field_id = form_field_translations.field_id AND form_field_translations.lang='".$_SESSION['MDS_LANG']."' AND form_id=1 ORDER BY list_sort_order ";
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	# do a query for each field
 	while ($fields = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -74,7 +72,6 @@ function ad_tag_to_field_id_init () {
 		$tag_to_field_id[$fields['template_tag']]['field_type'] = $fields['field_type'];
 		$tag_to_field_id[$fields['template_tag']]['field_label'] = $fields['field_label'];
 	}
-
 
 	$tag_to_field_id["ORDER_ID"]['field_id'] = 'order_id';
 	$tag_to_field_id["ORDER_ID"]['field_label'] = 'Order ID';
@@ -92,12 +89,7 @@ function ad_tag_to_field_id_init () {
 	$tag_to_field_id["DATE"]['field_id'] = 'ad_date';
 	$tag_to_field_id["DATE"]['field_label'] = 'Date';
 
-
-
-
 	return $tag_to_field_id;
-
-
 
 }
 
@@ -113,7 +105,7 @@ function load_ad_values ($ad_id) {
 	$sql = "SELECT * FROM `ads` WHERE ad_id='$ad_id'   ";
 	
 
-	$result = mysqli_query($sql) or die ($sql. mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ($sql. mysqli_error($GLOBALS['connection']));
 
 	
 
@@ -126,7 +118,7 @@ function load_ad_values ($ad_id) {
 		
 
 		$sql = "SELECT * FROM form_fields WHERE form_id=1 AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' ";
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		while ($fields = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 			$prams[$fields['field_id']] =  $row[$fields['field_id']];
@@ -153,13 +145,9 @@ function load_ad_values ($ad_id) {
 		return false;
 	}
 
-	
-
-
 }
 
 #########################################################
-
 
 function assign_ad_template($prams) {
 
@@ -169,7 +157,7 @@ function assign_ad_template($prams) {
 
 	$sql = "SELECT * FROM form_fields WHERE form_id='1' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' ";
 		//echo $sql;
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		
 		if ($row['field_type']=='IMAGE') {
@@ -208,7 +196,7 @@ function display_ad_form ($form_id, $mode, $prams) {
 
 		$sql = "SELECT * FROM form_fields WHERE form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' ";
 		//echo $sql;
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 			//$prams[$row[field_id]] = $_REQUEST[$row[field_id]];
@@ -357,7 +345,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 
 	//echo "[".$sql."]";
 
-	$result = mysqli_query($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	############
 	# get the count
 	$count = mysqli_num_rows($result);
@@ -553,7 +541,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 function delete_ads_files ($ad_id) {
 
 	$sql = "select * from form_fields where form_id=1 ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	while ($row=mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -585,7 +573,7 @@ function delete_ad ($ad_id) {
   
 
    $sql = "delete FROM `ads` WHERE `ad_id`='".$ad_id."' ";
-   $result = mysqli_query($sql) or die (mysqli_error().$sql);
+   $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
 }
@@ -602,12 +590,12 @@ function search_category_tree_for_ads() {
 	}
 
 	$sql = "select search_set from categories where category_id='$cat_id' ";
-	$result2 = mysqli_query ($sql) or die (mysqli_error());
+	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result2);
 	$search_set = $row[search_set];
 
 	$sql = "select * from form_fields where field_type='CATEGORY' AND form_id='1'";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$i=0;
 
 	if (mysqli_num_rows($result) >0) {
@@ -652,7 +640,7 @@ function search_category_for_ads() {
 	}
 
 	$sql = "select * from form_fields where field_type='CATEGORY' AND form_id='1'";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$i=0;
 
 	if (mysqli_num_rows($result) >0) {
@@ -674,7 +662,7 @@ function search_category_for_ads() {
 	return " AND ($where_cat) ";
 	//$sql ="Select * from posts_table where $where_cat ";
 	//echo $sql."<br/>";
-	//$result2 = mysqli_query ($sql) or die (mysqli_error());
+	//$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 ##################
@@ -682,7 +670,7 @@ function search_category_for_ads() {
 function generate_ad_id () {
 
    $query ="SELECT max(`ad_id`) FROM `ads`";
-   $result = mysqli_query($query) or die(mysqli_error());
+   $result = mysqli_query($GLOBALS['connection'], $query) or die(mysqli_error($GLOBALS['connection']));
    $row = mysqli_fetch_row($result);
    $row[0]++;
    return $row[0];
@@ -694,7 +682,7 @@ function generate_ad_id () {
 function temp_ad_exists($sid) {
 
 	$query ="SELECT ad_id FROM `ads` where user_id='$sid' ";
-	$result = mysqli_query($query) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $query) or die(mysqli_error($GLOBALS['connection']));
 	// $row = mysqli_fetch_row($result);
 	return mysqli_num_rows($result);
 
@@ -728,11 +716,11 @@ function insert_ad_data() {
 
 		//$extra_columns = get_sql_insert_fields(1);
 		$extra_values = get_sql_insert_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
-		$values = $ad_id . ", '" . $user_id . "', '" . mysqli_real_escape_string($now) . "', " . $order_id . ", $banner_id" . $extra_values;
+		$values = $ad_id . ", '" . $user_id . "', '" . mysqli_real_escape_string($GLOBALS['connection'], $now) . "', " . $order_id . ", $banner_id" . $extra_values;
 
 /*$sql = "INSERT INTO `ads` (`ad_id`, `user_id`, `ad_date`, `order_id`, `banner_id` " . $extra_columns .") " .
 		"VALUES (" . $values . ") " .
-		"ON DUPLICATE KEY UPDATE `ad_id`='" . $ad_id . "', `user_id` = '" . $user_id . "', `ad_date` = '" . mysqli_real_escape_string($ad_date) . "', `order_id` = " . parseNull($order_id) . ", `banner_id` = '" . $banner_id ."'". get_sql_update_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
+		"ON DUPLICATE KEY UPDATE `ad_id`='" . $ad_id . "', `user_id` = '" . $user_id . "', `ad_date` = '" . mysqli_real_escape_string($GLOBALS['connection'], $ad_date) . "', `order_id` = " . parseNull($order_id) . ", `banner_id` = '" . $banner_id ."'". get_sql_update_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
 */
 
 		$sql = "REPLACE INTO ads VALUES (" . $values . ");";
@@ -747,7 +735,7 @@ function insert_ad_data() {
 				if ($_REQUEST['user_id']!=session_id()) return false;
 			} else { // user is logged in
 				$sql = "select user_id from `ads` WHERE ad_id='".intval($_REQUEST['ad_id'])."'";
-				$result = mysqli_query ($sql) or die(mysqli_error());
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 				$row = @mysqli_fetch_array($result);
 				if ($_SESSION['MDS_ID']!==$row['user_id']) {
 					
@@ -761,7 +749,7 @@ function insert_ad_data() {
 		$f2->write_log($sql);
 	}
 	
-	mysqli_query($sql) or die("<br />SQL:[$sql]<br />ERROR:[".mysqli_error()."]<br />");
+	mysqli_query($GLOBALS['connection'], $sql) or die("<br />SQL:[$sql]<br />ERROR:[".mysqli_error($GLOBALS['connection'])."]<br />");
 
 	return $ad_id;
 }
@@ -781,7 +769,7 @@ function update_blocks_with_ad($ad_id, $user_id) {
 	
 	if ($prams['order_id']>0) {
 		$sql = "UPDATE blocks SET alt_text='".addslashes(get_template_value('ALT_TEXT', 1))."', url='".addslashes(get_template_value('URL', 1))."'  WHERE order_id='".$prams['order_id']."' AND user_id='".$user_id."' ";
-		mysqli_query($sql) or die(mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$f2->debug("Updated blocks with ad URL, ALT_TEXT", $sql);
 	}
 

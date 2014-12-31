@@ -31,6 +31,7 @@
  */
 session_start();
 require ('../config.php');
+
 require ('../include/code_functions.php');
 
 require ("admin_common.php");
@@ -71,7 +72,7 @@ body {
 function list_code_groups ($form_id) {
 
 	$sql = "select * FROM `form_fields` WHERE form_id='$form_id' AND (field_type='CHECK' OR field_type='RADIO' OR field_type='SELECT' OR field_type='MSELECT' ) ";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//echo $sql;
 	if (mysqli_num_rows($result)==0) {
 		echo " (0 codes)";

@@ -74,14 +74,15 @@ The output is saved into a file.
 */
 
 function process_map($BID, $map_file='') {
+	
 
 	if (!is_numeric($BID)) die();
 
 	$sql = "UPDATE orders SET published='N' where `status`='expired' ";
-	mysqli_query($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$b_row = mysqli_fetch_array($result);
 
 	if (!$b_row['block_width']) { $b_row['block_width'] = 10;}
@@ -107,7 +108,7 @@ function process_map($BID, $map_file='') {
                       AND (image_data > '')
                       AND (image_data = image_data)
                  GROUP BY order_id";
-  $result = mysqli_query ($sql) or die (mysqli_error());
+  $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
   
   while ($row = mysqli_fetch_array($result)) {
 
@@ -128,7 +129,7 @@ function process_map($BID, $map_file='') {
 							AND (image_data = image_data)
 							AND (order_id = ".$row['order_id'].")
 					   GROUP BY y";
-	  $res_i = mysqli_query($sql_i) or die(mysqli_error());
+	  $res_i = mysqli_query($GLOBALS['connection'], $sql_i) or die(mysqli_error($GLOBALS['connection']));
 	  while ($row_i = mysqli_fetch_array($res_i)) {
 
 		// If the min/max measure does not equal number of boxes, then we have to render this row's boxes individually
@@ -145,7 +146,7 @@ function process_map($BID, $map_file='') {
 					   AND (image_data = image_data)
 					   AND (order_id = ".$row['order_id'].")
 					   AND (y = ".$row_i['y1'].")";
-		  $res_r = mysqli_query($sql_r);
+		  $res_r = mysqli_query($GLOBALS['connection'], $sql_r);
 		  while ($row_r = mysqli_fetch_array($res_r)) {
 			// render single block RECT
 			render_map_area($fh,$row_r, $b_row);
@@ -196,6 +197,7 @@ The structure of output:
 */
 
 function show_map($BID = 1) {
+	
 
 	if (!is_numeric($BID)) die();
 
@@ -212,7 +214,7 @@ function show_map($BID = 1) {
 	$BANNER_PATH .= "/".$BANNER_DIR;
 
 	$sql = "SELECT grid_width,grid_height, block_width, block_height, bgcolor, time_stamp FROM banners WHERE (banner_id = '$BID')";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	if (!$b_row['block_width']) { $b_row['block_width'] = 10;}

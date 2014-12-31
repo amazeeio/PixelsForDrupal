@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 ?>
@@ -69,7 +70,7 @@ Packages: Here you can add different price / expiry / max orders combinations to
 <hr>
 <?php
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -155,14 +156,14 @@ if ($BID!='') {
 	if ($_REQUEST['action'] == 'delete') {
 
 		$sql = "SELECT * FROM orders where package_id='".$_REQUEST['package_id']."'";
-		$result = mysqli_query ($sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql);
 		if ((mysqli_num_rows($result)>0) && ($_REQUEST['really']=='')) {
 			echo "<font color='red'>Cannot delete package: This package is a part of another order</font> (<a href='packs.php?BID=$BID&package_id=".$_REQUEST['package_id']."&action=delete&really=yes'>Click here to delete anyway</a>)";
 
 		} else {
 		
 			$sql = "DELETE FROM packages WHERE package_id='".$_REQUEST['package_id']."' ";
-			mysqli_query($sql) or die(mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		}
 		
 	}
@@ -172,15 +173,15 @@ if ($BID!='') {
 		global $BID;
 
 		$sql = "SELECT * FROM packages where is_default='Y' and banner_id=$BID ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		$old_default = $row['package_id'];
 
 		$sql = "UPDATE packages SET is_default='N' WHERE banner_id=$BID ";
 		
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "UPDATE packages SET is_default='Y' WHERE package_id='".$package_id."' AND banner_id=$BID";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 		if ($old_default == '') {
 
@@ -188,7 +189,7 @@ if ($BID!='') {
 			// in the 1.7.0 database, all orders must have packages
 
 			$sql = "UPDATE orders SET package_id='".$package_id."' WHERE package_id='' AND banner_id='".$BID."' ";
-			mysqli_query($sql) or die(mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 		}
@@ -225,7 +226,7 @@ if ($BID!='') {
 
 			//echo $sql;
 
-			mysqli_query ($sql) or die (mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 			$_REQUEST['new'] ='';
 			$_REQUEST['action'] = '';
@@ -234,7 +235,7 @@ if ($BID!='') {
 			// if no default package exists, set the last inserted banner to default
 
 			if (!get_default_package($BID)) {
-				set_to_default(mysqli_insert_id());
+				set_to_default(mysqli_insert_id($GLOBALS['connection']));
 			}
 
 
@@ -248,7 +249,7 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysqli_query("select * FROM packages  where banner_id=$BID") or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], "select * FROM packages  where banner_id=$BID") or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)>0) {
 	?>
@@ -307,7 +308,7 @@ if ($BID!='') {
 		echo "<h4>Edit Package:</h4>";
 
 		$sql = "SELECT * FROM packages WHERE `package_id`='".$_REQUEST['package_id']."' ";
-		$result = mysqli_query ($sql) or die (mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 
 		if ($error=='') {

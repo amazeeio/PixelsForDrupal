@@ -30,13 +30,14 @@
  *
  */
 require("../config.php");
+
 require('admin_common.php');
 
 require('../include/ads.inc.php');
 
 function validate_advertiser ($user_id) {
 	$sql = "UPDATE users set Validated='1' where ID=".$user_id;
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
@@ -49,13 +50,13 @@ function delete_advertiser($user_id) {
 
 	
 	$sql = "SELECT * FROM orders where status<> 'new' AND user_id=".$user_id;
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	//$row = mysqli_fetch_array($result);
 	if (mysqli_num_rows($result)>0) {
 		echo "<font color='red'>Error: Cannot delete because this user has some orders. (<a href='customers.php?delete_anyway=1&user_id=".$user_id."'>Click here to delete anyway</a>)<br></font>";
 	} else {
 		$sql = "DELETE FROM users where ID=".$user_id;
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 	
 }
@@ -68,22 +69,22 @@ if ($_REQUEST['action']=='delete') {
 if ($_REQUEST['delete_anyway']!='') {
 
 	$sql = "DELETE FROM orders where user_id=".$_REQUEST['user_id'];
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	$sql = "DELETE FROM blocks where user_id=".$_REQUEST['user_id'];
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	$sql = "DELETE FROM users where ID=".$_REQUEST['user_id'];
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	// DELETE ADS
 	$sql = "select * FROM ads where user_id='".$_REQUEST['user_id']."' ";
-	$res2 = mysqli_query($sql) or die (mysqli_error());
+	$res2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	while ($row2=mysqli_fetch_array($res2)) {
 
 		delete_ads_files ($row2['ad_id']);
 		$sql = "DELETE from ads where ad_id='".$row2['ad_id']."' ";
-		mysqli_query ($sql) or die (mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 
 	echo "<p>User deleted. Please remember to process the image if the user had some pixels. </p>";
@@ -320,7 +321,7 @@ if ($q_news != '') {
 }
 
 $sql = "SELECT * FROM users WHERE 1=1 $where_sql ORDER BY Validated ASC, SignupDate DESC ";
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 $count = mysqli_num_rows($result);
 $records_per_page = 40;
@@ -380,11 +381,11 @@ if ($count > $records_per_page) {
 	  $i++;
 
 	$sql = "SELECT SUM(quantity) as Pixels FROM orders where (status='completed' OR status='confirmed' OR status='pending') AND user_id=".$row['ID'];
-	$result2 = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result2);
 
 	$sql = "SELECT * FROM orders where user_id='".$row['ID']."' AND status <> 'new' ";
-	$result3 = mysqli_query ($sql) or die (mysqli_error());
+	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//$row = mysqli_fetch_array($result);
 	
 

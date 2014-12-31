@@ -37,6 +37,7 @@ define("MDSROOT", dirname(__FILE__));
 // include the config file
 include_once (MDSROOT . "/config.php");
 
+
 // include the header
 include_once (MDSROOT . "/html/header.php");
 
@@ -66,10 +67,10 @@ include_once (MDSROOT . "/html/header.php");
 require_once ("include/ads.inc.php");
 
 $sql = "SELECT *, MAX(order_date) as max_date, sum(quantity) AS pixels FROM orders where status='completed' AND approved='Y' AND published='Y' AND banner_id='$BID' GROUP BY user_id, banner_id order by pixels desc ";
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 while ($row=mysqli_fetch_array($result)) {
 	$q = "SELECT FirstName, LastName FROM users WHERE ID=" . $row['user_id'];
-	$q = mysqli_query($q) or die(mysqli_error());
+	$q = mysqli_query($GLOBALS['connection'], $q) or die(mysqli_error($GLOBALS['connection']));
 	$user = mysqli_fetch_row($q);
 ?>
 	<tr bgcolor="#ffffff" >
@@ -83,7 +84,7 @@ while ($row=mysqli_fetch_array($result)) {
 	<font face="arial" size="2"><?php
 		
 		$sql = "Select * FROM  `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id > 0 AND t1.user_id='".$row['user_id']."' AND status='completed' AND approved='Y' ORDER BY `ad_date`";
-		$m_result = mysqli_query ($sql) or die(mysqli_error());
+		$m_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		while ($prams=mysqli_fetch_array($m_result, MYSQLI_ASSOC)) {
 			
 			$ALT_TEXT = get_template_value('ALT_TEXT', 1);

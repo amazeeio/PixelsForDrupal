@@ -34,6 +34,7 @@ ini_set('max_execution_time', 10000);
 define ('NO_HOUSE_KEEP', 'YES');
 
 require("../config.php");
+
 require ('admin_common.php');
 
 if ($f2->bid($_REQUEST['BID'])!='') {
@@ -45,7 +46,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 //print_r($_REQUEST);
 //$sql = "select * from banners where banner_id=$BID";
-//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$b_row = mysqli_fetch_array($result);
 /*
 
@@ -615,7 +616,7 @@ if ($_REQUEST['move_type']!='') {
 }
 
 $sql = "SELECT * FROM blocks WHERE  banner_id='$BID'";
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 
 
@@ -631,24 +632,24 @@ $result = mysqli_query ($sql) or die (mysqli_error());
 	while ($row=mysqli_fetch_array($result)) {
 
 		$sql = "select * from users where ID='".$row['user_id']."'";
-		$res = mysqli_query($sql) or die (mysqli_error().$sql);
+		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array($res);
 
 		if (mysqli_num_rows($res)==0) { 
 
 			//$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-			//mysqli_query($sql);
+			//mysqli_query($GLOBALS['connection'], $sql);
 
 		}
 
 		$sql = "select * from orders where order_id='".$row['order_id']."'";
-		$res = mysqli_query($sql) or die (mysqli_error().$sql);
+		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($res);
 
 		if (mysqli_num_rows($res)==0) {
 
 			//$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-			//mysqli_query($sql);
+			//mysqli_query($GLOBALS['connection'], $sql);
 
 		}
 

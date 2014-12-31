@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 ini_set (session.use_trans_sid, false);
@@ -76,7 +77,7 @@ function confirmLink(theLink, theConfirmMsg)
 $label = array();
 
 $sql = "SELECT * FROM lang WHERE lang_code='".$_REQUEST['target_lang']."' ";
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 
 $lang_filename = $row['lang_filename'];

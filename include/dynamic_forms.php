@@ -51,7 +51,7 @@ function format_field_translation_table ($form_id) {
 	global $AVAILABLE_LANGS;
 
 	$sql = "SELECT * FROM form_fields WHERE `form_id`=$form_id ";
-	$f_result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$f_result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($f_row = mysqli_fetch_array($f_result, MYSQLI_ASSOC)) { 
 
 		foreach  ($AVAILABLE_LANGS as $key => $val) {
@@ -59,7 +59,7 @@ function format_field_translation_table ($form_id) {
 			//$sql = "SELECT t2.field_id, t2.field_label AS FLABEL, lang FROM form_field_translations as t1, form_fields as t2 WHERE t2.field_id=t1.field_id AND t2.field_id='".$f_row['field_id']."' AND lang='$key' ";
 			$sql = "SELECT form_field_translations.field_id, form_field_translations.field_label, lang FROM form_field_translations, form_fields WHERE form_field_translations.field_id=form_fields.field_id AND form_field_translations.field_id='".$f_row['field_id']."' AND lang='$key' ";
 			//echo $sql;
-			$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 			//$row = mysqli_fetch_row($result);
 			if (mysqli_num_rows($result)==0) {
 				//$cat_row = get_category($cat);
@@ -72,7 +72,7 @@ ON DUPLICATE KEY UPDATE
 `error_message` = '".addslashes($f_row['error_message'])."',
  `field_comment` = '".addslashes($f_row['field_comment'])."';";
 				//echo "<b>$sql</b>";
-				mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+				mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 			}
 
@@ -144,7 +144,7 @@ function get_template_value ($tmpl, $form_id) {
 			break;
 		case "SKILL_MATRIX":
 			$sql = "SELECT name FROM skill_matrix_data where object_id='".$prams['resume_id']."' ";
-			$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 			$val='';
 			while ($row = mysqli_fetch_array($result)) {
 				$val .= $comma.$row['name'];
@@ -244,7 +244,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 	//$sql = "SELECT t2.field_label, t1.*, t2.field_comment AS FCOMMENT FROM form_fields AS t1, form_field_translations AS t2 WHERE t1.field_id=t2.field_id AND lang='".$_SESSION['MDS_LANG']."' AND section='$section' AND form_id='$form_id' $where_sql order by field_sort  ";
 	$sql = "SELECT form_field_translations.field_label, form_fields.*, form_field_translations.field_comment FROM form_fields, form_field_translations WHERE form_fields.field_id=form_field_translations.field_id AND lang='".$_SESSION['MDS_LANG']."' AND section='$section' AND form_id='$form_id' $where_sql order by field_sort  ";
 	//echo $sql;
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	if (!$dont_break_table) {
 
@@ -751,24 +751,24 @@ function display_form ($form_id, $mode,  $prams, $section) {
 function delete_field ($field_id) {
 
 	$sql = "SELECT * FROM form_fields WHERE  field_id='".$field_id."'";
-	$result = mysqli_query ($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC) ;
 
 	// delete codes
 	if (($row['field_type']=='CHECK') || ($row['field_type']=='RADIO') || ($row['field_type']=='MSELECT')) {
 		$sql = "DELETE FROM codes where field_id='$field_id' ";
-		$result = mysqli_query ($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	}
 	// delete the field and any translations
 	$sql = "DELETE FROM `form_fields` WHERE field_id='$field_id' ";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	$sql = "DELETE FROM `form_field_translations` WHERE field_id='$field_id' ";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	$sql = "DELETE FROM `form_lists` WHERE field_id='$field_id'  ";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	$_REQUEST['mode'] = 'edit'; // interface stays in edit mode
 
@@ -818,7 +818,7 @@ function save_field($error, $NEW_FIELD) {
 
 		//if ($_SESSION['MDS_LANG'] == "EN") {
 			$sql = "SELECT * FROM form_fields WHERE field_id='".$field_id."' ";
-			$result = mysqli_query ($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 			$row = mysqli_fetch_array($result);
 
 			if ($row['field_type'] != $_REQUEST['field_type']) {
@@ -900,8 +900,8 @@ $tt.
 		print_r($_REQUEST);
 		echo  "<hr>";
 
-		if ($sql !='') mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
-		mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		if ($sql !='') mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
+		mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		// update translations
 		$label = $_REQUEST['field_label'];
 		
@@ -914,32 +914,32 @@ ON DUPLICATE KEY UPDATE
 `error_message` = '".$_REQUEST['error_message']."',
  `field_comment` = '".$_REQUEST['field_comment']."';";
 
-		mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 		// update template tag on the form_lists 
 
 		if ($_REQUEST['template_tag']!='') { // sometimes template tag can be blank (reserved tags)
 
 			$sql = "UPDATE form_lists SET `template_tag`='".$_REQUEST['template_tag']."' WHERE `field_id`='".$_REQUEST['field_id']."'";
-			mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		}
 
 		
 
 	}
 
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	//print_r($_REQUEST);
 	if (($_REQUEST['field_type']=='RADIO') || ($_REQUEST['field_type']=='CHECK') || ($_REQUEST['field_type']=='MSELECT') || ($_REQUEST['field_type']=='SELECT')) {
 		//echo 'formatting field..<br>';
 		if ($NEW_FIELD=='YES') {
-			$_REQUEST['field_id'] = mysqli_insert_id();
+			$_REQUEST['field_id'] = mysqli_insert_id($GLOBALS['connection']);
 		}
 		format_codes_translation_table ($_REQUEST['field_id']);
 	}
 
 	if ($NEW_FIELD=='YES') {
-		$field_id = mysqli_insert_id();
+		$field_id = mysqli_insert_id($GLOBALS['connection']);
 
 	} else {
 		$field_id = $_REQUEST['field_id'];
@@ -1013,7 +1013,7 @@ function validate_field_form () {
 
 		$sql = "select field_id from form_fields where template_tag='".$_REQUEST['template_tag']."' and form_id='".$_REQUEST['form_id']."' $f_id_sql  ";
 		//echo $sql;
-		$result = mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($result)>0) {
 			$error .= "<FONT SIZE='' COLOR='#000000'><b>- Template Tag is already in use. Please try a different name.</B></FONT><br>";
 		}
@@ -1026,7 +1026,7 @@ function validate_field_form () {
 
 	if ($_REQUEST['field_id']!='') {
 		$sql = "SELECT * FROM form_fields WHERE field_id='".$_REQUEST['field_id']."' ";
-		$result = mysqli_query ($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 
 		if (get_definition($row['field_type']) != get_definition($_REQUEST['field_type'])) {
@@ -1052,8 +1052,8 @@ function validate_field_form () {
 
 			if ($_REQUEST['do_alter'] != '') {
 
-				//@mysqli_query ($sql);
-				$result = mysqli_query ($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+				//@mysqli_query($GLOBALS['connection'], $sql);
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 				$_REQUEST['allow_anyway'] = '';
 				$error = "";$_REQUEST['do_alter'] = "";
@@ -1081,7 +1081,7 @@ function validate_form_data($form_id) {
 	//$sql = "SELECT *, t2.field_label AS LABEL, t2.error_message as error_message FROM form_fields as t1, form_field_translations as t2 WHERE t1.field_id=t2.field_id AND t2.lang='".$_SESSION['MDS_LANG']."' AND form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' order by field_sort";
 	$sql = "SELECT * FROM form_fields, form_field_translations WHERE form_fields.field_id=form_field_translations.field_id AND form_field_translations.lang='".$_SESSION['MDS_LANG']."' AND form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' order by field_sort";
 
-	$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -1271,7 +1271,7 @@ function field_form($NEW_FIELD, $prams, $form_id) {
 		
 		//echo $sql;
 		
-		$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		$prams = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 		$prams['field_comment'] = $prams['t2.field_comment'];
@@ -1327,7 +1327,7 @@ function field_form($NEW_FIELD, $prams, $form_id) {
 			//$sql = "SELECT * FROM form_fields, form_field_translations WHERE t1.field_id=t2.field_id AND lang='".$_SESSION['MDS_LANG']."' AND t1.field_id='".$field_id."'";
 			$sql = "SELECT * FROM form_fields, form_field_translations WHERE form_fields.field_id=form_field_translations.field_id AND lang='".$_SESSION['MDS_LANG']."' AND form_fields.field_id='".$field_id."'";
 		
-			$temp_result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			$temp_result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 			$temp_row = mysqli_fetch_array($temp_result, MYSQLI_ASSOC);
 
 			$prams['template_tag'] = $temp_row['template_tag'];
@@ -1776,7 +1776,7 @@ function form_select_field ($field_id, $selected) {
 		$sql = "SELECT * FROM `codes` WHERE `field_id`='$field_id' ";
 	}
 
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	echo '<select  name="'.$field_id.'">';
 	echo '<option value="">'.$label['sel_box_select'].'</option>';
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -1805,7 +1805,7 @@ function form_radio_field ($field_id, $selected) {
 		$sql = "SELECT * FROM `codes` WHERE `field_id`='$field_id' ";
 	}
 
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -1837,7 +1837,7 @@ function form_checkbox_field ($field_id, $selected, $mode) {
 		$sql = "SELECT * FROM `codes` WHERE `field_id`='$field_id' ";
 	}
 	
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$checked_codes = explode (",", $selected);
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -1879,7 +1879,7 @@ function form_mselect_field ($field_id, $selected, $size, $mode) {
 		$sql = "SELECT * FROM `codes` WHERE `field_id`='$field_id' ";
 	}
 
-	$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	$selected_codes = explode (",", $selected);
 
@@ -1947,7 +1947,7 @@ function generate_category_option_list($category_id, $selected) {
 	}
 	//echo "<option>$query</option>";
 
-	$result = mysqli_query () or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	$cat_names[$depth] = $row['category_name'];
 	if ($depth != 0) {
@@ -1986,7 +1986,7 @@ function generate_category_option_list($category_id, $selected) {
 	}
 
 	$query ="SELECT * FROM categories WHERE parent_category_id='$category_id' $form_id_sql ORDER by list_order, category_name ";
-	$result = mysqli_query ($query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -2048,7 +2048,7 @@ function category_option_list2($category_id, $selected) {
 	}
 	//echo "<option>$query</option>";
 
-	$result = mysqli_query ($query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	$cat_names[$depth] = $row['category_name'];
 	if ($depth != 0) {
@@ -2068,7 +2068,7 @@ function category_option_list2($category_id, $selected) {
 	}
 
 	$query ="SELECT * FROM categories WHERE parent_category_id='$category_id' $form_id_sql ORDER by list_order, category_name ";
-	$result = mysqli_query ($query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $query) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -2084,7 +2084,7 @@ function category_option_list2($category_id, $selected) {
 
 function get_sql_insert_fields ($form_id) {
 	$sql = "SELECT * FROM form_fields WHERE form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' ";
-	$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		switch ($row['field_type']) {
@@ -2143,7 +2143,7 @@ function parseNull($data)
 function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id, $user_id) {
 	global $f2;
 	$sql = "SELECT * FROM form_fields WHERE form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE'  ";
-	$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		switch ($row['field_type']) {
@@ -2156,7 +2156,7 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 					if ($object_id != '') {
 						deleteImage($table_name, $object_name, $object_id, $row['field_id']);
 					}
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				} else {
 					$str .= ", ''";
 				}
@@ -2174,7 +2174,7 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 					// we update 2 fields: file name and mime type...
 					//$str .= ", '".$_REQUEST[$row['field_id']]."', '".$mime_type."' ";
 
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 					
 				} else {
 					$str .= ", ''";
@@ -2186,14 +2186,14 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 				$month = $_REQUEST[$row['field_id']."m"];
 				$year = $_REQUEST[$row['field_id']."y"];
 				$_REQUEST[$row['field_id']] = $year."-".$month."-".$day;
-				$str .= ",'" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ",'" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				break;
 			case "DATE_CAL":
 				$temp_time = strtotime($_REQUEST[$row['field_id']]." GMT");
 				$day = date('d', $temp_time);
 				$month = date('m', $temp_time);
 				$year = date('y', $temp_time);
-				$str .= ", '" .mysqli_real_escape_string($year."-".$month."-".$day)."'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $year."-".$month."-".$day)."'";
 				break;
 			case "CHECK":
 
@@ -2205,7 +2205,7 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 				}
 
 				$_REQUEST[$row['field_id']] = $tmp;
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				break;
 
 				
@@ -2218,14 +2218,14 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 				}
 
 				$_REQUEST[$row['field_id']] = $tmp;
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				break;
 			case "SKILL_MATRIX":
 				save_skill_matrix_data($row['field_id'], $object_id, $user_id);
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				break;
 			default:
-				$str .= ", '" .mysqli_real_escape_string($_REQUEST[$row['field_id']]) . "'";
+				$str .= ", '" .mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']]) . "'";
 				break;
 
 		}
@@ -2241,7 +2241,7 @@ function get_sql_insert_values ($form_id, $table_name, $object_name, $object_id,
 function get_sql_update_values ($form_id, $table_name, $object_name, $object_id, $user_id) {
 	global $f2;
 	$sql = "SELECT * FROM form_fields WHERE form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE'  ";
-	$result = mysqli_query($sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$tmp = ''; $comma = '';
 		switch ($row['field_type']) {
@@ -2255,7 +2255,7 @@ function get_sql_update_values ($form_id, $table_name, $object_name, $object_id,
 					if ($object_id != '') {
 						deleteImage($table_name, $object_name, $object_id, $row['field_id']);
 					}
-					$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($file_name)."'";
+					$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $file_name)."'";
 				}
 				break;
 			case "FILE":
@@ -2268,7 +2268,7 @@ function get_sql_update_values ($form_id, $table_name, $object_name, $object_id,
 						deleteFile($table_name, $object_name, $object_id, $row['field_id']);
 					}
 					//$str .= ", `".$row['field_id']."` = '".$file_name."' , `".$row['field_id']."9193` = '".$mime_type."'";
-					$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($file_name)."'";
+					$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $file_name)."'";
 				}
 				break;
 			case "DATE":
@@ -2276,14 +2276,14 @@ function get_sql_update_values ($form_id, $table_name, $object_name, $object_id,
 				$month = $_REQUEST[$row['field_id']."m"];
 				$year = $_REQUEST[$row['field_id']."y"];
 				$_REQUEST[$row['field_id']] = $year."-".$month."-".$day;
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($_REQUEST[$row['field_id']])."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']])."'";
 				break;
 			case "DATE_CAL":
 				$temp_time = strtotime($_REQUEST[$row['field_id']]." GMT");
 				$day = date('d', $temp_time);
 				$month = date('m', $temp_time);
 				$year = date('y', $temp_time);
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($year."-".$month."-".$day)."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $year."-".$month."-".$day)."'";
 				break;
 			case "CHECK":
 				
@@ -2295,7 +2295,7 @@ function get_sql_update_values ($form_id, $table_name, $object_name, $object_id,
 				}
 
 				$_REQUEST[$row['field_id']] = $tmp;
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($_REQUEST[$row['field_id']])."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']])."'";
 				break;
 
 			case "MSELECT":
@@ -2308,17 +2308,17 @@ function get_sql_update_values ($form_id, $table_name, $object_name, $object_id,
 				}
 
 				$_REQUEST[$row['field_id']] = $tmp;
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($_REQUEST[$row['field_id']])."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']])."'";
 				break;
 			case "SKILL_MATRIX":
 				save_skill_matrix_data($row['field_id'], $object_id, $user_id);
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($_REQUEST[$row['field_id']])."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']])."'";
 				break;
 			case "TEXT":
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string(html_entity_decode($_REQUEST[$row['field_id']]))."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], html_entity_decode($_REQUEST[$row['field_id']]))."'";
 				break;
 			default:
-				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($_REQUEST[$row['field_id']])."'";
+				$str .= ", `".$row['field_id']."`='".mysqli_real_escape_string($GLOBALS['connection'], $_REQUEST[$row['field_id']])."'";
 				break;
 
 		}
@@ -2340,7 +2340,7 @@ function tag_to_search_init ($form_id) {
 	$sql = "SELECT * FROM `form_fields`, `form_field_translations` where form_fields.field_id=form_field_translations.field_id AND form_fields.form_id='".$form_id."' AND is_in_search ='Y' AND form_field_translations.lang='".$_SESSION['MDS_LANG']."' ORDER BY search_sort_order";
 	//echo $sql;
 	
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	# do a query for each field
 	while ($fields = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -2539,7 +2539,7 @@ function get_tag_to_field_id($form_id) {
 							$sql = "SELECT * FROM `codes` WHERE `field_id`='$key_id' ";
 						}
 
-						$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+						$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 						while ($row  = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 							if ($row['code']== $_REQUEST[$key_id] ) {
 								$checked = ' checked ';
@@ -2556,7 +2556,7 @@ function get_tag_to_field_id($form_id) {
 						} else {
 							$sql = "SELECT * FROM `codes` WHERE `field_id`='$key_id' ";
 						}
-						$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+						$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 						
 				//$row['field_id']."-".$code['code'];
 						while ($row  = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -2575,7 +2575,7 @@ function get_tag_to_field_id($form_id) {
 						} else {
 							$sql = "SELECT * FROM `codes` WHERE `field_id`='$key_id' ";
 						}
-						$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+						$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 						
 				?>
 						<select class='search_input_style'  size='<?php echo $tag_to_search[$key]['field_height']; ?>' name="<?php echo $key_id; ?>">
@@ -2606,7 +2606,7 @@ function get_tag_to_field_id($form_id) {
 						} else {
 							$sql = "SELECT * FROM `codes` WHERE `field_id`='$key_id' ";
 						}
-						$result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+						$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 						
 				?>
 						<select class='search_input_style' multiple size='<?php echo $tag_to_search[$key]['field_height']; ?>' name="<?php echo $key_id; ?>[]">
@@ -2763,7 +2763,7 @@ function generate_search_sql($form_id) {
 				$tmp=''; $comma='';
 				## process all possible options
 				$sql = "SELECT * from codes where field_id='$name' ";
-				$code_result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+				$code_result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 				//echo $sql;
 				$i = 0;
@@ -2817,7 +2817,7 @@ function generate_search_sql($form_id) {
 				 } elseif (($_SEARCH_INPUT[$name] != '') && (($_SEARCH_INPUT[$name] != 'all'))) {
 
 					//$sql = "SELECT * from codes where field_id=$name ";
-					//$code_result = mysqli_query ($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+					//$code_result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 					$where_sql .= " AND `$name` = '".$_SEARCH_INPUT[$name]."' ";
 
@@ -2885,7 +2885,7 @@ function is_reserved_field ($field_id) {
 	}
 
 	$sql = "SELECT * from `form_fields` WHERE field_id='$field_id' ";
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 	if (is_reserved_template_tag($row['template_tag'])) {	
@@ -2942,7 +2942,7 @@ function build_sort_fields ($form_id, $section) {
 	$section = $section;
 
 	$sql =  "SELECT * FROM form_fields where `form_id`='$form_id' and section='$section' order by field_sort ASC";
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	$order = 1;
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -2951,7 +2951,7 @@ function build_sort_fields ($form_id, $section) {
 		$sql = "UPDATE form_fields SET `field_sort`='$order' WHERE form_id='$form_id' AND field_id='".$field_id."' ";
 		
 		//echo $sql." ".$row['field_label']."(".$row['field_sort'].")<br>";
-		mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		$order++;
 
 	}
@@ -2977,12 +2977,12 @@ function move_field_up($form_id, $field_id) {
 
 	// top goes to bottom
 	$sql = "UPDATE form_fields SET `field_sort`=field_sort+1 WHERE form_id='$form_id' AND field_sort='".$new_order."' AND `section`='$section' ";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	
 
 	// field_id moves up
 	$sql = "UPDATE form_fields SET `field_sort`=$new_order WHERE form_id='$form_id' AND field_id='".$field_id."' ";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	
 
 
@@ -3006,7 +3006,7 @@ function move_field_down($form_id, $field_id) {
 	$new_order = $now_order + 1;
 
 	$sql = "SELECT max(field_sort) as the_max from form_fields where form_id='$form_id' AND section='$section'  ";
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	//echo "the max:".$row['the_max']." new oreer".$new_order;
@@ -3019,12 +3019,12 @@ function move_field_down($form_id, $field_id) {
 	// bottom goes to top
 	$sql = "UPDATE form_fields SET `field_sort`=field_sort-1 WHERE form_id='$form_id' AND field_sort='".$new_order."' AND `section`='$section' ";
 	//echo $sql."<br>";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	// field_id moves up
 	$sql = "UPDATE form_fields SET `field_sort`=$new_order WHERE form_id='$form_id' AND field_id='".$field_id."' ";
 	//echo $sql."<br>";
-	mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	
 }
 
@@ -3033,7 +3033,7 @@ function move_field_down($form_id, $field_id) {
 function get_field_order ($form_id, $field_id) {
 
 		$sql =  "SELECT * from form_fields where `form_id`='$form_id' AND field_id='$field_id' ";
-		$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array ($result, MYSQLI_ASSOC);
 		return $row['field_sort']; 
 
@@ -3045,7 +3045,7 @@ function get_field_order ($form_id, $field_id) {
 function get_field ($form_id, $field_id) {
 
 		$sql =  "SELECT * from form_fields where `form_id`='$form_id' AND field_id='$field_id' ";
-		$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		return mysqli_fetch_array ($result, MYSQLI_ASSOC);
 		
 }
@@ -3056,7 +3056,7 @@ function is_table_unsaved ($tname) {
 
 	// load cols
 	$sql = " show columns from $tname ";
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_row($result)) {
 		if (preg_match("/^\d+$/", $row[0])) {
 			$cols[$row[0]] = $row[0];
@@ -3076,7 +3076,7 @@ function is_table_unsaved ($tname) {
 	// load fields
 	$sql = "SELECT * FROM `form_fields` where form_id=$form_id AND field_type != 'BLANK' AND field_type !='SEPERATOR' AND field_type !='NOTE'  ";
 	//echo $sql;
-	$result = mysqli_query($sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$fields[$row['field_id']]=$row['field_id'];
@@ -3116,7 +3116,7 @@ function generate_template_tag($form_id) { // generate a random template tag. Th
 	$unique = false;
 
 	$sql = "select field_id from form_fields where template_tag='$template_tag' and form_id='$form_id' ";
-	$result = mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)==0) {
 		$unique = true;
 	}
@@ -3142,16 +3142,16 @@ function generate_template_tag($form_id) { // generate a random template tag. Th
 function fix_form_field_translations() {
 
 	$sql = "DELETE from form_fields WHERE (form_id=4 OR form_id=5) AND section=3 ";
-	mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	$sql = "SELECT field_id from form_field_translations";
-	$result = mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 		$sql = "SELECT field_id from form_fields";
-		$result2 = mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+		$result2 = mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($result2)==0) {
 			$sql = "DELETE FORM form_field_translations WHERE field_id=".$row['field_id'];
-			mysqli_query($sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql)or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
 		}
 

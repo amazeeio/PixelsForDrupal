@@ -76,7 +76,7 @@ function publish_image ($BID) {
 	// update the records
 
 	$sql = "SELECT * FROM blocks WHERE approved='Y' and status='sold' AND image_data <> '' AND banner_id='$BID' ";
-	$r = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$r = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	
 	while ($row = mysqli_fetch_array($r)) {
 
@@ -85,15 +85,15 @@ function publish_image ($BID) {
 		// set the 'date_published' only if it was not set before, date_published can only be set once.
 		$now = (gmdate("Y-m-d H:i:s"));
 		$sql = "UPDATE orders set `date_published`='$now' where order_id='".$row['order_id']."' AND date_published IS NULL ";
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 		// update the published status, always updated to Y
 
 		$sql = "UPDATE orders set `published`='Y' where order_id='".$row['order_id']."'  ";
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 		$sql = "UPDATE blocks set `published`='Y' where block_id='".$row['block_id']."' AND banner_id='$BID'";
-		$result = mysqli_query($sql) or die(mysqli_error());
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 
 	}
@@ -102,20 +102,20 @@ function publish_image ($BID) {
 
 	$sql = "SELECT block_id, order_id FROM blocks WHERE approved='N' AND status='sold' AND banner_id='$BID' ";
 	//echo $sql;
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 		$sql = "UPDATE blocks set `published`='N' where block_id='".$row['block_id']."'  AND banner_id='$BID'  ";
-		mysqli_query($sql) or die(mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 		$sql = "UPDATE orders set `published`='N' where order_id='".$row['order_id']."'  AND banner_id='$BID'  ";
-		mysqli_query($sql) or die(mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	}
 
 	// update the time-stamp on the banner
 
 	$sql = "UPDATE banners SET time_stamp='".time()."' WHERE banner_id='".$BID."' ";
-	mysqli_query($sql) or die(mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	//echo $sql;
 
 }
@@ -129,7 +129,7 @@ function process_image($BID) {
 	$BANNER_DIR = get_banner_dir();
 
 	$sql = "select * from banners where banner_id='".$BID."'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	// initialize banner values:
@@ -176,7 +176,7 @@ function process_image($BID) {
 	//$nfs_block = imagecreatefrompng ( $file_path."temp/not_for_sale_block.png" );
 	$nfs_block = imagecreatefromstring ( base64_decode($b_row['nfs_block']) );
 	$sql = "select * from blocks where status='nfs' AND banner_id='$BID' ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	while ($row = mysqli_fetch_array($result)) {
 		imagecopy ( $map, $nfs_block, $row['x'], $row['y'], 0, 0, $BLK_WIDTH, $BLK_HEIGHT );
@@ -199,7 +199,7 @@ function process_image($BID) {
 	// crate a map form the images in the db
 	
 	$sql = "select * from blocks where approved='Y' and status='sold' AND image_data <> '' AND banner_id='$BID' ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 	$i=0;
 	while ($row = mysqli_fetch_array($result)) {
@@ -278,7 +278,7 @@ function process_image($BID) {
 function get_html_code($BID) {
 
 	$sql = "select * from banners where banner_id='".$BID."'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	if (!$b_row['block_width']) $b_row['block_width'] = 10;
@@ -292,7 +292,7 @@ function get_html_code($BID) {
 function get_stats_html_code($BID) {
 
 	//$sql = "select * from banners where banner_id=".$BID;
-	//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	//$b_row = mysqli_fetch_array($result);
 
 	return "<iframe width=\"150\" height=\"50\" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src=\"".BASE_HTTP_PATH."display_stats.php?BID=$BID\" allowtransparency=\"true\" ></iframe>";

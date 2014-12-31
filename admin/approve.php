@@ -31,6 +31,7 @@
  */
 
 require("../config.php");
+
 require ('admin_common.php');
 
 $dir = dirname(__FILE__);
@@ -54,13 +55,13 @@ if (($BID=='all') || ($BID=='')) {
 	
 } 
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 if ($_REQUEST['action']=='approve') {
 
 	$sql = "UPDATE blocks set approved='Y', published='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$sql = "UPDATE orders set approved='Y', published='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	echo "Advertiser Approved.<br>";
 }
 
@@ -71,9 +72,9 @@ if ($_REQUEST['mass_approve']!='') {
 		foreach ($_REQUEST['users'] as $user_id) {
 
 			$sql = "UPDATE blocks set approved='Y', published='N' WHERE user_id='".$user_id."' $bid_sql";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$sql = "UPDATE orders set approved='Y', published='N' WHERE user_id='".$user_id."' $bid_sql";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		}
 		echo "Advertiser(s) Approved.<br>";
 	}
@@ -84,9 +85,9 @@ if ($_REQUEST['mass_approve']!='') {
 if ($_REQUEST['action']=='disapprove') {
 
 	$sql = "UPDATE blocks set approved='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$sql = "UPDATE orders set approved='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	echo "Advertiser Disapproved.<br>";
 }
 
@@ -97,9 +98,9 @@ if ($_REQUEST['mass_disapprove']!='') {
 		foreach ($_REQUEST['users'] as $user_id) {
 
 			$sql = "UPDATE blocks set approved='N' WHERE user_id=".$user_id." $bid_sql";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$sql = "UPDATE orders set approved='N' WHERE user_id=".$user_id." $bid_sql";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		}
 		echo "Advertiser(s) Disapproved.<br>";
@@ -115,7 +116,7 @@ if ($_REQUEST['do_it_now']=='true') {
 	// process all grids
 
 	$sql = "select * from banners ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);	
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);	
 	while ($row = mysqli_fetch_array($result)) {
 		echo process_image($row['banner_id']);
 		publish_image($row['banner_id']);
@@ -128,9 +129,9 @@ if ($_REQUEST['do_it_now']=='true') {
 if ($_REQUEST['all_go']!='') {
 
 	$sql = "UPDATE blocks set approved='Y' ";
-	mysqli_query ($sql) or die (mysqli_error().$sql);
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$sql = "select * from banners ";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);	
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);	
 	while ($row = mysqli_fetch_array($result)) {
 		process_image($row['banner_id']);
 		publish_image($row['banner_id']);
@@ -211,7 +212,7 @@ if ($_REQUEST['save_links']!='') {
 		foreach ($_REQUEST['urls'] as $url) {
 			$sql = "UPDATE blocks SET url='".$_REQUEST['new_urls'][$i]."', alt_text='".$_REQUEST['new_alts'][$i]."' WHERE user_id='".$_REQUEST['user_id']."' and url='$url' and banner_id='".$f2->bid($_REQUEST['BID'])."'  ";
 			//echo $sql."<br>";
-			mysqli_query ($sql) or die (mysqli_error().$sql);
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$i++;
 		}
 		
@@ -240,7 +241,7 @@ if ($_REQUEST['edit_links']!='') {
 
 		$sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=".$_REQUEST['user_id']."  $bid_sql group by url ";
 		
-		$m_result = mysqli_query ($sql);
+		$m_result = mysqli_query($GLOBALS['connection'], $sql);
 		$i=0;
 		while ($m_row=mysqli_fetch_array($m_result)) {
 			$i++;
@@ -269,7 +270,7 @@ $sql = "SELECT FirstName, LastName, Username, Email,ID, alt_text, url, t1.status
 
 //echo $sql;
 
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $count = mysqli_num_rows($result);
 $records_per_page = 20;
 
@@ -348,7 +349,7 @@ if ($count > $records_per_page)  {
 	  // is it approved?
 
 	  $sql = "SELECT alt_text, url, approved  FROM blocks WHERE user_id=".$row[ID]." and approved='N' $bid_sql and banner_id=".$row[banner_id];
-	  $a_result = mysqli_query ($sql);	
+	  $a_result = mysqli_query($GLOBALS['connection'], $sql);	
 	  $a_row=mysqli_fetch_array($a_result);
 
 	  if ($_REQUEST['app']=='Y') {
@@ -377,14 +378,14 @@ if ($count > $records_per_page)  {
 	<td><font face="Arial" size="2"><?php 
 		$sql = "SELECT name from banners where banner_id=".$row['banner_id'];
 	//	echo "<br>".$sql;
-		$t_result = mysqli_query ($sql);
+		$t_result = mysqli_query($GLOBALS['connection'], $sql);
 		$t_row=mysqli_fetch_array($t_result);
 		echo $t_row['name']; ?></font></td>
 	<td ><font face="Arial" size="2"><?php 
 
 		$sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id, ad_id FROM blocks WHERE user_id=".$row['ID']." and banner_id=".$row['banner_id']." $bid_sql group by url ";
 	//	echo "<br>".$sql;
-		$m_result = mysqli_query ($sql);
+		$m_result = mysqli_query($GLOBALS['connection'], $sql);
 		while ($m_row=mysqli_fetch_array($m_result)) {
 			if ($m_row[url] !='') {
 				$js_str = " onmousemove=\"sB(event,'".htmlspecialchars(str_replace("'","\'",($m_row['alt_text'])))."',this, ".$m_row['ad_id'].")\" onmouseout=\"hI()\" ";

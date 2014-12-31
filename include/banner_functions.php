@@ -31,13 +31,14 @@
  */
 
 function load_banner_row($BID) {
+	
 
 	if (!is_numeric($BID)) {
 		return false;
 	}
 
 	$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
-	$result = mysqli_query($sql) or die(mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	return $row;

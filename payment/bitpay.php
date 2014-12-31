@@ -31,6 +31,7 @@
  */
 require_once "../config.php";
 
+
 // https://github.com/bitpay/php-client
 
 $_PAYMENT_OBJECTS['BitPay'] = new BitPay;
@@ -71,7 +72,7 @@ if ($_POST['posData'] != '') {
 	$invoice = json_decode($result);
 
 	$sql = "select * FROM orders where order_id='" . $invoice['orderId'] . "'";
-	$result = mysqli_query($sql) or bp_mail_error(mysqli_error() . $sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or bp_mail_error(mysqli_error($GLOBALS['connection']) . $sql);
 	$row = mysqli_fetch_array($result);
 
 	complete_order($row['user_id'], $invoice['orderId']);
@@ -95,7 +96,7 @@ class BitPay {
 
 		if ($this->is_installed()) {
 			$sql = "SELECT * FROM config where `key` LIKE 'BITPAY_%'";
-			$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 
 			while ($row = mysqli_fetch_array($result)) {
 				// check for default transactionspeed value
@@ -116,21 +117,21 @@ class BitPay {
 		echo "Installing BitPay...<br>";
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BITPAY_ENABLED', 'N'),('BITPAY_APIKEY', ''),('BITPAY_CURRENCY', 'BTC'),('BITPAY_TRANSACTIONSPEED', 'low'),('BITPAY_FULLNOTIFICATIONS', 'false'),('BITPAY_HTTPMODE', 'http'),('BITPAY_REDIRECTURL', ''),('BITPAY_THEME', 'light')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 	}
 
 	function uninstall() {
 		echo "Uninstall BitPay...<br>";
 
 		$sql = "DELETE FROM config where `key` IN ('BITPAY_ENABLED','BITPAY_APIKEY','BITPAY_CURRENCY','BITPAY_TRANSACTIONSPEED','BITPAY_FULLNOTIFICATIONS','BITPAY_HTTPMODE','BITPAY_REDIRECTURL','BITPAY_THEME')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 	}
 
 	function payment_button($order_id) {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='" . $order_id . "'";
-		$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 		$order = mysqli_fetch_array($result);
 		
 		// if site only has http support then use email
@@ -261,13 +262,13 @@ class BitPay {
 
 	function save_config() {
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('BITPAY_APIKEY', '" . $_REQUEST['bitpay_apikey'] . "'),('BITPAY_CURRENCY', '" . $_REQUEST['bitpay_currency'] . "'),('BITPAY_TRANSACTIONSPEED', '" . $_REQUEST['bitpay_transactionspeed'] . "'),('BITPAY_FULLNOTIFICATIONS', '" . $_REQUEST['bitpay_fullnotifications'] . "'),('BITPAY_HTTPMODE', '" . $_REQUEST['bitpay_httpmode'] . "'),('BITPAY_REDIRECTURL', '" . $_REQUEST['bitpay_redirecturl'] . "'),('BITPAY_THEME', '" . $_REQUEST['bitpay_theme'] . "')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 	}
 
 	// true or false
 	function is_enabled() {
 		$sql = "SELECT val from config where `key`='BITPAY_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val'] == 'Y') {
 			return true;
@@ -279,7 +280,7 @@ class BitPay {
 	// true or false
 	function is_installed() {
 		$sql = "SELECT val from config where `key`='BITPAY_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 		if (mysqli_num_rows($result) > 0) {
 			return true;
 		} else {
@@ -289,12 +290,12 @@ class BitPay {
 
 	function enable() {
 		$sql = "UPDATE config set val='Y' where `key`='BITPAY_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 	}
 
 	function disable() {
 		$sql = "UPDATE config set val='N' where `key`='BITPAY_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error() . $sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 	}
 
 	function process_payment_return() {

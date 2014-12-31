@@ -35,6 +35,7 @@ if (!defined('MDSROOT')) {
 }
 
 require_once "../config.php";
+
 require_once("Twocheckout/Twocheckout.php");
 
 define (LOGGING, 'Y');
@@ -103,7 +104,7 @@ class _2CO {
 		if ($this->is_installed()) {
 
 			$sql = "SELECT * FROM config where `key`='_2CO_ENABLED' OR `key`='_2CO_PRIVATE_KEY' OR `key`='_2CO_PUBLISHABLE_KEY' OR `key`='_2CO_SID' OR `key`='_2CO_DEMO' OR `key`='_2CO_VERIFY_SSL' OR `key`='_2CO_SECRET_WORD' OR `key`='_2CO_X_RECEIPT_LINK_URL'";
-			$result = mysqli_query($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			while ($row=mysqli_fetch_array($result)) {
 
@@ -124,51 +125,51 @@ class _2CO {
 	function install() {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_ENABLED', 'N')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
-		//mysqli_query($sql);
+		//mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', 'Y')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', 'Y')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '')";
-		mysqli_query($sql) or die(mysqli_error());
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	}
 
 	function uninstall() {
 
 		$sql = "DELETE FROM config where `key`='_2CO_ENABLED'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_SID'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_PRIVATE_KEY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_PUBLISHABLE_KEY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		//$sql = "REPLACE INTO config (`key`, val, descr) VALUES ('_2CO_PRODUCT_ID', '1', '# Your 2CO seller ID number.')";
-		//mysqli_query($sql);
+		//mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_DEMO'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_VERIFY_SSL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_SECRET_WORD'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='_2CO_PAYMENT_ROUTINE'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='_2CO_X_RECEIPT_LINK_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 	}
@@ -178,7 +179,7 @@ class _2CO {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 		
 		// https://github.com/2Checkout/2checkout-php/wiki
@@ -350,26 +351,26 @@ U.S. Dollar (USD)
 
 	function save_config() {
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '".$_REQUEST['_2co_private_key']."')";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '".$_REQUEST['_2co_publishable_key']."')";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '".$_REQUEST['_2co_sid']."')";
-		mysqli_query($sql) or die(mysqli_error().$sql);
+		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', '".$_REQUEST['_2co_demo']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', '".$_REQUEST['_2co_verify_ssl']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '".$_REQUEST['_2co_secret_word']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '".$_REQUEST['_2co_x_receipt_link_url']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 	}
 
 	// true or false
 	function is_enabled() {
 
 		$sql = "SELECT val from `config` where `key`='_2CO_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
@@ -384,7 +385,7 @@ U.S. Dollar (USD)
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='_2CO_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//$row = mysqli_fetch_array($result);
 
 		if (mysqli_num_rows($result)>0) {
@@ -400,14 +401,14 @@ U.S. Dollar (USD)
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='_2CO_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='_2CO_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 
@@ -453,7 +454,7 @@ U.S. Dollar (USD)
 
 				// get customer's order
 				$sql = "SELECT * FROM orders where order_id='".$order_id."'";
-				$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 
 				if ($credit_card_processed=='Y') {

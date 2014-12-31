@@ -42,8 +42,9 @@ if ($BID=='') {
 require ('../config.php');
 
 
+
 $sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' banner_id='$BID' ";
-$result  = mysqli_query ($sql) or die(mysqli_error());
+$result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 

@@ -31,6 +31,7 @@
  */
 require_once "../config.php";
 
+
 $_PAYMENT_OBJECTS['authorizeNet'] = new authorizeNet;
 
 define (IPN_LOGGING, 'Y');
@@ -133,7 +134,7 @@ class authorizeNet {
 
 			
 			$sql = "SELECT * FROM config where `key`='AUTHNET_LOGIN_ID' OR `key`='AUTHNET_CURRENCY' OR `key`='AUTHNET_TEST_MODE' OR `key`='AUTHNET_X_RELAY_URL' OR `key`='AUTHNET_X_RECEIPT_LINK_METHOD' OR `key`='AUTHNET_X_RECEIPT_LINK_URL' OR `key`='AUTHNET_X_RECEIPT_LINK_TEXT' OR `key`='AUTHNET_X_TRAN_KEY' OR `key`='AUTHNET_X_BACKGROUND_URL' OR `key`='AUTHNET_X_COLOR_LINK' OR `key`='AUTHNET_X_COLOR_TEXT' OR `key`='AUTHNET_X_LOGO_URL' OR `key`='AUTHNET_X_COLOR_BACKGROUND' OR `key`='AUTHNET_X_HEADER_HTML_PAYMENT_FORM' or `key`='AUTHNET_X_FOOTER_HTML_PAYMENT_FORM' ";
-			$result = mysqli_query($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			while ($row=mysqli_fetch_array($result)) {
 
@@ -168,54 +169,54 @@ class authorizeNet {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_ENABLED', 'N')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_CURRENCY', 'USD')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_TEST_MODE', 'NO')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_LOGIN_ID', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RELAY_URL', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', 'http://$host".$http_url."/users/index.php"."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_METHOD', 'POST"."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".SITE_NAME."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_TRAN_KEY', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".SITE_LOGO_URL."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_BACKGROUND_URL', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_BACKGROUND', '#FFFFFF')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_LINK', '#0000FF')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_TEXT', '#000000')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_HEADER_HTML_PAYMENT_FORM', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_FOOTER_HTML_PAYMENT_FORM', '')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		
 
@@ -230,52 +231,52 @@ class authorizeNet {
 
 	
 		$sql = "DELETE FROM config where `key`='AUTHNET_ENABLED'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		
 		$sql = "DELETE FROM config where `key`='AUTHNET_LOGIN_ID'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_CURRENCY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_TEST_MODE'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_RELAY_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_RECEIPT_LINK_METHOD'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_RECEIPT_LINK_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_RECEIPT_LINK_TEXT'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_TRAN_KEY'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_BACKGROUND_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_LOGO_URL'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_COLOR_BACKGROUND'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_COLOR_LINK'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_COLOR_TEXT'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_HEADER_HTML_PAYMENT_FORM'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "DELETE FROM config where `key`='AUTHNET_X_FOOTER_HTML_PAYMENT_FORM'";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 
 		
 
@@ -290,7 +291,7 @@ class authorizeNet {
 		global $label;
 
 		$sql = "SELECT * from orders where order_id='".$order_id."'";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 
 ?>
@@ -554,35 +555,35 @@ class authorizeNet {
 
 	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_LOGIN_ID', '".$_REQUEST['authnet_login_id']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_CURRENCY', '".$_REQUEST['authnet_currency']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_TEST_MODE', '".$_REQUEST['authnet_test_mode']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RELAY_URL', '".$_REQUEST['authnet_x_relay_url']."')";
-		mysqli_query($sql);
+		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_METHOD', '".$_REQUEST['authnet_x_receipt_link_method']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', '".$_REQUEST['authnet_x_receipt_link_url']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".$_REQUEST['authnet_x_receipt_link_text']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_TRAN_KEY', '".$_REQUEST['authnet_x_tran_key']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_BACKGROUND_URL', '".$_REQUEST['authnet_x_background_url']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_BACKGROUND', '".$_REQUEST['authnet_x_color_background']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_LINK', '".$_REQUEST['authnet_x_color_link']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_TEXT', '".$_REQUEST['authnet_x_color_text']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".$_REQUEST['authnet_x_logo_url']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_HEADER_HTML_PAYMENT_FORM', '".$_REQUEST['authnet_x_header_html_payment_form']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_FOOTER_HTML_PAYMENT_FORM', '".$_REQUEST['authnet_x_footer_html_payment_form']."')";
-		mysqli_query($sql);	
+		mysqli_query($GLOBALS['connection'], $sql);	
 		
 
 		
@@ -594,7 +595,7 @@ class authorizeNet {
 	function is_enabled() {
 
 		$sql = "SELECT val from config where `key`='AUTHNET_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
@@ -610,7 +611,7 @@ class authorizeNet {
 	function is_installed() {
 
 		$sql = "SELECT val from config where `key`='AUTHNET_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		//$row = mysqli_fetch_array($result);
 
 		if (mysqli_num_rows($result)>0) {
@@ -626,7 +627,7 @@ class authorizeNet {
 	function enable() {
 
 		$sql = "UPDATE config set val='Y' where `key`='AUTHNET_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
 	}
@@ -634,7 +635,7 @@ class authorizeNet {
 	function disable() {
 
 		$sql = "UPDATE config set val='N' where `key`='AUTHNET_ENABLED' ";
-		$result = mysqli_query($sql) or die(mysqli_error().$sql);
+		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 	}
 
@@ -649,7 +650,7 @@ class authorizeNet {
 			$working_sig = strtoupper (md5($merchant_id.$transaction_id.$secret.$mb_amount.$mb_currency.$status));
 
 			$sql = "SELECT * FROM orders where order_id='".$_POST['x_invoice_num']."'";
-			$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$order_row = mysqli_fetch_array($result);
 
 			$myhash = strtoupper (md5 ( AUTHNET_X_TRAN_KEY.AUTHNET_LOGIN_ID.$_POST['x_trans_id'].$_POST['x_amount'] ));

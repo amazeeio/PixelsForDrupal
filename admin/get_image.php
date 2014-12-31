@@ -33,6 +33,7 @@
 define ('NO_HOUSE_KEEP', 'YES');
 
 require("../config.php");
+
 require ('admin_common.php');
 
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
@@ -40,7 +41,7 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 
 $sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' ";
-$result  = mysqli_query ($sql) or die(mysqli_error());
+$result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 

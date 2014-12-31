@@ -30,6 +30,7 @@
  *
  */
 require("../config.php");
+
 require ('admin_common.php');
 
 if (ADVANCED_CLICK_COUNT!='YES') {
@@ -46,7 +47,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 }
 
 $sql = "Select * from banners ";
-$res = mysqli_query($sql);
+$res = mysqli_query($GLOBALS['connection'], $sql);
 ?>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
@@ -222,7 +223,7 @@ $sql = "SELECT *, SUM(clicks) as CLICKSUM FROM clicks WHERE banner_id='$BID' AND
 
 
 
-$result = mysqli_query ($sql);
+$result = mysqli_query($GLOBALS['connection'], $sql);
 
 
 

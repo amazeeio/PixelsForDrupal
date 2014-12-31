@@ -32,6 +32,7 @@
 
 session_start();
 include ("../config.php");
+
 include ("login_functions.php");
 
 process_login();
@@ -50,7 +51,7 @@ require ("header.php");
 if ($_REQUEST[action]=='changepass') {
 
 	$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
-	$result = mysqli_query ($sql) or die (mysqli_error());
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
 	$oldpass = md5 ($_REQUEST['oldpass']);
@@ -61,7 +62,7 @@ if ($_REQUEST[action]=='changepass') {
 		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
 
 			$sql = "UPDATE users set password='$newpass' where ID='".$_SESSION['MDS_ID']."'";
-			mysqli_query ($sql) or die (mysqli_error());
+			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			echo "<h3><font color=green>".$label['advertiser_edit_passok'].
 			"</font></h3><br>";
 
@@ -105,7 +106,7 @@ if ($_REQUEST[action]=='update') {
 	//print_r ($_REQUEST);
 
 	$sql = "UPDATE users set FirstName='".$_REQUEST['firstname']."', LastName='".$_REQUEST['lastname']."', CompName='".$_REQUEST['compname']."', Email='".$_REQUEST['email']."' where ID='".$_SESSION['MDS_ID']."'";
-	mysqli_query ($sql) or die (mysqli_error());
+	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
 	echo "<h3><font color=green>".$label['advertiser_edit_details_updated']."</font></h3><br>";
@@ -115,7 +116,7 @@ if ($_REQUEST[action]=='update') {
 
 $sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
 
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 $lastname = $row['LastName'];
 $firstname = $row['FirstName'];

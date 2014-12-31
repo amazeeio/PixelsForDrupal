@@ -35,19 +35,20 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ("../config.php");
 
+
 $BID = $f2->bid($_REQUEST['BID']);
 
 load_banner_constants($BID);
 
 //$sql = "select * from banners where banner_id='".$BID."'";
-//$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$b_row = mysqli_fetch_array($result);
 $has_packages = banner_get_packages($BID);
 
 #
 # Preloaad all block
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID'  ";
-$result = mysqli_query ($sql) or die (mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 while ($row=mysqli_fetch_array($result)) {
 	$blocks[$row[block_id]] = $row['status'];
 	if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold') && ($row['status']!='nfs')) {

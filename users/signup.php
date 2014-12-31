@@ -32,6 +32,7 @@
 
 session_start();
 require "../config.php";
+
 ?>
 
 <?php include('login_functions.php'); ?>

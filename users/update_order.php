@@ -37,6 +37,7 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 require_once ("../config.php");
+
 $block_id=$_REQUEST['block_id'];
 $BID=$f2->bid($_REQUEST['BID']);
 
@@ -58,11 +59,11 @@ if ($_REQUEST['user_id']!='') {
 
 }
 $sql = "select * from banners where banner_id='$BID'";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($result);
 
 $sql = "select Rank from users where ID='$user_id'";
-$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $u_row = mysqli_fetch_array($result);
 
 if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
@@ -75,7 +76,7 @@ if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
 // check the max pixels
 if (G_MAX_BLOCKS>0) {
 	$sql = "SELECT * from blocks where user_id='$user_id' and status='reserved' and banner_id='$BID' ";
-	$result = mysqli_query($sql) or die(mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	
 	$count = mysqli_num_rows($result);
 	
@@ -88,7 +89,7 @@ if (G_MAX_BLOCKS>0) {
 
 $sql = "select status, user_id from blocks where banner_id='$BID' AND block_id='$block_id'";
 
-$result = mysqli_query($sql) or die(mysqli_error());
+$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row=mysqli_fetch_array($result);
 
 //if ($row[user_id]!=$_SESSION['MDS_ID']) {
@@ -128,7 +129,7 @@ if (($row['status']=='reserved') && ($row[user_id]==$user_id)) {
 if ($update_order) {
 
 	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysqli_query ($sql) or die (mysqli_error().$sql);
+	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	select_block ('', '', $block_id);

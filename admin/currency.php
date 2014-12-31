@@ -178,35 +178,21 @@ if ($_REQUEST['submit']!='') {
 All prices will be displayed in the default currency.<br>
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
 			<tr bgColor="#eaeaea">
-				<td><b><font size="2">Currency</b></font></td>
-				<td><b><font size="2">Code</b></font></td>
-				<td><b><font size="2">Rate</b></font></td>
-				<td><b><font size="2">Sign</b></font></td>
-				<td><b><font size="2">Decimal<br>Places</b></font></td>
-				<td><b><font size="2">Decimal<br>Point</b></font></td>
-				<td><b><font size="2">Thousands<br>Seperator</b></font></td>
-				<td><b><font size="2">Is Default</b></font></td>
-				<td><b><font size="2">Action</b></font></td>
+				<td><font size="2"><b>Currency</b></font></td>
+				<td><font size="2"><b>Code</b></font></td>
+				<td><font size="2"><b>Rate</b></font></td>
+				<td><font size="2"><b>Sign</b></font></td>
+				<td><font size="2"><b>Decimal<br>Places</b></font></td>
+				<td><font size="2"><b>Decimal<br>Point</b></font></td>
+				<td><font size="2"><b>Thousands<br>Seperator</b></font></td>
+				<td><font size="2"><b>Is Default</b></font></td>
+				<td><font size="2"><b>Action</b></font></td>
 			</tr>
 <?php
-			// http://php.net/manual/en/function.htmlspecialchars.php#103939
-			function umlaute($text){
-			    $returnvalue="";
-			    for($i = 0; $i < strlen($text); $i++){
-			        $teil = hexdec(rawurlencode(substr($text, $i, 1)));
-			        if($teil<32||$teil>1114111){
-			            $returnvalue .= substr($text, $i, 1);
-			        }else{
-			            $returnvalue .= "&#" . $teil . ";";
-			        }
-			    }
-			    return $returnvalue;
-			}
 
 			$result = mysqli_query($GLOBALS['connection'], "select * FROM currencies order by name") or die (mysqli_error($GLOBALS['connection']));
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
-				$row['sign'] = umlaute($row['sign']);
 				?>
 
 				<tr bgcolor="#ffffff">

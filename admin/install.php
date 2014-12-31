@@ -29,28 +29,12 @@
  * 		http://www.milliondollarscript.com/
  *
  */
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(0);
 if ($_REQUEST[action]=='install') {
 	
 	save_db_config();
 	require("../config.php");
-
-	if ($conn=check_connection ($_REQUEST['mysql_user'], $_REQUEST['mysql_pass'],$_REQUEST['mysql_host'])) {
-		 if (check_db ($conn, $_REQUEST['mysql_db'])) {
-
-			 install_db();
-
-		 } else {
-
-			 echo "<p><font color='red'><b>Install failed: Cannot select database.  ".mysqli_error($conn)."</b></font></p>";
-
-		 }
-	}
-	else {
-
-			 echo "<p><font color='red'><b>Install failed: Cannot connect to database. ".mysqli_error($conn)."</b></font></p>";
-
-	}
+	install_db();
 
 } else {
 	
@@ -727,10 +711,6 @@ CREATE TABLE `codes` (
   PRIMARY KEY  (`field_id`,`code`,`lang`)
 ) 
 	";
-
-	$GLOBALS['connection'] = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASS) or die(mysqli_error($GLOBALS['connection']));
-	
-	mysqli_select_db($GLOBALS['connection'], MYSQL_DB) or die(mysqli_error($GLOBALS['connection']));
 
 	/* You can use it like this */
 

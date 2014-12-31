@@ -82,11 +82,11 @@ if (function_exists("imagecreatetruecolor")) {
 	for ($i=0; $i < G_HEIGHT; $i++) {
 		for ($j=0; $j < G_WIDTH; $j++) {
 
-			if ($images[$cell]!='') {
+			if (isset($images[$cell]) && $images[$cell]!='') {
 				imagecopy ( $map, $images[$cell], $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
 				imagedestroy($images[$cell]);
 
-			} elseif($blocks[$cell]!='') {
+			} elseif(isset($blocks[$cell]) && $blocks[$cell]!='') {
 				imagecopy ( $map, $sold_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
 				
 			} else {

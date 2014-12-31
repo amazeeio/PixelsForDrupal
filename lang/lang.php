@@ -33,7 +33,7 @@
 //if(!empty($_GET)) extract($_GET);
 //if(!empty($_POST)) extract($_POST);
 global $f2;
-if ($_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
+if (isset($_REQUEST["lang"]) && $_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
 	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['lang']."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)>0) {
@@ -53,10 +53,10 @@ if ($_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
 	}
 }
 
-elseif ($_SESSION['MDS_LANG']=='') {
+elseif (isset($_SESSION['MDS_LANG']) && $_SESSION['MDS_LANG']=='') {
 	// get the default language, or saved language
 
-	if ($_COOKIE['MDS_SAVED_LANG']!='') {
+	if (isset($_COOKIE['MDS_SAVED_LANG']) && $_COOKIE['MDS_SAVED_LANG']!='') {
 		$_SESSION['MDS_LANG'] = $_COOKIE['MDS_SAVED_LANG'];
 
 	} else {
@@ -101,7 +101,7 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 				$AVAILABLE_LANGS [$row['lang_code']] = $row['name'];
 				$LANG_FILES [$row['lang_code']] = $row['lang_filename'];
 			}
-			if (($_SESSION['MDS_LANG'] != '') ) {
+			if (isset($_SESSION) && (isset($_SESSION['MDS_LANG']) && $_SESSION['MDS_LANG'] != '') ) {
 				include dirname(__FILE__)."/".$LANG_FILES[$_SESSION['MDS_LANG']];
 				
 			} else {

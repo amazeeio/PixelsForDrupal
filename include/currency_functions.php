@@ -149,6 +149,7 @@ function convert_to_default_currency($cur_code, $amount) {
 
 function convert_to_default_currency_formatted($cur_code, $amount) {
 
+	$show_code = "";
 	if (func_num_args()>2) {
 		$show_code = func_get_arg(2);
 	}
@@ -191,7 +192,7 @@ function convert_to_default_currency_formatted($cur_code, $amount) {
 
 	
 
-	return format_currency($new_amount, $to_code, $show_code, true) ;
+	return format_currency($new_amount, $to_code, $show_code, true);
 
 
 }
@@ -199,6 +200,7 @@ function convert_to_default_currency_formatted($cur_code, $amount) {
 ##############################################
 
 function format_currency($amount, $cur_code) {
+	$show_code = "";
 	if (func_num_args()>2) {
 		$show_code = func_get_arg(2);
 		
@@ -208,11 +210,11 @@ function format_currency($amount, $cur_code) {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//format_currency($row['price'], $row['currency_code']);
 	$row = mysqli_fetch_array($result);
-	if ($show_code) {
+	if (!empty($show_code)) {
 		$show_code = " ".$row['code'];
 
 	}
-	$amount = number_format ( $amount , $row[decimal_places], $row[decimal_point], $row[thousands_sep] );
+	$amount = number_format ( $amount , $row['decimal_places'], $row['decimal_point'], $row['thousands_sep'] );
 	$amount = $row['sign']."".$amount.$show_code;
 
 	return $amount;

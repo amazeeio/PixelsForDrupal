@@ -78,8 +78,8 @@ function unfck($v) {
 ##################################################
 
 
-if ($_REQUEST['time']=='') {
-	if (NO_HOUSE_KEEP!='YES') {
+if (isset($_REQUEST['time']) && $_REQUEST['time']=='') {
+	if (defined(NO_HOUSE_KEEP) && NO_HOUSE_KEEP!='YES') {
 		expire_orders();
 	}
 }
@@ -96,7 +96,7 @@ function expire_orders() {
 	$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
 	$t_row = @mysqli_fetch_array($result);
 
-	if ($DB_ERROR!='') return $DB_ERROR;
+	if (isset($DB_ERROR) && $DB_ERROR!='') return $DB_ERROR;
 
 	// Poor man's lock
 	$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='EXPIRE_RUNNING' AND `val`='NO' ";
@@ -411,7 +411,7 @@ function complete_order ($user_id, $order_id) {
 	
 		$label["order_completed_email_template"] = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $label["order_completed_email_template"]);
 		$label["order_completed_email_template"] = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row[currency], $order_row['price']), $label["order_completed_email_template"]);
+		$label["order_completed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row['currency'], $order_row['price']), $label["order_completed_email_template"]);
 		$label["order_completed_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_completed_email_template"]);
 		$label["order_completed_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_completed_email_template"]);
 		$message = $label["order_completed_email_template"];
@@ -436,10 +436,10 @@ function complete_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row[FirstName]." ".$user_row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 1);
+				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 1);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $user_row[FirstName]." ".$user_row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
 			}
 			
 		}
@@ -2260,7 +2260,7 @@ function get_required_size($x, $y) {
 # If $user_id is null then return for all banners
 function get_clicks_for_today($BID, $user_id=0) {
 	
-	$date = gmDate(Y)."-".gmDate(m)."-".gmDate(d);
+	$date = gmDate('Y')."-".gmDate('m')."-".gmDate('d');
 	
 	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID' AND `date`='$date' GROUP BY banner_id";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
@@ -3071,7 +3071,8 @@ function bcmod_wrapper( $x, $y )
 function elapsedtime($sec){ 
 	$days  = floor($sec / 86400); 
 	$hrs   = floor(bcmod_wrapper($sec,86400)/3600); 
-	$mins  = round(bcmod_wrapper(bcmod_wrapper($sec,86400),3600)/60); 
+	$mins  = round(bcmod_wrapper(bcmod_wrapper($sec,86400),3600)/60);
+	$tstring = "";
 	if($days > 0) $tstring = $days . "d, "; 
 	if($hrs  > 0) $tstring = $tstring . $hrs . "h, "; 
 	$tstring = "" . $tstring . $mins . "m"; 

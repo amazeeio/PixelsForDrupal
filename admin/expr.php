@@ -76,11 +76,11 @@ require ('admin_common.php');
 			?>
 
 			<tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
-	<td><input type="checkbox" name="orders[]" value="<?php echo $row[order_id]; ?>"></td>
-	<td><font face="Arial" size="2"><?php echo $row[order_date];?></font></td>
-	<td><font face="Arial" size="2"><?php echo $row[FirstName]." ".$row[LastName];?></font></td>
-    <td><font face="Arial" size="2"><?php echo $row[Username];?> (#<?php echo $row[ID];?>)</font></td>
-	<td><font face="Arial" size="2">#<?php echo $row[order_id];?></font></td>
+	<td><input type="checkbox" name="orders[]" value="<?php echo $row['order_id']; ?>"></td>
+	<td><font face="Arial" size="2"><?php echo $row['order_date'];?></font></td>
+	<td><font face="Arial" size="2"><?php echo $row['FirstName']." ".$row['LastName'];?></font></td>
+    <td><font face="Arial" size="2"><?php echo $row['Username'];?> (#<?php echo $row[ID];?>)</font></td>
+	<td><font face="Arial" size="2">#<?php echo $row['order_id'];?></font></td>
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];
@@ -91,7 +91,7 @@ $b_row = mysqli_fetch_array($b_result);
 		
 	?></font></td>
 	<td><font face="Arial" size="2"><?php echo $row['quantity'];?></font></td>
-	<td><font face="Arial" size="2"><?php echo convert_to_default_currency_formatted($row['currency'], $row[price])?></font></td>
+	<td><font face="Arial" size="2"><?php echo convert_to_default_currency_formatted($row['currency'], $row['price'])?></font></td>
 	<td><font face="Arial" size="2"><?php echo $label[$row['status']];?></font></td>
 	</tr>
 

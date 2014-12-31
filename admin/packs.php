@@ -38,8 +38,7 @@ require ('admin_common.php');
 <html>
 <?php
 
-$BID = $f2->bid($_REQUEST['BID']);
-
+$BID = $f2->bid((isset($_REQUEST['BID']) ? $_REQUEST['BID'] : 1));
 ?>
 <?php echo $f2->get_doc(); ?>
 
@@ -80,13 +79,13 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<?php
 	while ($row=mysqli_fetch_array($res)) {
 		
-		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
+		if (($row['banner_id']==$BID) && ($BID != 'all')) {
 			$sel = 'selected';
 		} else {
 			$sel ='';
 
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 	}
 	?>
 </select>
@@ -94,7 +93,7 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 <?php
 
 if ($BID!='') {
-
+	load_banner_constants($BID);
 	?>
 	<hr>
 	
@@ -153,7 +152,7 @@ if ($BID!='') {
 
 	}
 
-	if ($_REQUEST['action'] == 'delete') {
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 
 		$sql = "SELECT * FROM orders where package_id='".$_REQUEST['package_id']."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql);
@@ -197,12 +196,12 @@ if ($BID!='') {
 
 	}
 
-	if ($_REQUEST['action'] == 'default') {
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'default') {
 		set_to_default($_REQUEST['package_id']);
 		
 	}
 
-	if ($_REQUEST['submit']!='') {
+	if (isset($_REQUEST['submit']) && $_REQUEST['submit']!='') {
 
 		$error = validate_input();
 
@@ -300,11 +299,11 @@ if ($BID!='') {
 	
 	<?php
 
-	if ($_REQUEST['new']=='1') {
+	if (isset($_REQUEST['new']) && $_REQUEST['new']=='1') {
 		echo "<h4>New Package:</h4>";
 		
 	}
-	if ($_REQUEST['action']=='edit') {
+	if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 		echo "<h4>Edit Package:</h4>";
 
 		$sql = "SELECT * FROM packages WHERE `package_id`='".$_REQUEST['package_id']."' ";
@@ -327,7 +326,7 @@ if ($BID!='') {
 		
 	}
 
-	if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
+	if ((isset($_REQUEST['new']) && $_REQUEST['new']!='') || (isset($_REQUEST['action']) && $_REQUEST['action']=='edit')) {
 
 	
 

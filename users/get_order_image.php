@@ -41,10 +41,10 @@ include ("login_functions.php");
 process_login();
 
 // get the order id
-if ($_REQUEST['block_id']!='') {
+if (isset($_REQUEST['block_id']) && $_REQUEST['block_id']!='') {
 	$sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' and banner_id='".$f2->bid($_REQUEST['BID'])."' ";
 	
-} elseif ($_REQUEST['aid']!='') {
+} elseif (isset($_REQUEST['aid']) && $_REQUEST['aid']!='') {
 	$sql = "SELECT * FROM ads where ad_id='".$_REQUEST['aid']."' ";
 
 }
@@ -59,9 +59,10 @@ $result3 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBA
 load_banner_constants($f2->bid($_REQUEST['BID']));
 $blocks = array();
 
+$i = 0;
 while ($block_row = mysqli_fetch_array($result3)) {
 
-	if ($high_x=='') {
+	if (isset($high_x) && $high_x=='') {
 		$high_x = $block_row['x'];
 		$high_y = $block_row['y'];
 		$low_x = $block_row['x'];

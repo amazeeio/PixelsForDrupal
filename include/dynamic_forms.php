@@ -35,7 +35,7 @@ require_once ("code_functions.php");
 require_once ("category.inc.php");
 
 global $f2;
-if (($_SESSION['JB_ID'] != '') && ($_SESSION['JB_Domain']=='EMPLOYER')) {
+if ((isset($_SESSION['JB_ID']) && $_SESSION['JB_ID'] != '') && (isset($_SESSION['JB_Domain']) && $_SESSION['JB_Domain']=='EMPLOYER')) {
 	if (SUBSCRIPTION_FEE_ENABLED=='YES') {
 		//$subscr_status = get_employer_subscription_status($_SESSION['JB_ID']);
 		$subscr_block_status = get_employer_view_block_status($_SESSION['JB_ID']);

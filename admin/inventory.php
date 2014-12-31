@@ -67,7 +67,7 @@ require ('admin_common.php');
 
 <?php
 
-if ($_REQUEST['reset_image']!='') {
+if (isset($_REQUEST['reset_image']) && $_REQUEST['reset_image']!='') {
 
 	$default = get_default_image($_REQUEST['reset_image']);
 
@@ -82,7 +82,7 @@ if ($_REQUEST['reset_image']!='') {
 
 function display_reset_link($BID, $image_name) {
 
-	if ($_REQUEST['action']=='edit') {
+	if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 		?>
 		<a onclick="return confirmLink(this, 'Reset this image to deafult, are you sure?');" href='inventory.php?action=edit&banner_id=<?php echo $BID; ?>&reset_image=<?php echo $image_name; ?>'><font color='red'>x</font></a>
 		<?php
@@ -113,88 +113,88 @@ function is_allowed_grid_file($image_name) {
 function validate_input() {
 
 
-	if ($_REQUEST['name']=='') {
+	if (isset($_REQUEST['name']) && $_REQUEST['name']=='') {
 		$error .= "- Grid name not filled in<br>";
 	}
 
-	if ($_REQUEST['grid_width']=='') {
+	if (isset($_REQUEST['grid_width']) && $_REQUEST['grid_width']=='') {
 		$error .= "- Grid Width not filled in<br>";
 	}
 
-	if ($_REQUEST['grid_height']=='') {
+	if (isset($_REQUEST['grid_height']) && $_REQUEST['grid_height']=='') {
 		$error .= "- Grid Height not filled in<br>";
 	}
 
-	if ($_REQUEST['days_expire']=='') {
+	if (isset($_REQUEST['days_expire']) && $_REQUEST['days_expire']=='') {
 		$error .= "- Days Expire not filled in<br>";
 	}
 
-	if ($_REQUEST['max_orders']=='') {
+	if (isset($_REQUEST['max_orders']) && $_REQUEST['max_orders']=='') {
 		$error .= "- Max orders per customer not filled in<br>";
 	}
 
-	if ($_REQUEST['price_per_block']=='') {
+	if (isset($_REQUEST['price_per_block']) && $_REQUEST['price_per_block']=='') {
 		$error .= "- Price per Block  not filled in<br>";
 	}
 
-	if ($_REQUEST['currency']=='') {
+	if (isset($_REQUEST['currency']) && $_REQUEST['currency']=='') {
 		$error .= "- Currency not filled in<br>";
 	}
 
-	if (!is_numeric( $_REQUEST['block_width'])) {
+	if (isset($_REQUEST['block_width']) && !is_numeric( $_REQUEST['block_width'])) {
 		$error .= "- Block width is not valid<br>";
 	}
 
-	if (!is_numeric( $_REQUEST['block_height'])) {
+	if (isset($_REQUEST['block_height']) && !is_numeric( $_REQUEST['block_height'])) {
 		$error .= "- Block height is not valid<br>";
 	}
 
-	if (!is_numeric( $_REQUEST['max_blocks'])) {
+	if (isset($_REQUEST['max_blocks']) && !is_numeric( $_REQUEST['max_blocks'])) {
 		$error .= "- Max Blocks is not valid<br>";
 	}
 
-	if (!is_numeric( $_REQUEST['min_blocks'])) {
+	if (isset($_REQUEST['min_blocks']) && !is_numeric( $_REQUEST['min_blocks'])) {
 		$error .= "- Min Blocks is not valid<br>";
 	}
 	
-	if ($_FILES['grid_block']['tmp_name']!='') {
+	if (isset($_FILES['grid_block']) && $_FILES['grid_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('grid_block')) {
 			$error .= "- Grid Block must be a valid PNG file.<br>";
 		}
 	}
 
-	if ($_FILES['nfs_block']['tmp_name']!='') {
+	if (isset($_FILES['nfs_block']) && $_FILES['nfs_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('nfs_block')) {
 			$error .= "- Not For Sale Block must be a valid PNG file.<br>";
 		}
 	}
 
 	
-	if ($_FILES['usr_grid_block']['tmp_name']!='') {
+	if (isset($_FILES['usr_grid_block']) && $_FILES['usr_grid_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('usr_grid_block')) {
 			$error .= "- Not For Sale Block must be a valid PNG file.<br>";
 		}
 	}
 
-	if ($_FILES['usr_nfs_block']['tmp_name']!='') {
+	if (isset($_FILES['usr_nfs_block']) && $_FILES['usr_nfs_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('usr_nfs_block')) {
 			$error .= "- User's Not For Sale Block must be a valid PNG file.<br>";
 		}
 	}
 
-	if ($_FILES['usr_ord_block']['tmp_name']!='') {
+	if (isset($_FILES['usr_ord_block']) && $_FILES['usr_ord_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('usr_ord_block')) {
 			$error .= "- User's Ordered Block must be a valid PNG file.<br>";
 		}
 	}
 
-	if ($_FILES['usr_res_block']['tmp_name']!='') {
+	if (isset($_FILES['usr_res_block']) && $_FILES['usr_res_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('usr_res_block')) {
 			$error .= "- User's Reserved Block must be a valid PNG file.<br>";
 		}
 	}
 
-	if ($_FILES['usr_sol_block']['tmp_name']!='') {
+	if (isset($_FILES['usr_sol_block']) && $_FILES['usr_sol_block']['tmp_name']!='') {
 		if (!is_allowed_grid_file('usr_sol_block')) {
 			$error .= "- User's Sold Block must be a valid PNG file.<br>";
 		}
@@ -211,14 +211,14 @@ function validate_input() {
 ####################
 function is_default() {
 
-	if ($_REQUEST[banner_id]==1) {
+	if (isset($_REQUEST['banner_id']) && $_REQUEST['banner_id']==1) {
 		return true;
 	}
 	return false;
 
 }
 #####################
-if ($_REQUEST['action'] == 'delete') {
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 	if (is_default ()) {
 		echo "<b>Cannot delete</b> - This is the default grid!<br>";
 
@@ -313,7 +313,7 @@ function get_banner_image_sql_values($BID) {
 
 }
 
-if ($_REQUEST['submit']!='') {
+if (isset($_REQUEST['submit']) && $_REQUEST['submit']!='') {
 
 	$error = validate_input();
 
@@ -348,7 +348,7 @@ if ($_REQUEST['submit']!='') {
 }
 
 ?>
-<?php if (($_REQUEST['new']=='')&&(($_REQUEST['action']==''))) { ?>
+<?php if ((isset($_REQUEST['new']) && $_REQUEST['new']=='')&&((isset($_REQUEST['action']) && $_REQUEST['action']==''))) { ?>
 Here you can manage your grid(s): <ul><li>Set the expiry of the pixels</li>
 <li>Set the maximum allowed orders per grid</li>
 								<li>Set the default price of the pixels</li>
@@ -358,17 +358,17 @@ Here you can manage your grid(s): <ul><li>Set the expiry of the pixels</li>
 
 
 <?php } ?>
-<?php if (($_REQUEST['new']=='')) { ?>
+<?php if ((isset($_REQUEST['new']) && $_REQUEST['new']=='')) { ?>
 <input type="button" style="background-color:#66FF33" value="New Grid..." onclick="window.location='inventory.php?new=1'"><br>
 <?php } ?>
 
 <?php
 
-if ($_REQUEST['new']=='1') {
+if (isset($_REQUEST['new']) && $_REQUEST['new']=='1') {
 	echo "<h4>New Grid:</h4>";
 	//echo "<p>Note: Make sure that you create a file for your new language in the /lang directory.</p>";
 }
-if ($_REQUEST['action']=='edit') {
+if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 	echo "<h4>Edit Grid:</h4>";
 
 	$sql = "SELECT * FROM banners WHERE `banner_id`='".$_REQUEST['banner_id']."' ";
@@ -393,29 +393,29 @@ if ($_REQUEST['action']=='edit') {
 
 //echo 'block width is:'.$_REQUEST['block_width']."<br> ($sql)";
 
-if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
+if ((isset($_REQUEST['new']) && $_REQUEST['new']!='') || (isset($_REQUEST['action']) && $_REQUEST['action']=='edit')) {
 
-	if (!$_REQUEST['block_width']) {
+	if (isset($_REQUEST['block_width']) && !$_REQUEST['block_width']) {
 		$_REQUEST['block_width'] = 10;
 	}
 
-	if (!$_REQUEST['block_height']) {
+	if (isset($_REQUEST['block_height']) && !$_REQUEST['block_height']) {
 		$_REQUEST['block_height'] = 10;
 	}
 
-	if (!$_REQUEST['max_blocks']) {
+	if (isset($_REQUEST['max_blocks']) && !$_REQUEST['max_blocks']) {
 		$_REQUEST['max_blocks'] = '0';
 	}
 
-	if (!$_REQUEST['min_blocks']) {
+	if (isset($_REQUEST['min_blocks']) && !$_REQUEST['min_blocks']) {
 		$_REQUEST['min_blocks'] = '0';
 	}
 
-	if (!$_REQUEST['days_expire']) {
+	if (isset($_REQUEST['days_expire']) && !$_REQUEST['days_expire']) {
 		$_REQUEST['days_expire'] = '0';
 	}
 
-	if (!$_REQUEST['max_orders']) {
+	if (isset($_REQUEST['max_orders']) && !$_REQUEST['max_orders']) {
 		$_REQUEST['max_orders'] = '0';
 	}
 
@@ -424,31 +424,31 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 
 	?>
 <form enctype="multipart/form-data" action='inventory.php' method="post">
-<input type="hidden" value="<?php echo $_REQUEST['new']?>" name="new" >
-<input type="hidden" value="<?php echo $_REQUEST['edit']?>" name="edit" >
-<input type="hidden" value="<?php echo $_REQUEST['action']?>" name="action" >
-<input type="hidden" value="<?php echo $_REQUEST['banner_id']?>" name="banner_id" >
-<input type="hidden" value="<?php echo $_REQUEST['edit_anyway']?>" name="edit_anyway" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['new']) ? $_REQUEST['new'] : ""); ?>" name="new" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['edit']) ? $_REQUEST['edit'] : ""); ?>" name="edit" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['action']) ? $_REQUEST['action'] : ""); ?>" name="action" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['banner_id']) ? $_REQUEST['banner_id'] : ""); ?>" name="banner_id" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['edit_anyway']) ? $_REQUEST['edit_anyway'] : ""); ?>" name="edit_anyway" >
 <table border="0" cellSpacing="0" cellPadding="0"  width="100%" bgcolor="#ffffff">
 
 <tr ><td width="50%" valign='top'><!-- start left column -->
 
 <table border='0' cellSpacing="1" cellPadding="3" bgColor="#d9d9d9"><tr ><td  >
 
-<tr bgcolor="#ffffff" ><td bgColor="#eaeaea"><font size="2"><b>Grid Name</b></font></td><td><input size="30" type="text" name="name" value="<?php echo $_REQUEST['name']; ?>"/> <font size="2">eg. My Million Pixel Grid</font></td></tr>
+<tr bgcolor="#ffffff" ><td bgColor="#eaeaea"><font size="2"><b>Grid Name</b></font></td><td><input size="30" type="text" name="name" value="<?php echo (isset($_REQUEST['name']) ? $_REQUEST['name'] : ""); ?>"/> <font size="2">eg. My Million Pixel Grid</font></td></tr>
 <?php
 				
-				$sql = "SELECT * FROM blocks where banner_id=".$row[banner_id]." AND status <> 'nfs' limit 1 ";
+				$sql = "SELECT * FROM blocks where banner_id=".$row['banner_id']." AND status <> 'nfs' limit 1 ";
 				$b_res = mysqli_query($GLOBALS['connection'], $sql);
 				
-				if (($row[banner_id]!='') && (mysqli_num_rows($b_res)>0)) {
+				if (($row['banner_id']!='') && (mysqli_num_rows($b_res)>0)) {
 					$locked = true;
 
 				} else {
 					$locked= false;
 				}
 
-				if ($_REQUEST['edit_anyway']!='') {
+				if (isset($_REQUEST['edit_anyway']) && $_REQUEST['edit_anyway']!='') {
 
 					$locked = false;
 
@@ -458,14 +458,14 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 				?>
 <tr bgcolor="#ffffff" ><td bgColor="#eaeaea"><font size="2"><b>Grid Width</b></font></td><td>
 <?php
-
+$disabled = "";
 if (!$locked) {
 ?>
 <input <?php echo $disabled; ?> size="2" type="text" name="grid_width" value="<?php echo $_REQUEST['grid_width']; ?>"/><font size="2"> Measured in blocks (default block size is 10x10 pixels)</font>
 <?php } else {
 
 	echo "<b>".$_REQUEST['grid_width'];
-	echo "<input type='hidden' value='".$row[grid_width]."' name='grid_width'> Blocks.</b> <font size='1'>Note: Cannot change width because the grid is in use by an advertiser. [<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
+	echo "<input type='hidden' value='".$row['grid_width']."' name='grid_width'> Blocks.</b> <font size='1'>Note: Cannot change width because the grid is in use by an advertiser. [<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
 
 }
 ?>
@@ -480,7 +480,7 @@ if (!$locked) {
 <?php } else {
 
 	echo "<b>".$_REQUEST['grid_height'];
-	echo "<input type='hidden' value='".$row[grid_height]."' name='grid_height'> Blocks.</b> <font size='1'> Note: Cannot change height because the grid is in use by an advertiser.[<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
+	echo "<input type='hidden' value='".$row['grid_height']."' name='grid_height'> Blocks.</b> <font size='1'> Note: Cannot change height because the grid is in use by an advertiser.[<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
 
 }
 ?>
@@ -712,7 +712,7 @@ function render_offer ($price, $currency, $max_orders, $days_expire, $package_id
 
 				<?php
 
-					$banner_packages = banner_get_packages($row['banner_id'], $p_result);
+					$banner_packages = banner_get_packages($row['banner_id']);
 
 					if (!$banner_packages) {
 						// render the default offer
@@ -734,7 +734,7 @@ function render_offer ($price, $currency, $max_orders, $days_expire, $package_id
 				
 					}?>
 				</td>
-				<td><font size="2"><a href='<?php echo $SERVER['PHP_SELF'];?>?action=edit&banner_id=<?php echo $row['banner_id'];?>'>Edit</a> / <a href="packs.php?BID=<?php echo $row['banner_id'];?>"> Packages</a><?php if ($row['banner_id']!='1') {?> / <a href='<?php echo $SERVER['PHP_SELF'];?>?action=delete&banner_id=<?php echo $row['banner_id'];?>'>Delete</a><?php } ?></font></td>
+				<td><font size="2"><a href='<?php echo $_SERVER['PHP_SELF'];?>?action=edit&banner_id=<?php echo $row['banner_id'];?>'>Edit</a> / <a href="packs.php?BID=<?php echo $row['banner_id'];?>"> Packages</a><?php if ($row['banner_id']!='1') {?> / <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&banner_id=<?php echo $row['banner_id'];?>'>Delete</a><?php } ?></font></td>
 				<td><font size="2"><?php echo get_clicks_for_today($row['banner_id']); ?></font></td>
 				<td><font size="2"><?php echo get_clicks_for_banner($row['banner_id']); ?></font></td>
 

@@ -97,11 +97,11 @@ if (mysqli_num_rows($result)==0) {
 	while ($row=mysqli_fetch_array($result)) {
 	?>
 <tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
-    <td><font face="Arial" size="2"><?php echo get_local_time($row[order_date]);?></font></td>
-	<td><font face="Arial" size="2"><?php echo $row[FirstName]." ".$row[LastName];?></font></td>
-    <td><font face="Arial" size="2"><?php echo $row[Username];?> (#<?php echo $row[ID];?>)</font></td>
-	<td><font face="Arial" size="2">#<?php echo $row[order_id];?></font></td>
-	<td><font face="Arial" size="2"><?php echo $row[quantity];?></font></td>
+    <td><font face="Arial" size="2"><?php echo get_local_time($row['order_date']);?></font></td>
+	<td><font face="Arial" size="2"><?php echo $row['FirstName']." ".$row['LastName'];?></font></td>
+    <td><font face="Arial" size="2"><?php echo $row['Username'];?> (#<?php echo $row['ID'];?>)</font></td>
+	<td><font face="Arial" size="2">#<?php echo $row['order_id'];?></font></td>
+	<td><font face="Arial" size="2"><?php echo $row['quantity'];?></font></td>
 	<td><font face="Arial" size="2"><?php 
 
 			$sql = "select * from banners where banner_id=".$row['banner_id'];

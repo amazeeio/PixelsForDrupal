@@ -964,6 +964,7 @@ $lang_filename = "english.php";
 $sql = "SELECT * FROM lang  ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
+$done = 0;
 while ($row = mysqli_fetch_array($result)) {
 
 	$lang_filename=$row['lang_filename'];

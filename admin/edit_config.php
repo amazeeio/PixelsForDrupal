@@ -29,10 +29,8 @@
  * 		http://www.milliondollarscript.com/
  *
  */
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(0);
 require ('admin_common.php');
-
-error_reporting(E_ALL & ~E_NOTICE);
 
 // filter vars
 $footer = $purifier->purify( $_REQUEST['footer'] );
@@ -144,7 +142,7 @@ define('MDS_AGRESSIVE_CACHE', $_REQUEST['mds_agressive_cache']);
 define('ERROR_REPORTING', $_REQUEST['error_reporting']);
 
 $config_str = "<?php
-error_reporting(".(is_numeric(ERROR_REPORTING) ? ERROR_REPORTING : "'".ERROR_REPORTING."'").");
+error_reporting(".ERROR_REPORTING.");
 
 #########################################################################
 # CONFIGURATION
@@ -265,7 +263,7 @@ if (defined('MEMORY_LIMIT')) {
 	ini_set('memory_limit', '64M');
 }
 
-define('ERROR_REPORTING', ".(is_numeric(ERROR_REPORTING) ? ERROR_REPORTING : "'".ERROR_REPORTING."'").");
+define('ERROR_REPORTING', ".ERROR_REPORTING.");
 
 	// database connection
 	require_once(dirname(__FILE__).'/include/database.php');

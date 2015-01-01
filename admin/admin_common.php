@@ -44,7 +44,7 @@ if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (MAIN_PHP=='1')) {
 		$_SESSION['ADMIN'] = '1';
 	}
 }
-if ((!isset($_SESSION['ADMIN']) && $_SESSION['ADMIN']=='') ) {
+if (!isset($_SESSION['ADMIN']) || empty($_SESSION['ADMIN'])) {
 	if (MAIN_PHP=='1') {
 	?>
 Please input admin password:<br>

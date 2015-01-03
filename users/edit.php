@@ -82,19 +82,24 @@ if ($_REQUEST[action]=='changepass') {
 
 ?>
 <form name="form1" method="post">
-<table border="0">
-<tr><td colspan="2"><h3><?php echo $label['advertiser_edit_chpass'];?></h3></tr>
-<tr>
-	<td><?php echo $label['advertiser_edit_curpass'];?></td><td><input type="password" name="oldpass"></td>
-</tr><tr>
-	<td><?php echo $label['advertiser_edit_newpass'];?></td><td><input type="password" name="password"></td>
-</tr></tr>
-	<td><?php echo $label['advertiser_edit_retypepass'];?></td><td><input type="password" name="password2"></td>
-</tr><tr>
-	<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_changebutton']; ?>"></td>
-</tr>
-</table>
-<input type="hidden" name="action" value="changepass">
+	<table border="0">
+		<tr>
+			<td colspan="2"><h3><?php echo $label['advertiser_edit_chpass']; ?></h3></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_curpass']; ?></td><td><input type="password" name="oldpass"></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_newpass']; ?></td><td><input type="password" name="password"></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_retypepass']; ?></td><td><input type="password" name="password2"></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_changebutton']; ?>"></td>
+		</tr>
+	</table>
+	<input type="hidden" name="action" value="changepass">
 </form>
 </p>
 <hr>
@@ -125,21 +130,27 @@ $email = $row['Email'];
 
 ?>
 <form name="form2" method="post">
-<table border="0">
-<tr><td colspan="2"><h3><?php echo $label['advertiser_edit_upd_personald'];?></h3></tr>
-<tr>
-	<td><?php echo $label['advertiser_edit_fname'];?></td><td><input type="text" name="firstname" value="<?php echo ($firstname); ?>" ></td>
-</tr><tr>
-	<td><?php echo $label['advertiser_edit_lname']; ?></td><td><input type="text" name="lastname" value="<?php echo htmlentities($lastname); ?>"></td>
-</tr><tr>
-	<td><?php echo $label['advertiser_edit_comp_n']; ?></td><td><input type="text" size="30" name="compname" value="<?php echo htmlentities($compname); ?>"></td>
-</tr><tr>
-	<td><?php echo $label['advertiser_edit_email']; ?></td><td><input type="text" size="30" name="email" value="<?php echo htmlentities($email); ?>"></td>
-</tr><tr>
-	<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_savebutton']; ?>"></td>
-</tr>
-</table>
-<input type="hidden" name="action" value="update">
+	<table border="0">
+		<tr>
+			<td colspan="2"><h3><?php echo $label['advertiser_edit_upd_personald']; ?></h3></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_fname']; ?></td><td><input type="text" name="firstname" value="<?php echo htmlentities($firstname); ?>" ></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_lname']; ?></td><td><input type="text" name="lastname" value="<?php echo htmlentities($lastname); ?>"></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_comp_n']; ?></td><td><input type="text" size="30" name="compname" value="<?php echo htmlentities($compname); ?>"></td>
+		</tr>
+		<tr>
+			<td><?php echo $label['advertiser_edit_email']; ?></td><td><input type="text" size="30" name="email" value="<?php echo htmlentities($email); ?>"></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_savebutton']; ?>"></td>
+		</tr>
+	</table>
+	<input type="hidden" name="action" value="update">
 </form>
 </p>
 

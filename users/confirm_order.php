@@ -35,7 +35,7 @@ include ("../config.php");
 
 require_once ("../include/ads.inc.php");
 
-$BID = $f2->bid($_REQUEST['BID']);
+$BID = $f2->bid(isset($_REQUEST['BID']) ? $_REQUEST['BID'] : 1);
 
 ##############################
 function display_edit_order_button ($order_id) {
@@ -253,7 +253,7 @@ show_nav_status (3);
 		<?php
 
 		//echo "can ordr:".can_user_order($b_row, $_SESSION['MDS_ID'], $_REQUEST['pack']);
-		if (!can_user_order($b_row, $_SESSION['MDS_ID'], $_REQUEST['pack'])) { // one more check before continue
+		if (!can_user_order($b_row, $_SESSION['MDS_ID'], (isset($_REQUEST['pack'])?$_REQUEST['pack']:""))) { // one more check before continue
 
 			if (!$p_max_ord) {
 				$max = G_MAX_ORDERS;

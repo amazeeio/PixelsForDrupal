@@ -1188,33 +1188,33 @@ function display_order ($order_id, $BID) {
 ?>
 
 <table border="1" width="300">
-<?php if ($order_row['order_id']!='') { ?>
+<?php if (isset($order_row['order_id']) && $order_row['order_id']!='') { ?>
 <tr>
 <td><b><?php echo $label['advertiser_ord_order_id'];?></b></td><td><?php echo $order_row['order_id'];?></td>
 </tr>
 <?php } ?>
 <tr>
-<td><b><?php echo $label['advertiser_ord_date'];?></b></td><td><?php echo $order_row[order_date]; ?></td>
+<td><b><?php echo $label['advertiser_ord_date'];?></b></td><td><?php echo $order_row['order_date']; ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_name']; ?></b></td><td><?php echo $b_row[name]; ?></td>
+<td><b><?php echo $label['advertiser_ord_name']; ?></b></td><td><?php echo $b_row['name']; ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_quantity'];?></b></td><td><?php echo $order_row[quantity]; ?> <?php echo $label['advertiser_ord_pix'];?></td>
+<td><b><?php echo $label['advertiser_ord_quantity'];?></b></td><td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix'];?></td>
 </tr>
-<td><b><?php echo $label['advertiser_ord_expired']; ?></b></td><td><?php if ($order_row[days_expire]==0) { echo $label['advertiser_ord_never']; } else { 
+<td><b><?php echo $label['advertiser_ord_expired']; ?></b></td><td><?php if ($order_row['days_expire']==0) { echo $label['advertiser_ord_never']; } else { 
 
-	$label['advertiser_ord_days_exp'] = str_replace ("%DAYS_EXPIRE%", $order_row[days_expire], $label['advertiser_ord_days_exp']);
+	$label['advertiser_ord_days_exp'] = str_replace ("%DAYS_EXPIRE%", $order_row['days_expire'], $label['advertiser_ord_days_exp']);
 	echo $label['advertiser_ord_days_exp'];
 		
 } ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_price']; ?></b></td><td><?php echo convert_to_default_currency_formatted($order_row[currency], $order_row[price])?></td>
+<td><b><?php echo $label['advertiser_ord_price']; ?></b></td><td><?php echo convert_to_default_currency_formatted($order_row['currency'], $order_row['price'])?></td>
 </tr>
-<?php if ($order_row['order_id']!='') { ?>
+<?php if (isset($order_row['order_id']) && $order_row['order_id']!='') { ?>
 <tr>
-<td><b><?php echo $label['advertiser_ord_status']; ?></b></td><td><?php echo $order_row[status];?></td>
+<td><b><?php echo $label['advertiser_ord_status']; ?></b></td><td><?php echo $order_row['status'];?></td>
 </tr>
 <?php } ?>
 </table>
@@ -1246,13 +1246,13 @@ Please choose the duration of the campaign you desire:<p>
 <td><b><?php echo $label['advertiser_ord_order_id'];?></b></td><td><?php echo $order_row['order_id'];?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_date'];?></b></td><td><?php echo $order_row[order_date]; ?></td>
+<td><b><?php echo $label['advertiser_ord_date'];?></b></td><td><?php echo $order_row['order_date']; ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_name']; ?></b></td><td><?php echo $b_row[name]; ?></td>
+<td><b><?php echo $label['advertiser_ord_name']; ?></b></td><td><?php echo $b_row['name']; ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_quantity'];?></b></td><td><?php echo $order_row[quantity]; ?> <?php echo $label['advertiser_ord_pix'];?></td>
+<td><b><?php echo $label['advertiser_ord_quantity'];?></b></td><td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix'];?></td>
 </tr>
 <td><b>Duration/Price</b></td><td><?php if ($b_row[days_expire]==0) { echo $label['advertiser_ord_never']; } else { 
 // viday pricing dropdown
@@ -1273,7 +1273,7 @@ Please choose the duration of the campaign you desire:<p>
 } ?></td>
 </tr>
 <tr>
-<td><b><?php echo $label['advertiser_ord_status']; ?></b></td><td><?php echo $order_row[status];?></td>
+<td><b><?php echo $label['advertiser_ord_status']; ?></b></td><td><?php echo $order_row['status'];?></td>
 </tr>
 </table>
 <?php

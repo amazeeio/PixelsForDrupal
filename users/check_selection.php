@@ -103,10 +103,8 @@ function reserve_temp_order_pixels($block_info, $in_str) {
 		return; 
 	}
 
-	
-
 	$blocks = explode (',', $in_str);
-
+	$total = 0;
 	foreach ($block_info as $key=>$block) {
 
 		//$price = get_zone_price($f2->bid($_REQUEST['BID']),  $block['map_y']/10, $block['map_x']/10);
@@ -250,6 +248,8 @@ function check_selection_main() {
 	imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $size[0], $size[1] );
 //imagepng($whole_image);
 
+	$block_info = array();
+	$comma = "";
 	for ($i=0; $i<($size[1]); $i+=BLK_HEIGHT) {
 		
 		for ($j=0; $j<($size[0]); $j+=BLK_WIDTH) {
@@ -265,8 +265,7 @@ function check_selection_main() {
 			$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
 			$cb = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH));
 
-
-			$in_str = $in_str."$comma$cb";
+			$in_str = $in_str . $comma . $cb;
 			$comma = ',';
 
 			$block_info[$cb]['map_x'] = $map_x;
@@ -296,7 +295,7 @@ function check_selection_main() {
 	//print_r ($block_info);
 
 	// create a temporary order and place the blocks on a temp order
-
+	$price = 0;
 	place_temp_order($in_str, $price);
 	//echo "in_str is:".$in_str;
 	reserve_temp_order_pixels($block_info, $in_str);

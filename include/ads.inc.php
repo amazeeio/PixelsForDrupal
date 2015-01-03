@@ -189,10 +189,10 @@ function display_ad_form ($form_id, $mode, $prams) {
 
 	if ($prams == '' ) {
 
-		$prams['mode'] = $_REQUEST['mode'];
-		$prams['ad_id']= $_REQUEST['ad_id'];
+		$prams['mode'] = (isset($_REQUEST['mode']) ? $_REQUEST['mode'] : "");
+		$prams['ad_id']= (isset($_REQUEST['ad_id']) ? $_REQUEST['ad_id'] : "");
 		$prams['banner_id'] = $BID;
-		$prams['user_id'] = $_REQUEST['user_id'];
+		$prams['user_id'] = (isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : "");
 
 		$sql = "SELECT * FROM form_fields WHERE form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' ";
 		//echo $sql;
@@ -215,7 +215,7 @@ function display_ad_form ($form_id, $mode, $prams) {
 				}
 				
 			} else {
-				$prams[$row['field_id']] = stripslashes ($_REQUEST[$row['field_id']]);
+				$prams[$row['field_id']] = stripslashes (isset($_REQUEST[$row['field_id']]) ? $_REQUEST[$row['field_id']] : "");
 			}
 
 
@@ -238,7 +238,7 @@ function display_ad_form ($form_id, $mode, $prams) {
 	<input type="hidden" name="mode" size="" value="<?php echo $mode; ?>">
 	<input type="hidden" name="ad_id" size="" value="<?php echo $prams['ad_id']; ?>">
 	<input type="hidden" name="user_id" size="" value="<?php echo $prams['user_id']; ?>">
-	<input type="hidden" name="order_id" size="" value="<?php echo $prams['order_id']; ?>">
+	<input type="hidden" name="order_id" size="" value="<?php echo (isset($prams['order_id']) ? $prams['order_id'] : ""); ?>">
 	<input type="hidden" name="banner_id" size="" value="<?php echo $prams['banner_id']; ?>">
 
 	<table cellSpacing="1" cellPadding="5" class="ad_data"  id="ad"   >

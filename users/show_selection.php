@@ -50,12 +50,12 @@ $has_packages = banner_get_packages($BID);
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID'  ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 while ($row=mysqli_fetch_array($result)) {
-	$blocks[$row[block_id]] = $row['status'];
-	if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold') && ($row['status']!='nfs')) {
-		$blocks[$row[block_id]] = 'onorder';
+	$blocks[$row['block_id']] = $row['status'];
+	if (($row['user_id'] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold') && ($row['status']!='nfs')) {
+		$blocks[$row['block_id']] = 'onorder';
 		$order_exists = true;
-	} elseif (($row['status']!='sold') && ($row[user_id] != $_SESSION['MDS_ID']) && ($row['status']!='nfs')) {
-		$blocks[$row[block_id]] = 'reserved';
+	} elseif (($row['status']!='sold') && ($row['user_id'] != $_SESSION['MDS_ID']) && ($row['status']!='nfs')) {
+		$blocks[$row['block_id']] = 'reserved';
 
 	}
 	//echo $row[block_id]." ";
@@ -147,34 +147,35 @@ if (function_exists("imagecreatetruecolor")) {
 	for ($i=0; $i < G_HEIGHT; $i++) {
 		for ($j=0; $j < G_WIDTH; $j++) {
 			
+			if(isset($blocks[$cell])) {
+				switch ($blocks[$cell]) {
 
-			switch ($blocks[$cell]) {
+				case 'sold':
+					imagecopy ( $map, $sold_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
 
-			case 'sold':
-				imagecopy ( $map, $sold_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-				
-				break;
-			case 'reserved':
-				imagecopy ( $map, $reserved_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-				break;
-			case 'nfs':
-				imagecopy ( $map, $nfs_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-				break;
-			case 'ordered':
-				imagecopy ( $map, $ordered_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-				break;
+					break;
+				case 'reserved':
+					imagecopy ( $map, $reserved_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
+					break;
+				case 'nfs':
+					imagecopy ( $map, $nfs_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
+					break;
+				case 'ordered':
+					imagecopy ( $map, $ordered_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
+					break;
 
-			case 'onorder':
-				imagecopy ( $map, $selected_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-				
-				break;
-			case 'free':
-			case '':
+				case 'onorder':
+					imagecopy ( $map, $selected_block, $x_pos, $y_pos, 0, 0, BLK_WIDTH, BLK_HEIGHT );
 
-				
-		
-				//imagecopy ( $map, $block, $x_pos, $y_pos, 0, 0, 10, 10 );
-			
+					break;
+				case 'free':
+				case '':
+
+
+
+					//imagecopy ( $map, $block, $x_pos, $y_pos, 0, 0, 10, 10 );
+
+				}
 			}
 			$cell++;
 

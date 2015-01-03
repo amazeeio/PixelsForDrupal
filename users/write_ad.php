@@ -82,7 +82,7 @@ $_REQUEST['user_id'] = addslashes(session_id());
 // TODO: fixing save / edit form
 
 // saving
-if ($_REQUEST['save'] != "" ) {
+if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 	
 	$error = validate_ad_data(1);
 	if ($error != '') { // we have an error

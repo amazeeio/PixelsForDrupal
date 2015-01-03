@@ -105,6 +105,7 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 				include dirname(__FILE__)."/".$LANG_FILES[$_SESSION['MDS_LANG']];
 				
 			} else {
+				$_SESSION['MDS_LANG'] = "EN";
 				include dirname(__FILE__)."/english.php";
 			}
 		
@@ -115,6 +116,7 @@ if(isset($dbhost) && isset($dbusername) && isset($database_name)) {
 
 	} else {
 		// no db so use defaults
+		$_SESSION['MDS_LANG'] = "EN";
 		include dirname(__FILE__)."/english.php";
 	}
 }

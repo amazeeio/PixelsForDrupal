@@ -39,10 +39,10 @@ require_once ("../include/ads.inc.php");
 
 process_login();
 
-$gd_info = @gd_info();
-if ($gd_info['GIF Read Support']) {$gif_support="GIF";} ;
-if ($gd_info['JPG Support']) {$jpeg_support="JPG";};
-if ($gd_info['PNG Support']) {$png_support="PNG";};
+$gd_info = gd_info();
+if (isset($gd_info['GIF Read Support']) && !empty($gd_info['GIF Read Support'])) {$gif_support="GIF";}
+if (isset($gd_info['JPG Support']) && !empty($gd_info['JPG Support'])) {$jpeg_support="JPG";}
+if (isset($gd_info['PNG Support']) && !empty($gd_info['PNG Support'])) {$png_support="PNG";}
 
 require ("header.php");
 
@@ -174,7 +174,7 @@ if (mysqli_num_rows($res)>1) {
 # A block was clicked. Fetch the ad_id and initialize $_REQUEST['ad_id']
 # If no ad exists for this block, create it. 
 
-if ($_REQUEST['block_id']!='') {
+if (isset($_REQUEST['block_id']) && $_REQUEST['block_id']!='') {
 
 	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));

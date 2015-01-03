@@ -234,7 +234,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 //echo "MODE:".$mode;
 	global $f2, $label, $admin, $subscr_block_status;
 	//print_r( $prams);
-
+	$dont_break_table = true;
 	if (func_num_args() > 4) {
 
 		$dont_break_table = func_get_arg(4);
@@ -242,7 +242,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 	}
 
 	//$sql = "SELECT t2.field_label, t1.*, t2.field_comment AS FCOMMENT FROM form_fields AS t1, form_field_translations AS t2 WHERE t1.field_id=t2.field_id AND lang='".$_SESSION['MDS_LANG']."' AND section='$section' AND form_id='$form_id' $where_sql order by field_sort  ";
-	$sql = "SELECT form_field_translations.field_label, form_fields.*, form_field_translations.field_comment FROM form_fields, form_field_translations WHERE form_fields.field_id=form_field_translations.field_id AND lang='".$_SESSION['MDS_LANG']."' AND section='$section' AND form_id='$form_id' $where_sql order by field_sort  ";
+	$sql = "SELECT form_field_translations.field_label, form_fields.*, form_field_translations.field_comment FROM form_fields, form_field_translations WHERE form_fields.field_id=form_field_translations.field_id AND lang='".$_SESSION['MDS_LANG']."' AND section='$section' AND form_id='$form_id' order by field_sort  ";
 	//echo $sql;
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 
@@ -264,7 +264,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 			//print_r($row);
 			$i++;
 
-			if (($mode=='edit' || $mode == 'user') && ($_REQUEST['field_id']==$row['field_id'])) {
+			if (($mode=='edit' || $mode == 'user') && (isset($_REQUEST['field_id']) && $_REQUEST['field_id']==$row['field_id'])) {
 				$bg_selected = ' style="background-color: #FFFFCC;" ';
 			} else {
 				$bg_selected = '';
@@ -280,7 +280,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 			########################
 			
 
-			if (($row[is_hidden]=="Y") && ($mode == "view" ) && !$admin) {
+			if (($row['is_hidden']=="Y") && ($mode == "view" ) && !$admin) {
 			# Hidden Fields, do not appear on website (view mode) 
 
 			} 
@@ -527,7 +527,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 				if ($mode=='edit')  { 
 					echo '</a>';
 				}
-				if ($row[is_required]=='Y' && $mode!='view' && $mode == 'user') {
+				if ($row['is_required']=='Y' && $mode!='view' && $mode == 'user') {
 					echo "<FONT SIZE='4' COLOR='#FF0000'><b>*</B></FONT>";
 				}
 				
@@ -554,7 +554,7 @@ function display_form ($form_id, $mode,  $prams, $section) {
 				
 				<?php 
 
-				if (($is_hidden == 'Y') || (($is_blocked == 'Y'))) {
+				if ((isset($is_hidden) && $is_hidden == 'Y') || ((isset($is_blocked) && $is_blocked == 'Y'))) {
 					echo $prams[$row['field_id']]; // display blocked field message
 					
 				} else {
@@ -1574,7 +1574,7 @@ function form_file_field ($field_name, $field_value) {
 
 function form_image_field ($field_name, $field_value) {
 	//echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.MAX_UPLOAD_BYTES.'">';
-	return '<input class="dynamic_form_text_style" type="file" name="'.$field_name.'"  size="'.$width.'" >';
+	return '<input class="dynamic_form_text_style" type="file" name="'.$field_name.'" >';
 
 	
 }
@@ -2342,6 +2342,7 @@ function tag_to_search_init ($form_id) {
 	
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die ("SQL:".$sql."<br />ERROR: ".mysqli_error($GLOBALS['connection']));
 	# do a query for each field
+	$tag_to_search = array();
 	while ($fields = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
 		//$form_data = $row[]

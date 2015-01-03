@@ -103,7 +103,7 @@ update_temp_order_timestamp();
 $sql = "select block_id, status, user_id FROM blocks where banner_id='$BID' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 while ($row=mysqli_fetch_array($result)) {
-	$blocks[$row[block_id]] = $row['status'];
+	$blocks[$row['block_id']] = $row['status'];
 	//if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
 	//	$blocks[$row[block_id]] = 'onorder';
 	//	$order_exists = true;
@@ -698,7 +698,7 @@ function move_image_to_selection() {
 </script>
 <?php
 
-if ($_FILES['graphic']['tmp_name']!='') {
+if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 	$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
 
@@ -811,7 +811,7 @@ show_nav_status (1);
 </p>
 
 
-<p id="select_status" ><?php echo $cannot_sel; ?></p>
+<p id="select_status" ><?php echo (isset($cannot_sel) ? $cannot_sel : ""); ?></p>
 
 <?php
 
@@ -839,7 +839,7 @@ $label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysqli_num_r
 
 
 
-if ($order_exists) {
+if (isset($order_exists) && $order_exists) {
 	echo "<p>".$label['advertiser_order_not_confirmed']."</p>";
 
 }
@@ -937,7 +937,7 @@ if (!$tmp_image_file) {
 	<input type="hidden" name="jEditOrder" value="true">
 	
 	<p>
-	<input  class='big_button' <?php if ($_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> type="button" name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick='document.form1.submit()'>
+	<input  class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> type="button" name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick='document.form1.submit()'>
 	
 	</p>
 
@@ -957,7 +957,7 @@ if (!$tmp_image_file) {
 	<form method="post" action="write_ad.php" name="form1">
 	<input type="hidden" name="package" value="">
 	<input type="hidden" name="selected_pixels" value=''>
-	<input type="hidden" name="order_id" value="<?php echo $_SESSION[MDS_order_id]; ?>">
+	<input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
 	<input type="hidden" value="<?php echo $BID;?>" name="BID">
 	<input type="submit" class='big_button' disabled  name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>'>
 	<hr />

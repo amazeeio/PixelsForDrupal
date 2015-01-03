@@ -67,7 +67,7 @@ function get_zone_color($banner_id, $row, $col) {
 	$row = $row+1;
 	$col = $col+1;
 	global $price_table;
-	if ($price_table['loaded']!=1) {
+	if (isset($price_table['loaded']) && $price_table['loaded']!=1) {
 		load_price_zones($banner_id);
 	}
 

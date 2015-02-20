@@ -358,9 +358,9 @@ Here you can manage your grid(s): <ul><li>Set the expiry of the pixels</li>
 
 
 <?php } ?>
-<?php if ((isset($_REQUEST['new']) && $_REQUEST['new']=='')) { ?>
+<?php //if ((isset($_REQUEST['new']) && $_REQUEST['new']=='')) { ?>
 <input type="button" style="background-color:#66FF33" value="New Grid..." onclick="window.location='inventory.php?new=1'"><br>
-<?php } ?>
+<?php //} ?>
 
 <?php
 

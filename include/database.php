@@ -22,7 +22,11 @@ $database_name = MYSQL_DB;
 
 if (isset($dbhost) && isset($dbusername) && isset($database_name)) {
 	if (!empty($dbhost) && !empty($dbusername) && !empty($database_name)) {
-		$GLOBALS['connection'] = mysqli_connect("$dbhost", "$dbusername", "$dbpassword") or die(mysqli_error($GLOBALS['connection']));
+		$GLOBALS['connection'] = mysqli_connect("$dbhost", "$dbusername", "$dbpassword");
+		if (mysqli_connect_errno()) {
+			echo mysqli_connect_error();
+			exit();
+		}
 		$db = mysqli_select_db($GLOBALS['connection'], "$database_name") or die(mysqli_error($GLOBALS['connection']));
 		mysqli_set_charset($GLOBALS['connection'], 'utf8') or die(mysqli_error($GLOBALS['connection']));
 	}

@@ -29,8 +29,7 @@
  * 		http://www.milliondollarscript.com/
  *
  */
-error_reporting(0);
-if ($_REQUEST[action]=='install') {
+if (isset($_REQUEST['action']) && $_REQUEST['action']=='install') {
 	
 	save_db_config();
 	require("../config.php");

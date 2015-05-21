@@ -40,6 +40,6 @@ require ('admin_common.php');
 <META HTTP-EQUIV="REFRESH" CONTENT="0; URL=admin.php">
 </head>
 <body>
-<a href="admin.html">Click here to continue.</a>
+<a href="admin.php">Click here to continue.</a>
 </body>
 </html>

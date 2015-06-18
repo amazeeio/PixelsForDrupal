@@ -91,7 +91,7 @@ while ($row=mysqli_fetch_array($result)) {
 			$ALT_TEXT = str_replace("'", "", $ALT_TEXT);
 			$ALT_TEXT = (str_replace("\"", '', $ALT_TEXT));
 			$js_str = "onmouseover=\"sB(event, '".$ALT_TEXT."', this, ".$prams['ad_id'].")\" onmousemove=\"sB(event, '".$ALT_TEXT."', this, ".$prams['ad_id'].")\" onmouseout=\"hI()\" ";
-			echo $br.'<a target="_blank" '.$js_str.' href="'.get_template_value('URL', 1).'">'.get_template_value('ALT_TEXT', 1).'</a>';
+			echo $br.'<a target="_blank" '.$js_str.' href="http://'.get_template_value('URL', 1).'">'.get_template_value('ALT_TEXT', 1).'</a>';
 			$br = '<br>';
 		}
 

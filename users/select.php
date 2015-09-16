@@ -37,27 +37,21 @@ include ("login_functions.php");
 
 process_login();
 
-if ($f2->bid($_REQUEST['BID'])!='') {
-	$BID = $f2->bid($_REQUEST['BID']);
+if(isset($_REQUEST['BID']) && !empty($_REQUEST['BID'])) {
+	if ($f2->bid($_REQUEST['BID'])!='') {
+		$BID = $f2->bid($_REQUEST['BID']);
 
-	$_SESSION['BID']=$BID;
+		$_SESSION['BID']=$BID;
 
 
+	} else {
+		$BID = $_SESSION['BID'];
+	}
 } else {
-	$BID = $_SESSION['BID'];
+	$BID = 1;
 }
 
 load_banner_constants($BID);
-
-if (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) {
-	$_SESSION['MDS_order_id'] = intval($_REQUEST['order_id']);
-} else if(isset($_SESSION['MDS_order_id']) && !empty($_SESSION['MDS_order_id'])) {
-	$_REQUEST['order_id'] = intval($_SESSION['MDS_order_id']);
-}
-
-if (!is_numeric($_REQUEST['order_id']) || !is_numeric($_SESSION['MDS_order_id'])) {
-	die();
-}
 
 if (!is_numeric($BID)) {
 	die();

@@ -49,20 +49,24 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 load_banner_constants($BID);
 
-if ($_REQUEST['order_id']!='') {
-
-	$_SESSION['MDS_order_id']=$_REQUEST['order_id'];
-	if (!is_numeric($_REQUEST['order_id'])) die();
-
-
+if (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) {
+	$_SESSION['MDS_order_id'] = intval($_REQUEST['order_id']);
+} else if(isset($_SESSION['MDS_order_id']) && !empty($_SESSION['MDS_order_id'])) {
+	$_REQUEST['order_id'] = intval($_SESSION['MDS_order_id']);
 }
 
-if (!is_numeric($BID)) die();
+if (!is_numeric($_REQUEST['order_id']) || !is_numeric($_SESSION['MDS_order_id'])) {
+	die();
+}
+
+if (!is_numeric($BID)) {
+	die();
+}
 
 //Begin -J- Edit: Force New Order on load of page unless user clicked "Edit" button on confirm/complete page (indicated by $_GET['jEditOrder'])
 //Important: This chunk was moved from below the "load order from php" section
 
-if (($_REQUEST['banner_change']!='')) {
+if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 
 	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
 //	echo $sql;
@@ -110,9 +114,9 @@ from the system. The user can start making a new order for the new banner.
 */
 
 
-if ($_REQUEST['banner_change']!='') {
+if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 		
-		$_SESSION[MDS_order_id] = ''; // clear the current order
+		$_SESSION['MDS_order_id'] = ''; // clear the current order
 
 		$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
 //	echo $sql;
@@ -129,7 +133,6 @@ if ($_REQUEST['banner_change']!='') {
 	//	echo "deleted pixels";
 	}
 
-
 $sql = "select * from banners where banner_id='$BID'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($result);
@@ -145,9 +148,9 @@ while ($row=mysqli_fetch_array($result)) {
 	//echo $row[block_id]." ";
 }
 
-if ($_REQUEST[select]!='') {
+if (isset($_REQUEST['select']) && !empty($_REQUEST['select'])) {
 
-	if ($_REQUEST[sel_mode]=='sel4') {
+	if ($_REQUEST['sel_mode']=='sel4') {
 
 		$max_x = $b_row[grid_width]*BLK_WIDTH;
 		$max_y = $b_row[grid_height]*BLK_HEIGHT;
@@ -421,7 +424,7 @@ function show_block(clicked_block, OffsetX, OffsetY) {
 		var myblock = document.getElementById('blocks');
 		var pixelimg = document.getElementById('pixelimg');
 //-J- Edit: Added tempTop and tempLeft values to span tag for resize bug
-		myblock.innerHTML = myblock.innerHTML+"<span id='block"+clicked_block+"' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='cursor: pointer;position: absolute; top: "+(OffsetY+pixelimg.offsetTop)+"; left: "+(OffsetX+pixelimg.offsetLeft)+";' onclick='change_block_state("+OffsetX+", "+OffsetY+");' onmousemove='show_pointer2(this, event)' ><img src='selected_block.png' width='<?php echo BLK_WIDTH; ?>' height='<?php echo BLK_HEIGHT; ?>'></span>";
+		myblock.innerHTML = myblock.innerHTML+"<span id='block"+clicked_block+"' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='cursor: pointer;position: absolute; top: "+(OffsetY+pixelimg.offsetTop)+"px; left: "+(OffsetX+pixelimg.offsetLeft)+"px;' onclick='change_block_state("+OffsetX+", "+OffsetY+");' onmousemove='show_pointer2(this, event)' ><img src='selected_block.png' width='<?php echo BLK_WIDTH; ?>' height='<?php echo BLK_HEIGHT; ?>'></span>";
 		//alert('new block created');
 		//alert(clicked_block);
 //Begin -J- Edit: For resize bug
@@ -466,7 +469,7 @@ function hide_block(clicked_block, OffsetX, OffsetY, status) {
 
 //////////////////////////////////////////
 // Initialize
-var block_str = "<?php echo $order_row[blocks]; ?>";
+var block_str = "<?php echo $order_row['blocks']; ?>";
 var trip_count = 0;
 /////////////////////////////////////////
 function select_pixels(e) {
@@ -912,7 +915,7 @@ echo $label['advertiser_select_instructions2']; ?>
 
 <form method="post" action="select.php" name='pixel_form'>
 <input type="hidden" name="jEditOrder" value="true">
-<p><b><?php echo $label['selection_mode'];?></b> <input type="radio" id='sel1' name='sel_mode' value='sel1' <?php  if (($_REQUEST[sel_mode]=='')||($_REQUEST[sel_mode]=='sel1')) { echo " checked ";}?> > <label for='sel1'><?php echo $label['select1']; ?></label> | <input type="radio" name='sel_mode' id='sel4' value='sel4'  <?php  if (($_REQUEST[sel_mode]=='sel4')) { echo " checked ";}?> > <label for="sel4"><?php echo $label['select4']; ?></label> | <input type="radio" name='sel_mode' id='sel6' value='sel6'  <?php  if (($_REQUEST[sel_mode]=='sel6')) { echo " checked ";}?> > <label for="sel6"><?php echo $label['select6']; ?></label>
+<p><b><?php echo $label['selection_mode'];?></b> <input type="radio" id='sel1' name='sel_mode' value='sel1' <?php  if (($_REQUEST['sel_mode']=='')||($_REQUEST['sel_mode']=='sel1')) { echo " checked ";}?> > <label for='sel1'><?php echo $label['select1']; ?></label> | <input type="radio" name='sel_mode' id='sel4' value='sel4'  <?php  if (($_REQUEST['sel_mode']=='sel4')) { echo " checked ";}?> > <label for="sel4"><?php echo $label['select4']; ?></label> | <input type="radio" name='sel_mode' id='sel6' value='sel6'  <?php  if (($_REQUEST['sel_mode']=='sel6')) { echo " checked ";}?> > <label for="sel6"><?php echo $label['select6']; ?></label>
 </p>
 <p>
 <input type="button" name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_buy_button']; ?>' onclick='document.form1.submit()'>

@@ -1811,15 +1811,15 @@ function select_block ($map_x, $map_y) {
 
 				$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='http://';
 				$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
-				$_REQUEST['order_id'] = $_SESSION['MDS_order_id'];
+				$_REQUEST['order_id'] = $order_id;
 				$_REQUEST['banner_id'] = $BID;
 				$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 
 				$ad_id = insert_ad_data();
 
-				$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$_SESSION['MDS_order_id']."' ";
+				$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='$order_id' ";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-				$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$_SESSION['MDS_order_id']."' ";
+				$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='$order_id' ";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 				$_REQUEST['ad_id'] = $ad_id;

@@ -51,7 +51,7 @@ require ("header.php");
 if ($f2->bid($_REQUEST['BID'])!='') {
 	$BID = $f2->bid($_REQUEST['BID']);
 	
-} elseif ($_REQUEST['ad_id']!='') {
+} elseif (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 	$sql = "select banner_id from ads where ad_id='".$_REQUEST['ad_id']."'";
 	$res = mysqli_query($GLOBALS['connection'], $sql);
 	$row = mysqli_fetch_array($res);
@@ -174,17 +174,17 @@ if (mysqli_num_rows($res)>1) {
 # A block was clicked. Fetch the ad_id and initialize $_REQUEST['ad_id']
 # If no ad exists for this block, create it. 
 
-if (isset($_REQUEST['block_id']) && $_REQUEST['block_id']!='') {
+if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 
 	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$blk_row = mysqli_fetch_array($result);
 
 
-	if (!$blk_row['ad_id']) { // no ad exists, create a new ad_id
+	if (!isset($blk_row['ad_id']) || empty($blk_row['ad_id'])) { // no ad exists, create a new ad_id
 
 
-		$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='http://';
+		$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='';
 		$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 		$_REQUEST['order_id'] = $blk_row['order_id'];
 		$_REQUEST['banner_id'] = $BID;
@@ -207,7 +207,7 @@ if (isset($_REQUEST['block_id']) && $_REQUEST['block_id']!='') {
 		//echo $sql;
 		if (mysqli_num_rows($result)==0) {
 			echo "No ad exists..";
-			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='http://';
+			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='';
 			$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 			$_REQUEST['order_id'] = $blk_row['order_id'];
 			$_REQUEST['banner_id'] = $BID;
@@ -253,27 +253,22 @@ function disapprove_modified_order($order_id, $BID) {
 /////////////////////////
 # Display ad editing forms if the ad was clicked, or 'Edit' button was pressed.
 
-if ($_REQUEST['ad_id']) {
-	//print_r($_REQUEST);
+if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 
 	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=".$_SESSION['MDS_ID']." and t1.banner_id='$BID' and t1.ad_id='".$_REQUEST['ad_id']."' AND t1.order_id=t2.order_id ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	//echo $sql."<br>";
+
 	$row = mysqli_fetch_array($result);
 	$order_id = $row['order_id'];
 	$blocks = explode(',',$row['blocks']);
 
 	$size = get_pixel_image_size($row['order_id']);
 	$pixels = $size['x'] * $size['y'];
-	//print_r($size);
-	//echo "order id:".$row['order_id']."<br>";
-	//echo "$sql<br>";
 
 	$sql = "SELECT * from blocks WHERE order_id='".$order_id."'";
 	$blocks_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
-
-	if ($_REQUEST['change_pixels']) {
+	if (isset($_REQUEST['change_pixels']) && !empty($_REQUEST['change_pixels'])) {
 
 		// a new image was uploaded...
 
@@ -343,7 +338,6 @@ if ($_REQUEST['ad_id']) {
 
 					}
 
-					
 					$_REQUEST['map_x'] = $high_x;
 					$_REQUEST['map_y'] = $high_y;
 
@@ -373,13 +367,10 @@ if ($_REQUEST['ad_id']) {
 							break;
 					}
 
-					
 					$imagebg = imageCreateFromstring (GRID_BLOCK);
 
 					imageSetTile ($whole_image, $imagebg);
 					imageFilledRectangle ($whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED);
-
-					
 
 					//echo " size x y ".$size['x'].' '.$size['y'].' img siz [0] [1]'.$img_size[0]." ". $img_size[1];
 
@@ -394,8 +385,6 @@ if ($_REQUEST['ad_id']) {
 					}
 
 					//imagepng($whole_image);
-
-					
 
 					for ($i=0; $i<($size['y']); $i+=BLK_HEIGHT) {
 						
@@ -422,21 +411,15 @@ if ($_REQUEST['ad_id']) {
 
 							$sql = "UPDATE blocks SET image_data='$data' where block_id='".$cb."' AND banner_id='".$BID."' ";
 							mysqli_query($GLOBALS['connection'], $sql);
-							
 
 							//echo $sql."------>".mysqli_affected_rows($GLOBALS['connection'])."<br>";
-
 						}
-
 					}
-
-
 				}
 
 				unlink($tmp_image_file);
 
 				if (AUTO_APPROVE!='Y') { // to be approved by the admin
-
 					disapprove_modified_order($order_id, $BID);
 				}
 
@@ -444,20 +427,13 @@ if ($_REQUEST['ad_id']) {
 					process_image($BID);
 					publish_image($BID);
 					process_map($BID);
-					
 				}
-
 
 			} else {
 				//echo "Possible file upload attack!\n";
 				echo $label['pixel_upload_failed'];
 			}
-
-			
-
 		}
-
-
 	}
 
 # Ad forms:
@@ -471,7 +447,7 @@ if ($_REQUEST['ad_id']) {
 <td valign="top"><b><?php echo $label['adv_pub_piximg']; ?></b><br>
 <center>
 <?php
-if ($_REQUEST['ad_id']!='') { 
+if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) { 
 		//echo "ad is".$_REQUEST['ad_id'];
 		?><img src="get_order_image.php?BID=<?php echo $BID; ?>&aid=<?php echo $_REQUEST['ad_id']; ?>" border=1><?php
 	} else {
@@ -502,7 +478,7 @@ if ($_REQUEST['ad_id']!='') {
 <p><b><?php echo $label['adv_pub_edityourad']; ?></b></p>
 <?php
 
-	if ($_REQUEST['save'] != "" ) { // saving
+	if (isset($_REQUEST['save']) && !empty($_REQUEST['save'])) { // saving
 
 		$error = validate_ad_data(1);
 		if ($error != '') { // we have an error

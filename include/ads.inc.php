@@ -705,7 +705,17 @@ function insert_ad_data() {
 	if ($user_id=='') {
 		$user_id = addslashes(session_id());
 	}
-	$order_id = ($order_id)?$_REQUEST['order_id']:0;
+
+	if (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) {
+		$_SESSION['MDS_order_id'] = intval($_REQUEST['order_id']);
+	} else if(isset($_SESSION['MDS_order_id']) && !empty($_SESSION['MDS_order_id'])) {
+		$_REQUEST['order_id'] = intval($_SESSION['MDS_order_id']);
+	}
+
+	if (!is_numeric($_REQUEST['order_id']) || !is_numeric($_SESSION['MDS_order_id'])) {
+		die();
+	}
+	$order_id = (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) ? $_REQUEST['order_id'] : 0;
 	$ad_date = (gmdate("Y-m-d H:i:s")); 
 	$banner_id = $_REQUEST['banner_id'];
 	

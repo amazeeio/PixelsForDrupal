@@ -70,20 +70,19 @@ $has_packages = banner_get_packages($BID);
 <p>
 <?php 
 show_nav_status (2);
-
 ?>
 </p>
-<h3><?php $label['write_ad_instructions']; ?></h3>
+<h3><?php echo $label['write_ad_instructions']; ?></h3>
 <?php
 
-$_REQUEST['user_id'] = addslashes(session_id());
+$_REQUEST['user_id'] = $user_id = intval(addslashes(session_id()));
 //	print_r($_REQUEST);
 
 // TODO: fixing save / edit form
 
 // saving
 if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
-	
+
 	$error = validate_ad_data(1);
 	if ($error != '') { // we have an error
 		$mode = "user";
@@ -94,7 +93,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 
 		// save ad_id with the temp order...
 
-		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".addslashes(session_id())."' ";
+		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".$user_id."' ";
 		//echo $sql;
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 

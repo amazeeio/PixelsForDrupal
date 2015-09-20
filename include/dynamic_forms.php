@@ -1153,7 +1153,7 @@ function validate_form_data($form_id) {
 
 		}
 
-	if ($row[is_required]=='Y') {
+	if ($row['is_required']=='Y') {
 
 			if (($row['field_type']=='DATE') || (($row['field_type']=='DATE_CAL'))) {
 				$row['reg_expr'] = "date"; // default to date check
@@ -1227,13 +1227,19 @@ function validate_form_data($form_id) {
 							$str = fgets ($fp);
 							if (strpos ($str, "404") || strpos ($str, "401") || strpos ($str, "403")) {
 
-								$error .= "- ".$row['field_label']  ."<b>".$label['advertiser_publish_bad_url']."</b><br>";
+								$error .= "- '".$row['field_label']  ."' <b>".$label['advertiser_publish_bad_url']."</b><br>";
 
 							} 
 							
 							fclose($fp);
 
 						}
+					}
+
+					// Check for http or https
+					$url = parse_url($_REQUEST[$row['field_id']]);
+					if(!empty($url['scheme'])) {
+						$error .= "- '" .$row['field_label'] . "' <b>" . $label['advertiser_publish_bad_url'] . "</b> <span style='text-decoration:line-through'>" . $url['scheme'] . "://</span><br>";
 					}
 
 				default:

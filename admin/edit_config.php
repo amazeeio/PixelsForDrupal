@@ -71,6 +71,8 @@ define('MYSQL_HOST', $_REQUEST['mysql_host']);
 define('MYSQL_USER', $_REQUEST['mysql_user']);
 define('MYSQL_PASS', $_REQUEST['mysql_pass']);
 define('MYSQL_DB', $_REQUEST['mysql_db']);
+define('MYSQL_PORT', $_REQUEST['mysql_port']);
+define('MYSQL_SOCKET', $_REQUEST['mysql_socket']);
 
 define('ADMIN_PASSWORD', $_REQUEST['admin_password']);
 
@@ -163,6 +165,8 @@ define('MYSQL_HOST', '".MYSQL_HOST."'); # mysql database host
 define('MYSQL_USER', '".MYSQL_USER."'); #mysql user name
 define('MYSQL_PASS', '".MYSQL_PASS."'); # mysql password
 define('MYSQL_DB', '".MYSQL_DB."'); # mysql database name
+define('MYSQL_PORT', ".MYSQL_PORT."); # mysql port
+define('MYSQL_SOCKET', '".MYSQL_SOCKET."'); # mysql socket
 
 # ADMIN_PASSWORD
 define('ADMIN_PASSWORD',  '".ADMIN_PASSWORD."');

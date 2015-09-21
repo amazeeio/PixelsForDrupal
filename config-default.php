@@ -51,6 +51,8 @@ define('MYSQL_HOST', ''); # mysql database host
 define('MYSQL_USER', ''); #mysql user name
 define('MYSQL_PASS', ''); # mysql password
 define('MYSQL_DB', ''); # mysql database name
+define('MYSQL_PORT', 3306); # mysql port
+define('MYSQL_SOCKET', ''); # mysql socket
 
 define('MDS_RESIZE', 'YES');
 

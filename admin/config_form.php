@@ -141,31 +141,37 @@ NOTES<br>
   <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
     <tr>
       <td colspan="2"  bgcolor="#e6f2ea">
-      <font face="Verdana" size="1"><b>Mysql Settings</b></font></td>
+      <font face="Verdana" size="1"><b>MySQL Settings</b></font></td>
     </tr>
     <tr>
-      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">Mysql 
-      Database Username</font></td>
+      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Database Username</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="mysql_user" size="29" value="<?php echo MYSQL_USER; ?>"></font></td>
     </tr>
 	 <tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Mysql 
-      Database Password</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Database Password</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="password" name="mysql_pass" size="29" value="<?php echo MYSQL_PASS; ?>"></font></td>
     </tr>
     <tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Mysql 
-      Database Name</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Database Name</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="mysql_db" size="29" value="<?php echo MYSQL_DB; ?>"></font></td>
     </tr>
     <tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Mysql 
-      Server Hostname</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Server Hostname</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="mysql_host" size="29" value="<?php echo MYSQL_HOST; ?>"></font></td>
+    </tr>
+    <tr>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Server Port</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+      <input type="text" name="mysql_port" size="29" value="<?php echo MYSQL_PORT; ?>"></font></td>
+    </tr>
+    <tr>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">MySQL Server Socket (optional)</font></td>
+      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+      <input type="text" name="mysql_socket" size="29" value="<?php echo MYSQL_SOCKET; ?>"></font></td>
     </tr>
 	<tr>
       <td bgcolor="#e6f2ea" width="20%"><font face="Verdana" size="1"> 

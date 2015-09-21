@@ -1,28 +1,26 @@
 <?php
 
-function check_connection($user, $pass, $host) {
-	if (!($GLOBALS['connection'] = mysqli_connect("$host", "$user", "$pass"))) {
-		return false;
-	}
-
-	return $GLOBALS['connection'];
-}
-
-function check_db($link, $db_name) {
-	if (!($db = mysqli_select_db($link, "$db_name"))) {
-		return false;
-	}
-	return true;
-}
-
 $dbhost = MYSQL_HOST;
 $dbusername = MYSQL_USER;
 $dbpassword = MYSQL_PASS;
 $database_name = MYSQL_DB;
 
-if (isset($dbhost) && isset($dbusername) && isset($database_name)) {
-	if (!empty($dbhost) && !empty($dbusername) && !empty($database_name)) {
-		$GLOBALS['connection'] = mysqli_connect("$dbhost", "$dbusername", "$dbpassword");
+if(!defined('MYSQL_PORT')) {
+	define('MYSQL_PORT', 3306);
+}
+if(!defined('MYSQL_SOCKET')) {
+	define('MYSQL_SOCKET', "");
+}
+$database_port = MYSQL_PORT;
+$database_socket = MYSQL_SOCKET;
+
+if (isset($dbhost) && isset($dbusername) && isset($database_name) && isset($database_port)) {
+	if (!empty($dbhost) && !empty($dbusername) && !empty($database_name) && !empty($database_port)) {
+		if(isset($database_socket) && !empty($database_socket)) {
+			$GLOBALS['connection'] = mysqli_connect("$dbhost", "$dbusername", "$dbpassword", "$database_name", "$database_port", "$database_socket");
+		} else {
+			$GLOBALS['connection'] = mysqli_connect("$dbhost", "$dbusername", "$dbpassword", "$database_name", "$database_port");
+		}
 		if (mysqli_connect_errno()) {
 			echo mysqli_connect_error();
 			exit();

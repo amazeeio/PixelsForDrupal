@@ -37,7 +37,7 @@ require("../config.php");
 
 require ('admin_common.php');
 
-if ($f2->bid($_REQUEST['BID'])!='') {
+if (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') {
 	$BID = $f2->bid($_REQUEST['BID']);
 } else {
 	$BID = 1;
@@ -602,7 +602,7 @@ function get_clicked_block() {
 
 //echo "bannerid is --- ".$BID;
 
-if ($_REQUEST['move_type']!='') { 
+if (isset($_REQUEST['move_type']) && !empty($_REQUEST['move_type'])) { 
 
 	if ($_REQUEST['move_type']=='B') {// move block
 

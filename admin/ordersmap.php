@@ -35,7 +35,7 @@ require("../config.php");
 
 require ('admin_common.php');
 
-if ($f2->bid($_REQUEST['BID'])!='') {
+if (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') {
 	$BID = $f2->bid($_REQUEST['BID']);
 } else {
 	$BID = 1;

@@ -728,7 +728,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBA
 
 		?>
 		 
-		href="<?php echo ($row[url]);?>"
+		href="<?php echo ($row['url']);?>"
 	<?php } else {?>
 		href="orders.php?user_id=<?php echo ($row['user_id']);?>&BID=<?php echo $BID;?>&order_id=<?php echo $row['order_id'];?>";
 	<?php } ?>

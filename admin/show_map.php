@@ -60,7 +60,7 @@ if ($_REQUEST[user_id]!='') {
 
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 while ($row=mysqli_fetch_array($result)) {
-	$blocks[$row[block_id]] = $row['status'];
+	$blocks[$row['block_id']] = $row['status'];
 	/*
 	if (($row[user_id] == $_REQUEST[user_id]) && ($row['status']!='ordered') && ($row['status']!='sold')) {
 		$blocks[$row[block_id]] = 'onorder';

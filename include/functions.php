@@ -3136,5 +3136,10 @@ function shutdown(){
     }
 }
 
+// validate session id
+// http://php.net/manual/en/function.session-id.php#116836
+function session_valid_id($session_id) {
+    return preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $session_id) > 0;
+}
 
 ?>

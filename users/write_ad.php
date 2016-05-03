@@ -74,8 +74,12 @@ show_nav_status (2);
 </p>
 <h3><?php echo $label['write_ad_instructions']; ?></h3>
 <?php
-
-$_REQUEST['user_id'] = $user_id = intval(addslashes(session_id()));
+if(session_valid_id(session_id())) {
+	$_REQUEST['user_id'] = $user_id =  session_id();
+} else {
+	echo "Sorry there was an error with your session.";
+	die;
+}
 //	print_r($_REQUEST);
 
 // TODO: fixing save / edit form
@@ -99,7 +103,6 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 
 
 		$prams = load_ad_values ($ad_id);
-		//print_r($prams);
 
 		?>
 		<center><div class='ok_msg_label'><input type="button"  class='big_button' value="<?php echo $label['write_ad_saved']." ".$label['write_ad_continue_button']; ?>" onclick="window.location='confirm_order.php'"></div></center>

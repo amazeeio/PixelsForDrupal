@@ -52,8 +52,11 @@ if (USE_AJAX=='SIMPLE') {
 	$order_page = 'select.php';
 }
 
+$logourl = SITE_LOGO_URL;
+if(!empty($logourl)) {
+	echo '<img src="' . $logourl . '" />';
+}
 ?>
-<img src="<?php echo SITE_LOGO_URL; ?>">
 <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px;'>
 <div class="menu_bar">
 <a href="index.php" class="menu_bar"><?php echo $label['advertiser_header_nav1']; ?></a> | <a href="<?php echo $order_page; ?>" class="menu_bar"><?php echo $label['advertiser_header_nav2'];?></a>  | <a href="publish.php"  class="menu_bar"><?php echo $label['advertiser_header_nav3'];?></a> | <a href="orders.php"  class="menu_bar"><?php echo $label['advertiser_header_nav4'];?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <?php

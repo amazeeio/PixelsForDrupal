@@ -44,17 +44,25 @@ echo '<?xml version="1.0" encoding="utf-8"?>';
 		
 			<div class="heading">
 			
+				<?php
+				$logourl = SITE_LOGO_URL;
+				if(!empty($logourl)) { ?>
 				<!-- logo image -->
 				<div class="logo">
 					<a href="index.php">
-						<img src="<?php echo SITE_LOGO_URL; ?>" style="border:0px;" alt="" />
+						<img src="<?php echo $logourl; ?>" style="border:0px;" alt="" />
 					</a>
 				</div>
+				<?php } ?>
 				
+				<?php
+				$slogan = SITE_SLOGAN;
+				if(!empty($slogan)) { ?>
 				<!-- slogan -->
 				<div class="slogan">
-					<?php echo SITE_SLOGAN; ?>
+					<?php echo $slogan; ?>
 				</div>
+				<?php } ?>
 				
 				<!-- stats iframe -->
 				<div class="status_outer">

@@ -49,17 +49,17 @@ $sql = "select block_id, status, user_id, image_data FROM blocks where status='s
 //echo $sql;
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 while ($row=mysqli_fetch_array($result)) {
-	$blocks[$row[block_id]] = $row['status'];
-	if (($row[user_id] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
-		$blocks[$row[block_id]] = 'onorder';
+	$blocks[$row['block_id']] = $row['status'];
+	if (($row['user_id'] == $_SESSION['MDS_ID']) && ($row['status']!='ordered') && ($row['status']!='sold')) {
+		$blocks[$row['block_id']] = 'onorder';
 		$order_exists = true;
-	} elseif (($row['status']!='sold') && ($row[user_id] != $_SESSION['MDS_ID']) ) {
-		$blocks[$row[block_id]] = 'reserved';
+	} elseif (($row['status']!='sold') && ($row['user_id'] != $_SESSION['MDS_ID']) ) {
+		$blocks[$row['block_id']] = 'reserved';
 
 	}
 	
-	if ($row[image_data]!='') {
-		$images[$row[block_id]]=imagecreatefromstring(base64_decode($row[image_data]));
+	if ($row['image_data']!='') {
+		$images[$row['block_id']]=imagecreatefromstring(base64_decode($row['image_data']));
 	}
 		//echo $row[block_id]." ";
 }

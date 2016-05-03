@@ -40,7 +40,7 @@ if ($BID=='') {
 	$BID = 1;
 }
 
-if ($DB_ERROR) {
+if (isset($DB_ERROR)) {
 	echo "Database configuration error: ".$DB_ERROR;
 } else {
 	show_map($BID);

@@ -589,7 +589,8 @@ class smtp_class
 		$message.="\n";
 		if($this->html_debug)
 			$message=str_replace("\n","<br />\n",HtmlEntities($message));
-		echo $message;
+		file_put_contents(__DIR__ . '/maildebug.log' . $message);
+		
 		flush();
 	}
 

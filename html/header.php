@@ -25,7 +25,7 @@ if (MDS_AGRESSIVE_CACHE=='YES') {
 
 }
 
-$BID = ($f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
 
 echo '<?xml version="1.0" encoding="utf-8"?>';
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

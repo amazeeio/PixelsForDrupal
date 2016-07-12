@@ -45,7 +45,7 @@ echo '<script language="JAVASCRIPT">';
 require ($dir.'/include/mouseover_js.inc.php');
 echo '</script>';
 
-$BID = $f2->bid($_REQUEST['BID']);
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
 
 $bid_sql = " AND banner_id=$BID ";
 
@@ -56,7 +56,7 @@ if (($BID=='all') || ($BID=='')) {
 } 
 $sql = "Select * from banners ";
 $res = mysqli_query($GLOBALS['connection'], $sql);
-if ($_REQUEST['action']=='approve') {
+if (isset($_REQUEST['action']) && $_REQUEST['action']=='approve') {
 
 	$sql = "UPDATE blocks set approved='Y', published='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -65,9 +65,9 @@ if ($_REQUEST['action']=='approve') {
 	echo "Advertiser Approved.<br>";
 }
 
-if ($_REQUEST['mass_approve']!='') {
+if (isset($_REQUEST['mass_approve']) && $_REQUEST['mass_approve']!='') {
 
-	if (sizeof($_REQUEST['users'])>0) {
+	if (isset($_REQUEST['users']) && sizeof($_REQUEST['users'])>0) {
 
 		foreach ($_REQUEST['users'] as $user_id) {
 
@@ -82,7 +82,7 @@ if ($_REQUEST['mass_approve']!='') {
 
 }
 
-if ($_REQUEST['action']=='disapprove') {
+if (isset($_REQUEST['action']) && $_REQUEST['action']=='disapprove') {
 
 	$sql = "UPDATE blocks set approved='N' WHERE user_id='".$_REQUEST['user_id']."' $bid_sql";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -91,9 +91,9 @@ if ($_REQUEST['action']=='disapprove') {
 	echo "Advertiser Disapproved.<br>";
 }
 
-if ($_REQUEST['mass_disapprove']!='') {
+if (isset($_REQUEST['mass_disapprove']) && $_REQUEST['mass_disapprove']!='') {
 
-	if (sizeof($_REQUEST['users'])>0) {
+	if (isset($_REQUEST['users']) && sizeof($_REQUEST['users'])>0) {
 
 		foreach ($_REQUEST['users'] as $user_id) {
 
@@ -109,7 +109,7 @@ if ($_REQUEST['mass_disapprove']!='') {
 
 }
 
-if ($_REQUEST['do_it_now']=='true') {
+if (isset($_REQUEST['do_it_now']) && $_REQUEST['do_it_now']=='true') {
 
 
 
@@ -187,7 +187,7 @@ Select Grid: <select name="BID" onchange="document.bidselect.submit()">
 	<?php
 	while ($row=mysqli_fetch_array($res)) {
 		
-		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
+		if (($row['banner_id']==$BID) && (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='all')) {
 			$sel = 'selected';
 		} else {
 			$sel ='';

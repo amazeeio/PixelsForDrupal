@@ -54,7 +54,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 $nfs = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
 
-$available = (($b_row[grid_width] * $b_row[grid_height] * (BLK_WIDTH*BLK_HEIGHT) )-$nfs ) - $sold;
+$available = (($b_row['grid_width'] * $b_row['grid_height'] * (BLK_WIDTH*BLK_HEIGHT) )-$nfs ) - $sold;
 
 if ($label['sold_stats']=='') {
 	$label['sold_stats']="Sold";

@@ -1126,8 +1126,9 @@ function send_published_pixels_notification($user_id, $BID) {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$u_row = mysqli_fetch_array($result);
 
-	$sql = "SELECT  url, alt_text FROM blocks where user_id='$user_id' AND banner_id='$BID' GROUP by url ";
+	$sql = "SELECT  url, alt_text FROM blocks where user_id='$user_id' AND banner_id='$BID' GROUP by url, alt_text ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
+	$url_list = '';
 	while ($row = mysqli_fetch_array($result)) {
 
 		$url_list .= $row['url']." - ".$row['alt_text']."\n";

@@ -134,7 +134,7 @@ if ($_REQUEST['disapprove_links']!='') {
 
 <?php
 
-$sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=".$_REQUEST['user_id']."  $bid_sql group by url ";
+$sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=".$_REQUEST['user_id']."  $bid_sql group by url, alt_text ";
 
 $m_result = mysqli_query($GLOBALS['connection'], $sql);
 $i=0;

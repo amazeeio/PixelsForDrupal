@@ -396,7 +396,7 @@ function does_field_exist($table, $field) {
 
 		$sql ="CREATE TABLE `transactions` (
 		`transaction_id` int(11) NOT NULL auto_increment,
-		`date` datetime NOT NULL default '0000-00-00 00:00:00',
+		`date` datetime default CURRENT_TIMESTAMP,
 		`order_id` int(11) NOT NULL default '0',
 		`type` varchar(32) NOT NULL default '',
 		`amount` float NOT NULL default '0',
@@ -431,7 +431,7 @@ function does_field_exist($table, $field) {
 	if (!does_field_exist('mail_queue', 'mail_id')) {
 		$sql = "CREATE TABLE `mail_queue` (
 		`mail_id` int(11) NOT NULL auto_increment,
-		`mail_date` datetime NOT NULL default '0000-00-00 00:00:00',
+		`mail_date` datetime default CURRENT_TIMESTAMP,
 		`to_address` varchar(128) NOT NULL default '',
 		`to_name` varchar(128) NOT NULL default '',
 		`from_address` varchar(128) NOT NULL default '',
@@ -447,7 +447,7 @@ function does_field_exist($table, $field) {
 		`att1_name` varchar(128) NOT NULL default '',
 		`att2_name` varchar(128) NOT NULL default '',
 		`att3_name` varchar(128) NOT NULL default '',
-		`date_stamp` datetime NOT NULL default '0000-00-00 00:00:00',
+		`date_stamp` datetime default CURRENT_TIMESTAMP,
 		PRIMARY KEY  (`mail_id`)) ";
 
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
@@ -510,7 +510,7 @@ function does_field_exist($table, $field) {
 			`banner_id` INT NOT NULL ,
 			`block_id` INT NOT NULL ,
 			`user_id` INT NOT NULL ,
-			`date` date NOT NULL default '0000-00-00',
+			`date` date default '1970-01-01',
 			`clicks` INT NOT NULL ,
 			PRIMARY KEY ( `banner_id` , `block_id` ,  `date` ) 
 			)";
@@ -672,7 +672,7 @@ function does_field_exist($table, $field) {
 
 	if (!does_field_exist("banners", "date_updated")) {
 
-		$sql = "ALTER TABLE `banners` ADD `date_updated` DATETIME NOT NULL ";
+		$sql = "ALTER TABLE `banners` ADD `date_updated` datetime ";
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
@@ -703,13 +703,13 @@ function does_field_exist($table, $field) {
 		$sql ="CREATE TABLE `temp_orders` (
 		  `session_id` varchar(32) NOT NULL default '',
 		  `blocks` text NOT NULL,
-		  `order_date` datetime NOT NULL default '0000-00-00 00:00:00',
+		  `order_date` datetime default CURRENT_TIMESTAMP,
 		  `price` float NOT NULL default '0',
 		  `quantity` int(11) NOT NULL default '0',
 		  `banner_id` int(11) NOT NULL default '1',
 		  `currency` char(3) NOT NULL default 'USD',
 		  `days_expire` int(11) NOT NULL default '0',
-		  `date_stamp` datetime default NULL,
+		  `date_stamp` datetime default CURRENT_TIMESTAMP,
 		  `package_id` int(11) NOT NULL default '0',
 		  `ad_id` int(11) default '0',
 			 `block_info` TEXT NOT NULL,
@@ -855,7 +855,7 @@ function does_field_exist($table, $field) {
 		$sql ="CREATE TABLE `ads` (
 			`ad_id` int(11) NOT NULL,
 			`user_id` varchar(255) NOT NULL default '0',
-			`ad_date` datetime NOT NULL default '0000-00-00 00:00:00',
+			`ad_date` datetime default CURRENT_TIMESTAMP,
 			`order_id` int(11) default '0',
 			`banner_id` int(11) NOT NULL default '0',
 			`1` varchar(255) NOT NULL default '',

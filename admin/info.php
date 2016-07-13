@@ -1,46 +1,54 @@
 <?php
 /**
- * @version		$Id: info.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
- *		it under the terms of the GNU General Public License as published by
- *		the Free Software Foundation; either version 3 of the License, or
- *		(at your option) any later version.
+ * @version        $Id: info.php 62 2010-09-12 01:17:36Z ryan $
+ * @package        mds
+ * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @author        Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
+ *        it under the terms of the GNU General Public License as published by
+ *        the Free Software Foundation; either version 3 of the License, or
+ *        (at your option) any later version.
  *
- *		This program is distributed in the hope that it will be useful,
- *		but WITHOUT ANY WARRANTY; without even the implied warranty of
- *		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *		GNU General Public License for more details.
+ *        This program is distributed in the hope that it will be useful,
+ *        but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *        GNU General Public License for more details.
  *
- *		You should have received a copy of the GNU General Public License along
- *		with this program;  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
+ *        You should have received a copy of the GNU General Public License along
+ *        with this program;  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
- *		Million Dollar Script
- *		A pixel script for selling pixels on your website.
+ *        Million Dollar Script
+ *        A pixel script for selling pixels on your website.
  *
- *		For instructions see README.txt
+ *        For instructions see README.txt
  *
- *		Visit our website for FAQs, documentation, a list team members,
- *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ *        Visit our website for FAQs, documentation, a list team members,
+ *        to post any bugs or feature requests, and a community forum:
+ *        http://www.milliondollarscript.com/
  *
  */
 
-require("../config.php");
-require ('admin_common.php');
+require( "../config.php" );
+require( 'admin_common.php' );
 
 ?>
-<p>System info</p>
-You have PHP version: <?php echo phpversion(); ?><br><br>
-GD Library version: <pre><?php print_r (gd_info()); ?></pre><br>
-<?php if (!function_exists("imagecreatetruecolor")) { echo "imagecreatetruecolor() is not supported by your version GD. Using imagecreate() instead."; }  ?>
-<br>
-Your path to your admin directory: <?php echo str_replace('\\', '/', getcwd());?>/
-<hr>
+	<p>System info</p>
+	You have PHP version: <?php echo phpversion(); ?><br><br>
+<?php
+if ( function_exists( 'gd_info' ) ) {
+	echo 'GD Library version: <pre>' . print_r( gd_info(), true ) . '</pre>';
+	if ( ! function_exists( "imagecreatetruecolor" ) ) {
+		echo "imagecreatetruecolor() is not supported by your version GD. Using imagecreate() instead.";
+	}
+} else {
+	echo "Not installed! MDS cannot function without the php-gd package.";
+}
+?><br>
+	<br>
+	Your path to your admin directory: <?php echo str_replace( '\\', '/', getcwd() ); ?>/
+	<hr>
 <?php
 phpinfo();
 ?>

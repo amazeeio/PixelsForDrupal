@@ -66,7 +66,7 @@ include_once (MDSROOT . "/html/header.php");
 <?php
 require_once ("include/ads.inc.php");
 
-$sql = "SELECT *, MAX(order_date) as max_date, sum(quantity) AS pixels FROM orders where status='completed' AND approved='Y' AND published='Y' AND banner_id='$BID' GROUP BY user_id, banner_id order by pixels desc ";
+$sql = "SELECT *, MAX(order_date) as max_date, sum(quantity) AS pixels FROM orders where status='completed' AND approved='Y' AND published='Y' AND banner_id='$BID' GROUP BY user_id, banner_id, order_id order by pixels desc ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 while ($row=mysqli_fetch_array($result)) {
 	$q = "SELECT FirstName, LastName FROM users WHERE ID=" . $row['user_id'];

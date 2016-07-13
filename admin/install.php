@@ -658,7 +658,7 @@ CREATE TABLE `temp_orders` (
 	  `Validated` int(11) NOT NULL default '0',
 	  `CompName` varchar(255) NOT NULL default '',
 	  `login_date` datetime default CURRENT_TIMESTAMP,
-	  `logout_date` datetime default CURRENT_TIMESTAMP,
+	  `logout_date` datetime default '1000-01-01 00:00:00',
 	  `login_count` int(11) NOT NULL default '0',
 	  `last_request_time` datetime default CURRENT_TIMESTAMP,
 	  `click_count` int(11) NOT NULL default '0',

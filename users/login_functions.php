@@ -39,7 +39,7 @@ function process_login() {
 		$session_duration = 60*20;
 	}
    $now = (gmdate("Y-m-d H:i:s"));
-   $sql = "UPDATE `users` SET `logout_date`='$now' WHERE UNIX_TIMESTAMP(DATE_SUB('$now', INTERVAL $session_duration SECOND)) > UNIX_TIMESTAMP(last_request_time) AND (`logout_date` ='0000-00-00 00:00:00')";
+   $sql = "UPDATE `users` SET `logout_date`='$now' WHERE UNIX_TIMESTAMP(DATE_SUB('$now', INTERVAL $session_duration SECOND)) > UNIX_TIMESTAMP(last_request_time) AND (`logout_date` ='1000-01-01 00:00:00')";
    mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection']));
    
    if (!is_logged_in() || ($_SESSION['MDS_Domain'] != "ADVERTISER")) {

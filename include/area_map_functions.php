@@ -107,7 +107,7 @@ function process_map($BID, $map_file='') {
                       AND (banner_id = '$BID')
                       AND (image_data > '')
                       AND (image_data = image_data)
-                 GROUP BY order_id";
+                 GROUP BY order_id, user_id,url,image_data,block_id,alt_text";
   $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
   
   while ($row = mysqli_fetch_array($result)) {

@@ -145,7 +145,7 @@ function process_image($BID) {
 
 	$file_path = SERVER_PATH_TO_ADMIN;
 
-	$progress .= 'Please wait.. Processing the Grid image with GD';
+	$progress = 'Please wait.. Processing the Grid image with GD';
 
 	if (function_exists("imagecreatetruecolor")) {
 		$map = imagecreatetruecolor ( $G_WIDTH*$BLK_WIDTH, $G_HEIGHT*$BLK_HEIGHT );

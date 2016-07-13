@@ -221,7 +221,7 @@ if ($BID!='') {
 			$_REQUEST['block_id_to'] = ((($_REQUEST['row_to']) * G_HEIGHT)-1);
 
 
-			$sql = "REPLACE INTO packages(package_id, banner_id, price, currency, days_expire,  max_orders, description, is_default) VALUES ('".$_REQUEST['package_id']."', '".$BID."', '".$_REQUEST['price']."', '".$_REQUEST['currency']."', '".$_REQUEST['days_expire']."',  '".$_REQUEST['max_orders']."', '".$_REQUEST['description']."', '".$_REQUEST['is_default']."')";
+			$sql = "REPLACE INTO packages(package_id, banner_id, price, currency, days_expire,  max_orders, description, is_default) VALUES ('".intval($_REQUEST['package_id'])."', '".$BID."', '".$_REQUEST['price']."', '".$_REQUEST['currency']."', '".$_REQUEST['days_expire']."',  '".$_REQUEST['max_orders']."', '".$_REQUEST['description']."', '".$_REQUEST['is_default']."')";
 
 			//echo $sql;
 

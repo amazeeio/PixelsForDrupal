@@ -148,7 +148,7 @@ if ($_REQUEST['action']=='complete') {
 # Banner Selection form
 # Load this form only if more than 1 grid exists with pixels purchased.
 
-$sql = "select * FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id order by `name`";
+$sql = "select * FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id, orders.order_id, banners.banner_id order by `name`";
 
 $res = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 

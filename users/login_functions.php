@@ -83,7 +83,7 @@ die ();
 	} else {
       // update last_request_time
 	  $now = (gmdate("Y-m-d H:i:s"));
-       $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='0' WHERE `Username`='".$_SESSION['MDS_Username']."'";
+       $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='1000-01-01 00:00:00' WHERE `Username`='".$_SESSION['MDS_Username']."'";
        mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 	   
 
@@ -177,7 +177,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
    }
 	$now = (gmdate("Y-m-d H:i:s"));
     // everything Ok, create account and send out emails.
-    $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated) values('$REMOTE_ADDR', '$now', '$FirstName', '$LastName', '$CompName', '$Username', '$Password', '$Email', '$Newsletter', '$Notification1', '$Notification2', '$validated')";
+    $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated, Aboutme) values('$REMOTE_ADDR', '$now', '$FirstName', '$LastName', '$CompName', '$Username', '$Password', '$Email', '" . intval($Newsletter) . "', '" . intval($Notification1) . "', '" . intval($Notification2) . "', '$validated', '')";
     mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection']));
     $res = mysqli_affected_rows($GLOBALS['connection']);
 
@@ -438,7 +438,7 @@ function do_login() {
 			}
 
 			$now = (gmdate("Y-m-d H:i:s"));
-			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`=0, `login_count`=`login_count`+1 WHERE `Username`='".$row['Username']."' ";
+			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`='1000-01-01 00:00:00', `login_count`=`login_count`+1 WHERE `Username`='".$row['Username']."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 			if ($row['Validated']=="0") {

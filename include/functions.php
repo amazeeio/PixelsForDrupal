@@ -1762,7 +1762,7 @@ function select_block ($map_x, $map_y) {
 			$blocks = implode (",", $blocks); // change to string
 			$now = (gmdate("Y-m-d H:i:s")); 
 
-			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('".$_SESSION['MDS_ID']."', '".$row['order_id']."', '".$blocks."', 'new', NOW(), '".$price."', '".$quantity."', '".$BID."', '".get_default_currency()."', ".$b_row['days_expire'].", '$now', '".AUTO_APPROVE."') ";
+			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('".$_SESSION['MDS_ID']."', '".intval($row['order_id'])."', '".$blocks."', 'new', NOW(), '".$price."', '".$quantity."', '".$BID."', '".get_default_currency()."', ".$b_row['days_expire'].", '$now', '".AUTO_APPROVE."') ";
 		
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$_SESSION['MDS_order_id'] = mysqli_insert_id($GLOBALS['connection']);
@@ -1958,7 +1958,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 	$now = (gmdate("Y-m-d H:i:s")); 
 
-	$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, package_id, ad_id, approved) VALUES ('".$_SESSION['MDS_ID']."', '', '".$in_str."', 'new', '".$now."', '".$temp_order_row['price']."', '".$temp_order_row['quantity']."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', ".$temp_order_row['days_expire'].", '".$now."', ".$temp_order_row['package_id'].", ".$temp_order_row['ad_id'].", '".$approved."') ";
+	$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, package_id, ad_id, approved) VALUES ('".$_SESSION['MDS_ID']."', 0, '".$in_str."', 'new', '".$now."', '".$temp_order_row['price']."', '".$temp_order_row['quantity']."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', ".$temp_order_row['days_expire'].", '".$now."', ".$temp_order_row['package_id'].", ".$temp_order_row['ad_id'].", '".$approved."') ";
 		
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_id = mysqli_insert_id($GLOBALS['connection']); 
@@ -1985,7 +1985,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	
 	foreach ($block_info as $key=>$block) {
 
-		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`) VALUES ('".$key."',  '".$_SESSION['MDS_ID']."' , 'reserved' , '".($block['map_x'])."' , '".($block['map_y'])."' , '".$block['image_data']."' , '".addslashes($url)."' , '".addslashes($alt_text)."', '".$approved."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', '".$block['price']."', '".$order_id."', '".$temp_order_row['ad_id']."')";
+		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`, `click_count`) VALUES ('".$key."',  '".$_SESSION['MDS_ID']."' , 'reserved' , '".($block['map_x'])."' , '".($block['map_y'])."' , '".$block['image_data']."' , '".addslashes($url)."' , '".addslashes($alt_text)."', '".$approved."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', '".$block['price']."', '".$order_id."', '".$temp_order_row['ad_id']."', 0)";
 //echo $sql."<br>";
 		
 		global $f2;
@@ -2263,7 +2263,7 @@ function get_clicks_for_today($BID, $user_id=0) {
 	
 	$date = gmDate('Y')."-".gmDate('m')."-".gmDate('d');
 	
-	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID' AND `date`='$date' GROUP BY banner_id";
+	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID' AND `date`='$date' GROUP BY banner_id, block_id, user_id, date";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -2276,7 +2276,7 @@ function get_clicks_for_today($BID, $user_id=0) {
 # If $BID is null then return for all banners
 function get_clicks_for_banner($BID='') {
 	
-	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID'  GROUP BY banner_id";
+	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID'  GROUP BY banner_id, block_id, user_id, date";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 

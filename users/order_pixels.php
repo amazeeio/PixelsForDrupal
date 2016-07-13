@@ -43,11 +43,11 @@ include ("login_functions.php");
 //print_r($_SESSION);
 //print_r($_REQUEST);
 
-$BID = $f2->bid($_REQUEST['BID']);
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
 $_SESSION['BID'] = $BID;
 
 ###############################
-if ($_REQUEST['order_id']!='') {
+if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='') {
 
 	$_SESSION['MDS_order_id']=$_REQUEST['order_id'];
 	
@@ -61,7 +61,7 @@ Delete temporary order when the banner was chnaged.
 
 */
 
-if ( ($_REQUEST['banner_change']!='') || ($_FILES['graphic']['tmp_name']!='') ) {
+if ( (isset($_REQUEST['banner_change']) && $_REQUEST['banner_change']!='') || (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') ) {
 
 
 	delete_temp_order(session_id());
@@ -86,8 +86,8 @@ $tmp_image_file = get_tmp_img_name();
 
  }
 
- if (($_SESSION[MDS_order_id]=='')||(USE_AJAX=='YES')) { // guess the order id
-	$_SESSION[MDS_order_id]=$order_row[order_id];
+ if (($_SESSION["MDS_order_id"]=='')||(USE_AJAX=='YES')) { // guess the order id
+	$_SESSION["MDS_order_id"]=$order_row["order_id"];
  }
 
 ###############################
@@ -289,7 +289,7 @@ function check_selection(OffsetX, OffsetY) {
 		if ($sesname==''){
 			$sesname = 'PHPSESSID';
 		}
-		echo $BID."&amp;t=".time()."&amp;$sesname=".session_id(); ?>",true);
+		echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
 
 		//alert("before trup_count:"+trip_count);
 
@@ -333,7 +333,7 @@ function check_selection(OffsetX, OffsetY) {
 
 //////////////////////////////////////////
 // Initialize
-var block_str = "<?php echo $order_row[blocks]; ?>";
+var block_str = "<?php echo $order_row["blocks"]; ?>";
 var trip_count = 0;
 
 //////////////////////////////////
@@ -635,12 +635,13 @@ $fh = fopen ($filename, 'rb');
 $block_info = fread($fh, filesize($filename));
 fclose($fh);
 
-}
 //$block_info = unserialize ($row['block_info']);
 $block_info = unserialize ($block_info);
 
+}
+
 //echo "size of block_info:".sizeof($block_info[0]);
-if (is_array($block_info)) {
+if (isset($block_info) && is_array($block_info)) {
 
 //print_r ($block_info);
 
@@ -664,7 +665,7 @@ if (($low_x == (G_WIDTH*BLK_WIDTH)) && ($low_y == (G_HEIGHT*BLK_HEIGHT))) {
 
 }
 
-if (!$init) {
+if (isset($init) && !$init) {
 	$low_x=0;
 	$low_y=0;
 	$is_moving = " is_moving=true ";
@@ -703,20 +704,18 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 	$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
 
 	//$parts = split ('\.', $_FILES['graphic']['name']);
-	$parts = explode('.', $_FILES['graphic']['name']);
-	$ext = strtolower(array_pop($parts));
+	$parts = $file_parts = pathinfo($_FILES['graphic']['name']);
+	$ext = strtolower($file_parts['extension']);
 
 	// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED
-	$ALLOWED_EXT= 'jpg, jpeg, gif, png';
-	$ext_list = preg_split ("/[\s,]+/i", ($ALLOWED_EXT));	
+	$ALLOWED_EXT= array('jpg', 'jpeg', 'gif', 'png');
 
-
-	if (!in_array($ext, $ext_list)) {
+	if (!in_array($ext, $ALLOWED_EXT)) {
 		$error .=  "<strong><font color='red'>".$label['advertiser_file_type_not_supp']." ($ext)</font></strong><br />";
 		$image_changed_flag = false;
 	
 	} 
-	if ($error) {
+	if (isset($error)) {
 		//echo "<font color='red'>Error, image upload failed</font>";
 		echo $error;
 

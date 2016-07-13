@@ -39,7 +39,7 @@ require ("../config.php");
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
-$BID = $f2->bid($_REQUEST['BID']);
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
 load_banner_constants($BID);
 
 // normalize...
@@ -49,14 +49,16 @@ $_REQUEST['map_y'] = floor ($_REQUEST['map_y'] / BLK_HEIGHT)* BLK_HEIGHT;
 $_REQUEST['block_id'] = floor ($_REQUEST['block_id']);
 # place on temp order -> then 
 
-//print_r($_REQUEST);
-
 function place_temp_order($in_str, $price) {
 
 
 	global $f2;
 
-	if (session_id()=='') { return false; } // cannot place order if there is no session!
+	// cannot place order if there is no session!
+	if (session_id()=='') {
+		$f2->debug('Cannot place order if there is no session!');
+		return false;
+	}
 	$blocks = explode(',', $in_str);
 
 	$quantity = sizeof($blocks)*(BLK_WIDTH*BLK_HEIGHT);
@@ -67,9 +69,9 @@ function place_temp_order($in_str, $price) {
 	$sql = "SELECT ad_id, block_info  FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
-	$ad_id = $row['ad_id'];
+	$ad_id = intval($row['ad_id']);
 	$block_info = addslashes($row['block_info']);
-	
+
 	$BID = $f2->bid($_REQUEST['BID']);
 
 	// DAYS_EXPIRE comes form load_banner_constants()

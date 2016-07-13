@@ -180,7 +180,7 @@ function can_user_get_package($user_id, $package_id) {
 	
 	// count the orders the user made for this package
 
-	$sql = "SELECT count(*) AS order_count, banner_id FROM orders WHERE status <> 'deleted' AND status <> 'new' AND package_id='".$package_id."' AND user_id='$user_id' GROUP BY user_id LIMIT 1";
+	$sql = "SELECT count(*) AS order_count, banner_id FROM orders WHERE status <> 'deleted' AND status <> 'new' AND package_id='".$package_id."' AND user_id='$user_id' GROUP BY user_id, banner_id LIMIT 1";
 	//echo " $sql ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);

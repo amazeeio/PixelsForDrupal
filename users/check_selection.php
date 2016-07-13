@@ -250,6 +250,7 @@ function check_selection_main() {
 
 	$block_info = array();
 	$comma = "";
+	$in_str = "";
 	for ($i=0; $i<($size[1]); $i+=BLK_HEIGHT) {
 		
 		for ($j=0; $j<($size[0]); $j+=BLK_WIDTH) {

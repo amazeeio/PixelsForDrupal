@@ -166,6 +166,9 @@ function does_field_exist($table, $field) {
 
 }
 
+    // compare MySQL version, versions newer than 5.6.5 require a different set of queries
+    $mysql_server_info = mysqli_get_server_info( $GLOBALS['connection'] );
+
 	if (!does_field_exist("blocks", "published")) {
 		$sql = "ALTER TABLE `blocks` ADD `published` SET( 'Y', 'N') NOT NULL ";
 		 mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br>$sql<br>");
@@ -394,7 +397,8 @@ function does_field_exist($table, $field) {
 
 	if (!does_field_exist("transactions", "transaction_id")) {
 
-		$sql ="CREATE TABLE `transactions` (
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "CREATE TABLE `transactions` (
 		`transaction_id` int(11) NOT NULL auto_increment,
 		`date` datetime default CURRENT_TIMESTAMP,
 		`order_id` int(11) NOT NULL default '0',
@@ -405,6 +409,19 @@ function does_field_exist($table, $field) {
 		`reason` varchar(64) NOT NULL default '',
 		`origin` varchar(32) NOT NULL default '',
 		PRIMARY KEY  (`transaction_id`))";
+		} else {
+			$sql = "CREATE TABLE `transactions` (
+		`transaction_id` int(11) NOT NULL auto_increment,
+		`date` datetime NOT NULL default '0000-00-00 00:00:00',
+		`order_id` int(11) NOT NULL default '0',
+		`type` varchar(32) NOT NULL default '',
+		`amount` float NOT NULL default '0',
+		`currency` char(3) NOT NULL default '',
+		`txn_id` varchar(128) NOT NULL default '',
+		`reason` varchar(64) NOT NULL default '',
+		`origin` varchar(32) NOT NULL default '',
+		PRIMARY KEY  (`transaction_id`))";
+		}
 
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
@@ -429,7 +446,8 @@ function does_field_exist($table, $field) {
 	}
 
 	if (!does_field_exist('mail_queue', 'mail_id')) {
-		$sql = "CREATE TABLE `mail_queue` (
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "CREATE TABLE `mail_queue` (
 		`mail_id` int(11) NOT NULL auto_increment,
 		`mail_date` datetime default CURRENT_TIMESTAMP,
 		`to_address` varchar(128) NOT NULL default '',
@@ -449,6 +467,28 @@ function does_field_exist($table, $field) {
 		`att3_name` varchar(128) NOT NULL default '',
 		`date_stamp` datetime default CURRENT_TIMESTAMP,
 		PRIMARY KEY  (`mail_id`)) ";
+		} else {
+			$sql = "CREATE TABLE `mail_queue` (
+		`mail_id` int(11) NOT NULL auto_increment,
+		`mail_date` datetime NOT NULL default '0000-00-00 00:00:00',
+		`to_address` varchar(128) NOT NULL default '',
+		`to_name` varchar(128) NOT NULL default '',
+		`from_address` varchar(128) NOT NULL default '',
+		`from_name` varchar(128) NOT NULL default '',
+		`subject` varchar(255) NOT NULL default '',
+		`message` text NOT NULL,
+		`html_message` text NOT NULL,
+		`attachments` set('Y','N') NOT NULL default '',
+		`status` set('queued','sent','error') NOT NULL default '',
+		`error_msg` varchar(255) NOT NULL default '',
+		`retry_count` smallint(6) NOT NULL default '0',
+		`template_id` int(11) NOT NULL default '0',
+		`att1_name` varchar(128) NOT NULL default '',
+		`att2_name` varchar(128) NOT NULL default '',
+		`att3_name` varchar(128) NOT NULL default '',
+		`date_stamp` datetime NOT NULL default '0000-00-00 00:00:00',
+		PRIMARY KEY  (`mail_id`)) ";
+		}
 
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
@@ -506,7 +546,18 @@ function does_field_exist($table, $field) {
 
 	if (!does_field_exist("clicks", "block_id")) {
 
-		$sql = "CREATE TABLE `clicks` (
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "CREATE TABLE `clicks` (
+			`banner_id` INT NOT NULL ,
+			`block_id` INT NOT NULL ,
+			`user_id` INT NOT NULL ,
+			`date` date NOT NULL default '0000-00-00',
+			`clicks` INT NOT NULL ,
+			PRIMARY KEY ( `banner_id` , `block_id` ,  `date` ) 
+			)";
+		} else {
+
+			$sql = "CREATE TABLE `clicks` (
 			`banner_id` INT NOT NULL ,
 			`block_id` INT NOT NULL ,
 			`user_id` INT NOT NULL ,
@@ -514,6 +565,7 @@ function does_field_exist($table, $field) {
 			`clicks` INT NOT NULL ,
 			PRIMARY KEY ( `banner_id` , `block_id` ,  `date` ) 
 			)";
+		}
 
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
@@ -672,7 +724,12 @@ function does_field_exist($table, $field) {
 
 	if (!does_field_exist("banners", "date_updated")) {
 
-		$sql = "ALTER TABLE `banners` ADD `date_updated` datetime ";
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "ALTER TABLE `banners` ADD `date_updated` datetime ";
+		} else {
+			$sql = "ALTER TABLE `banners` ADD `date_updated` DATETIME NOT NULL ";
+		}
+
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 	}
@@ -700,7 +757,9 @@ function does_field_exist($table, $field) {
 
 
 	if (!does_field_exist("temp_orders", "session_id")) {
-		$sql ="CREATE TABLE `temp_orders` (
+
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "CREATE TABLE `temp_orders` (
 		  `session_id` varchar(32) NOT NULL default '',
 		  `blocks` text NOT NULL,
 		  `order_date` datetime default CURRENT_TIMESTAMP,
@@ -715,6 +774,23 @@ function does_field_exist($table, $field) {
 			 `block_info` TEXT NOT NULL,
 		  PRIMARY KEY  (`session_id`)
 		)";
+		} else {
+			$sql = "CREATE TABLE `temp_orders` (
+		  `session_id` varchar(32) NOT NULL default '',
+		  `blocks` text NOT NULL,
+		  `order_date` datetime NOT NULL default '0000-00-00 00:00:00',
+		  `price` float NOT NULL default '0',
+		  `quantity` int(11) NOT NULL default '0',
+		  `banner_id` int(11) NOT NULL default '1',
+		  `currency` char(3) NOT NULL default 'USD',
+		  `days_expire` int(11) NOT NULL default '0',
+		  `date_stamp` datetime default NULL,
+		  `package_id` int(11) NOT NULL default '0',
+		  `ad_id` int(11) default '0',
+			 `block_info` TEXT NOT NULL,
+		  PRIMARY KEY  (`session_id`)
+		)";
+		}
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 	}
 
@@ -852,7 +928,8 @@ function does_field_exist($table, $field) {
 
 		require_once ('../include/ads.inc.php');
 
-		$sql ="CREATE TABLE `ads` (
+		if ( version_compare( $mysql_server_info, '5.6.5' ) >= 0 ) {
+			$sql = "CREATE TABLE `ads` (
 			`ad_id` int(11) NOT NULL,
 			`user_id` varchar(255) NOT NULL default '0',
 			`ad_date` datetime default CURRENT_TIMESTAMP,
@@ -863,6 +940,20 @@ function does_field_exist($table, $field) {
 			`3` varchar(255) NOT NULL default '',
 			PRIMARY KEY  (`ad_id`)
 			) ";
+		} else {
+			$sql = "CREATE TABLE `ads` (
+			`ad_id` int(11) NOT NULL,
+			`user_id` varchar(255) NOT NULL default '0',
+			`ad_date` datetime NOT NULL default '0000-00-00 00:00:00',
+			`order_id` int(11) default '0',
+			`banner_id` int(11) NOT NULL default '0',
+			`1` varchar(255) NOT NULL default '',
+			`2` varchar(255) NOT NULL default '',
+			`3` varchar(255) NOT NULL default '',
+			PRIMARY KEY  (`ad_id`)
+			) ";
+		}
+
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the follwoing query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
 
 		// populate the ads table

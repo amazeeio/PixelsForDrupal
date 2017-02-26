@@ -328,7 +328,12 @@ function multiple_query($q){
 
 function install_db() {
 
-	$sql = "
+    // compare MySQL version, versions newer than 5.6.5 require a different set of queries
+	$mysql_server_info = mysqli_get_server_info( $GLOBALS['connection'] );
+
+	if (version_compare($mysql_server_info, '5.6.5') >= 0) {
+
+		$sql = "
 	
 	CREATE TABLE `ads` (
   `ad_id` int(11) NOT NULL auto_increment,
@@ -710,6 +715,391 @@ CREATE TABLE `codes` (
   PRIMARY KEY  (`field_id`,`code`,`lang`)
 ) 
 	";
+	} else {
+
+		$sql = "
+	
+	CREATE TABLE `ads` (
+  `ad_id` int(11) NOT NULL auto_increment,
+  `user_id` varchar(255) NOT NULL default '0',
+  `ad_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `order_id` int(11) default '0',
+  `banner_id` int(11) NOT NULL default '0',
+  `1` varchar(255) NOT NULL default '',
+  `2` varchar(255) NOT NULL default '',
+  `3` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`ad_id`)
+);;;
+	
+	
+	CREATE TABLE `banners` (
+  `banner_id` int(11) NOT NULL auto_increment,
+  `grid_width` int(11) NOT NULL default '0',
+  `grid_height` int(11) NOT NULL default '0',
+  `days_expire` mediumint(9) default '0',
+  `price_per_block` float NOT NULL default '0',
+  `name` varchar(255) NOT NULL default '',
+  `currency` char(3) NOT NULL default 'USD',
+  `publish_date` datetime default NULL,
+  `max_orders` int(11) NOT NULL default '0',
+  `block_width` int(11) NOT NULL default '10',
+  `block_height` int(11) NOT NULL default '10',
+  `grid_block` text NOT NULL,
+  `nfs_block` text NOT NULL,
+  `tile` text NOT NULL,
+  `usr_grid_block` text NOT NULL,
+  `usr_nfs_block` text NOT NULL,
+  `usr_ord_block` text NOT NULL,
+  `usr_res_block` text NOT NULL,
+  `usr_sel_block` text NOT NULL,
+  `usr_sol_block` text NOT NULL,
+  `max_blocks` int(11) NOT NULL default '0',
+  `min_blocks` int(11) NOT NULL default '0',
+  `date_updated` datetime NOT NULL default '0000-00-00 00:00:00',
+  `bgcolor` varchar(7) NOT NULL default '#FFFFFF',
+  `auto_publish` char(1) NOT NULL default 'N',
+  `auto_approve` char(1) NOT NULL default 'N',
+  `time_stamp` int(11) default NULL,
+  PRIMARY KEY  (`banner_id`)
+);;;
+
+
+	INSERT INTO `banners` VALUES (1, 100, 100, 1, 100, 'Million Pixels. (1000x1000)', 'USD', NULL, 1, 10, 10, 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4AQMAAAADqqSRAAAABlBMVEXW19b///9ZVCXjAAAAJklEQVR4nGNgQAP197///Y8gBpw/6r5R9426b9R9o+4bdd8wdB8AiRh20BqKw9IAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFElEQVR4nGP83+DAgBsw4ZEbwdIAJ/sB02xWjpQAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGP8/58BD2DCJzlypQF0BwISHGyJPgAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGNk+M+ABzDhkxy50gBALQETmXEDiQAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAEklEQVR4nGP8z4APMOGVHbHSAEEsAROxCnMTAAAAAElFTkSuQmCC', 500, 0, '2007-02-17 10:48:32', '#FFffFF', 'Y', 'Y', 1171775611);;;
+
+CREATE TABLE `categories` (
+  `category_id` int(11) NOT NULL default '0',
+  `category_name` varchar(255) NOT NULL default '',
+  `parent_category_id` int(11) NOT NULL default '0',
+  `obj_count` int(11) NOT NULL default '0',
+  `form_id` int(11) NOT NULL default '0',
+  `allow_records` set('Y','N') NOT NULL default 'Y',
+  `list_order` smallint(6) NOT NULL default '1',
+  `search_set` text NOT NULL,
+  `seo_fname` varchar(100) default NULL,
+  `seo_title` varchar(255) default NULL,
+  `seo_desc` varchar(255) default NULL,
+  `seo_keys` varchar(255) default NULL,
+  PRIMARY KEY  (`category_id`),
+  KEY `composite_index` (`parent_category_id`,`category_id`)
+);;;
+
+
+CREATE TABLE `form_fields` (
+  `form_id` int(11) NOT NULL default '0',
+  `field_id` int(11) NOT NULL auto_increment,
+  `section` tinyint(4) NOT NULL default '1',
+  `reg_expr` varchar(255) NOT NULL default '',
+  `field_label` varchar(255) NOT NULL default '-noname-',
+  `field_type` varchar(255) NOT NULL default 'TEXT',
+  `field_sort` tinyint(4) NOT NULL default '0',
+  `is_required` set('Y','N') NOT NULL default 'N',
+  `display_in_list` set('Y','N') NOT NULL default 'N',
+  `is_in_search` set('Y','N') NOT NULL default 'N',
+  `error_message` varchar(255) NOT NULL default '',
+  `field_init` varchar(255) NOT NULL default '',
+  `field_width` tinyint(4) NOT NULL default '20',
+  `field_height` tinyint(4) NOT NULL default '0',
+  `list_sort_order` tinyint(4) NOT NULL default '0',
+  `search_sort_order` tinyint(4) NOT NULL default '0',
+  `template_tag` varchar(255) NOT NULL default '',
+  `is_hidden` char(1) NOT NULL default '',
+  `is_anon` char(1) NOT NULL default '',
+  `field_comment` text NOT NULL,
+  `category_init_id` int(11) NOT NULL default '0',
+  `is_cat_multiple` set('Y','N') NOT NULL default 'N',
+  `cat_multiple_rows` tinyint(4) NOT NULL default '1',
+  `is_blocked` char(1) NOT NULL default 'N',
+  `multiple_sel_all` char(1) NOT NULL default 'N',
+  `is_prefill` char(1) NOT NULL default 'N',
+  PRIMARY KEY  (`field_id`)
+);;;
+
+INSERT INTO `form_fields` VALUES (1, 1, 1, 'not_empty', 'Ad Text', 'TEXT', 1, 'Y', '', '', 'was not filled in', '', 80, 0, 0, 0, 'ALT_TEXT', '', '', '', 0, '', 0, '', '', '');;;
+INSERT INTO `form_fields` VALUES (1, 2, 1, 'url', 'URL', 'TEXT', 2, 'Y', '', '', 'is not valid.', '', 80, 0, 0, 0, 'URL', '', '', '', 0, '', 0, '', '', '');;;
+INSERT INTO `form_fields` VALUES (1, 3, 1, '', 'Additional Image', 'IMAGE', 3, '', '', '', '', '', 0, 0, 0, 0, 'IMAGE', '', '', '(This image will be displayed when a mouse pointer is placed over your ad)', 0, '', 0, '', '', '');;;
+
+
+
+CREATE TABLE `form_field_translations` (
+  `field_id` int(11) NOT NULL default '0',
+  `lang` char(2) NOT NULL default '',
+  `field_label` text NOT NULL,
+  `error_message` varchar(255) NOT NULL default '',
+  `field_comment` text NOT NULL,
+  PRIMARY KEY  (`field_id`,`lang`),
+  KEY `field_id` (`field_id`)
+) ;;;
+
+INSERT INTO `form_field_translations` VALUES (1, 'EN', 'Ad Text', 'was not filled in', '');;;
+INSERT INTO `form_field_translations` VALUES (2, 'EN', 'URL', 'is not valid.', '');;;
+INSERT INTO `form_field_translations` VALUES (3, 'EN', 'Additional Image', '', '(This image will be displayed when a mouse pointer is placed over your ad)');;;
+
+
+CREATE TABLE `form_lists` (
+  `form_id` int(11) NOT NULL default '0',
+  `field_type` varchar(255) NOT NULL default '',
+  `sort_order` int(11) NOT NULL default '0',
+  `field_id` varchar(255) NOT NULL default '0',
+  `template_tag` varchar(255) NOT NULL default '',
+  `column_id` int(11) NOT NULL auto_increment,
+  `admin` set('Y','N') NOT NULL default '',
+  `truncate_length` smallint(4) NOT NULL default '0',
+  `linked` set('Y','N') NOT NULL default 'N',
+  `clean_format` set('Y','N') NOT NULL default '',
+  `is_bold` set('Y','N') NOT NULL default '',
+  `is_sortable` set('Y','N') NOT NULL default 'N',
+  `no_wrap` set('Y','N') NOT NULL default '',
+  PRIMARY KEY  (`column_id`)
+) ;;;
+
+INSERT INTO `form_lists` VALUES (1, 'TIME', 1, 'ad_date', 'DATE', 1, 'N', 0, 'N', 'N', 'N', 'Y', 'N');;;
+INSERT INTO `form_lists` VALUES (1, 'EDITOR', 2, '1', 'ALT_TEXT', 2, 'N', 0, 'Y', 'N', 'N', 'Y', 'N');;;
+INSERT INTO `form_lists` VALUES (1, 'TEXT', 3, '2', 'URL', 3, 'N', 0, 'N', 'N', 'N', 'N', 'N');;;
+
+
+CREATE TABLE `temp_orders` (
+  `session_id` varchar(32) NOT NULL default '',
+  `blocks` text NOT NULL,
+  `order_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `price` float NOT NULL default '0',
+  `quantity` int(11) NOT NULL default '0',
+  `banner_id` int(11) NOT NULL default '1',
+  `currency` char(3) NOT NULL default 'USD',
+  `days_expire` int(11) NOT NULL default '0',
+  `date_stamp` datetime default NULL,
+  `package_id` int(11) NOT NULL default '0',
+  `ad_id` int(11) default '0',
+  `block_info` text NOT NULL,
+  PRIMARY KEY  (`session_id`)
+);;;
+
+	CREATE TABLE `blocks` (
+	  `block_id` int(11) NOT NULL default '0',
+	  `user_id` int(11) default NULL,
+	  `status` set('reserved','sold','free','ordered','nfs') NOT NULL default '',
+	  `x` int(11) NOT NULL default '0',
+	  `y` int(11) NOT NULL default '0',
+	  `image_data` text NOT NULL,
+	  `url` varchar(255) NOT NULL default '',
+	  `alt_text` text NOT NULL default '',
+	  `file_name` varchar(255) NOT NULL default '',
+	  `mime_type` varchar(100) NOT NULL default '',
+	  `approved` set('Y','N') NOT NULL default '',
+	  `published` set('Y','N') NOT NULL default '',
+	  `currency` char(3) NOT NULL default 'USD',
+	  `order_id` int(11) NOT NULL default '0',
+	  `price` float default NULL,
+	  `banner_id` int(11) NOT NULL default '1',
+		`ad_id` INT(11)  NOT NULL default '0',
+		`click_count` INT NOT NULL,
+	  PRIMARY KEY  (`block_id`,`banner_id`)
+	);;;
+
+	CREATE TABLE `clicks` (
+		`banner_id` INT NOT NULL ,
+		`block_id` INT NOT NULL ,
+		`user_id` INT NOT NULL ,
+		`date` date NOT NULL default '0000-00-00',
+		`clicks` INT NOT NULL ,
+		PRIMARY KEY ( `banner_id` , `block_id` ,  `date` ) 
+	);;;
+
+
+	CREATE TABLE `config` (
+	  `key` varchar(255) NOT NULL default '',
+	  `val` varchar(255) NOT NULL default '',
+	  PRIMARY KEY  (`key`)
+	);;;
+
+	INSERT INTO `config` VALUES ('EXPIRE_RUNNING', 'NO');;;
+	INSERT INTO `config` VALUES ('LAST_EXPIRE_RUN', '1138243912');;;
+	INSERT INTO `config` VALUES ('SELECT_RUNNING', 'NO');;;
+
+
+
+
+
+	CREATE TABLE `currencies` (
+	  `code` char(3) NOT NULL default '',
+	  `name` varchar(50) NOT NULL default '',
+	  `rate` decimal(10,4) NOT NULL default '1.0000',
+	  `is_default` set('Y','N') NOT NULL default 'N',
+	  `sign` varchar(8) NOT NULL default '',
+	  `decimal_places` smallint(6) NOT NULL default '0',
+	  `decimal_point` char(3) NOT NULL default '',
+	  `thousands_sep` char(3) NOT NULL default '',
+	  PRIMARY KEY  (`code`)
+	);;;
+
+
+	INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.0075, 'N', '$', 2, '.', ',');;;
+	INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 0.99489, 'N', '$', 2, '.', ',');;;
+	INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.77476, 'N', '€', 2, '.', ',');;;
+	INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.64337, 'N', '£', 2, '.', ',');;;
+	INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 83.149, 'N', '¥', 0, '.', ',');;;
+	INSERT INTO `currencies` VALUES ('USD', 'U.S. Dollar', 1.0000, 'Y', '$', 2, '.', ',');;;
+
+
+
+	CREATE TABLE `lang` (
+	  `lang_code` char(2) NOT NULL default '',
+	  `lang_filename` varchar(32) NOT NULL default '',
+	  `lang_image` varchar(32) NOT NULL default '',
+	  `is_active` set('Y','N') NOT NULL default '',
+	  `name` varchar(32) NOT NULL default '',
+	  `charset` varchar(32) NOT NULL default '',
+	  `image_data` text NOT NULL,
+	  `mime_type` varchar(255) NOT NULL default '',
+	  `is_default` char(1) NOT NULL default 'N',
+	  PRIMARY KEY  (`lang_code`)
+	);;;
+
+	 
+
+	INSERT INTO `lang` VALUES ('EN', 'english.php', 'english.gif', 'Y', 'English', 'en_US.utf8', 'R0lGODlhGQARAMQAAAURdBYscgNNfrUOEMkMBdAqE9UTMtItONNUO9w4SdxmaNuObhYuh0Y5lCxVlFJcpqN2ouhfjLCrrOeRmeHKr/Wy3Lje4dPW3PDTz9/q0vXm1ffP7MLt5/f0+AAAAAAAACwAAAAAGQARAAAF02AAMIDDkOgwEF3gukCZIICI1jhFDRmOS4dF50aMVSqEjehFIWQ2kJLUMRoxCCsNzDFBZDCuh1RMpQY6HZYIiOlIYqKy9JZIqHeZTqMWnvoZCgosCkIXDoeIAGJkfmgEB3UHkgp1dYuKVWJXWCsEnp4qAwUcpBwWphapFhoanJ+vKxOysxMRgbcDHRlfeboZF2mvwp+5Eh07YC9naMzNzLmKuggTDy8G19jZ2NAiFB0LBxYuC+TlC7Syai8QGU0TAs7xaNxLDLoDdsPDuS98ABXfQgAAOw==', 'image/gif', 'Y');;;
+
+
+
+	CREATE TABLE `orders` (
+  `user_id` int(11) NOT NULL default '0',
+  `order_id` int(11) NOT NULL auto_increment,
+  `blocks` text NOT NULL,
+  `status` set('pending','completed','cancelled','confirmed','new','expired','deleted','renew_wait','renew_paid') NOT NULL default '',
+  `order_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `price` float NOT NULL default '0',
+  `quantity` int(11) NOT NULL default '0',
+  `banner_id` int(11) NOT NULL default '1',
+  `currency` char(3) NOT NULL default 'USD',
+  `days_expire` int(11) NOT NULL default '0',
+  `date_published` datetime default NULL,
+  `date_stamp` datetime default NULL,
+  `expiry_notice_sent` set('Y','N') NOT NULL default '',
+  `package_id` int(11) NOT NULL default '0',
+  `ad_id` int(11) default NULL,
+  `approved` set('Y','N') NOT NULL default 'N',
+  `published` set('Y','N') NOT NULL default '',
+  `subscr_status` varchar(32) NOT NULL default '',
+  `original_order_id` int(11) default NULL,
+  `previous_order_id` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`order_id`)
+);;;
+
+
+	CREATE TABLE `packages` (
+  `banner_id` int(11) NOT NULL default '0',
+  `days_expire` int(11) NOT NULL default '0',
+  `price` float NOT NULL default '0',
+  `currency` char(3) NOT NULL default '',
+  `package_id` int(11) NOT NULL auto_increment,
+  `is_default` set('Y','N') default NULL,
+  `max_orders` mediumint(9) NOT NULL default '0',
+  `description` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`package_id`)
+);;;
+
+
+	CREATE TABLE `prices` (
+	  `price_id` int(11) NOT NULL auto_increment,
+	  `banner_id` int(11) NOT NULL default '0',
+	  `row_from` int(11) NOT NULL default '0',
+	  `row_to` int(11) NOT NULL default '0',
+	  `block_id_from` int(11) NOT NULL default '0',
+	  `block_id_to` int(11) NOT NULL default '0',
+	  `price` float NOT NULL default '0',
+	  `currency` char(3) NOT NULL default '',
+	  `color` varchar(50) NOT NULL default '',
+		col_from int(11) default NULL,
+		col_to int(11) default NULL,
+	  PRIMARY KEY  (`price_id`)
+	);;;
+
+
+
+	CREATE TABLE `transactions` (
+	  `transaction_id` int(11) NOT NULL auto_increment,
+	  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+	  `order_id` int(11) NOT NULL default '0',
+	  `type` varchar(32) NOT NULL default '',
+	  `amount` float NOT NULL default '0',
+	  `currency` char(3) NOT NULL default '',
+	  `txn_id` varchar(128) NOT NULL default '',
+	  `reason` varchar(64) NOT NULL default '',
+	  `origin` varchar(32) NOT NULL default '',
+	  PRIMARY KEY  (`transaction_id`)
+	);;;
+
+	 
+
+	CREATE TABLE `users` (
+	  `ID` int(11) NOT NULL auto_increment,
+	  `IP` varchar(50) NOT NULL default '',
+	  `SignupDate` datetime NOT NULL default '0000-00-00 00:00:00',
+	  `FirstName` varchar(50) NOT NULL default '',
+	  `LastName` varchar(50) NOT NULL default '',
+	  `Rank` int(11) NOT NULL default '1',
+	  `Username` varchar(50) NOT NULL default '',
+	  `Password` varchar(50) NOT NULL default '',
+	  `Email` varchar(255) NOT NULL default '',
+	  `Newsletter` int(11) NOT NULL default '1',
+	  `Notification1` int(11) NOT NULL default '0',
+	  `Notification2` int(11) NOT NULL default '0',
+	  `Aboutme` longtext NOT NULL,
+	  `Validated` int(11) NOT NULL default '0',
+	  `CompName` varchar(255) NOT NULL default '',
+	  `login_date` datetime NOT NULL default '0000-00-00 00:00:00',
+	  `logout_date` datetime NOT NULL default '0000-00-00 00:00:00',
+	  `login_count` int(11) NOT NULL default '0',
+	  `last_request_time` datetime NOT NULL default '0000-00-00 00:00:00',
+	  `click_count` int(11) NOT NULL default '0',
+	  PRIMARY KEY  (`ID`),
+	  UNIQUE KEY `Username` (`Username`)
+	);;;
+		
+	CREATE TABLE `mail_queue` (
+		`mail_id` int(11) NOT NULL auto_increment,
+		`mail_date` datetime NOT NULL default '0000-00-00 00:00:00',
+		`to_address` varchar(128) NOT NULL default '',
+		`to_name` varchar(128) NOT NULL default '',
+		`from_address` varchar(128) NOT NULL default '',
+		`from_name` varchar(128) NOT NULL default '',
+		`subject` varchar(255) NOT NULL default '',
+		`message` text NOT NULL,
+		`html_message` text NOT NULL,
+		`attachments` set('Y','N') NOT NULL default '',
+		`status` set('queued','sent','error') NOT NULL default '',
+		`error_msg` varchar(255) NOT NULL default '',
+		`retry_count` smallint(6) NOT NULL default '0',
+		`template_id` int(11) NOT NULL default '0',
+		`att1_name` varchar(128) NOT NULL default '',
+		`att2_name` varchar(128) NOT NULL default '',
+		`att3_name` varchar(128) NOT NULL default '',
+		`date_stamp` datetime NOT NULL default '0000-00-00 00:00:00',
+		PRIMARY KEY  (`mail_id`));;;
+
+	CREATE TABLE `cat_name_translations` (
+  `category_id` int(11) NOT NULL default '0',
+  `lang` char(2) NOT NULL default '',
+  `category_name` text NOT NULL,
+  PRIMARY KEY  (`category_id`,`lang`),
+  KEY `category_id` (`category_id`)
+) ;;;
+
+CREATE TABLE `codes` (
+  `field_id` varchar(30) NOT NULL default '',
+  `code` varchar(5) NOT NULL default '',
+  `description` varchar(30) NOT NULL default '',
+  PRIMARY KEY  (`field_id`,`code`)
+) ;;;
+
+	CREATE TABLE `codes_translations` (
+  `field_id` int(11) NOT NULL default '0',
+  `code` varchar(10) NOT NULL default '',
+  `description` varchar(255) NOT NULL default '',
+  `lang` char(2) NOT NULL default '',
+  PRIMARY KEY  (`field_id`,`code`,`lang`)
+) 
+	";
+    }
 
 	/* You can use it like this */
 

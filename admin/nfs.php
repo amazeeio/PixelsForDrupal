@@ -37,7 +37,7 @@ require ('admin_common.php');
 ini_set('max_execution_time', 10000);
 ini_set('max_input_vars', 10002);
 if ($_REQUEST['pass']!='') {
-	if ($_REQUEST['pass']==ADMIN_PASSWORD) {
+	if (stripslashes($_REQUEST['pass'])==ADMIN_PASSWORD) {
 		$_SESSION['ADMIN'] = '1';
 	}
 }

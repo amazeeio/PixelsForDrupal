@@ -35,7 +35,7 @@ require ('admin_common.php');
 
 if ($_REQUEST['pass']!='') {
 
-	if ($_REQUEST['pass']==ADMIN_PASSWORD) {
+	if (stripslashes($_REQUEST['pass'])==ADMIN_PASSWORD) {
 		$_SESSION[ADMIN] = '1';
 
 	}

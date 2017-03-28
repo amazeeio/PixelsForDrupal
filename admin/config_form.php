@@ -461,7 +461,7 @@ NOTES<br>
       <p ><font face="Verdana" size="2"><b>SMTP Settings</b><br>
 	  <input type="checkbox" name="use_smtp" value="YES"  <?php if (USE_SMTP=='YES') { echo " checked "; } ?> >Enable SMTP Server. (All outgoing email will be sent via authenticated SMTP server connection. By default, the email is sent using the PHP mail() function, and there is no need to turn this option on. Please make sure to fill in all the fields if you enable this option. POP port setting is used to verify that the script can connect to a POP account to check if the username and password was correctly filled in when the test button is clicked. )<br>
 	  </font>
-	  </font></td>
+	  </p></td>
     </tr>
      <tr>
       <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">Hostname (of your HTTP server)</font></td>

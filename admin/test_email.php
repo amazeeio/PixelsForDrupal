@@ -54,7 +54,7 @@ if ($_REQUEST['pop3_port']=='') {
 	$pop3->hostname=$_REQUEST['email_pop_server'];      /* POP 3 server host name              */
 	$pop3->port=$_REQUEST['pop3_port'];     /* POP 3 server host port              */
 	$user=$_REQUEST['user'];                /* Authentication user name            */
-	$password=$_REQUEST['pass'];            /* Authentication password             */
+	$password=stripslashes($_REQUEST['pass']);            /* Authentication password             */
 	$pop3->realm="";                        /* Authentication realm or domain      */
 	$pop3->workstation="";                  /* Workstation for NTLM authentication */
 	$apop=0;                                /* Use APOP authentication             */

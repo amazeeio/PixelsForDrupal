@@ -40,7 +40,7 @@ require_once '../library/HTMLPurifier.auto.php';
 $purifier = new HTMLPurifier(); 
 
 if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (MAIN_PHP=='1')) {
-	if ($_REQUEST['pass'] == ADMIN_PASSWORD) {
+	if (stripslashes($_REQUEST['pass']) == ADMIN_PASSWORD) {
 		$_SESSION['ADMIN'] = '1';
 	}
 }

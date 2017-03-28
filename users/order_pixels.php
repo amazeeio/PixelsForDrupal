@@ -443,7 +443,7 @@ var i_count =0;
 
 
 function show_pointer2 (e) {
-	//function called when mouse is over the actual pinting image
+	//function called when mouse is over the actual pointing image
 
 	if(!is_moving) return;
 
@@ -641,6 +641,7 @@ $block_info = unserialize ($block_info);
 }
 
 //echo "size of block_info:".sizeof($block_info[0]);
+$init = false;
 if (isset($block_info) && is_array($block_info)) {
 
 //print_r ($block_info);
@@ -665,7 +666,7 @@ if (($low_x == (G_WIDTH*BLK_WIDTH)) && ($low_y == (G_HEIGHT*BLK_HEIGHT))) {
 
 }
 
-if (isset($init) && !$init) {
+if (!$init) {
 	$low_x=0;
 	$low_y=0;
 	$is_moving = " is_moving=true ";

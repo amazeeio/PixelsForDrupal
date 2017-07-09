@@ -51,6 +51,7 @@ if (file_exists($filename)) {
 
 } else {
 	$image = imagecreatefrompng('pointer.png');
+	$image = ImageTrueColorToPalette2( $image, false, 255 );
 	$size = getimagesize('pointer.png');
 
 }
@@ -60,6 +61,7 @@ $new_size = get_required_size($size[0], $size[1]);
 $out = imagecreatetruecolor($new_size[0], $new_size[1]);
 
 $imagebg = imageCreateFromPNG ('block.png'); // tile filler
+$imagebg = ImageTrueColorToPalette2( $imagebg, false, 255 );
 imageSetTile ($out, $imagebg);
 imageFilledRectangle ($out, 0, 0, $new_size[0], $new_size[1], IMG_COLOR_TILED);
 

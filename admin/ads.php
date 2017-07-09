@@ -197,9 +197,12 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 							break;
 						case 'gif':
 							$upload_image = imagecreatefromgif ($tmp_image_file);
+							imagealphablending($upload_image, true);
+							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 						case 'png':
 							$upload_image = imagecreatefrompng ($tmp_image_file);
+							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 					}
 

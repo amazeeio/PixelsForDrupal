@@ -232,9 +232,11 @@ function check_selection_main() {
 		case 'gif':
 			// Note: Errors saying "not a valid GIF file" may mean there is no GIF support available in GD.
 			$upload_image = imagecreatefromgif ($upload_image_file);
+			$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 			break;
 		case 'png':
 			$upload_image = imagecreatefrompng ($upload_image_file);
+			$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 			break;
 	}
 

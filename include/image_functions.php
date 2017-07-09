@@ -302,5 +302,45 @@ function get_stats_html_code($BID) {
 
 #########################################################
 
+/**
+ * Resize PNG
+ *
+ * @link http://php.net/manual/en/function.imagepng.php#60128
+ *
+ * @param $src
+ * @param $dst
+ * @param $dstw
+ * @param $dsth
+ */
+function resize_png( $src, $dst, $dstw, $dsth ) {
+	list( $width, $height, $type, $attr ) = getimagesize( $src );
+	$im  = imagecreatefrompng( $src );
+	$tim = imagecreatetruecolor( $dstw, $dsth );
+	imagecopyresampled( $tim, $im, 0, 0, 0, 0, $dstw, $dsth, $width, $height );
+	$tim = ImageTrueColorToPalette2( $tim, false, 255 );
+	imagepng( $tim, $dst );
+}
 
+/**
+ * Recolor Image
+ *
+ * @link http://php.net/manual/en/function.imagepng.php#60128
+ *
+ * @param $image
+ * @param $dither
+ * @param $ncolors
+ *
+ * @return mixed
+ */
+function ImageTrueColorToPalette2( $image, $dither, $ncolors ) {
+	$width         = imagesx( $image );
+	$height        = imagesy( $image );
+	$colors_handle = ImageCreateTrueColor( $width, $height );
+	ImageCopyMerge( $colors_handle, $image, 0, 0, 0, 0, $width, $height, 100 );
+	ImageTrueColorToPalette( $image, $dither, $ncolors );
+	ImageColorMatch( $colors_handle, $image );
+	ImageDestroy( $colors_handle );
+
+	return $image;
+}
 ?>

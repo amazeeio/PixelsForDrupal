@@ -361,9 +361,11 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 							break;
 						case 'gif':
 							$upload_image = imagecreatefromgif ($tmp_image_file);
+							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 						case 'png':
 							$upload_image = imagecreatefrompng ($tmp_image_file);
+							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 					}
 

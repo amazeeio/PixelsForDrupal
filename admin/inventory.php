@@ -112,6 +112,7 @@ function is_allowed_grid_file($image_name) {
 ##################
 function validate_input() {
 
+	$error = "";
 
 	if (isset($_REQUEST['name']) && $_REQUEST['name']=='') {
 		$error .= "- Grid name not filled in<br>";
@@ -298,7 +299,6 @@ function get_banner_image_sql_values($BID) {
 	# , grid_block, nfs_block, tile, usr_grid_block, usr_nfs_block, usr_ord_block, usr_res_block, usr_sel_block, usr_sol_block 
 	
 	// get banner
-
 	if ($BID) {
 		$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
 		//echo "<p>$sql</p>";

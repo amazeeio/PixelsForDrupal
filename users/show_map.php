@@ -109,6 +109,7 @@ if (function_exists("imagecreatetruecolor")) {
 	# copy the NFS blocks.
 
 	$nfs_block = imagecreatefrompng ( "not_for_sale_block.png" );
+	$nfs_block = ImageTrueColorToPalette2( $nfs_block, false, 255 );
 	$sql = "select * from blocks where status='nfs' and banner_id='$BID' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
@@ -121,7 +122,7 @@ if (function_exists("imagecreatetruecolor")) {
 
 	if (file_exists(SERVER_PATH_TO_ADMIN.'temp/background.png') && (function_exists("imagealphablending"))) {
 		$background = imagecreatefrompng (SERVER_PATH_TO_ADMIN."temp/background.png");
-		imagealphablending($map, true);
+		$background = ImageTrueColorToPalette2( $background, false, 255 );
 		$MaxW = imagesx($background); //Edit by -J-
 		$MaxH = imagesy($background); //Edit by -J-
 

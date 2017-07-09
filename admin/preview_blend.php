@@ -47,7 +47,7 @@ $b_row = mysqli_fetch_array($result);
 
 
 if (function_exists("imagecreatetruecolor")) {
-	$map = imagecreatetruecolor ( $b_row[grid_width]*10, $b_row[grid_height]*10 );
+	$map = imagecreatetruecolor ( $b_row['grid_width']*10, $b_row['grid_height']*10 );
 } else {
 
 	echo "Your GD library does not support alpha blending, please upgrade to GD2 ";
@@ -58,19 +58,22 @@ if (file_exists(SERVER_PATH_TO_ADMIN."temp/background$BID.png")) {
 	$background = imagecreatefrompng ("temp/background$BID.png");
 	imagealphablending($map, true);
 } else {
-	$background = imagecreatetruecolor ( $b_row[grid_width]*10, $b_row[grid_height]*10 );
-	imagealphablending($map, false);
+	$background = $map;
+	imagealphablending($background, false);
+	$transparent = imagecolorallocatealpha( $background, 0, 0, 0, 127 );
+	imagefill( $background, 0, 0, $transparent );
 }
 
 
 $block = imagecreatefrompng ( $file_path."temp/block.png" );
+$block = ImageTrueColorToPalette2( $block, false, 255 );
 
 
 
 $i=0; $j=0; $x_pos=0; $y_pos=0;
 
-	for ($i=0; $i < $b_row[grid_height]; $i++) {
-		for ($j=0; $j < $b_row[grid_width]; $j++) {
+	for ($i=0; $i < $b_row['grid_height']; $i++) {
+		for ($j=0; $j < $b_row['grid_width']; $j++) {
 			imagecopy ( $map, $block, $x_pos, $y_pos, 0, 0, 10, 10 );
 			//echo "$map, $block, $x_pos, $y_pos, 0, 0, 10, 10 ($i $j)<br>";
 			// bool imagecopy ( resource dst_im, resource src_im, int dst_x, int dst_y, int src_x, int src_y, int src_w, int src_h )
@@ -86,6 +89,7 @@ $i=0; $j=0; $x_pos=0; $y_pos=0;
 # copy the NFS blocks.
 
 	$nfs_block = imagecreatefrompng ( $file_path."temp/not_for_sale_block.png" );
+	$nfs_block = ImageTrueColorToPalette2( $nfs_block, false, 255 );
 	$sql = "select * from blocks where status='nfs' and banner_id=$BID ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 

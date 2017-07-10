@@ -325,6 +325,7 @@ function resize_png( $src, $dst, $dstw, $dsth ) {
  * Recolor Image
  *
  * @link http://php.net/manual/en/function.imagepng.php#60128
+ * @link http://php.net/manual/en/function.imagesavealpha.php#102597
  *
  * @param $image
  * @param $dither
@@ -336,9 +337,22 @@ function ImageTrueColorToPalette2( $image, $dither, $ncolors ) {
 	$width         = imagesx( $image );
 	$height        = imagesy( $image );
 	$colors_handle = ImageCreateTrueColor( $width, $height );
-	ImageCopyMerge( $colors_handle, $image, 0, 0, 0, 0, $width, $height, 100 );
-	ImageTrueColorToPalette( $image, $dither, $ncolors );
-	ImageColorMatch( $colors_handle, $image );
+
+	// enable alpha blending on the destination image.
+	imagealphablending( $colors_handle, true );
+
+	// Allocate a transparent color and fill the new image with it.
+	// Without this the image will have a black background instead of being transparent.
+	$transparent = imagecolorallocatealpha( $colors_handle, 0, 0, 0, 127 );
+	imagefill( $colors_handle, 0, 0, $transparent );
+
+	// copy the frame into the output image (layered on top of the thumbnail)
+	imagecopyresampled( $colors_handle, $image, 0, 0, 0, 0, $width, $height, $width, $height );
+
+	// save the alpha
+	imagesavealpha( $colors_handle, true );
+
+	//ImageCopyMerge( $colors_handle, $image, 0, 0, 0, 0, $width, $height, 100 );
 	ImageDestroy( $colors_handle );
 
 	return $image;

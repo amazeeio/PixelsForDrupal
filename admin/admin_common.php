@@ -36,7 +36,7 @@ session_start();
 require_once '../include/functions2.php';
 $f2 = new functions2(); 
 
-require_once '../library/HTMLPurifier.auto.php';
+require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
 $purifier = new HTMLPurifier(); 
 
 if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (MAIN_PHP=='1')) {

@@ -162,7 +162,7 @@ define('ERROR_REPORTING', 0);
 	require_once(dirname(__FILE__).'/include/database.php');
 
 	// load HTMLPurifier
-    require_once dirname(__FILE__).'/library/HTMLPurifier.auto.php';
+    require_once dirname(__FILE__).'/vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
 //    $HTMLPurifier_Config = HTMLPurifier_Config::createDefault();
 
 // replace with your encoding

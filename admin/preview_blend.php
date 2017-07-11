@@ -64,11 +64,9 @@ if (file_exists(SERVER_PATH_TO_ADMIN."temp/background$BID.png")) {
 	imagefill( $background, 0, 0, $transparent );
 }
 
-
 $block = imagecreatefrompng ( $file_path."temp/block.png" );
-$block = ImageTrueColorToPalette2( $block, false, 255 );
-
-
+imagealphablending($block, false);
+imagesavealpha($block, true);
 
 $i=0; $j=0; $x_pos=0; $y_pos=0;
 
@@ -89,7 +87,8 @@ $i=0; $j=0; $x_pos=0; $y_pos=0;
 # copy the NFS blocks.
 
 	$nfs_block = imagecreatefrompng ( $file_path."temp/not_for_sale_block.png" );
-	$nfs_block = ImageTrueColorToPalette2( $nfs_block, false, 255 );
+	imagealphablending($nfs_block, false);
+	imagesavealpha($nfs_block, true);
 	$sql = "select * from blocks where status='nfs' and banner_id=$BID ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 

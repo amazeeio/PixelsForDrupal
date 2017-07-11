@@ -232,11 +232,9 @@ function check_selection_main() {
 		case 'gif':
 			// Note: Errors saying "not a valid GIF file" may mean there is no GIF support available in GD.
 			$upload_image = imagecreatefromgif ($upload_image_file);
-			$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 			break;
 		case 'png':
 			$upload_image = imagecreatefrompng ($upload_image_file);
-			$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 			break;
 	}
 
@@ -249,6 +247,8 @@ function check_selection_main() {
 
 	imageSetTile ($whole_image, $imagebg);
 	imageFilledRectangle ($whole_image, 0, 0, $new_size[0], $new_size[1], IMG_COLOR_TILED);
+	imagealphablending($upload_image, false);
+	imagesavealpha($upload_image, true);
 	imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $size[0], $size[1] );
 //imagepng($whole_image);
 

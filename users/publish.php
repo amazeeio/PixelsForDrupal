@@ -353,7 +353,7 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 
 					$parts = explode ('.', $tmp_image_file);
 					$ext = strtolower(array_pop($parts));
-					//echo $ext."($upload_image_file)\n";
+					$upload_image = imagecreate($size['x'], $size['y']);
 					switch (strtolower($ext)) {
 						case 'jpeg':
 						case 'jpg':
@@ -361,11 +361,9 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 							break;
 						case 'gif':
 							$upload_image = imagecreatefromgif ($tmp_image_file);
-							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 						case 'png':
 							$upload_image = imagecreatefrompng ($tmp_image_file);
-							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 					}
 
@@ -376,17 +374,19 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 
 					//echo " size x y ".$size['x'].' '.$size['y'].' img siz [0] [1]'.$img_size[0]." ". $img_size[1];
 
-					if (MDS_RESIZE=='YES') { // make it smaller
+					if (MDS_RESIZE=='YES') {
 						// resize
-						$newsize_img = imagecreate($size['x'], $size['y']);
+						$newsize_img = ImageCreate( $size['x'], $size['y'] );
+						imagealphablending($newsize_img, false);
+						imagesavealpha($newsize_img, true);
 						imagecopyresampled ( $newsize_img, $upload_image, 0, 0, 0, 0, $size['x'], $size['y'], $img_size[0], $img_size[1] );
 						imagecopy ($whole_image, $newsize_img, 0, 0, 0, 0, $size['x'], $size['y'] );
 					} else {
 
+						imagealphablending($whole_image, false);
+						imagesavealpha($whole_image, true);
 						imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $img_size[0], $img_size[1] );
 					}
-
-					//imagepng($whole_image);
 
 					for ($i=0; $i<($size['y']); $i+=BLK_HEIGHT) {
 						

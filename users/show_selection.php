@@ -133,7 +133,8 @@ if (function_exists("imagecreatetruecolor")) {
 
 	if ((file_exists(SERVER_PATH_TO_ADMIN."temp/background$BID.png") && (function_exists("imagealphablending")))) {
 		$background = imagecreatefrompng (SERVER_PATH_TO_ADMIN."temp/background$BID.png");
-		$background = ImageTrueColorToPalette2( $background, false, 255 );
+		imagealphablending($background, false);
+		imagesavealpha($background, true);
 		$MaxW = imagesx($background); //Edit by -J-
 		$MaxH = imagesy($background); //Edit by -J-
 

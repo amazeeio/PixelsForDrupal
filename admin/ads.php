@@ -198,11 +198,9 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 						case 'gif':
 							$upload_image = imagecreatefromgif ($tmp_image_file);
 							imagealphablending($upload_image, true);
-							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 						case 'png':
 							$upload_image = imagecreatefrompng ($tmp_image_file);
-							$upload_image = ImageTrueColorToPalette2( $upload_image, false, 255 );
 							break;
 					}
 
@@ -211,6 +209,8 @@ if ($gd_info['PNG Support']) {$png_support="PNG";};
 
 					imageSetTile ($whole_image, $imagebg);
 					imageFilledRectangle ($whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED);
+					imagealphablending($upload_image, false);
+					imagesavealpha($upload_image, true);
 					imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $img_size[0], $img_size[1] );
 					//imagepng($whole_image);
 

@@ -2568,7 +2568,8 @@ function saveImage($field_id) {
 			case "image/gif":
 				touch ($filename);
 				$uploaded_img = imagecreatefromgif($filename);
-				$uploaded_img = ImageTrueColorToPalette2( $uploaded_img, false, 255 );
+				imagealphablending($uploaded_img, false);
+				imagesavealpha($uploaded_img, true);
 				imagecopyresampled($image_p, $uploaded_img, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
 				unlink ($filename); // delete original file 
 				// Output
@@ -2595,7 +2596,8 @@ function saveImage($field_id) {
 			case "image/x-png":
 				touch ($filename);
 				$uploaded_img = imagecreatefrompng($filename);
-                $uploaded_img = ImageTrueColorToPalette2( $uploaded_img, false, 255 );
+                imagealphablending($uploaded_img, false);
+                imagesavealpha($uploaded_img, true);
 				imagecopyresampled($image_p, $uploaded_img, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
 				unlink ($filename); // delete original file 
 				// Output

@@ -117,7 +117,7 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 
 		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
 
-		$parts = split( '\.', $_FILES['pixels']['name'] );
+		$parts = explode( '.', $_FILES['pixels']['name'] );
 		$ext   = strtolower( array_pop( $parts ) );
 
 		// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED

@@ -140,7 +140,7 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 
 				$img_size = getimagesize( $tmp_image_file );
 				// check the size
-				if ( ( $img_size[0] > $size['x'] ) || ( $img_size[1] > $size['y'] ) ) {
+				if ( ( MDS_RESIZE != 'YES' ) && ( ( $img_size[0] > $size['x'] ) || ( $img_size[1] > $size['y'] ) ) ) {
 					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_X%', $size['x'], $label['adv_pub_sizewrong'] );
 					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_Y%', $size['y'], $label['adv_pub_sizewrong'] );
 					$error                      = $label['adv_pub_sizewrong'] . "<br>";

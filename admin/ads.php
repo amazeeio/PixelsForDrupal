@@ -69,213 +69,215 @@ function disapprove_modified_order($order_id, $BID) {
 
 <?php
 
-if (is_numeric($_REQUEST['ad_id'])) {
+if ( is_numeric( $_REQUEST['ad_id'] ) ) {
+	$imagine = new Imagine\Gd\Imagine();
 
-		$gd_info = @gd_info();
-if ($gd_info['GIF Read Support']) {$gif_support="GIF";} ;
-if ($gd_info['JPG Support']) {$jpeg_support="JPG";};
-if ($gd_info['PNG Support']) {$png_support="PNG";};
+	$gd_info = @gd_info();
+	if ( $gd_info['GIF Read Support'] ) {
+		$gif_support = "GIF";
+	};
+	if ( $gd_info['JPG Support'] ) {
+		$jpeg_support = "JPG";
+	};
+	if ( $gd_info['PNG Support'] ) {
+		$png_support = "PNG";
+	};
 
-	$prams = load_ad_values($_REQUEST['ad_id']);
+	$prams = load_ad_values( $_REQUEST['ad_id'] );
 
 	// pre-check for failure
-	if ($prams['user_id'] == "") {
-		die("Either the user id for this ad doesn't exist or this ad doesn't exist.");
+	if ( $prams['user_id'] == "" ) {
+		die( "Either the user id for this ad doesn't exist or this ad doesn't exist." );
 	}
 	//echo "load const ";
-	load_banner_constants($prams['banner_id']);
+	load_banner_constants( $prams['banner_id'] );
 
-	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=".$prams['user_id']." and t1.banner_id='".$prams['banner_id']."' and t1.ad_id='".$prams['ad_id']."' AND t1.order_id=t2.order_id ";
+	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . $prams['user_id'] . " and t1.banner_id='" . $prams['banner_id'] . "' and t1.ad_id='" . $prams['ad_id'] . "' AND t1.order_id=t2.order_id ";
 	//echo $sql."<br>";
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	
-	$row = mysqli_fetch_array($result);
-	$order_id = $row['order_id'];
-	$blocks = explode(',',$row['blocks']);
+	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
-	$size = get_pixel_image_size($row['order_id']);
+	$row      = mysqli_fetch_array( $result );
+	$order_id = $row['order_id'];
+	$blocks   = explode( ',', $row['blocks'] );
+
+	$size   = get_pixel_image_size( $row['order_id'] );
 	$pixels = $size['x'] * $size['y'];
 	//print_r($size);
 	//echo "order id:".$row['order_id']."<br>";
 	//echo "$sql<br>";
 
-	$sql = "SELECT * from blocks WHERE order_id='".$order_id."'";
-	$blocks_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+	$sql = "SELECT * from blocks WHERE order_id='" . $order_id . "'";
+	$blocks_result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
-
-	if ($_REQUEST['change_pixels']) {
+	if ( $_REQUEST['change_pixels'] ) {
 
 		// a new image was uploaded...
 
 		// move the file
 
-		$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
+		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
 
-		$parts = split ('\.', $_FILES['pixels']['name']);
-		$ext = strtolower(array_pop($parts));
+		$parts = split( '\.', $_FILES['pixels']['name'] );
+		$ext   = strtolower( array_pop( $parts ) );
 
 		// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED
-		$ALLOWED_EXT= 'jpg, jpeg, gif, png';
-		$ext_list = preg_split ("/[\s,]+/i", ($ALLOWED_EXT));	
-		if (!in_array($ext, $ext_list)) {
+		$ALLOWED_EXT = 'jpg, jpeg, gif, png';
+		$ext_list    = preg_split( "/[\s,]+/i", ( $ALLOWED_EXT ) );
+		if ( ! in_array( $ext, $ext_list ) ) {
 
-			$error .=  "<b>".$label['advertiser_file_type_not_supp']."</b><br>";
+			$error              .= "<b>" . $label['advertiser_file_type_not_supp'] . "</b><br>";
 			$image_changed_flag = false;
 
 		} else {
 
-			$uploadfile = $uploaddir . "tmp_".md5(session_id()).".$ext";
+			$uploadfile = $uploaddir . "tmp_" . md5( session_id() ) . ".$ext";
 
-			if (move_uploaded_file($_FILES['pixels']['tmp_name'], $uploadfile)) {
+			if ( move_uploaded_file( $_FILES['pixels']['tmp_name'], $uploadfile ) ) {
 				//echo "File is valid, and was successfully uploaded.\n";
 				$tmp_image_file = $uploadfile;
 
 				// check image size
 
-				$img_size = getimagesize($tmp_image_file);
+				$img_size = getimagesize( $tmp_image_file );
 				// check the size
-				if (($img_size[0] > $size['x']) || ($img_size[1] > $size['y'])) {
-					$label['adv_pub_sizewrong'] = str_replace ('%SIZE_X%', $size['x'], $label['adv_pub_sizewrong']);
-					$label['adv_pub_sizewrong'] = str_replace ('%SIZE_Y%', $size['y'], $label['adv_pub_sizewrong']);
-					$error = $label['adv_pub_sizewrong']."<br>";
+				if ( ( $img_size[0] > $size['x'] ) || ( $img_size[1] > $size['y'] ) ) {
+					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_X%', $size['x'], $label['adv_pub_sizewrong'] );
+					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_Y%', $size['y'], $label['adv_pub_sizewrong'] );
+					$error                      = $label['adv_pub_sizewrong'] . "<br>";
 
 				} else { // size is ok. change the blocks.
 
 					// create the new img...
 
-					while ($block_row = mysqli_fetch_array($blocks_result)) {
+					while ( $block_row = mysqli_fetch_array( $blocks_result ) ) {
 
-						//
-
-						if ($high_x=='') {
+						if ( ! isset( $high_x ) || $high_x == '' ) {
 							$high_x = $block_row['x'];
 							$high_y = $block_row['y'];
-							$low_x = $block_row['x'];
-							$low_y = $block_row['y'];
+							$low_x  = $block_row['x'];
+							$low_y  = $block_row['y'];
 
 						}
 
-						if ($block_row['x'] > $high_x) {
+						if ( $block_row['x'] > $high_x ) {
 							$high_x = $block_row['x'];
 						}
 
-						if ($block_row['y'] > $high_y) {
+						if ( ! isset( $high_y ) || $block_row['y'] > $high_y ) {
 							$high_y = $block_row['y'];
 						}
 
-						if ($block_row['y'] < $low_y) {
+						if ( ! isset( $low_y ) || $block_row['y'] < $low_y ) {
 							$low_y = $block_row['y'];
 						}
 
-						if ($block_row['x'] < $low_x) {
+						if ( ! isset( $low_x ) || $block_row['x'] < $low_x ) {
 							$low_x = $block_row['x'];
 						}
 
 					}
 
-					
+					$high_x = ! isset( $high_x ) ? 0 : $high_x;
+					$high_y = ! isset( $high_y ) ? 0 : $high_y;
+					$low_x  = ! isset( $low_x ) ? 0 : $low_x;
+					$low_y  = ! isset( $low_y ) ? 0 : $low_y;
+
 					$_REQUEST['map_x'] = $high_x;
 					$_REQUEST['map_y'] = $high_y;
 
-					// create the requ
+					$parts = explode( '.', $tmp_image_file );
+					$ext   = strtolower( array_pop( $parts ) );
 
-					if (function_exists("imagecreatetruecolor")) {
-						$dest = imagecreatetruecolor(BLK_WIDTH, BLK_HEIGHT);
-						$whole_image = imagecreatetruecolor ($size['x'], $size['y']);
+					// init new image with Imagine from uploaded file
+					$image = $imagine->open( $tmp_image_file );
+
+					// image size
+					$box = new Imagine\Image\Box( $size['x'], $size['y'] );
+
+					// resize uploaded image
+					if ( MDS_RESIZE == 'YES' ) {
+						$image->resize( $box );
+					}
+
+					// paste image onto grid
+					$grid    = $imagine->load( GRID_BLOCK );
+					$imagebg = imageCreateFromstring( GRID_BLOCK );
+
+					// create tiled background using GD
+					if ( function_exists( "imagecreatetruecolor" ) ) {
+						$whole_image = imagecreatetruecolor( $size['x'], $size['y'] );
 					} else {
-						$dest = imagecreate(BLK_WIDTH, BLK_HEIGHT);
-						$whole_image = imagecreate ($size['x'], $new_size['y']);
+						$whole_image = imagecreate( $size['x'], $new_size['y'] );
 					}
+					$imagebg = imageCreateFromstring( GRID_BLOCK );
+					imageSetTile( $whole_image, $imagebg );
+					imageFilledRectangle( $whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED );
 
-					$parts = split ('\.', $tmp_image_file);
-					$ext = strtolower(array_pop($parts));
-					//echo $ext."($upload_image_file)\n";
-					switch (strtolower($ext)) {
-						case 'jpeg':
-						case 'jpg':
-							$upload_image = imagecreatefromjpeg ($tmp_image_file);
-							break;
-						case 'gif':
-							$upload_image = imagecreatefromgif ($tmp_image_file);
-							imagealphablending($upload_image, true);
-							break;
-						case 'png':
-							$upload_image = imagecreatefrompng ($tmp_image_file);
-							break;
-					}
+					// convert GD resource to Imagine
+					ob_start();
+					imagepng( $whole_image );
+					$data = ob_get_contents();
+					ob_end_clean();
+					$tiled_image = $imagine->load( $data );
 
-					
-					$imagebg = imageCreateFromstring (GRID_BLOCK);
+					// Paste uploaded image onto tiled background
+					$top_left = new Imagine\Image\Point( 0, 0 );
+					$tiled_image->paste( $image, $top_left );
 
-					imageSetTile ($whole_image, $imagebg);
-					imageFilledRectangle ($whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED);
-					imagealphablending($upload_image, false);
-					imagesavealpha($upload_image, true);
-					imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $img_size[0], $img_size[1] );
-					//imagepng($whole_image);
+					// create a block size Box
+					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
 
-				
+					// Paste image into selected blocks (AJAX mode allows individual block selection)
+					for ( $i = 0; $i < ( $size['y'] ); $i += BLK_HEIGHT ) {
 
-					for ($i=0; $i<($size['y']); $i+=BLK_HEIGHT) {
-						
-						for ($j=0; $j<($size['x']); $j+=BLK_WIDTH) {
-							 
-							$map_x = $j+$low_x;
-							$map_y = $i+$low_y;
+						for ( $j = 0; $j < ( $size['x'] ); $j += BLK_WIDTH ) {
 
-							$r_x = $map_x;
-							$r_y = $map_y;
+							// create new destination image
+							$dest = $imagine->create( $block_size );
 
+							// crop a part from the tiled image
+							$block = $imagine->load( $tiled_image->__toString() );
+							$block->crop( new Imagine\Image\Point( $j, $i ), $block_size );
+
+							// paste the block into the destination image
+							$dest->paste( $block, new Imagine\Image\Point( 0, 0 ) );
+
+							// save the image as a base64 encoded string
+							$data = base64_encode( $dest->__toString() );
+
+							// some variables
+							$map_x     = $j + $low_x;
+							$map_y     = $i + $low_y;
 							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
+							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 
-							$cb = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH)) ;
-
-							// bool imagecopy ( resource dst_im, resource src_im, int dst_x, int dst_y, int src_x, int src_y, int src_w, int src_h )
-							imagecopy ( $dest, $whole_image, 0, 0, $j, $i, BLK_WIDTH,  BLK_HEIGHT);
-							
-							ob_start();
-							imagepng($dest);
-							$data = ob_get_contents();
-							ob_end_clean();
-							$data = base64_encode($data);
-
-							$sql = "UPDATE blocks SET image_data='$data' where block_id='".$cb."' AND banner_id='".$prams['banner_id']."' ";
-							mysqli_query($GLOBALS['connection'], $sql);
-							
-
-							//echo $sql."------>".mysqli_affected_rows($GLOBALS['connection'])."<br>";
-
+							// save to db
+							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . $cb . "' AND banner_id='" . $BID . "' ";
+							mysqli_query( $GLOBALS['connection'], $sql );
 						}
-
 					}
-
-
 				}
 
-				unlink($tmp_image_file);
+				unlink( $tmp_image_file );
 
-				if (AUTO_APPROVE!='Y') { // to be approved by the admin
+				if ( AUTO_APPROVE != 'Y' ) { // to be approved by the admin
 
-					disapprove_modified_order($order_id, $prams['banner_id']);
+					disapprove_modified_order( $order_id, $prams['banner_id'] );
 				}
 
-				if (AUTO_PUBLISH=='Y') {
-					process_image($prams['banner_id']);
-					publish_image($prams['banner_id']);
-					process_map($prams['banner_id']);
-					
-				}
+				if ( AUTO_PUBLISH == 'Y' ) {
+					process_image( $prams['banner_id'] );
+					publish_image( $prams['banner_id'] );
+					process_map( $prams['banner_id'] );
 
+				}
 
 			} else {
 				//echo "Possible file upload attack!\n";
 				echo $label['pixel_upload_failed'];
 			}
 
-			
-
 		}
-
 
 	}
 

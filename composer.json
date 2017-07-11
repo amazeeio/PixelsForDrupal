@@ -1,0 +1,17 @@
+{
+  "name": "milliondollarscript/milliondollarscript",
+  "description": "A WordPress plugin for selling pixel ads.",
+  "keywords": ["million", "dollar", "script", "sell", "pixel", "ads"],
+  "homepage": "https://milliondollarscript.com",
+  "license": "GPLv3",
+  "authors": [
+    {
+      "name": "Ryan Rhode",
+      "email": "ryan@milliondollarscript.com"
+    }
+  ],
+  "require": {
+    "imagine/imagine": "0.7.x-dev",
+    "ezyang/htmlpurifier": "v4.9.3"
+  }
+}

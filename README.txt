@@ -493,4 +493,10 @@ Acknowledgments
 SMTP code is based on MIME E-Mail class, released under LGPL by Manuel Lemos.
 AREA Map code contributed by Martin Diekhoff,  http://www.onecentads.com/
 
+Imagine - Image manipulation library for PHP 5.3 inspired by Python's PIL and other image libraries.
+https://github.com/avalanche123/Imagine
+
+HTMLPurifier - HTML filtering solution
+http://htmlpurifier.org/
+
 Thank you to everyone else who helps out!

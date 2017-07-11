@@ -54,94 +54,93 @@ if ($_REQUEST['save'] != '') {
 
    }
 echo "updating config....";
+define('VERSION_INFO', addslashes($_REQUEST['version_info']));
 
-define('VERSION_INFO', $_REQUEST['version_info']);
+define('BASE_HTTP_PATH', addslashes($_REQUEST['base_http_path']));
+define('SERVER_PATH_TO_ADMIN', addslashes($_REQUEST['server_path_to_admin']));
+define('UPLOAD_PATH', addslashes($_REQUEST['upload_path']));
+define('UPLOAD_HTTP_PATH', addslashes($_REQUEST['upload_http_path']));
+define('SITE_CONTACT_EMAIL', addslashes($_REQUEST['site_contact_email']));
+define('SITE_LOGO_URL', addslashes($_REQUEST['site_logo_url']));
+define('SITE_NAME', addslashes($_REQUEST['site_name']));
+define('SITE_SLOGAN', addslashes($_REQUEST['site_slogan']));
+define('MDS_RESIZE', addslashes($_REQUEST['mds_resize']));
 
-define('BASE_HTTP_PATH', $_REQUEST['base_http_path']);
-define('SERVER_PATH_TO_ADMIN', $_REQUEST['server_path_to_admin']);
-define('UPLOAD_PATH', $_REQUEST['upload_path']);
-define('UPLOAD_HTTP_PATH', $_REQUEST['upload_http_path']);
-define('SITE_CONTACT_EMAIL', $_REQUEST['site_contact_email']);
-define('SITE_LOGO_URL', $_REQUEST['site_logo_url']);
-define('SITE_NAME', $_REQUEST['site_name']);
-define('SITE_SLOGAN', $_REQUEST['site_slogan']);
-define('MDS_RESIZE', $_REQUEST['mds_resize']);
+define('MYSQL_HOST', addslashes($_REQUEST['mysql_host']));
+define('MYSQL_USER', addslashes($_REQUEST['mysql_user']));
+define('MYSQL_PASS', addslashes($_REQUEST['mysql_pass']));
+define('MYSQL_DB', addslashes($_REQUEST['mysql_db']));
+define('MYSQL_PORT', addslashes($_REQUEST['mysql_port']));
+define('MYSQL_SOCKET', addslashes($_REQUEST['mysql_socket']));
 
-define('MYSQL_HOST', $_REQUEST['mysql_host']);
-define('MYSQL_USER', $_REQUEST['mysql_user']);
-define('MYSQL_PASS', $_REQUEST['mysql_pass']);
-define('MYSQL_DB', $_REQUEST['mysql_db']);
-define('MYSQL_PORT', $_REQUEST['mysql_port']);
-define('MYSQL_SOCKET', $_REQUEST['mysql_socket']);
+define('ADMIN_PASSWORD', addslashes($_REQUEST['admin_password']));
 
-define('ADMIN_PASSWORD', $_REQUEST['admin_password']);
+define('DATE_FORMAT', addslashes($_REQUEST['date_format']));
+define('GMT_DIF', addslashes($_REQUEST['gmt_dif']));
+define('DATE_INPUT_SEQ', addslashes($_REQUEST['date_input_seq']));
 
-define('DATE_FORMAT', $_REQUEST['date_format']);
-define('GMT_DIF', $_REQUEST['gmt_dif']);
-define('DATE_INPUT_SEQ', $_REQUEST['date_input_seq']);
+define('OUTPUT_JPEG', addslashes($_REQUEST['output_jpeg']));
+define('JPEG_QUALITY', addslashes($_REQUEST['jpeg_quality']));
+define('INTERLACE_SWITCH', addslashes($_REQUEST['interlace_switch']));
+define('USE_LOCK_TABLES', addslashes($_REQUEST['use_lock_tables']));
+define('BANNER_DIR', addslashes($_REQUEST['banner_dir']));
+define('DISPLAY_PIXEL_BACKGROUND', addslashes($_REQUEST['display_pixel_background']));
 
-define('OUTPUT_JPEG', $_REQUEST['output_jpeg']);
-define('JPEG_QUALITY', $_REQUEST['jpeg_quality']);
-define('INTERLACE_SWITCH', $_REQUEST['interlace_switch']);
-define('USE_LOCK_TABLES', $_REQUEST['use_lock_tables']);
-define('BANNER_DIR', $_REQUEST['banner_dir']);
-define('DISPLAY_PIXEL_BACKGROUND', $_REQUEST['display_pixel_background']);
+define('EMAIL_USER_ORDER_CONFIRMED', addslashes($_REQUEST['email_user_order_confirmed']));
+define('EMAIL_ADMIN_ORDER_CONFIRMED', addslashes($_REQUEST['email_admin_order_confirmed']));
+define('EMAIL_USER_ORDER_COMPLETED', addslashes($_REQUEST['email_user_order_completed']));
+define('EMAIL_ADMIN_ORDER_COMPLETED', addslashes($_REQUEST['email_admin_order_completed']));
+define('EMAIL_USER_ORDER_PENDED', addslashes($_REQUEST['email_user_order_pended']));
+define('EMAIL_ADMIN_ORDER_PENDED', addslashes($_REQUEST['email_admin_order_pended']));
+define('EMAIL_USER_ORDER_EXPIRED', addslashes($_REQUEST['email_user_order_expired']));
+define('EMAIL_ADMIN_ORDER_EXPIRED', addslashes($_REQUEST['email_admin_order_expired']));
+define('EM_NEEDS_ACTIVATION', addslashes($_REQUEST['em_needs_activation']));
+define('EMAIL_USER_EXPIRE_WARNING', addslashes($_REQUEST['email_user_expire_warning']));
+define('EMAIL_ADMIN_ACTIVATION', addslashes($_REQUEST['email_admin_activation']));
+define('EMAIL_ADMIN_PUBLISH_NOTIFY', addslashes($_REQUEST['email_admin_publish_notify']));
+define('EMAILS_DAYS_KEEP', addslashes($_REQUEST['emails_days_keep']));
 
-define('EMAIL_USER_ORDER_CONFIRMED', $_REQUEST['email_user_order_confirmed']);
-define('EMAIL_ADMIN_ORDER_CONFIRMED', $_REQUEST['email_admin_order_confirmed']);
-define('EMAIL_USER_ORDER_COMPLETED', $_REQUEST['email_user_order_completed']);
-define('EMAIL_ADMIN_ORDER_COMPLETED', $_REQUEST['email_admin_order_completed']);
-define('EMAIL_USER_ORDER_PENDED', $_REQUEST['email_user_order_pended']);
-define('EMAIL_ADMIN_ORDER_PENDED', $_REQUEST['email_admin_order_pended']);
-define('EMAIL_USER_ORDER_EXPIRED', $_REQUEST['email_user_order_expired']);
-define('EMAIL_ADMIN_ORDER_EXPIRED', $_REQUEST['email_admin_order_expired']);
-define('EM_NEEDS_ACTIVATION', $_REQUEST['em_needs_activation']);
-define('EMAIL_USER_EXPIRE_WARNING', $_REQUEST['email_user_expire_warning']);
-define('EMAIL_ADMIN_ACTIVATION', $_REQUEST['email_admin_activation']);
-define('EMAIL_ADMIN_PUBLISH_NOTIFY', $_REQUEST['email_admin_publish_notify']);
-define('EMAILS_DAYS_KEEP', $_REQUEST['emails_days_keep']);
+define('DAYS_RENEW', addslashes($_REQUEST['days_renew']));
+define('DAYS_CONFIRMED', addslashes($_REQUEST['days_confirmed']));
+define('HOURS_UNCONFIRMED', addslashes($_REQUEST['hours_unconfirmed']));
+define('DAYS_CANCEL', addslashes($_REQUEST['days_cancel']));
+define('ENABLE_MOUSEOVER', addslashes($_REQUEST['enable_mouseover']));
+define('ENABLE_CLOAKING', addslashes($_REQUEST['enable_cloaking']));
+define('VALIDATE_LINK', addslashes($_REQUEST['validate_link']));
+define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
+define('USE_SMTP', addslashes($_REQUEST['use_smtp']));
+define('EMAIL_HOSTNAME', addslashes($_REQUEST['email_hostname']));
+define('EMAIL_SMTP_SERVER', addslashes($_REQUEST['email_smtp_server']));
+define('EMAIL_POP_SERVER', addslashes($_REQUEST['email_pop_server']));
+define('EMAIL_SMTP_USER', addslashes($_REQUEST['email_smtp_user']));
+define('EMAIL_SMTP_PASS', addslashes($_REQUEST['email_smtp_pass']));
+define('EMAIL_SMTP_AUTH_HOST', addslashes($_REQUEST['email_smtp_auth_host']));
+define('POP3_PORT', addslashes($_REQUEST['pop3_port']));
+define('EMAIL_POP_BEFORE_SMTP', addslashes($_REQUEST['email_pop_before_smtp']));
 
-define('DAYS_RENEW', $_REQUEST['days_renew']);
-define('DAYS_CONFIRMED', $_REQUEST['days_confirmed']);
-define('HOURS_UNCONFIRMED', $_REQUEST['hours_unconfirmed']);
-define('DAYS_CANCEL', $_REQUEST['days_cancel']);
-define('ENABLE_MOUSEOVER', $_REQUEST['enable_mouseover']);
-define('ENABLE_CLOAKING', $_REQUEST['enable_cloaking']);
-define('VALIDATE_LINK', $_REQUEST['validate_link']);
-define('ADVANCED_CLICK_COUNT', $_REQUEST['advanced_click_count']);
-define('USE_SMTP', $_REQUEST['use_smtp']);
-define('EMAIL_HOSTNAME', $_REQUEST['email_hostname']);
-define('EMAIL_SMTP_SERVER', $_REQUEST['email_smtp_server']);
-define('EMAIL_POP_SERVER', $_REQUEST['email_pop_server']);
-define('EMAIL_SMTP_USER', $_REQUEST['email_smtp_user']);
-define('EMAIL_SMTP_PASS', $_REQUEST['email_smtp_pass']);
-define('EMAIL_SMTP_AUTH_HOST', $_REQUEST['email_smtp_auth_host']);
-define('POP3_PORT', $_REQUEST['pop3_port']);
-define('EMAIL_POP_BEFORE_SMTP', $_REQUEST['email_pop_before_smtp']);
+define('EMAILS_PER_BATCH', addslashes($_REQUEST['emails_per_batch']));
+define('EMAILS_MAX_RETRY', addslashes($_REQUEST['emails_max_retry']));
+define('EMAILS_ERROR_WAIT', addslashes($_REQUEST['emails_error_wait']));
 
-define('EMAILS_PER_BATCH', $_REQUEST['emails_per_batch']);
-define('EMAILS_MAX_RETRY', $_REQUEST['emails_max_retry']);
-define('EMAILS_ERROR_WAIT', $_REQUEST['emails_error_wait']);
+define('USE_AJAX', addslashes($_REQUEST['use_ajax']));
+define('ANIMATION_SPEED', addslashes($_REQUEST['animation_speed']));
+define('MAX_BLOCKS', addslashes($_REQUEST['max_blocks']));
 
-define('USE_AJAX', $_REQUEST['use_ajax']);
-define('ANIMATION_SPEED', $_REQUEST['animation_speed']);
-define('MAX_BLOCKS', $_REQUEST['max_blocks']);
+define('MEMORY_LIMIT', addslashes($_REQUEST['memory_limit']));
 
-define('MEMORY_LIMIT', $_REQUEST['memory_limit']);
+define('REDIRECT_SWITCH', addslashes($_REQUEST['redirect_switch']));
+define('REDIRECT_URL', addslashes($_REQUEST['redirect_url']));
 
-define('REDIRECT_SWITCH', $_REQUEST['redirect_switch']);
-define('REDIRECT_URL', $_REQUEST['redirect_url']);
+define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
 
-define('ADVANCED_CLICK_COUNT', $_REQUEST['advanced_click_count']);
+define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
+define('TRANSITION_EFFECT', addslashes($_REQUEST['transition_effect']));
+define('ENABLE_TRANSITIONS', addslashes($_REQUEST['enable_transitions']));
+define('TRANSITION_DURATION', addslashes($_REQUEST['transition_duration']));
+define('HIDE_TIMEOUT', addslashes($_REQUEST['hide_timeout']));
+define('MDS_AGRESSIVE_CACHE', addslashes($_REQUEST['mds_agressive_cache']));
 
-define('ADVANCED_CLICK_COUNT', $_REQUEST['advanced_click_count']);
-define('TRANSITION_EFFECT', $_REQUEST['transition_effect']);
-define('ENABLE_TRANSITIONS', $_REQUEST['enable_transitions']);
-define('TRANSITION_DURATION', $_REQUEST['transition_duration']);
-define('HIDE_TIMEOUT', $_REQUEST['hide_timeout']);
-define('MDS_AGRESSIVE_CACHE', $_REQUEST['mds_agressive_cache']);
-
-define('ERROR_REPORTING', $_REQUEST['error_reporting']);
+define('ERROR_REPORTING', addslashes($_REQUEST['error_reporting']));
 
 $config_str = "<?php
 error_reporting(".ERROR_REPORTING.");
@@ -273,7 +272,7 @@ define('ERROR_REPORTING', ".ERROR_REPORTING.");
 	require_once(dirname(__FILE__).'/include/database.php');
 
 	// load HTMLPurifier
-    require_once dirname(__FILE__).'/library/HTMLPurifier.auto.php';
+    require_once dirname(__FILE__).'/vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
     \$purifier = new HTMLPurifier(); 
 	
 	require_once dirname(__FILE__).'/include/functions2.php';

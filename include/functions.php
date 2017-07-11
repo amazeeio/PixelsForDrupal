@@ -34,6 +34,7 @@ require_once('area_map_functions.php');
 require_once('package_functions.php');
 require_once('banner_functions.php');
 require_once('image_functions.php');
+require_once('../vendor/autoload.php');
 
 if (!defined('UPLOAD_PATH')) {
 	$dir = dirname(__FILE__);

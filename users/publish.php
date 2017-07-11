@@ -253,182 +253,181 @@ function disapprove_modified_order($order_id, $BID) {
 /////////////////////////
 # Display ad editing forms if the ad was clicked, or 'Edit' button was pressed.
 
-if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
+if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
+	$imagine = new Imagine\Gd\Imagine();
 
-	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=".$_SESSION['MDS_ID']." and t1.banner_id='$BID' and t1.ad_id='".$_REQUEST['ad_id']."' AND t1.order_id=t2.order_id ";
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
+	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . $_SESSION['MDS_ID'] . " and t1.banner_id='$BID' and t1.ad_id='" . $_REQUEST['ad_id'] . "' AND t1.order_id=t2.order_id ";
+	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
-	$row = mysqli_fetch_array($result);
+	$row      = mysqli_fetch_array( $result );
 	$order_id = $row['order_id'];
-	$blocks = explode(',',$row['blocks']);
+	$blocks   = explode( ',', $row['blocks'] );
 
-	$size = get_pixel_image_size($row['order_id']);
+	$size   = get_pixel_image_size( $row['order_id'] );
 	$pixels = $size['x'] * $size['y'];
 
-	$sql = "SELECT * from blocks WHERE order_id='".$order_id."'";
-	$blocks_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
+	$sql = "SELECT * from blocks WHERE order_id='" . $order_id . "'";
+	$blocks_result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
-	if (isset($_REQUEST['change_pixels']) && !empty($_REQUEST['change_pixels'])) {
+	if ( isset( $_REQUEST['change_pixels'] ) && ! empty( $_REQUEST['change_pixels'] ) ) {
 
 		// a new image was uploaded...
 
 		// move the file
 
-		$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
+		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
 
-		$parts = explode ('.', $_FILES['pixels']['name']);
-		$ext = strtolower(array_pop($parts));
+		$parts = explode( '.', $_FILES['pixels']['name'] );
+		$ext   = strtolower( array_pop( $parts ) );
 
 		// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED
-		$ALLOWED_EXT= 'jpg, jpeg, gif, png';
-		$ext_list = preg_split ("/[\s,]+/i", ($ALLOWED_EXT));	
-		if (!in_array($ext, $ext_list)) {
+		$ALLOWED_EXT = 'jpg, jpeg, gif, png';
+		$ext_list    = preg_split( "/[\s,]+/i", ( $ALLOWED_EXT ) );
+		if ( ! in_array( $ext, $ext_list ) ) {
 
-			$error .=  "<b>".$label['advertiser_file_type_not_supp']."</b><br>";
+			$error              .= "<b>" . $label['advertiser_file_type_not_supp'] . "</b><br>";
 			$image_changed_flag = false;
 
 		} else {
 
-			$uploadfile = $uploaddir . "tmp_".md5(session_id()).".$ext";
+			$uploadfile = $uploaddir . "tmp_" . md5( session_id() ) . ".$ext";
 
-			if (move_uploaded_file($_FILES['pixels']['tmp_name'], $uploadfile)) {
+			if ( move_uploaded_file( $_FILES['pixels']['tmp_name'], $uploadfile ) ) {
 				//echo "File is valid, and was successfully uploaded.\n";
 				$tmp_image_file = $uploadfile;
 
 				// check image size
 
-				$img_size = getimagesize($tmp_image_file);
+				$img_size = getimagesize( $tmp_image_file );
 				// check the size
-				if ((MDS_RESIZE!='YES') && (($img_size[0] > $size['x']) || ($img_size[1] > $size['y'])) ) {
-					$label['adv_pub_sizewrong'] = str_replace ('%SIZE_X%', $size['x'], $label['adv_pub_sizewrong']);
-					$label['adv_pub_sizewrong'] = str_replace ('%SIZE_Y%', $size['y'], $label['adv_pub_sizewrong']);
-					$error = $label['adv_pub_sizewrong']."<br>";
+				if ( ( MDS_RESIZE != 'YES' ) && ( ( $img_size[0] > $size['x'] ) || ( $img_size[1] > $size['y'] ) ) ) {
+					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_X%', $size['x'], $label['adv_pub_sizewrong'] );
+					$label['adv_pub_sizewrong'] = str_replace( '%SIZE_Y%', $size['y'], $label['adv_pub_sizewrong'] );
+					$error                      = $label['adv_pub_sizewrong'] . "<br>";
 
 				} else { // size is ok. change the blocks.
 
 					// create the new img...
 
-					while ($block_row = mysqli_fetch_array($blocks_result)) {
+					while ( $block_row = mysqli_fetch_array( $blocks_result ) ) {
 
-						//
-
-						if ($high_x=='') {
+						if ( ! isset( $high_x ) || $high_x == '' ) {
 							$high_x = $block_row['x'];
 							$high_y = $block_row['y'];
-							$low_x = $block_row['x'];
-							$low_y = $block_row['y'];
+							$low_x  = $block_row['x'];
+							$low_y  = $block_row['y'];
 
 						}
 
-						if ($block_row['x'] > $high_x) {
+						if ( $block_row['x'] > $high_x ) {
 							$high_x = $block_row['x'];
 						}
 
-						if ($block_row['y'] > $high_y) {
+						if ( ! isset( $high_y ) || $block_row['y'] > $high_y ) {
 							$high_y = $block_row['y'];
 						}
 
-						if ($block_row['y'] < $low_y) {
+						if ( ! isset( $low_y ) || $block_row['y'] < $low_y ) {
 							$low_y = $block_row['y'];
 						}
 
-						if ($block_row['x'] < $low_x) {
+						if ( ! isset( $low_x ) || $block_row['x'] < $low_x ) {
 							$low_x = $block_row['x'];
 						}
 
 					}
+
+					$high_x = ! isset( $high_x ) ? 0 : $high_x;
+					$high_y = ! isset( $high_y ) ? 0 : $high_y;
+					$low_x  = ! isset( $low_x ) ? 0 : $low_x;
+					$low_y  = ! isset( $low_y ) ? 0 : $low_y;
 
 					$_REQUEST['map_x'] = $high_x;
 					$_REQUEST['map_y'] = $high_y;
 
-					// create the requ
+					$parts = explode( '.', $tmp_image_file );
+					$ext   = strtolower( array_pop( $parts ) );
 
-					if (function_exists("imagecreatetruecolor")) {
-						$dest = imagecreatetruecolor(BLK_WIDTH, BLK_HEIGHT);
-						$whole_image = imagecreatetruecolor ($size['x'], $size['y']);
+					// init new image with Imagine from uploaded file
+					$image = $imagine->open( $tmp_image_file );
+
+					// image size
+					$box = new Imagine\Image\Box( $size['x'], $size['y'] );
+
+					// resize uploaded image
+					if ( MDS_RESIZE == 'YES' ) {
+						$image->resize( $box );
+					}
+
+					// paste image onto grid
+					$grid    = $imagine->load( GRID_BLOCK );
+					$imagebg = imageCreateFromstring( GRID_BLOCK );
+
+					// create tiled background using GD
+					if ( function_exists( "imagecreatetruecolor" ) ) {
+						$whole_image = imagecreatetruecolor( $size['x'], $size['y'] );
 					} else {
-						$dest = imagecreate(BLK_WIDTH, BLK_HEIGHT);
-						$whole_image = imagecreate ($size['x'], $new_size['y']);
+						$whole_image = imagecreate( $size['x'], $new_size['y'] );
 					}
+					$imagebg = imageCreateFromstring( GRID_BLOCK );
+					imageSetTile( $whole_image, $imagebg );
+					imageFilledRectangle( $whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED );
 
-					$parts = explode ('.', $tmp_image_file);
-					$ext = strtolower(array_pop($parts));
-					$upload_image = imagecreate($size['x'], $size['y']);
-					switch (strtolower($ext)) {
-						case 'jpeg':
-						case 'jpg':
-							$upload_image = imagecreatefromjpeg ($tmp_image_file);
-							break;
-						case 'gif':
-							$upload_image = imagecreatefromgif ($tmp_image_file);
-							break;
-						case 'png':
-							$upload_image = imagecreatefrompng ($tmp_image_file);
-							break;
-					}
+					// convert GD resource to Imagine
+					ob_start();
+					imagepng( $whole_image );
+					$data = ob_get_contents();
+					ob_end_clean();
+					$tiled_image = $imagine->load( $data );
 
-					$imagebg = imageCreateFromstring (GRID_BLOCK);
+					// Paste uploaded image onto tiled background
+					$top_left = new Imagine\Image\Point( 0, 0 );
+					$tiled_image->paste( $image, $top_left );
 
-					imageSetTile ($whole_image, $imagebg);
-					imageFilledRectangle ($whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED);
+					// create a block size Box
+					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
 
-					//echo " size x y ".$size['x'].' '.$size['y'].' img siz [0] [1]'.$img_size[0]." ". $img_size[1];
+					// Paste image into selected blocks (AJAX mode allows individual block selection)
+					for ( $i = 0; $i < ( $size['y'] ); $i += BLK_HEIGHT ) {
 
-					if (MDS_RESIZE=='YES') {
-						// resize
-						$newsize_img = ImageCreate( $size['x'], $size['y'] );
-						imagealphablending($newsize_img, false);
-						imagesavealpha($newsize_img, true);
-						imagecopyresampled ( $newsize_img, $upload_image, 0, 0, 0, 0, $size['x'], $size['y'], $img_size[0], $img_size[1] );
-						imagecopy ($whole_image, $newsize_img, 0, 0, 0, 0, $size['x'], $size['y'] );
-					} else {
+						for ( $j = 0; $j < ( $size['x'] ); $j += BLK_WIDTH ) {
 
-						imagealphablending($whole_image, false);
-						imagesavealpha($whole_image, true);
-						imagecopy ($whole_image, $upload_image, 0, 0, 0, 0, $img_size[0], $img_size[1] );
-					}
+							// create new destination image
+							$dest = $imagine->create( $block_size );
 
-					for ($i=0; $i<($size['y']); $i+=BLK_HEIGHT) {
-						
-						for ($j=0; $j<($size['x']); $j+=BLK_WIDTH) {
-							 
-							$map_x = $j+$low_x;
-							$map_y = $i+$low_y;
+							// crop a part from the tiled image
+							$block = $imagine->load($tiled_image->__toString());
+							$block->crop( new Imagine\Image\Point( $j, $i ), $block_size );
 
-							$r_x = $map_x;
-							$r_y = $map_y;
+							// paste the block into the destination image
+							$dest->paste( $block, new Imagine\Image\Point( 0, 0 ) );
 
+							// save the image as a base64 encoded string
+							$data = base64_encode( $dest->__toString() );
+
+							// some variables
+							$map_x     = $j + $low_x;
+							$map_y     = $i + $low_y;
 							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
+							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 
-							$cb = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH)) ;
-
-							// bool imagecopy ( resource dst_im, resource src_im, int dst_x, int dst_y, int src_x, int src_y, int src_w, int src_h )
-							imagecopy ( $dest, $whole_image, 0, 0, $j, $i, BLK_WIDTH,  BLK_HEIGHT);
-							
-							ob_start();
-							imagepng($dest);
-							$data = ob_get_contents();
-							ob_end_clean();
-							$data = base64_encode($data);
-
-							$sql = "UPDATE blocks SET image_data='$data' where block_id='".$cb."' AND banner_id='".$BID."' ";
-							mysqli_query($GLOBALS['connection'], $sql);
-
-							//echo $sql."------>".mysqli_affected_rows($GLOBALS['connection'])."<br>";
+							// save to db
+							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . $cb . "' AND banner_id='" . $BID . "' ";
+							mysqli_query( $GLOBALS['connection'], $sql );
 						}
 					}
 				}
 
-				unlink($tmp_image_file);
+				unlink( $tmp_image_file );
 
-				if (AUTO_APPROVE!='Y') { // to be approved by the admin
-					disapprove_modified_order($order_id, $BID);
+				if ( AUTO_APPROVE != 'Y' ) { // to be approved by the admin
+					disapprove_modified_order( $order_id, $BID );
 				}
 
-				if (AUTO_PUBLISH=='Y') {
-					process_image($BID);
-					publish_image($BID);
-					process_map($BID);
+				if ( AUTO_PUBLISH == 'Y' ) {
+					process_image( $BID );
+					publish_image( $BID );
+					process_map( $BID );
 				}
 
 			} else {
@@ -628,7 +627,7 @@ if ($count > 0) {
 		//if (strlen($row['image_data'])>0) {
 	?>
 
-	<area shape="RECT" coords="<?php echo $row['x'];?>,<?php echo $row['y'];?>,<?php echo $row['x']+BLK_WIDTH;?>,<?php echo $row['y']+BLK_HEIGHT;?>" href="publish.php?BID=<?php echo $BID;?>&block_id=<?php echo ($row['block_id']);?>" title="<?php echo ($row[alt_text]);?>" alt="<?php echo ($row[alt_text]);?>"  />
+	<area shape="RECT" coords="<?php echo $row['x'];?>,<?php echo $row['y'];?>,<?php echo $row['x']+BLK_WIDTH;?>,<?php echo $row['y']+BLK_HEIGHT;?>" href="publish.php?BID=<?php echo $BID;?>&block_id=<?php echo ($row['block_id']);?>" title="<?php echo ($row['alt_text']);?>" alt="<?php echo ($row['alt_text']);?>"  />
 
 	<?php
 	//	}

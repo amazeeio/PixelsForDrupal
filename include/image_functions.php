@@ -204,7 +204,7 @@ function process_image($BID) {
 	$i=0;
 	while ($row = mysqli_fetch_array($result)) {
 
-		$data = $row[image_data];
+		$data = $row['image_data'];
 		
 		if (strlen($data)!=0) {
 			$block = base64_decode($data);

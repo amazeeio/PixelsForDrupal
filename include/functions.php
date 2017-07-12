@@ -2463,6 +2463,8 @@ function saveImage($field_id) {
 
 	global $f2;
 
+	$imagine = new Imagine\Gd\Imagine();
+
 	if (IMG_MAX_WIDTH=='IMG_MAX_WIDTH' ) {
 
 		$max_width = '150';
@@ -2530,93 +2532,42 @@ function saveImage($field_id) {
 		//echo $_FILES[$field_id]['tmp_name']."<br>";
 	}
 
-	$current_size = getimagesize($uploadfile);
-    $width_orig = $current_size[0];
-    $height_orig = $current_size[1];
+	setMemoryLimit($uploadfile);
 
+	$image = $imagine->open( $uploadfile );
 
-	if ($width_orig > $max_width) {
+	$current_size = $image->getSize();
+	$orig_width   = $current_size->getWidth();
+	$orig_height  = $current_size->getHeight();
 
-		//echo "resizing file...<br>";
+	// Set a maximum height and width
+	$max_width  = 200;
+	$max_height = 200;
 
-		// The file
-		$filename = $uploadfile;
+	$new_width  = $final_width = min( $orig_width, $max_width );
+	$new_height = $final_height = min( $orig_height, $max_height );
 
-		// Set a maximum height and width
-		$width = 200;
-		$height = 200;
+	if ( $orig_width > $max_width ) {
 
-		// Content type
-		//header('Content-type: image/jpeg');
-
-		// Get new dimensions
-		//list($width_orig, $height_orig) = getimagesize($filename);
-
-		$ratio_orig = $width_orig/$height_orig;
-
-		if ($width/$height > $ratio_orig) {
-		   $width = $height*$ratio_orig;
-		} else {
-		   $height = $width/$ratio_orig;
+		if ( $orig_width > $orig_height ) {
+			$final_width  = $new_width;
+			$final_height = $orig_height * ( $new_height / $orig_width );
+		} else if ( $orig_width < $orig_height ) {
+			$final_width  = $orig_width * ( $new_width / $orig_height );
+			$final_height = $new_height;
+		} else if ( $orig_width == $orig_height ) {
+			$final_width  = $new_width;
+			$final_height = $new_height;
 		}
 
-		// Resample
-		$image_p = imagecreatetruecolor($width, $height);
-		//echo "type is:".$_FILES[$field_id]['type']."<br>";
-		//echo "orig file is:".$filename."<br>";
-		//echo "dest file is:".$thumbfile."<br>";
-		switch ($_FILES[$field_id]['type']) {
-			case "image/gif":
-				touch ($filename);
-				$uploaded_img = imagecreatefromgif($filename);
-				imagealphablending($uploaded_img, false);
-				imagesavealpha($uploaded_img, true);
-				imagecopyresampled($image_p, $uploaded_img, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-				unlink ($filename); // delete original file 
-				// Output
-				imagejpeg($image_p, $thumbfile, 100);
+		// Resize to max size
+		$image->resize( new Imagine\Image\Box( $final_width, $final_height ) );
+		$image->save( $uploadfile );
 
-				break;
-			case "image/jpg":
-			case "image/jpeg":
-			case "image/pjpeg":
-				touch ($filename);
+	} else {
+		//echo 'No need to resize.<br>';
 
-				//error_reporting(E_ALL);
-				//ini_set('display_errors', 0);
-
-				//register_shutdown_function('shutdown');
-
-				$uploaded_img = imagecreatefromjpeg($filename);
-				imagecopyresampled($image_p, $uploaded_img, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-				unlink ($filename); // delete original file 
-				// Output
-				imagejpeg($image_p, $thumbfile, 100);
-				break;
-			case "image/png":
-			case "image/x-png":
-				touch ($filename);
-				$uploaded_img = imagecreatefrompng($filename);
-                imagealphablending($uploaded_img, false);
-                imagesavealpha($uploaded_img, true);
-				imagecopyresampled($image_p, $uploaded_img, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-				unlink ($filename); // delete original file 
-				// Output
-				imagejpeg($image_p, $thumbfile, 100);
-				break;
-			default:
-				break;
-		}
-
-		imagedestroy ($uploaded_img);
-		imagedestroy ($image_p);
-
-		
-   
-   } else {
-      //echo 'No need to resize.<br>';
-	  
-   } 
+	}
 	//@unlink($uploadfile); // delete the original file.
    return $new_name;
 } 
@@ -2920,7 +2871,7 @@ function break_long_words($input, $with_tags) {
 	while ($trun_str = truncate_html_str($input, $lng_max, $trunc_str_len, false, $with_tags)) {
 
 		//echo "trun_str:".htmlentities($trun_str)."<br>";
-		
+		$new_str = "";
 		if ($trunc_str_len == $lng_max) { // string was truncated
 			
 			//echo "truncate!";
@@ -3148,4 +3099,80 @@ function session_valid_id($session_id) {
     return preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $session_id) > 0;
 }
 
-?>
+/**
+ * Get Max Allowed Upload Size
+ *
+ * @link https://stackoverflow.com/a/40484281/311458
+ *
+ * @return mixed
+ */
+function _GetMaxAllowedUploadSize() {
+	$Sizes   = array();
+	$Sizes[] = ini_get( 'upload_max_filesize' );
+	$Sizes[] = ini_get( 'post_max_size' );
+	$Sizes[] = ini_get( 'memory_limit' );
+
+	$Sizes = convertMemoryToBytes( $Sizes );
+
+	return min( $Sizes );
+}
+
+/**
+ * Convert an array memory string values to integer values
+ *
+ * @param $Sizes array
+ *
+ * @return array
+ */
+function convertMemoryToBytes( $Sizes ) {
+	for ( $x = 0; $x < count( $Sizes ); $x ++ ) {
+		$Last = strtolower( $Sizes[ $x ][ strlen( $Sizes[ $x ] ) - 1 ] );
+		if ( $Last == 'k' ) {
+			$Sizes[ $x ] *= 1024;
+		} elseif ( $Last == 'm' ) {
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+		} elseif ( $Last == 'g' ) {
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+		} elseif ( $Last == 't' ) {
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+			$Sizes[ $x ] *= 1024;
+		}
+	}
+
+	return $Sizes;
+}
+
+/**
+ * Attempt to set a new Memory Limit based on image size.
+ *
+ * @link https://alvarotrigo.com/blog/watch-beauty-and-the-beast-2017-full-movie-online-streaming-online-and-download/
+ *
+ * @param $filename string
+ */
+function setMemoryLimit( $filename ) {
+	//this might take time so we limit the maximum execution time to 50 seconds
+	set_time_limit( 50 );
+
+	//initializing variables
+	$maxMemoryUsage = convertMemoryToBytes(array("512M"))[0];
+	$width          = 0;
+	$height         = 0;
+	$size           = convertMemoryToBytes(array(ini_get( 'memory_limit' )))[0];
+
+	//getting the image width and height
+	list( $width, $height ) = getimagesize( $filename );
+
+	//calculating the needed memory
+	$size = $size + (floor( ( $width * $height * 4 * 1.5 + 1048576 ) / 1048576 ));
+
+	// make sure memory limit is within range
+	$size = min(max($size, MEMORY_LIMIT), $maxMemoryUsage);
+
+	//updating the default value
+	ini_set( 'memory_limit', $size );
+}

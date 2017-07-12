@@ -30,6 +30,8 @@
  *
  */
 
+use Imagine\Filter\Basic\Autorotate;
+
 @set_time_limit ( 260); // 180 sec
 session_start();
 include ("../config.php");
@@ -352,6 +354,12 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 
 					// init new image with Imagine from uploaded file
 					$image = $imagine->open( $tmp_image_file );
+
+					// autorotate
+					$imagine->setMetadataReader(new \Imagine\Image\Metadata\ExifMetadataReader());
+					$filter = new Imagine\Filter\Transformation();
+					$filter->add(new AutoRotate());
+					$filter->apply($image);
 
 					// image size
 					$box = new Imagine\Image\Box( $size['x'], $size['y'] );

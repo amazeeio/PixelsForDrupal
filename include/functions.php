@@ -30,6 +30,8 @@
  *
  */
 
+use Imagine\Filter\Basic\Autorotate;
+
 require_once('area_map_functions.php');
 require_once('package_functions.php');
 require_once('banner_functions.php');
@@ -2536,6 +2538,12 @@ function saveImage($field_id) {
 
 	$image = $imagine->open( $uploadfile );
 
+	// autorotate
+	$imagine->setMetadataReader(new \Imagine\Image\Metadata\ExifMetadataReader());
+	$filter = new Imagine\Filter\Transformation();
+	$filter->add(new AutoRotate());
+	$filter->apply($image);
+
 	$current_size = $image->getSize();
 	$orig_width   = $current_size->getWidth();
 	$orig_height  = $current_size->getHeight();
@@ -3120,7 +3128,7 @@ function _GetMaxAllowedUploadSize() {
 /**
  * Convert an array memory string values to integer values
  *
- * @param $Sizes array
+ * @param array $Sizes
  *
  * @return array
  */
@@ -3148,30 +3156,31 @@ function convertMemoryToBytes( $Sizes ) {
 }
 
 /**
- * Attempt to set a new Memory Limit based on image size.
+ * Attempt to increase the Memory Limit based on image size.
  *
  * @link https://alvarotrigo.com/blog/watch-beauty-and-the-beast-2017-full-movie-online-streaming-online-and-download/
  *
- * @param $filename string
+ * @param string $filename
  */
 function setMemoryLimit( $filename ) {
 	//this might take time so we limit the maximum execution time to 50 seconds
 	set_time_limit( 50 );
 
 	//initializing variables
-	$maxMemoryUsage = convertMemoryToBytes(array("512M"))[0];
-	$width          = 0;
-	$height         = 0;
-	$size           = convertMemoryToBytes(array(ini_get( 'memory_limit' )))[0];
+	list( $maxMemoryUsage ) = convertMemoryToBytes( array( "512M" ) );
+	list( $currentLimit ) = convertMemoryToBytes( array( ini_get( 'memory_limit' ) ) );
+	$currentUsage = memory_get_usage();
+	$width  = 0;
+	$height = 0;
 
 	//getting the image width and height
 	list( $width, $height ) = getimagesize( $filename );
 
 	//calculating the needed memory
-	$size = $size + (floor( ( $width * $height * 4 * 1.5 + 1048576 ) / 1048576 ));
+	$size = $currentUsage + $currentLimit + ( floor( $width * $height * 4 * 1.5 + 1048576 ) );
 
 	// make sure memory limit is within range
-	$size = min(max($size, MEMORY_LIMIT), $maxMemoryUsage);
+	$size = min( max( $size, MEMORY_LIMIT ), $maxMemoryUsage );
 
 	//updating the default value
 	ini_set( 'memory_limit', $size );

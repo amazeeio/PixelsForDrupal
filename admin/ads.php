@@ -29,6 +29,8 @@
  * 		http://www.milliondollarscript.com/
  *
  */
+use Imagine\Filter\Basic\Autorotate;
+
 session_start();
 require("../config.php");
 
@@ -192,6 +194,12 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 
 					// init new image with Imagine from uploaded file
 					$image = $imagine->open( $tmp_image_file );
+
+					// autorotate
+					$imagine->setMetadataReader(new \Imagine\Image\Metadata\ExifMetadataReader());
+					$filter = new Imagine\Filter\Transformation();
+					$filter->add(new AutoRotate());
+					$filter->apply($image);
 
 					// image size
 					$box = new Imagine\Image\Box( $size['x'], $size['y'] );

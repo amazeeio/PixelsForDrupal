@@ -750,6 +750,8 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 			//echo "File is valid, and was successfully uploaded.\n";
 			$tmp_image_file = $uploadfile;
 
+			setMemoryLimit($uploadfile);
+
 			// check the file size for min an max blocks.
 
 			$size = getimagesize($tmp_image_file);

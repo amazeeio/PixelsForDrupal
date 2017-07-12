@@ -1075,7 +1075,7 @@ function validate_form_data($form_id) {
 	global $f2, $label, $purifier;
 
 	if (!defined('MAX_UPLOAD_BYTES')) {
-		define ('MAX_UPLOAD_BYTES', 150000);
+		define ('MAX_UPLOAD_BYTES', _GetMaxAllowedUploadSize());
 	}
 
 	//$sql = "SELECT *, t2.field_label AS LABEL, t2.error_message as error_message FROM form_fields as t1, form_field_translations as t2 WHERE t1.field_id=t2.field_id AND t2.lang='".$_SESSION['MDS_LANG']."' AND form_id='$form_id' AND field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' order by field_sort";

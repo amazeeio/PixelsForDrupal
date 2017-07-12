@@ -136,6 +136,8 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 				//echo "File is valid, and was successfully uploaded.\n";
 				$tmp_image_file = $uploadfile;
 
+				setMemoryLimit($uploadfile);
+
 				// check image size
 
 				$img_size = getimagesize( $tmp_image_file );

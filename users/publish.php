@@ -385,6 +385,7 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 					// Paste uploaded image onto tiled background
 					$top_left = new Imagine\Image\Point( 0, 0 );
 					$tiled_image->paste( $image, $top_left );
+					unset($image);
 
 					// create a block size Box
 					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );

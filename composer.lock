@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b8c188d49568dd1aeb1588e0699e45b",
+    "content-hash": "b349eafa5a64ec6462dccf8618f84bb1",
     "packages": [
         {
             "name": "ezyang/htmlpurifier",
@@ -55,7 +55,7 @@
         },
         {
             "name": "imagine/imagine",
-            "version": "dev-develop",
+            "version": "v0.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avalanche123/Imagine.git",
@@ -109,15 +109,13 @@
                 "image manipulation",
                 "image processing"
             ],
-            "time": "2017-05-16 10:31:22"
+            "time": "2017-05-16T10:31:22+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "imagine/imagine": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

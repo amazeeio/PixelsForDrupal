@@ -10,8 +10,13 @@
       "email": "ryan@milliondollarscript.com"
     }
   ],
+  "config": {
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
   "require": {
-    "imagine/imagine": "0.7.x-dev",
+    "imagine/imagine": "0.7.1",
     "ezyang/htmlpurifier": "v4.9.3"
   }
 }

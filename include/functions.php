@@ -3185,3 +3185,21 @@ function setMemoryLimit( $filename ) {
 	//updating the default value
 	ini_set( 'memory_limit', $size );
 }
+
+/**
+ * Function to validate email addresses
+ *
+ * @link https://stackoverflow.com/a/42969643/311458
+ *
+ * @param $email
+ *
+ * @return bool
+ */
+function validate_mail( $email ) {
+	$emailB = filter_var( $email, FILTER_SANITIZE_EMAIL );
+
+	if ( filter_var( $emailB, FILTER_VALIDATE_EMAIL ) === false || $emailB != $email ) {
+		return false;
+	}
+	return true;
+}

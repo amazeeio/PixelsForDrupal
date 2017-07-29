@@ -671,47 +671,6 @@ NOTES<br>
 	  <input type="radio" name="enable_mouseover" value="NO"  <?php if (ENABLE_MOUSEOVER=='NO') { echo " checked "; } ?> >No, turn off<br>
 	  </font></td>
     </tr>
-	  <tr>
-      <td bgcolor="#e6f2ea"><font face="Verdana" size="1">Transition Effects </font></td>
-      <td  bgcolor="#e6f2ea"><font size="1" face="Verdana">
-<input type="checkbox" name="enable_transitions" <?php if (ENABLE_TRANSITIONS=='YES') { echo " checked "; }  ?> value="YES" > Enable Transition effects? (IE browser only)<br>
-Select Transition Effect:<br>
-<blockquote>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='0') { echo " checked "; }  ?> value="0" > 0 - Box in  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='1') { echo " checked "; }  ?> value="1" > 1 - Box out <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='2') { echo " checked "; }  ?> value="2" > 2 - Circle (In)<br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='3') { echo " checked "; }  ?> value="3" > 3 - Circle (Out)<br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='4') { echo " checked "; }  ?> value="4" > 4 - Wipe up <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='5') { echo " checked "; }  ?> value="5" > 5 - Wipe down  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='6') { echo " checked "; }  ?> value="6" > 6 - Wipe right <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='7') { echo " checked "; }  ?> value="7" > 7 - Wipe left  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='8') { echo " checked "; }  ?> value="8" > 8 - Vertical blinds <br> 
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='9') { echo " checked "; }  ?> value="9" > 9 - Horizontal blinds  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='10') { echo " checked "; }  ?> value="10" > 10 - Checkerboard across  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='11') { echo " checked "; }  ?> value="11" > 11 - Checkerboard down  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='12') { echo " checked "; }  ?> value="12" > 12 - Random dissolve<br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='13') { echo " checked "; }  ?> value="13" > 13 - Split vertical in  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='14') { echo " checked "; }  ?> value="14" > 14 - Split vertical out  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='15') { echo " checked "; }  ?> value="15" > 15 - Split horizontal in <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='16') { echo " checked "; }  ?> value="16" > 16 - Split horizontal out <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='17') { echo " checked "; }  ?> value="17" > 17 - Strips left down <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='18') { echo " checked "; }  ?> value="18" > 18 - Strips left up <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='19') { echo " checked "; }  ?> value="19" > 19 - Strips right down  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='20') { echo " checked "; }  ?> value="20" > 20 - Strips right up  <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='21') { echo " checked "; }  ?> value="21" > 21 - Random bars horizontal<br>  
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='22') { echo " checked "; }  ?> value="22" > 22 - Random bars vertical <br>
-<input type="radio" name="transition_effect" <?php if (TRANSITION_EFFECT=='23') { echo " checked "; }  ?> value="23" > 23 - Random - Apply above filters randomly. <br><br>
-<font face="Verdana" size="1"><b>Duration of a transition effect:</b></font>
-     <font face="Verdana" size="1">
-	 <?php
-	 if (!defined('TRANSITION_DURATION')) {
-		 define ('TRANSITION_DURATION', "0.5");
-	}
-	 ?>
-	 
-      <input type="text" name="transition_duration" size="2" value="<?php echo TRANSITION_DURATION; ?>">(Enter a decimal to specify how many seconds to run the transition effect for. Eg. 0.5 is half of a second)</font>
-</blockquote>
-</td></tr>
 <tr>
 <?php
 if (!defined('HIDE_TIMEOUT')) {

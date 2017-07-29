@@ -549,35 +549,12 @@ function show_map($BID = 1) {
 	//	window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY;
 		//str=str+"hello: "+bubble.clientWidth;
 			//b.filter="progid:DXImageTransform.Microsoft.Blinds(Duration=0.5)";
-			<?php 
-			if (ENABLE_TRANSITIONS=='YES'){
-			
-			?>
-				if (bubble.filters) {
-				
-					bubble.filters[0].transition=<?php echo TRANSITION_EFFECT; ?>;
-					bubble.filters[0].duration=<?php echo TRANSITION_DURATION; ?>;
-					bubble.filters[0].Apply();
-				}
-			<?php 
-			}
-			
-			?>
+
 			document.getElementById('content').innerHTML=str;
 			trip_count++
 			
 			fillAdContent(aid, document.getElementById('content'));
 
-			<?php 
-			if (ENABLE_TRANSITIONS=='YES'){
-			
-			?>
-				if (bubble.filters) {
-					bubble.filters[0].Play();
-				}
-			<?php 
-			}	
-			?>
 			//alert(document.getElementById('bubble').innerHTML);
 		}
 
@@ -664,36 +641,8 @@ function show_map($BID = 1) {
 
 		var bubble = document.getElementById('bubble');
 		b = bubble.style;
-		
-		<?php 
-		if (ENABLE_TRANSITIONS=='YES'){
-			
-		?>
-			if (bubble.filters) {
-				bubble.filters[0].transition=<?php echo TRANSITION_EFFECT; ?>;
-				bubble.filters[0].duration=<?php echo TRANSITION_DURATION; ?>;
-				bubble.filters[0].Apply();
-			}
-		<?php
 
-		}
-
-		?>
 		b.visibility='hidden';
-		
-		<?php 
-		if (ENABLE_TRANSITIONS=='YES'){
-			
-		?>
-			if (bubble.filters) {
-				bubble.filters[0].Play();
-			}
-
-		<?php 
-		}
-			
-		?>
-		
 
 	}
 

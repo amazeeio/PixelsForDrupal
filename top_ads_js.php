@@ -252,35 +252,12 @@ require ('config.php');
 			lastStr=str;
 			
 			hideBubble(e);
-			<?php 
-			if (ENABLE_TRANSITIONS=='YES'){
-			
-			?>
-				if (bubble.filters) {
-				
-					bubble.filters[0].transition=<?php echo TRANSITION_EFFECT; ?>;
-					bubble.filters[0].duration=<?php echo TRANSITION_DURATION; ?>;
-					bubble.filters[0].Apply();
-				}
-			<?php 
-			}
-			
-			?>
+
 			document.getElementById('content').innerHTML=str;
 			trip_count++
 			
 			fillAdContent(aid, document.getElementById('content'));
 
-			<?php 
-			if (ENABLE_TRANSITIONS=='YES'){
-			
-			?>
-				if (bubble.filters) {
-					bubble.filters[0].Play();
-				}
-			<?php 
-			}	
-			?>
 		}
 
 		var mytop =  is_top_available(bubble,e);
@@ -340,29 +317,7 @@ require ('config.php');
 		var bubble = document.getElementById('bubble');
 		b = bubble.style;
 		
-		<?php 
-		if (ENABLE_TRANSITIONS=='YES'){
-		?>
-			if (bubble.filters) {
-				bubble.filters[0].transition=<?php echo TRANSITION_EFFECT; ?>;
-				bubble.filters[0].duration=<?php echo TRANSITION_DURATION; ?>;
-				bubble.filters[0].Apply();
-			}
-		<?php
-		}
-		?>
-		
 		b.visibility='hidden';
-		
-		<?php 
-		if (ENABLE_TRANSITIONS=='YES'){
-		?>
-			if (bubble.filters) {
-				bubble.filters[0].Play();
-			}
-		<?php 
-		}
-		?>
 	}
 
 	var timeoutId=0;

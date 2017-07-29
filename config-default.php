@@ -144,9 +144,6 @@ define('REDIRECT_SWITCH', 'NO');
 define('REDIRECT_URL', 'http://www.example.com');
 define('ADVANCED_CLICK_COUNT', 'YES');
 
-define('TRANSITION_EFFECT', '23');
-define('ENABLE_TRANSITIONS', 'YES');
-define('TRANSITION_DURATION', '1');
 define('HIDE_TIMEOUT', '500');
 define('MDS_AGRESSIVE_CACHE', '');
 

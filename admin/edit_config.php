@@ -133,10 +133,6 @@ define('REDIRECT_URL', addslashes($_REQUEST['redirect_url']));
 
 define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
 
-define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
-define('TRANSITION_EFFECT', addslashes($_REQUEST['transition_effect']));
-define('ENABLE_TRANSITIONS', addslashes($_REQUEST['enable_transitions']));
-define('TRANSITION_DURATION', addslashes($_REQUEST['transition_duration']));
 define('HIDE_TIMEOUT', addslashes($_REQUEST['hide_timeout']));
 define('MDS_AGRESSIVE_CACHE', addslashes($_REQUEST['mds_agressive_cache']));
 
@@ -254,9 +250,6 @@ define('REDIRECT_SWITCH', '".REDIRECT_SWITCH."');
 define('REDIRECT_URL', '".REDIRECT_URL."');
 define('ADVANCED_CLICK_COUNT', '".ADVANCED_CLICK_COUNT."');
 
-define('TRANSITION_EFFECT', '".TRANSITION_EFFECT."');
-define('ENABLE_TRANSITIONS', '".ENABLE_TRANSITIONS."');
-define('TRANSITION_DURATION', '".TRANSITION_DURATION."');
 define('HIDE_TIMEOUT', '".HIDE_TIMEOUT."');
 define('MDS_AGRESSIVE_CACHE', '".MDS_AGRESSIVE_CACHE."');
 

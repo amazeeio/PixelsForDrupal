@@ -517,7 +517,7 @@ function install_db() {
     
     
         CREATE TABLE `config` (
-          `key` varchar(255) NOT NULL default '',
+          `key` varchar(100) NOT NULL default '',
           `val` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL default '',
           PRIMARY KEY  (`key`)
         );;;
@@ -877,7 +877,7 @@ function install_db() {
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
     
         CREATE TABLE `config` (
-          `key` varchar(255) NOT NULL default '',
+          `key` varchar(100) NOT NULL default '',
           `val` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL default '',
           PRIMARY KEY  (`key`)
         );;;

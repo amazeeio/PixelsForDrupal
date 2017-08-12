@@ -292,7 +292,6 @@ function process_mail_queue($send_count=1) {
 
 }
 
-
 ############################
 
 function send_smtp_email( $mail_row ) {
@@ -319,7 +318,7 @@ function send_smtp_email( $mail_row ) {
 	try {
 		$mail->isSMTP();
 
-		$mail->SMTPDebug = $debug_level;
+		$mail->SMTPDebug   = $debug_level;
 		$mail->Debugoutput = 'html';
 
 		$mail->Host = EMAIL_SMTP_SERVER;
@@ -341,21 +340,37 @@ function send_smtp_email( $mail_row ) {
 		$mail->addReplyTo( $mail_row['from_address'], html_ent_to_utf8( $mail_row['from_name'] ) );
 		$mail->addAddress( $mail_row['to_address'], html_ent_to_utf8( $mail_row['to_name'] ) );
 		$mail->Subject = html_ent_to_utf8( $mail_row['subject'] );
-		$mail->msgHTML( html_ent_to_utf8( $mail_row['html_message'] ) );
-		$mail->AltBody = html_ent_to_utf8( $mail_row['message'] );
+
+		$html = html_ent_to_utf8( $mail_row['html_message'] );
+		$text = html_ent_to_utf8( $mail_row['message'] );
+		if(!empty($html)) {
+			$mail->msgHTML($html);
+		} else {
+			$mail->msgHTML(nl2br($text));
+		}
+		$mail->AltBody = $text;
+
 		if ( ! $mail->send() ) {
 			$error = $mail->ErrorInfo;
-			file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+			if ( $debug_level > 0 ) {
+				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+			}
 		} else {
-			file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+			if ( $debug_level > 0 ) {
+				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+			}
 		}
 
 	} catch ( phpmailerException $e ) {
 		$error = $e->errorMessage();
-		file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+		if ( $debug_level > 0 ) {
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+		}
 	} catch ( Exception $e ) {
 		$error = $e->getMessage();
-		file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
+		if ( $debug_level > 0 ) {
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
+		}
 	}
 
 	if ( strcmp( $error, "" ) ) {

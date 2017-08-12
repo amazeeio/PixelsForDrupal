@@ -463,12 +463,7 @@ NOTES<br>
 	  </font>
 	  </p></td>
     </tr>
-     <tr>
-      <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">Hostname (of your HTTP server)</font></td>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="email_hostname" size="33" value="<?php echo EMAIL_HOSTNAME; ?>"><br>(Most likely this is: <b><?php echo $host;?></b>)</font></td>
-    </tr>
-     <tr>
+    <tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">SMTP Server address</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="email_smtp_server" size="33" value="<?php echo EMAIL_SMTP_SERVER; ?>"><br>Eg. mail.example.com</font></td>
@@ -493,10 +488,21 @@ NOTES<br>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="email_smtp_auth_host" size="33" value="<?php echo EMAIL_SMTP_AUTH_HOST; ?>">(This is usually the same as your SMTP Server address)</font></td>
     </tr>
-	<tr>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">POP3 Port</font></td>
-      <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="pop3_port" size="33" value="<?php echo POP3_PORT; ?>">(Leave blank to default to 110)</font></td>
+    <tr>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">SMTP Port</font></td>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+                <input type="text" name="smtp_port" size="33" value="<?php echo SMTP_PORT; ?>">(Leave blank to default to 465)</font></td>
+    </tr>
+    <tr>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">POP3 Port</font></td>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+                <input type="text" name="pop3_port" size="33" value="<?php echo POP3_PORT; ?>">(Leave blank to default to 995)</font></td>
+    </tr>
+    <tr>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Enable email TLS/SSL</font></td>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+        <input type="radio" name="email_tls" value="1"  <?php if (EMAIL_TLS=='1') { echo " checked "; } ?> >Yes<br>
+        <input type="radio" name="email_tls" value="0"  <?php if (EMAIL_TLS=='0') { echo " checked "; } ?> >No
     </tr>
 	<tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">My SMTP server uses the POP-before-SMTP mechanism</font></td>
@@ -505,8 +511,13 @@ NOTES<br>
 	  <input type="radio" name="email_pop_before_smtp" value="NO"  <?php if (EMAIL_POP_BEFORE_SMTP=='NO') { echo " checked "; } ?> >No - Default setting, correct 99% of cases
 	 </font></td>
     </tr>
-	<tr>
-	
+    <tr>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Enable email debug (saves file in /mail/.maildebug.log)</font></td>
+        <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
+                <input type="radio" name="email_debug" value="YES"  <?php if (EMAIL_DEBUG=='YES') { echo " checked "; } ?> >Yes<br>
+                <input type="radio" name="email_debug" value="NO"  <?php if (EMAIL_DEBUG=='NO') { echo " checked "; } ?> >No
+    </tr>
+
 	<?php
 	
 	$new_window = "onclick=\"test_email_window(); return false;\"";
@@ -523,11 +534,7 @@ NOTES<br>
 		define ('EMAILS_ERROR_WAIT', 20);
 	}
 
-	
-
 	?>
-		<td bgcolor="#e6f2ea" colspan="2"><input type="button" style="font-size: 11px;" <?php echo $new_window; ?> value="Test Email Connection..."> (Remember to save the config if the test passed OK)</td>
-	</tr>
 	 <tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Outgoing email queue settings</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">

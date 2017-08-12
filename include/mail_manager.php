@@ -30,73 +30,6 @@
  *
  */
 
-function add_mail_attachments(&$email_message, &$mail_row) {
-
-		 if ($mail_row[att1_name] != '') {
-		
-		  $attachment1=array(
-			 "FileName"=>$mail_row[att1_name],
-			 "Content-Type"=>"automatic/name",
-			 "Disposition"=>"attachment"
-		  );
-		  $email_message->AddFilePart($attachment1);
-		  
-	   }
-	   if ($mail_row[att2_name] != '') {
-		
-		  $attachment2=array(
-			 "FileName"=>$mail_row[att2_name],
-			 "Content-Type"=>"automatic/name",
-			 "Disposition"=>"attachment"
-		  );
-		  $email_message->AddFilePart($attachment2);
-		  
-	   }
-
-	   if ($mail_row[att3_name] != '') {
-		 
-		  $attachment3=array(
-			 "FileName"=>$mail_row[att3_name],
-			 "Content-Type"=>"automatic/name",
-			 "Disposition"=>"attachment"
-		  );
-		  $email_message->AddFilePart($attachment3);
-		  
-	   }
-
-	   return $email_message;
-
-	}
-
-##########################################################################
-
-function move_uploaded_attachment ($mail_id, $att_file, $from_name) {
-
-	// strip out non-alphanumeric characters from from_name
-	$from_name = preg_replace ('/[^\w]+/', "", $from_name);
-#mail('adam@jamit.com.au','attach', "Af:$att_file fname:".$_FILES[$att_file]['name']."\n");
-	$att_name = $_FILES[$att_file]['name'];
-	$att_tmp = $_FILES[$att_file]['tmp_name'];
-
-	$temp= explode('.', $att_name);
-	$ext = array_pop($temp);
-
-	if (!file_exists(FILE_PATH."temp/")) {
-		mkdir(FILE_PATH."temp/");
-		chmod(FILE_PATH."temp/", 0777);  
-
-	}
-
-	$new_name = FILE_PATH."temp/$from_name".$mail_id."$att_file.".$ext;
-
-	move_uploaded_file ($att_tmp, $new_name);
-	chmod($new_name, 0666);
-	
-
-	return $new_name;
-
-
-}
 
 function q_mail_error($s) {
 
@@ -206,6 +139,7 @@ function do_pop_before_smtp() {
 		$pop3=new pop3_class;
 		$pop3->hostname=EMAIL_POP_SERVER;      /* POP 3 server host name              */
 		$pop3->port=POP3_PORT;     /* POP 3 server host port              */
+		$pop3->tls=EMAIL_TLS;     /* Email tls setting        */
 		$user=EMAIL_SMTP_USER;                /* Authentication user name            */
 		$password=EMAIL_SMTP_PASS;           /* Authentication password             */
 		$pop3->realm="";                        /* Authentication realm or domain      */
@@ -279,22 +213,12 @@ function process_mail_queue($send_count=1) {
 
 	if ($unix_time > $t_row['val']+5) { // did 5 seconds elapse since last run?
 
-
-		if (EMAIL_POP_BEFORE_SMTP=='YES') {
-			do_pop_before_smtp();
-		}
-
-
-		
-
 		if (func_num_args>1) {
 			$mail_id = func_get_arg(1);
 
 			$and_mail_id = " AND mail_id=".$mail_id." ";
 
 		}
-
-		
 
 		$EMAILS_MAX_RETRY = EMAILS_MAX_RETRY;
 		if ($EMAILS_MAX_RETRY=='') {
@@ -371,125 +295,84 @@ function process_mail_queue($send_count=1) {
 
 ############################
 
-// $mail_row ->full email row from the database
-function send_smtp_email($mail_row) {
+function send_smtp_email( $mail_row ) {
 
-	
-
-	$to_name = html_ent_to_utf8($mail_row['to_name']);
-	$to_address = $mail_row['to_address'];
-	$from_name = html_ent_to_utf8($mail_row['from_name']);
-	$from_address = $mail_row['from_address'];
-	$subject = html_ent_to_utf8($mail_row['subject']);
-	$message = html_ent_to_utf8($mail_row['message']);
-	$html_message = html_ent_to_utf8($mail_row['html_message']);
-
-	//$html_message = $mail_row['html_message'];
-
-	$email_message=new smtp_message_class;
-
-	$dir = dirname(__FILE__);
-	$dir = preg_split ('%[/\\\]%', $dir);
-	$blank = array_pop($dir);
-	$dir = implode('/', $dir);
-
-	if (!class_exists("sasl_client_class")) {
-		require("$dir/mail/sasl/sasl.php");
+	$debug_level = 0;
+	if ( defined( "EMAIL_DEBUG" ) && EMAIL_DEBUG == 'YES' ) {
+		$debug_level = 2;
 	}
 
-
-    $email_message->localhost=EMAIL_HOSTNAME;
-    $email_message->smtp_host=EMAIL_SMTP_SERVER;
-    $email_message->smtp_direct_delivery=0;
-    $email_message->smtp_exclude_address="";
-    $email_message->smtp_user=EMAIL_SMTP_USER;
-    $email_message->smtp_realm="";
-    $email_message->smtp_password=EMAIL_SMTP_PASS;
-    $email_message->smtp_pop3_auth_host=EMAIL_SMTP_AUTH_HOST;
-	$email_message->smtp_ssl=0;
-
-	$email_message->authentication_mechanism = 'USER'; // SASL authentication
-
-	if (EMAIL_DEBUG_SWITCH=='YES') {
-        $email_message->smtp_debug=1;
-    } else {
-         $email_message->smtp_debug=0;
-    }
-   
-    $email_message->smtp_html_debug=0;
-
-	
-//echo "[$to_address], [$to_name], [$from_address], [$from_name], [$subject], [$message], [$html_messageaz]";
-	$reply_address=$mail_row['from_address'];
-	
-	$error_delivery_name=SITE_NAME;
-	$error_delivery_address=SITE_CONTACT_EMAIL;
-	
-	
-	//$message="Hello ".strtok($to_name," ").",\n\nThis message is just to let you know that your e-mail sending class is working as expected.\n\nHere's some non-ASCII characters ����� in the message body to let you see if they are sent properly encoded.\n\nThank you,\n$from_name";
-	//$email_message=new email_message_class;
-	$email_message->default_charset='UTF-8';
-	$email_message->SetEncodedEmailHeader("To",$to_address,$to_name);
-	$email_message->SetEncodedEmailHeader("From",$from_address,$from_name);
-	$email_message->SetEncodedEmailHeader("Reply-To",$reply_address,$reply_name);
-/*
-	Set the Return-Path header to define the envelope sender address to which bounced messages are delivered.
-	If you are using Windows, you need to use the smtp_message_class to set the return-path address.
-*/
-	if(defined("PHP_OS")
-	&& strcmp(substr(PHP_OS,0,3),"WIN"))
-		$email_message->SetHeader("Return-Path",$error_delivery_address);
-	$email_message->SetEncodedEmailHeader("Errors-To",$error_delivery_address,$error_delivery_name);
-	$email_message->SetEncodedHeader("Subject",$subject);
-	
-
-	if ($html_message=='') { // ONLY TEXT
-		
-		$email_message->AddQuotedPrintableTextPart($email_message->WrapText($message));
-	}else {
-		
-		$email_message->CreateQuotedPrintableHTMLPart($html_message,"",$html_part);
-		//$text_message="This is an HTML message. Please use an HTML capable mail program to read this message.";
-		$email_message->CreateQuotedPrintableTextPart($email_message->WrapText($message),"",$text_part);
-
-		$alternative_parts=array(
-			$html_part,
-			$text_part
-			
+	if ( EMAIL_POP_BEFORE_SMTP == 'YES' ) {
+		$pop = POP3::popBeforeSmtp(
+			EMAIL_POP_SERVER,
+			POP3_PORT,
+			30,
+			EMAIL_SMTP_USER,
+			EMAIL_SMTP_PASS,
+			$debug_level
 		);
-		$email_message->AddAlternativeMultipart($alternative_parts);
-
 	}
 
-	if ($mail_row[attachments]=='Y') {
-		add_mail_attachments($email_message, $mail_row);
+	$mail = new PHPMailer;
+
+	$error = "";
+	try {
+		$mail->isSMTP();
+
+		$mail->SMTPDebug = $debug_level;
+		$mail->Debugoutput = 'html';
+
+		$mail->Host = EMAIL_SMTP_SERVER;
+		$mail->Port = SMTP_PORT;
+
+		if ( EMAIL_TLS == 1 ) {
+			$mail->SMTPSecure = 'tls';
+		} else {
+			$mail->SMTPSecure = '';
+		}
+
+		if ( defined( "EMAIL_SMTP_USER" ) && EMAIL_SMTP_USER != "" ) {
+			$mail->SMTPAuth = true;
+			$mail->Username = EMAIL_SMTP_USER;
+			$mail->Password = EMAIL_SMTP_PASS;
+		}
+
+		$mail->setFrom( $mail_row['from_address'], html_ent_to_utf8( $mail_row['from_name'] ) );
+		$mail->addReplyTo( $mail_row['from_address'], html_ent_to_utf8( $mail_row['from_name'] ) );
+		$mail->addAddress( $mail_row['to_address'], html_ent_to_utf8( $mail_row['to_name'] ) );
+		$mail->Subject = html_ent_to_utf8( $mail_row['subject'] );
+		$mail->msgHTML( html_ent_to_utf8( $mail_row['html_message'] ) );
+		$mail->AltBody = html_ent_to_utf8( $mail_row['message'] );
+		if ( ! $mail->send() ) {
+			$error = $mail->ErrorInfo;
+			file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+		} else {
+			file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+		}
+
+	} catch ( phpmailerException $e ) {
+		$error = $e->errorMessage();
+		file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+	} catch ( Exception $e ) {
+		$error = $e->getMessage();
+		file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
 	}
 
-	$error=$email_message->Send();
-	if(strcmp($error,"")) {
-		//echo "Error: $error\n";
-		$now = gmdate("Y-m-d H:i:s");
+	if ( strcmp( $error, "" ) ) {
+		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='".addslashes($error)."', `date_stamp`='$now' WHERE mail_id=".$mail_row['mail_id'];
+		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . addslashes( $error ) . "', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
 		//echo $sql;
-		mysqli_query($GLOBALS['connection'], $sql) or q_mail_error(mysqli_error($GLOBALS['connection']).$sql);
-
-
+		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	} else {
 
-		$now = gmdate("Y-m-d H:i:s");
+		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=".$mail_row['mail_id'];
-		mysqli_query($GLOBALS['connection'], $sql) or q_mail_error(mysqli_error($GLOBALS['connection']).$sql);
-		//echo $sql;
-
+		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	}
 
-	//echo ".";
-
-
+	return $error;
 }
-
-?>

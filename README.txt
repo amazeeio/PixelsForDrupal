@@ -490,7 +490,9 @@ to help you with merging the new files.
 
 Acknowledgments
 
-SMTP code is based on MIME E-Mail class, released under LGPL by Manuel Lemos.
+PHPMailer
+https://github.com/PHPMailer/PHPMailer
+
 AREA Map code contributed by Martin Diekhoff,  http://www.onecentads.com/
 
 Imagine - Image manipulation library for PHP 5.3 inspired by Python's PIL and other image libraries.

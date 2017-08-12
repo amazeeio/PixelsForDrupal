@@ -39,13 +39,13 @@ $f2 = new functions2();
 require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
 $purifier = new HTMLPurifier(); 
 
-if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (MAIN_PHP=='1')) {
+if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (defined("MAIN_PHP") && MAIN_PHP=='1')) {
 	if (stripslashes($_REQUEST['pass']) == ADMIN_PASSWORD) {
 		$_SESSION['ADMIN'] = '1';
 	}
 }
 if (!isset($_SESSION['ADMIN']) || empty($_SESSION['ADMIN'])) {
-	if (MAIN_PHP=='1') {
+	if (defined("MAIN_PHP") && MAIN_PHP=='1') {
 	?>
 Please input admin password:<br>
 <form method='post'>

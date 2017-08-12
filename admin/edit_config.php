@@ -109,14 +109,16 @@ define('ENABLE_CLOAKING', addslashes($_REQUEST['enable_cloaking']));
 define('VALIDATE_LINK', addslashes($_REQUEST['validate_link']));
 define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
 define('USE_SMTP', addslashes($_REQUEST['use_smtp']));
-define('EMAIL_HOSTNAME', addslashes($_REQUEST['email_hostname']));
 define('EMAIL_SMTP_SERVER', addslashes($_REQUEST['email_smtp_server']));
 define('EMAIL_POP_SERVER', addslashes($_REQUEST['email_pop_server']));
 define('EMAIL_SMTP_USER', addslashes($_REQUEST['email_smtp_user']));
 define('EMAIL_SMTP_PASS', addslashes($_REQUEST['email_smtp_pass']));
 define('EMAIL_SMTP_AUTH_HOST', addslashes($_REQUEST['email_smtp_auth_host']));
+define('SMTP_PORT', addslashes($_REQUEST['smtp_port']));
 define('POP3_PORT', addslashes($_REQUEST['pop3_port']));
+define('EMAIL_TLS', addslashes($_REQUEST['email_tls']));
 define('EMAIL_POP_BEFORE_SMTP', addslashes($_REQUEST['email_pop_before_smtp']));
+define('EMAIL_DEBUG', addslashes($_REQUEST['email_debug']));
 
 define('EMAILS_PER_BATCH', addslashes($_REQUEST['emails_per_batch']));
 define('EMAILS_MAX_RETRY', addslashes($_REQUEST['emails_max_retry']));
@@ -228,14 +230,16 @@ define('ENABLE_CLOAKING', '".ENABLE_CLOAKING."');
 define('VALIDATE_LINK', '".VALIDATE_LINK."');
 define('DISPLAY_PIXEL_BACKGROUND', '".DISPLAY_PIXEL_BACKGROUND."');
 define('USE_SMTP', '".USE_SMTP."');
-define('EMAIL_HOSTNAME', '".EMAIL_HOSTNAME."');
 define('EMAIL_SMTP_SERVER', '".EMAIL_SMTP_SERVER."');
 define('EMAIL_SMTP_USER', '".EMAIL_SMTP_USER."');
 define('EMAIL_SMTP_PASS', '".EMAIL_SMTP_PASS."');
 define('EMAIL_SMTP_AUTH_HOST', '".EMAIL_SMTP_AUTH_HOST."');
+define('SMTP_PORT', '".SMTP_PORT."');
 define('POP3_PORT', '".POP3_PORT."');
+define('EMAIL_TLS', '".EMAIL_TLS."');
 define('EMAIL_POP_SERVER', '".EMAIL_POP_SERVER."');
 define('EMAIL_POP_BEFORE_SMTP', '".EMAIL_POP_BEFORE_SMTP."');
+define('EMAIL_DEBUG', '".EMAIL_DEBUG."');
 
 define('EMAILS_PER_BATCH', '".EMAILS_PER_BATCH."');
 define('EMAILS_MAX_RETRY', '".EMAILS_MAX_RETRY."');
@@ -272,9 +276,7 @@ define('ERROR_REPORTING', ".ERROR_REPORTING.");
 	\$f2 = new functions2();
 
 	include dirname(__FILE__).'/lang/lang.php';
-	require_once (dirname(__FILE__).'/mail/email_message.php');
-	require_once (dirname(__FILE__).'/mail/smtp_message.php');
-	require_once (dirname(__FILE__).'/mail/smtp.php');
+	require_once dirname(__FILE__).'/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 	require_once dirname(__FILE__).'/include/mail_manager.php';
 	require_once dirname(__FILE__).'/include/currency_functions.php';
 	require_once dirname(__FILE__).'/include/price_functions.php';
@@ -332,23 +334,6 @@ body {
 
 }
 </style>
-<script language="javascript">
-
-	function test_email_window () {
-
-		prams = 
-			'host='+document.form1.email_hostname.value+
-			'&email_pop_server='+document.form1.email_pop_server.value+
-			'&user='+document.form1.email_smtp_user.value+
-			'&pass='+document.form1.email_smtp_pass.value+
-			'&auth_host='+document.form1.email_smtp_auth_host.value+
-			'&php3_port='+document.form1.pop3_port.value;
-
-		window.open('test_email.php?'+prams, '', 'toolbar=no, scrollbars=yes, location=no, statusbar=no, menubar=no, resizable=1, width=800, height=500, left = 50, top = 50');
-
-	}
-
-	</script>
 </head>
 <body>
 

@@ -39,25 +39,33 @@ include( "login_functions.php" );
 
 process_login();
 
+if ( $f2->bid( $_REQUEST['BID'] ) != '' ) {
+	$BID = $f2->bid( $_REQUEST['BID'] );
+} else {
+	$BID = 1;
+
+}
+
+load_banner_constants( $BID );
+
 $imagine = new Imagine\Gd\Imagine();
 
 // get the order id
 if ( isset( $_REQUEST['block_id'] ) && $_REQUEST['block_id'] != '' ) {
-	$sql = "SELECT * FROM blocks where block_id='" . $_REQUEST['block_id'] . "' and banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
+	$sql = "SELECT * FROM blocks WHERE block_id='" . $_REQUEST['block_id'] . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
 
 } elseif ( isset( $_REQUEST['aid'] ) && $_REQUEST['aid'] != '' ) {
-	$sql = "SELECT * FROM ads where ad_id='" . $_REQUEST['aid'] . "' ";
+	$sql = "SELECT * FROM ads WHERE ad_id='" . $_REQUEST['aid'] . "' ";
 
 }
 
 $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 $row = mysqli_fetch_array( $result );
 // load all the blocks wot
-$sql = "select * from blocks where order_id='" . $row['order_id'] . "' ";
+$sql = "SELECT * FROM blocks WHERE order_id='" . $row['order_id'] . "' ";
 $result3 = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 //echo $sql;
 
-load_banner_constants( $f2->bid( $_REQUEST['BID'] ) );
 $blocks = array();
 
 $i = 0;
@@ -93,9 +101,9 @@ while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 
 	$blocks[ $i ]['block_id'] = $block_row['block_id'];
 	if ( $block_row['image_data'] == '' ) {
-		$blocks[ $i ]['image_data'] = imagecreatefromstring( GRID_BLOCK );
+		$blocks[ $i ]['image_data'] = $imagine->load( GRID_BLOCK );
 	} else {
-		$blocks[ $i ]['image_data'] = imagecreatefromstring( base64_decode( $block_row['image_data'] ) );
+		$blocks[ $i ]['image_data'] = $imagine->load( base64_decode( $block_row['image_data'] ) );
 
 	}
 
@@ -114,35 +122,31 @@ $low_y  = ! isset( $low_y ) ? 0 : $low_y;
 $x_size = ( $high_x + BLK_WIDTH ) - $low_x;
 $y_size = ( $high_y + BLK_HEIGHT ) - $low_y;
 
+$new_blocks = array();
 foreach ( $blocks as $block ) {
 	$id                = ( $block['x'] - $low_x ) . ( $block['y'] - $low_y );
 	$new_blocks[ $id ] = $block;
 }
 
-$std_image = imagecreatefromstring( GRID_BLOCK );
+$std_image = $imagine->load( GRID_BLOCK );
 
-$image = imagecreatetruecolor( $x_size, $y_size );
-imagealphablending( $image, false );
-imagesavealpha( $image, true );
+// grid size
+$size = new Imagine\Image\Box( $x_size, $y_size );
+
+// create empty image
+$palette = new Imagine\Image\Palette\RGB();
+$color   = $palette->color( '#000', 0 );
+$image   = $imagine->create( $size, $color );
 
 $block_count = 0;
 
-$transparent = imagecolorallocatealpha( $image, 0, 0, 0, 127 );
-
 for ( $i = 0; $i < $y_size; $i += BLK_HEIGHT ) {
 	for ( $j = 0; $j < $x_size; $j = $j + BLK_WIDTH ) {
-		if ( isset($new_blocks["$j$i"]) && $new_blocks["$j$i"]['image_data'] != '' ) {
-			imagecopymerge( $image, $new_blocks["$j$i"]['image_data'], $j, $i, 0, 0, BLK_WIDTH, BLK_HEIGHT, 100 );
-			imagedestroy( $new_blocks["$j$i"]['image_data'] );
-		} else {
-			imagefilledrectangle( $image, $j, $i, $j + BLK_WIDTH, $i + BLK_HEIGHT, $transparent );
+		if ( isset( $new_blocks["$j$i"] ) && $new_blocks["$j$i"]['image_data'] != '' ) {
+			$image->paste( $new_blocks["$j$i"]['image_data'], new Imagine\Image\Point( $j, $i ) );
 		}
 	}
 
 }
 
-header( "Cache-Control: no-cache, must-revalidate" ); // HTTP/1.1
-header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" ); // Date in the past
-
-header( "Content-type: image/png" );
-imagepng( $image );
+$image->show( "png", array( 'png_compression_level' => 9 ) );

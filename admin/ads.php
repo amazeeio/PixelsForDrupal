@@ -71,7 +71,7 @@ function disapprove_modified_order($order_id, $BID) {
 
 <?php
 
-if ( is_numeric( $_REQUEST['ad_id'] ) ) {
+if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 	$imagine = new Imagine\Gd\Imagine();
 
 	$gd_info = @gd_info();
@@ -209,31 +209,6 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 						$image->resize( $box );
 					}
 
-					// paste image onto grid
-					$grid    = $imagine->load( GRID_BLOCK );
-					$imagebg = imageCreateFromstring( GRID_BLOCK );
-
-					// create tiled background using GD
-					if ( function_exists( "imagecreatetruecolor" ) ) {
-						$whole_image = imagecreatetruecolor( $size['x'], $size['y'] );
-					} else {
-						$whole_image = imagecreate( $size['x'], $new_size['y'] );
-					}
-					$imagebg = imageCreateFromstring( GRID_BLOCK );
-					imageSetTile( $whole_image, $imagebg );
-					imageFilledRectangle( $whole_image, 0, 0, $size['x'], $size['y'], IMG_COLOR_TILED );
-
-					// convert GD resource to Imagine
-					ob_start();
-					imagepng( $whole_image );
-					$data = ob_get_contents();
-					ob_end_clean();
-					$tiled_image = $imagine->load( $data );
-
-					// Paste uploaded image onto tiled background
-					$top_left = new Imagine\Image\Point( 0, 0 );
-					$tiled_image->paste( $image, $top_left );
-
 					// create a block size Box
 					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
 
@@ -243,10 +218,12 @@ if ( is_numeric( $_REQUEST['ad_id'] ) ) {
 						for ( $j = 0; $j < ( $size['x'] ); $j += BLK_WIDTH ) {
 
 							// create new destination image
-							$dest = $imagine->create( $block_size );
+							$palette = new Imagine\Image\Palette\RGB();
+							$color = $palette->color('#000', 0);
+							$dest = $imagine->create($block_size, $color);
 
 							// crop a part from the tiled image
-							$block = $imagine->load( $tiled_image->__toString() );
+							$block = $imagine->load($image->__toString());
 							$block->crop( new Imagine\Image\Point( $j, $i ), $block_size );
 
 							// paste the block into the destination image
@@ -390,8 +367,7 @@ if ($_REQUEST['ad_id']!='') {
 } else {
 
 	// select banner id
-
-	if ($f2->bid($_REQUEST['BID'])!='') {
+	if (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') {
 		$BID = $f2->bid($_REQUEST['BID']);
 	} else {
 		$BID = 1;
@@ -409,13 +385,13 @@ $res = mysqli_query($GLOBALS['connection'], $sql);
 		<?php
 		while ($row=mysqli_fetch_array($res)) {
 			
-			if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
+			if (($row['banner_id']==$BID) && ($BID!='all')) {
 				$sel = 'selected';
 			} else {
 				$sel ='';
 
 			}
-			echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+			echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 		}
 		?>
 	</select>

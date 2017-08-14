@@ -65,7 +65,7 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 		<?php
 	while ($row=mysqli_fetch_array($res)) {
 		
-		if (($row['banner_id']==$BID) && ($f2->bid($_REQUEST['BID'])!='all')) {
+		if (($row['banner_id']==$BID) && ($BID!='all')) {
 			$sel = 'selected';
 		} else {
 			$sel ='';

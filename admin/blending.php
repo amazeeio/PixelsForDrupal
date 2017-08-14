@@ -128,7 +128,7 @@ Image Blending - Allows you to specify an image to blend in with your grid in th
 - Upload PNG true color image<br>
 - The image must have an alpha channel (Eg. PNG image created with Photoshop with blending options set).<br>
 - See http://www.milliondollarscript.com/admin/temp/background.png as an example of an image with an alpha channel set to 50%.<br>
-- <a href="http://www.milliondollarscript.com/alpha-blending-tutorial.htm" target="_blank">See the tutorial</a> to get an idea how to create background images using Photoshop.
+- <a href="https://milliondollarscript.com/article/alpha-blending-tutorial/" target="_blank">See the tutorial</a> to get an idea how to create background images using Photoshop.
 <hr>
 <?php
 $sql = "Select * from banners ";

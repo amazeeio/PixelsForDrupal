@@ -158,7 +158,7 @@ function echo_ad_list_data($admin) {
 			$val = $FORMATTED_DATE."<br>";
 			
 			if ($days==0) {
-				$val = $val. '<span class="today"><b>'.$label["ads_list_today"].'</span>';
+				$val = $val. '<span class="today">'.$label["ads_list_today"].'</span>';
 
 			} elseif (($days > 0) && ($days < 2)) { 
 				$val = $val .'<span class="days_ago">'. $days." ".$label["ads_list_day_ago"]."</span>"; 
@@ -175,9 +175,11 @@ function echo_ad_list_data($admin) {
 		
 
 		if ($column_info[$template_tag]['is_bold']=='Y') {
-			$b1="<b>"; $b2="</b>";
+			$b1="<b>";
+			$b2="</b>";
 		} else {
-			$b1='';$b2='';
+			$b1='';
+			$b2='';
 		}
 
 		if ($column_info[$template_tag]['clean']=='Y') { // fix up punctuation spacing

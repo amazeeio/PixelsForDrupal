@@ -309,7 +309,7 @@ Ads list
 
 */
 
-#adslist, TABLE.adslist {
+#pixels_list, TABLE.pixels_list {
 	background-color: #d9d9d9;
 	
 	
@@ -318,7 +318,7 @@ Ads list
 
 
 
-#adslist TD.list_data_cell {
+#pixels_list TD.list_data_cell {
 	font-family: "Arial", sans-serif;
 	font-size: 10pt;
 	color: #000000;
@@ -326,24 +326,24 @@ Ads list
 	
 }
 
-#adslist .today {
+#pixels_list .today {
 	color: #ff0000;
 	font-weight: bold;
 
 }
 
-#adslist .days_ago {
+#pixels_list .days_ago {
 	color: #339900;
 	font-weight: bold;
 }
 
-#adslist .days_ago2 {
+#pixels_list .days_ago2 {
 	color: #C0C0C0;
 	font-weight: bold;
 }
 
 
-#adslist .list_header_cell  {
+#pixels_list .list_header_cell  {
 
 	font-size: 10pt;
 	margin: 0px;

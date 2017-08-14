@@ -379,18 +379,14 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 
 
 		}
-		$dir = dirname(__FILE__);
-		$dir = preg_split ('%[/\\\]%', $dir);
-		$blank = array_pop($dir);
-		$dir = implode('/', $dir);
 
-		include ($dir.'/mouseover_box.htm'); // edit this file to change the style of the mouseover box!
+		include ('../mouseover_box.htm'); // edit this file to change the style of the mouseover box!
 		
 		echo '<script language="JAVASCRIPT">';
 		include ('mouseover_js.inc.php');
 		echo '</script>';
 		?>
-		<table border='0' bgcolor='#d9d9d9' cellspacing="1" cellpadding="5" id="adslist" >
+		<table border='0' bgcolor='#d9d9d9' cellspacing="1" cellpadding="5" id="pixels_list" >
 		<tr bgcolor="#EAEAEA">
 		<?php
 		if ($admin == true ) {

@@ -371,16 +371,19 @@ function output_grid( $show, $file, $BID, $types ) {
 		for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
 			for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
 
-				if ( $y == 1 ) {
-					imagestringup( $map->getGdResource(), 2, $x, 18, "#$col_c ", $textcolor_w );
-					imagestringup( $map->getGdResource(), 1, $x + 1, 18 + 1, "$col_c ", $textcolor );
+				if ( $y == 0 ) {
+					$spaces = str_repeat( ' ', 3 - strlen( $col_c ) );
+					imagestringup( $map->getGdResource(), 1, $x, 15, $spaces . "$col_c", $textcolor_w );
+					imagestringup( $map->getGdResource(), 1, $x + 1, 15 + 1, $spaces . "$col_c", $textcolor );
 					$col_c ++;
 				}
 			}
-			imagestring( $map->getGdResource(), 2, $x, $y, "#$row_c ", $textcolor_w );
-			imagestring( $map->getGdResource(), 1, $x + 1, $y + 1, "#$row_c ", $textcolor );
+
+			imagestring( $map->getGdResource(), 1, 1, $y, "$row_c", $textcolor_w );
+			imagestring( $map->getGdResource(), 1, 2, $y + 1, "$row_c", $textcolor );
 			$row_c ++;
 		}
+
 	}
 
 	// set output options

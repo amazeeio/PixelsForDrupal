@@ -301,7 +301,6 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 				setMemoryLimit($uploadfile);
 
 				// check image size
-
 				$img_size = getimagesize( $tmp_image_file );
 				// check the size
 				if ( ( MDS_RESIZE != 'YES' ) && ( ( $img_size[0] > $size['x'] ) || ( $img_size[1] > $size['y'] ) ) ) {
@@ -315,13 +314,10 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 
 					while ( $block_row = mysqli_fetch_array( $blocks_result ) ) {
 
-						if ( ! isset( $high_x ) || $high_x == '' ) {
-							$high_x = $block_row['x'];
-							$high_y = $block_row['y'];
-							$low_x  = $block_row['x'];
-							$low_y  = $block_row['y'];
-
-						}
+						$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+						$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+						$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+						$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
 						if ( $block_row['x'] > $high_x ) {
 							$high_x = $block_row['x'];
@@ -361,40 +357,38 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 					$filter->add(new AutoRotate());
 					$filter->apply($image);
 
-					// image size
-					$box = new Imagine\Image\Box( $size['x'], $size['y'] );
-
 					// resize uploaded image
 					if ( MDS_RESIZE == 'YES' ) {
-						$image->resize( $box );
+						$resize = new Imagine\Image\Box( $size['x'], $size['y'] );
+						$image->resize( $resize );
 					}
 
 					// create a block size Box
 					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
 
 					// Paste image into selected blocks (AJAX mode allows individual block selection)
-					for ( $i = 0; $i < ( $size['y'] ); $i += BLK_HEIGHT ) {
+					for ( $y = 0; $y < $size['y']; $y += BLK_HEIGHT ) {
 
-						for ( $j = 0; $j < ( $size['x'] ); $j += BLK_WIDTH ) {
+						for ( $x = 0; $x < $size['x']; $x += BLK_WIDTH ) {
 
-							// create new destination image
-							$palette = new Imagine\Image\Palette\RGB();
-							$color = $palette->color('#000', 0);
-							$dest = $imagine->create($block_size, $color);
+                            // create new destination image
+                            $palette = new Imagine\Image\Palette\RGB();
+                            $color = $palette->color('#000', 0);
+                            $dest = $imagine->create($block_size, $color);
 
 							// crop a part from the tiled image
-							$block = $imagine->load($image->__toString());
-							$block->crop( new Imagine\Image\Point( $j, $i ), $block_size );
+							$block = $image->copy();
+							$block->crop( new Imagine\Image\Point( $x, $y ), $block_size );
 
 							// paste the block into the destination image
 							$dest->paste( $block, new Imagine\Image\Point( 0, 0 ) );
 
 							// save the image as a base64 encoded string
-							$data = base64_encode( $dest->__toString() );
+							$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
 
 							// some variables
-							$map_x     = $j + $low_x;
-							$map_y     = $i + $low_y;
+							$map_x     = $x + $low_x;
+							$map_y     = $y + $low_y;
 							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
 							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 

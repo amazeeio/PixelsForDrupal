@@ -551,21 +551,21 @@ function validate_block_size($image_name) {
 
 	}
 
+	$imagine = new Imagine\Gd\Imagine();
+
+	$img = $imagine->load (base64_decode($b_row[$image_name]));
 
 	$temp_file = SERVER_PATH_TO_ADMIN."temp/temp_block".md5(session_id()).".png";
-
-	$img = imagecreatefromstring (base64_decode($b_row[$image_name]));
-	touch($temp_file);
-	imagepng($img, $temp_file);
-	$size = getimagesize($temp_file);
+	$img->save($temp_file);
+	$size = $img->getSize();
 
 	unlink($temp_file);
 
-	if ($size[0] != $block_w) {
+	if ($size->getWidth() != $block_w) {
 		return false;
 	}
 
-	if ($size[1] != $block_h) {
+	if ($size->getHeight() != $block_h) {
 		return false;
 	}
 

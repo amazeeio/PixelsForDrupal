@@ -46,10 +46,10 @@ function load_price_zones($banner_id) {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$key=0;
 	while ($row = mysqli_fetch_array($result)) {
-		$price_table[$key]['row_from']=$row['row_from'];
-		$price_table[$key]['row_to']=$row['row_to'];
-		$price_table[$key]['col_from']=$row['col_from'];
-		$price_table[$key]['col_to']=$row['col_to'];
+		$price_table[$key]['row_from']=$row['row_from'] * BLK_WIDTH;
+		$price_table[$key]['row_to']=$row['row_to'] * BLK_WIDTH;
+		$price_table[$key]['col_from']=$row['col_from'] * BLK_HEIGHT;
+		$price_table[$key]['col_to']=$row['col_to'] * BLK_HEIGHT;
 		$price_table[$key]['color']=$row['color'];
 		$price_table[$key]['price']=$row['price'];
 		$price_table[$key]['currency']=$row['currency'];
@@ -63,27 +63,26 @@ function load_price_zones($banner_id) {
 
 ##################################################
 
-function get_zone_color($banner_id, $row, $col) {
-	$row = $row+1;
-	$col = $col+1;
+function get_zone_color( $banner_id, $row, $col ) {
 	global $price_table;
-	if (isset($price_table['loaded']) && $price_table['loaded']!=1) {
-		load_price_zones($banner_id);
+
+	if ( ! isset( $price_table['loaded'] ) ) {
+		load_price_zones( $banner_id );
 	}
 
-	$color = "white";
+	$row += 10;
+	$col += 10;
 
-	foreach ($price_table as $key=>$val) {
-		if ((($price_table[$key]['row_from'] <= $row) && ($price_table[$key]['row_to'] >= $row)) &&
-			(($price_table[$key]['col_from'] <= $col) && ($price_table[$key]['col_to'] >= $col))) {
-			
-			return $price_table[$key]['color'];
+	foreach ( $price_table as $key => $val ) {
+
+		if ( ( ( $price_table[ $key ]['row_from'] <= $row ) && ( $price_table[ $key ]['row_to'] >= $row ) ) &&
+		     ( ( $price_table[ $key ]['col_from'] <= $col ) && ( $price_table[ $key ]['col_to'] >= $col ) ) ) {
+
+			return $price_table[ $key ]['color'];
 		}
 	}
 
-	return $color;
-
-	
+	return "";
 }
 
 #############################################################

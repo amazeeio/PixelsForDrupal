@@ -39,11 +39,10 @@ include( "login_functions.php" );
 
 process_login();
 
-if ( $f2->bid( $_REQUEST['BID'] ) != '' ) {
+if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
 	$BID = $f2->bid( $_REQUEST['BID'] );
 } else {
 	$BID = 1;
-
 }
 
 load_banner_constants( $BID );
@@ -52,36 +51,28 @@ $imagine = new Imagine\Gd\Imagine();
 
 // get the order id
 if ( isset( $_REQUEST['block_id'] ) && $_REQUEST['block_id'] != '' ) {
-	$sql = "SELECT * FROM blocks WHERE block_id='" . $_REQUEST['block_id'] . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
-
+	$sql = "SELECT order_id FROM blocks WHERE block_id='" . $_REQUEST['block_id'] . "' AND banner_id='" . $BID . "' ";
 } elseif ( isset( $_REQUEST['aid'] ) && $_REQUEST['aid'] != '' ) {
-	$sql = "SELECT * FROM ads WHERE ad_id='" . $_REQUEST['aid'] . "' ";
-
+	$sql = "SELECT order_id FROM ads WHERE ad_id='" . $_REQUEST['aid'] . "' ";
 }
-
 $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 $row = mysqli_fetch_array( $result );
+
+$size = get_pixel_image_size( $row['order_id'] );
+
 // load all the blocks wot
-$sql = "SELECT * FROM blocks WHERE order_id='" . $row['order_id'] . "' ";
+$sql = "SELECT block_id,x,y,image_data FROM blocks WHERE order_id='" . $row['order_id'] . "' ";
 $result3 = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-//echo $sql;
 
 $blocks = array();
 
 $i = 0;
 while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 
-	if ( isset( $high_x ) && $high_x == '' ) {
-		$high_x = $block_row['x'];
-		$high_y = $block_row['y'];
-		$low_x  = $block_row['x'];
-		$low_y  = $block_row['y'];
-	}
-
-	$high_x = ! isset( $high_x ) ? 0 : $high_x;
-	$high_y = ! isset( $high_y ) ? 0 : $high_y;
-	$low_x  = ! isset( $low_x ) ? 0 : $low_x;
-	$low_y  = ! isset( $low_y ) ? 0 : $low_y;
+	$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+	$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+	$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+	$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
 	if ( $block_row['x'] > $high_x ) {
 		$high_x = $block_row['x'];
@@ -111,7 +102,6 @@ while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 	$blocks[ $i ]['y'] = $block_row['y'];
 
 	$i ++;
-
 }
 
 $high_x = ! isset( $high_x ) ? 0 : $high_x;
@@ -140,13 +130,12 @@ $image   = $imagine->create( $size, $color );
 
 $block_count = 0;
 
-for ( $i = 0; $i < $y_size; $i += BLK_HEIGHT ) {
-	for ( $j = 0; $j < $x_size; $j = $j + BLK_WIDTH ) {
-		if ( isset( $new_blocks["$j$i"] ) && $new_blocks["$j$i"]['image_data'] != '' ) {
-			$image->paste( $new_blocks["$j$i"]['image_data'], new Imagine\Image\Point( $j, $i ) );
+for ( $y = 0; $y < $y_size; $y += BLK_HEIGHT ) {
+	for ( $x = 0; $x < $x_size; $x += BLK_WIDTH ) {
+		if ( isset( $new_blocks[ $x . $y ] ) && $new_blocks[ $x . $y ]['image_data'] != '' ) {
+			$image->paste( $new_blocks[ $x . $y ]['image_data'], new Imagine\Image\Point( $x, $y ) );
 		}
 	}
-
 }
 
 $image->show( "png", array( 'png_compression_level' => 9 ) );

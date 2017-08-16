@@ -72,6 +72,9 @@ function disapprove_modified_order($order_id, $BID) {
 <?php
 
 if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
+
+	$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
+
 	$imagine = new Imagine\Gd\Imagine();
 
 	$gd_info = @gd_info();
@@ -155,13 +158,10 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 
 					while ( $block_row = mysqli_fetch_array( $blocks_result ) ) {
 
-						if ( ! isset( $high_x ) || $high_x == '' ) {
-							$high_x = $block_row['x'];
-							$high_y = $block_row['y'];
-							$low_x  = $block_row['x'];
-							$low_y  = $block_row['y'];
-
-						}
+						$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+						$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+						$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+						$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
 						if ( $block_row['x'] > $high_x ) {
 							$high_x = $block_row['x'];
@@ -201,21 +201,19 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 					$filter->add(new AutoRotate());
 					$filter->apply($image);
 
-					// image size
-					$box = new Imagine\Image\Box( $size['x'], $size['y'] );
-
 					// resize uploaded image
 					if ( MDS_RESIZE == 'YES' ) {
-						$image->resize( $box );
+						$resize = new Imagine\Image\Box( $size['x'], $size['y'] );
+						$image->resize( $resize );
 					}
 
 					// create a block size Box
 					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
 
 					// Paste image into selected blocks (AJAX mode allows individual block selection)
-					for ( $i = 0; $i < ( $size['y'] ); $i += BLK_HEIGHT ) {
+					for ( $y = 0; $y < $size['y']; $y += BLK_HEIGHT ) {
 
-						for ( $j = 0; $j < ( $size['x'] ); $j += BLK_WIDTH ) {
+						for ( $x = 0; $x < $size['x']; $x += BLK_WIDTH ) {
 
 							// create new destination image
 							$palette = new Imagine\Image\Palette\RGB();
@@ -223,14 +221,14 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 							$dest = $imagine->create($block_size, $color);
 
 							// crop a part from the tiled image
-							$block = $imagine->load($image->__toString());
-							$block->crop( new Imagine\Image\Point( $j, $i ), $block_size );
+							$block = $image->copy();
+							$block->crop( new Imagine\Image\Point( $x, $y ), $block_size );
 
 							// paste the block into the destination image
 							$dest->paste( $block, new Imagine\Image\Point( 0, 0 ) );
 
 							// save the image as a base64 encoded string
-							$data = base64_encode( $dest->__toString() );
+							$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
 
 							// some variables
 							$map_x     = $j + $low_x;
@@ -248,7 +246,6 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 				unlink( $tmp_image_file );
 
 				if ( AUTO_APPROVE != 'Y' ) { // to be approved by the admin
-
 					disapprove_modified_order( $order_id, $prams['banner_id'] );
 				}
 

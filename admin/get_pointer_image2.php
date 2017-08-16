@@ -33,129 +33,106 @@ define ('NO_HOUSE_KEEP', 'YES');
 
 require ('../config.php');
 
+if ( $f2->bid( $_REQUEST['BID'] ) != '' ) {
+	$BID = $f2->bid( $_REQUEST['BID'] );
+} else {
+	$BID = 1;
+
+}
+
+load_banner_constants( $BID );
+
+$imagine = new Imagine\Gd\Imagine();
 
 // get the order id
-$sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' and banner_id='".$f2->bid($_REQUEST['BID'])."' ";
-$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-$row = mysqli_fetch_array($result);
+if ( isset( $_REQUEST['block_id'] ) && $_REQUEST['block_id'] != '' ) {
+	$sql = "SELECT * FROM blocks WHERE block_id='" . $_REQUEST['block_id'] . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
+
+} elseif ( isset( $_REQUEST['aid'] ) && $_REQUEST['aid'] != '' ) {
+	$sql = "SELECT * FROM ads WHERE ad_id='" . $_REQUEST['aid'] . "' ";
+
+}
+
+$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+$row = mysqli_fetch_array( $result );
+
 // load all the blocks wot
-$sql = "select * from blocks where order_id='".$row['order_id']."' ";
-$result3 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
+$sql = "SELECT * FROM blocks WHERE order_id='" . $row['order_id'] . "' ";
+$result3 = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
+$blocks = array();
 
-load_banner_constants($f2->bid($_REQUEST['BID']));
+$i = 0;
+while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 
-//echo $sql;
+	$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+	$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+	$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+	$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
-
-// find high x, y & low x, y
-// low x,y is the top corner, high x,y is the bottom corner
-
-while ($block_row = mysqli_fetch_array($result3)) {
-
-	if ($high_x=='') {
-		$high_x = $block_row['x'];
-		$high_y = $block_row['y'];
-		$low_x = $block_row['x'];
-		$low_y = $block_row['y'];
-
-	}
-
-	if ($block_row['x'] > $high_x) {
+	if ( $block_row['x'] > $high_x ) {
 		$high_x = $block_row['x'];
 	}
 
-	if ($block_row['y'] > $high_y) {
+	if ( $block_row['y'] > $high_y ) {
 		$high_y = $block_row['y'];
 	}
 
-	if ($block_row['y'] < $low_y) {
+	if ( $block_row['y'] < $low_y ) {
 		$low_y = $block_row['y'];
 	}
 
-	if ($block_row['x'] < $low_x) {
+	if ( $block_row['x'] < $low_x ) {
 		$low_x = $block_row['x'];
 	}
 
-	
-//echo "i is $i ".$block_row['block_id']." (x:".$block_row['x'].",y:".$block_row['y'].")<br>";
-	$blocks[$i]['block_id'] = $block_row['block_id'];
-	$blocks[$i]['image_data'] = imagecreatefromstring ( base64_decode($block_row['image_data']));
-	imagetruecolortopalette($blocks[$i]['image_data'], false, 256);
-	$blocks[$i]['x'] = $block_row['x'];
-	$blocks[$i]['y'] = $block_row['y'];
+	$blocks[ $i ]['block_id'] = $block_row['block_id'];
+	if ( $block_row['image_data'] == '' ) {
+		$blocks[ $i ]['image_data'] = $imagine->load( GRID_BLOCK );
+	} else {
+		$blocks[ $i ]['image_data'] = $imagine->load( base64_decode( $block_row['image_data'] ) );
 
-	$i++;
+	}
 
-}
+	$blocks[ $i ]['x'] = $block_row['x'];
+	$blocks[ $i ]['y'] = $block_row['y'];
 
-//echo "high: $high_x, $high_y low: $low_x, $low_y<br>".BLK_WIDTH;
-
-//print_r($blocks);
-$x_size = ($high_x + BLK_WIDTH) - $low_x;
-$y_size = ($high_y + BLK_HEIGHT) - $low_y;
-//$x_size = ($high_x - $low_x)+BLK_WIDTH;
-//$y_size = ($high_y - $low_y)+BLK_HEIGHT; 
-
-//echo "size:".sizeof($blocks)."<br>";
-
-foreach ($blocks as $block) {
-
-	$id = ($block['x']-$low_x).($block['y']-$low_y);
-	$new_blocks[$id] = $block;
-	//imagedestroy($block['image_data']);
+	$i ++;
 
 }
 
-//echo "xs: $x_size ys $y_size<br>";
-//$std_image =  "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAABGdBTUEAALGPC/xhBQAAABdJREFUKFNjvHLlCgMeAJT+jxswjFBpAOAoCvbvqFc9AAAAAElFTkSuQmCC";
+$high_x = ! isset( $high_x ) ? 0 : $high_x;
+$high_y = ! isset( $high_y ) ? 0 : $high_y;
+$low_x  = ! isset( $low_x ) ? 0 : $low_x;
+$low_y  = ! isset( $low_y ) ? 0 : $low_y;
 
-$std_image = imagecreatefromstring(GRID_BLOCK);
-//
-//if (function_exists("imagecreatetruecolor")) {
-//	$image = imagecreatetruecolor ( $x_size, $y_size  );
-	
-//} else {
-$image = imagecreate ( $x_size, $y_size );
-imagetruecolortopalette($image, false, 256);
-$trans = imagecolorallocate($image,0,0,0);
-imagecolortransparent($image , $trans);
-//}
-# imagecopy ( $image, $blocks[1], int dst_x, int dst_y, int src_x, int src_y, int src_w, int src_h )
-//imagecopy ( $image, $blocks[1]['image_data'], 0, 0, 0, 0, BLK_WIDTH, BLK_HEIGHT );
+$x_size = ( $high_x + BLK_WIDTH ) - $low_x;
+$y_size = ( $high_y + BLK_HEIGHT ) - $low_y;
 
+$new_blocks = array();
+foreach ( $blocks as $block ) {
+	$id                = ( $block['x'] - $low_x ) . ( $block['y'] - $low_y );
+	$new_blocks[ $id ] = $block;
+}
 
+$std_image = $imagine->load( GRID_BLOCK );
 
+// grid size
+$size = new Imagine\Image\Box( $x_size, $y_size );
 
-$block_count =0;
+// create empty image
+$palette = new Imagine\Image\Palette\RGB();
+$color   = $palette->color( '#000', 0 );
+$image   = $imagine->create( $size, $color );
 
-for ($i=0; $i<$y_size; $i+=BLK_HEIGHT) {
-	for ($j=0; $j<$x_size; $j=$j+BLK_WIDTH) {
-		//echo $j.$i."<br>";
-		if ($new_blocks["$j$i"]['image_data']!='') {
-			imagecopy ($image, $new_blocks["$j$i"]['image_data'], $j, $i, 0, 0, BLK_WIDTH, BLK_HEIGHT );
-			imagedestroy($new_blocks["$j$i"]['image_data']);
-			//echo "copy block..<br>";
-		} else {
-			imagefilledrectangle  ( $image, $j, $i, $j+BLK_WIDTH, $i+BLK_HEIGHT, $trans );
-			//imagecopy ( $image, $std_image, $j, $i, 0, 0, 10, 10 );
-			//echo "copy std..";
+$block_count = 0;
 
+for ( $y = 0; $y < ( $y_size ); $y += BLK_HEIGHT ) {
+	for ( $x = 0; $x < ( $x_size ); $x += BLK_WIDTH ) {
+		if ( isset( $new_blocks["$x$y"] ) && $new_blocks["$x$y"]['image_data'] != '' ) {
+			$image->paste( $new_blocks["$x$y"]['image_data'], new Imagine\Image\Point( $x, $y ) );
 		}
 	}
-
 }
 
-imagedestroy($std_image);
-
-//imageline ( $image, 0, 0, int x2, int y2, 0 );
-$c=imagecolorallocate($image, 0, 0, 0);
-//echo "0, 0, $size_x, $size_y, $c";
-imagerectangle ( $image, 0, 0, $x_size-1, $y_size-1, $c);
-header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-
-header ("Content-type: image/gif");
-imagegif( $image);
-
-?>
+$image->show( "png", array( 'png_compression_level' => 9 ) );

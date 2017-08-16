@@ -803,7 +803,7 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 ?>
 
-<span id="block_pointer" onmousemove="show_pointer2(event)" onclick="do_block_click(event);" style='cursor: pointer;position:absolute;left:0px; top:0px;background-color:#FFFFFF; visibility:hidden '><img src="get_pointer_graphic.php?BID=<?php echo $BID; ?>" alt="" /></span>
+<span id="block_pointer" onmousemove="show_pointer2(event)" onclick="do_block_click(event);" style='cursor: pointer;position:absolute;left:0px; top:0px;background:transparent; visibility:hidden '><img src="get_pointer_graphic.php?BID=<?php echo $BID; ?>" alt="" /></span>
 
 
 <p>

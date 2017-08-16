@@ -1987,7 +1987,6 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 //echo "<P>url: $url, alt_text: $alt_text </p>";
 	
 	foreach ($block_info as $key=>$block) {
-
 		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`, `click_count`) VALUES ('".$key."',  '".$_SESSION['MDS_ID']."' , 'reserved' , '".($block['map_x'])."' , '".($block['map_y'])."' , '".$block['image_data']."' , '".addslashes($url)."' , '".addslashes($alt_text)."', '".$approved."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', '".$block['price']."', '".$order_id."', '".$temp_order_row['ad_id']."', 0)";
 //echo $sql."<br>";
 		
@@ -2965,41 +2964,37 @@ function get_pixel_image_size($order_id) {
 
 	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	
-//echo $sql;
 	// find high x, y & low x, y
-// low x,y is the top corner, high x,y is the bottom corner
+    // low x,y is the top corner, high x,y is the bottom corner
 
 	while ($block_row = mysqli_fetch_array($result3)) {
 
-		if ($high_x=='') {
-			$high_x = $block_row['x'];
-			$high_y = $block_row['y'];
-			$low_x = $block_row['x'];
-			$low_y = $block_row['y'];
+		$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+		$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+		$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+		$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
-		}
-
-		if ($block_row['x'] > $high_x) {
+		if ( $block_row['x'] > $high_x ) {
 			$high_x = $block_row['x'];
 		}
 
-		if ($block_row['y'] > $high_y) {
+		if ( $block_row['y'] > $high_y ) {
 			$high_y = $block_row['y'];
 		}
 
-		if ($block_row['y'] < $low_y) {
+		if ( $block_row['y'] < $low_y ) {
 			$low_y = $block_row['y'];
 		}
 
-		if ($block_row['x'] < $low_x) {
+		if ( $block_row['x'] < $low_x ) {
 			$low_x = $block_row['x'];
 		}
-
-		
-
-		$i++;
-
 	}
+
+	$high_x = ! isset( $high_x ) ? 0 : $high_x;
+	$high_y = ! isset( $high_y ) ? 0 : $high_y;
+	$low_x  = ! isset( $low_x ) ? 0 : $low_x;
+	$low_y  = ! isset( $low_y ) ? 0 : $low_y;
 
 	$size['x'] = ($high_x + BLK_WIDTH) - $low_x;
 	$size['y'] = ($high_y + BLK_HEIGHT) - $low_y;
@@ -3053,10 +3048,11 @@ function decimal_to_hex($decimal) {
 }
 
 function htmlent_to_hex ($str) {
-// convert html Unicode entities to Javascript Unicode entities &#51060 to \u00ED
-	return preg_replace ("/&#([0-9A-z]+);/e", "'\\\u'.decimal_to_hex('\\1')" , $str);
+    // convert html Unicode entities to Javascript Unicode entities &#51060 to \u00ED
+	return preg_replace_callback ("/&#([0-9A-z]+);/", function($m) { decimal_to_hex($m[1]); } , $str);
 }
-// Javascript string preperation.
+
+// Javascript string preparation.
 function js_out_prep($str) {
 	$str = addslashes($str);
 	$str = htmlent_to_hex($str);

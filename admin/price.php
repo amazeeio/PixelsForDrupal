@@ -95,6 +95,8 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 
 if ($BID!='') {
 
+    load_banner_constants($BID);
+
 	?>
 	<hr>
 	<b>Grid ID:</b> <?php echo $BID; ?><br>
@@ -111,6 +113,7 @@ if ($BID!='') {
 
 		global $b_row, $BID;
 
+		$error = "";
 		if (trim($_REQUEST['row_from'])=='') {
 			$error .= "<b>- 'Start from Row' code is blank</b><br>";
 		}
@@ -276,21 +279,21 @@ if ($BID!='') {
 
 					<tr bgcolor="#ffffff">
 
-					 <td><font face="Arial" size="2"><?php echo $row[banner_id];?></font></td>
-					<td bgcolor="<?php if ($row[color]=='yellow') { echo '#FFFF00';} elseif ($row[color]=='cyan') { echo '#00FFFF';} elseif ($row[color]=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php 
+					 <td><font face="Arial" size="2"><?php echo $row['banner_id'];?></font></td>
+					<td bgcolor="<?php if ($row['color']=='yellow') { echo '#FFFF00';} elseif ($row['color']=='cyan') { echo '#00FFFF';} elseif ($row['color']=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php
 						
 					echo $row['color'];
 					 
 					 ?>
 						 
 					</font></td>
-					<td><font face="Arial" size="2"><?php echo $row[row_from];?></font></td>
-					<td><font face="Arial" size="2"><?php echo $row[row_to];?></font></td>
-					<td><font face="Arial" size="2"><?php echo $row[col_from];?></font></td>
-					<td><font face="Arial" size="2"><?php echo $row[col_to];?></font></td>
-					<td><font face="Arial" size="2"><?php echo $row[price];?></font></td>
-					<td><font face="Arial" size="2"><?php echo $row[currency];?></font></td>
-					<td nowrap><font face="Arial" size="2"><a href="<?php echo $_SERVER['PHP_SELF'];?>?price_id=<?php echo $row['price_id'];?>&BID=<?php echo $BID; ?>&action=edit">Edit</a> | <a href="<?php echo $_SERVER['PHP_SELF'];?>?price_id=<?php echo $row[price_id];?>&BID=<?php echo $BID; ?>&action=delete" onclick="return confirmLink(this, 'Delete, are you sure?');">Delete</a></font></td>	
+					<td><font face="Arial" size="2"><?php echo $row['row_from'];?></font></td>
+					<td><font face="Arial" size="2"><?php echo $row['row_to'];?></font></td>
+					<td><font face="Arial" size="2"><?php echo $row['col_from'];?></font></td>
+					<td><font face="Arial" size="2"><?php echo $row['col_to'];?></font></td>
+					<td><font face="Arial" size="2"><?php echo $row['price'];?></font></td>
+					<td><font face="Arial" size="2"><?php echo $row['currency'];?></font></td>
+					<td nowrap><font face="Arial" size="2"><a href="<?php echo $_SERVER['PHP_SELF'];?>?price_id=<?php echo $row['price_id'];?>&BID=<?php echo $BID; ?>&action=edit">Edit</a> | <a href="<?php echo $_SERVER['PHP_SELF'];?>?price_id=<?php echo $row['price_id'];?>&BID=<?php echo $BID; ?>&action=delete" onclick="return confirmLink(this, 'Delete, are you sure?');">Delete</a></font></td>
 					
 					
 					</tr>
@@ -322,7 +325,7 @@ if ($BID!='') {
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 
-		if ($error=='') {
+		if (isset($error) && $error=='') {
 		$_REQUEST['color'] = $row['color'];
 		$_REQUEST['price_id'] = $row['price_id'];
 		$_REQUEST['row_from'] = $row['row_from'];
@@ -358,10 +361,10 @@ if ($BID!='') {
 	<tr bgcolor="#ffffff" ><td><font size="2">Color :</font></td><td>
 	<select  name="color">
 	<option value="" >[Select]</option>
-	<option value="yellow" <?php if ($_REQUEST[color]=='yellow') {echo ' selected ';} ?> style="background-color: #FFFF00">Yellow</option>
-	<option value="cyan" <?php if ($_REQUEST[color]=='cyan'){ echo ' selected ';} ?> style="background-color: #00FFFF">Cyan</option>
-	<option value="magenta" <?php if ($_REQUEST[color]=='magenta') { echo ' selected ';} ?> style="background-color: #FF00FF">Magenta</option>
-	<option value="white" <?php if ($_REQUEST[color]=='white') { echo ' selected ';} ?> style="background-color: #FFffFF">White</option>
+	<option value="yellow" <?php if ($_REQUEST['color']=='yellow') {echo ' selected ';} ?> style="background-color: #FFFF00">Yellow</option>
+	<option value="cyan" <?php if ($_REQUEST['color']=='cyan'){ echo ' selected ';} ?> style="background-color: #00FFFF">Cyan</option>
+	<option value="magenta" <?php if ($_REQUEST['color']=='magenta') { echo ' selected ';} ?> style="background-color: #FF00FF">Magenta</option>
+	<option value="white" <?php if ($_REQUEST['color']=='white') { echo ' selected ';} ?> style="background-color: #FFffFF">White</option>
 	</select>
 
 	</td></tr>

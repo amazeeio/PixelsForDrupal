@@ -1775,25 +1775,23 @@ function select_block ($map_x, $map_y) {
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			
 
-			$cell="0";			
+			$cell="0";
 
-			for ($i=0; $i < $b_row['grid_height']; $i++) {
-				for ($j=0; $j < $b_row['grid_width']; $j++) {
+			for ( $y = 0; $y < ( $b_row['grid_height'] * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
+				for ( $x = 0; $x < ( $b_row['grid_width'] * BLK_WIDTH ); $x += BLK_WIDTH ) {
 
-					if (in_array($cell, $new_blocks)) {
+					if ( in_array( $cell, $new_blocks ) ) {
 
-						$price = get_zone_price($BID, $i, $j);
+						$price = get_zone_price( $BID, $y, $x );
 
-						$currency = get_default_currency();
-
-						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('$cell',  '".$_SESSION['MDS_ID']."' , 'reserved' , '".($j*BLK_WIDTH)."' , '".($i*BLK_HEIGHT)."' , '' , '' , '', '".AUTO_APPROVE."', '".$BID."', '".get_default_currency()."', '".$price."', '".$_SESSION['MDS_order_id']."')";
+						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('$cell',  '" . $_SESSION['MDS_ID'] . "' , 'reserved' , '" . ( $x ) . "' , '" . ( $y ) . "' , '' , '' , '', '" . AUTO_APPROVE . "', '" . $BID . "', '" . get_default_currency() . "', '" . $price . "', '" . $_SESSION['MDS_order_id'] . "')";
 
 						$total += $price;
-					
-						mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+
+						mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 					}
-					$cell++;
+					$cell ++;
 				}
 			}
 

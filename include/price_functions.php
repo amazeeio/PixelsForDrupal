@@ -70,8 +70,8 @@ function get_zone_color( $banner_id, $row, $col ) {
 		load_price_zones( $banner_id );
 	}
 
-	$row += 10;
-	$col += 10;
+	$row += BLK_HEIGHT;
+	$col += BLK_WIDTH;
 
 	foreach ( $price_table as $key => $val ) {
 
@@ -120,7 +120,7 @@ function get_block_price($banner_id, $block_id) {
 	$col = $block_row['y'];
 
 
-	$price = get_zone_price($banner_id, $row, $col);
+	$price = get_zone_price($banner_id, $row / BLK_HEIGHT, $col / BLK_WIDTH);
 
 
 	return $price;
@@ -129,43 +129,38 @@ function get_block_price($banner_id, $block_id) {
 }
 ##################################################################
 
-function get_zone_price($banner_id, $row, $col) {
-
-	$row = $row+1;
-	$col = $col+1;
+function get_zone_price( $banner_id, $row, $col ) {
 	global $price_table;
-	if(isset($price_table['loaded'])) {
-		if($price_table['loaded'] != 1) {
-	
-		load_price_zones($banner_id);
-		//print_r ($price_table);
+
+	$row += BLK_HEIGHT;
+	$col += BLK_WIDTH;
+
+	if ( isset( $price_table['loaded'] ) ) {
+		if ( $price_table['loaded'] != 1 ) {
+			load_price_zones( $banner_id );
 		}
 	} else {
-		load_price_zones($banner_id);
+		load_price_zones( $banner_id );
 	}
 
-	
-	foreach ($price_table as $key=>$val) {
-		if ((($price_table[$key]['row_from'] <= $row) && ($price_table[$key]['row_to'] >= $row)) &&
-			(($price_table[$key]['col_from'] <= $col) && ($price_table[$key]['col_to'] >= $col))) {
-			
-			$price = convert_to_default_currency($price_table[$key]['currency'], $price_table[$key]['price']);
-			//echo "Zone: row $row col $col ($price)\n";
+	foreach ( $price_table as $key => $val ) {
+		if ( ( ( $price_table[ $key ]['row_from'] <= $row ) && ( $price_table[ $key ]['row_to'] >= $row ) ) &&
+		     ( ( $price_table[ $key ]['col_from'] <= $col ) && ( $price_table[ $key ]['col_to'] >= $col ) ) ) {
+
+			$price = convert_to_default_currency( $price_table[ $key ]['currency'], $price_table[ $key ]['price'] );
+
 			return $price;
 		}
 	}
 
-	// if not found..
-
+	// If not found then get the default price per block for the grid
 	$sql = "select price_per_block as price, currency from banners where  banner_id='$banner_id' ";
-	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	$block_row = mysqli_fetch_array($result2);
-		
-	//echo "curr".$row['currency']." price".$row['price']."<br>";
-	$price = convert_to_default_currency($block_row['currency'],$block_row['price']);
-	//echo "row $row col $col ($price)\n";
-	return $price;
+	$result2 = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
+	$block_row = mysqli_fetch_array( $result2 );
 
+	$price = convert_to_default_currency( $block_row['currency'], $block_row['price'] );
+
+	return $price;
 }
 
 

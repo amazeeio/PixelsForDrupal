@@ -173,19 +173,17 @@ function process_mail_queue($send_count=1) {
 					$result = mysqli_query( $GLOBALS['connection'], $sql );
 					$row    = mysqli_fetch_array( $result );
 
-					$to        = wp_specialchars_decode( $row['to_name'] ) . " <" . wp_specialchars_decode( $row['to_address'] ) . ">\n";
-					$return    = wp_specialchars_decode( $row['from_name'] ) . " <" . wp_specialchars_decode( $row['from_address'] ) . ">\n";
-					$subject   = wp_specialchars_decode( $row['subject'] );
-					$from_name = wp_specialchars_decode( $row['from_name'] ) . " <" . wp_specialchars_decode( $row['from_address'] ) . ">\n";
-					$message   = wp_specialchars_decode( $row['message'] );
-					//$html_message = wp_specialchars_decode( $row['html_message'] );
+					send_phpmail(array(
+						'from_address' => $row['from_address'],
+						'from_name' => $row['from_name'],
+						'to_address' => $row['to_address'],
+						'to_name' => $row['to_name'],
+						'subject' => $row['subject'],
+						'html_message' => $row['html_message'],
+						'message' => $row['message'],
+						'mail_id' => intval( $_REQUEST['mail_id'] ),
 
-					$headers = "Return-Path: " . $return . "\r\n";
-					$headers .= "From: " . $from_name;
-					$headers .= "MIME-Version: 1.0\n";
-					$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-					mail( $to, $subject, $message, $headers );
+					));
 				}
 			}
 		}
@@ -260,6 +258,7 @@ function send_smtp_email( $mail_row ) {
 
 	$error = "";
 	try {
+		$mail->CharSet = "UTF-8";
 		$mail->isSMTP();
 
 		$mail->SMTPDebug   = $debug_level;
@@ -280,6 +279,76 @@ function send_smtp_email( $mail_row ) {
 			$mail->Password = EMAIL_SMTP_PASS;
 		}
 
+		$mail->setFrom( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addReplyTo( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addAddress( $mail_row['to_address'], wp_specialchars_decode( $mail_row['to_name'] ) );
+		$mail->Subject = wp_specialchars_decode( $mail_row['subject'] );
+
+		$html = wp_specialchars_decode( $mail_row['html_message'] );
+		$text = wp_specialchars_decode( $mail_row['message'] );
+		if(!empty($html)) {
+			$mail->msgHTML($html);
+		} else {
+			$mail->msgHTML(nl2br($text));
+		}
+		$mail->AltBody = $text;
+
+		if ( ! $mail->send() ) {
+			$error = $mail->ErrorInfo;
+			if ( $debug_level > 0 ) {
+				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+			}
+		} else {
+			if ( $debug_level > 0 ) {
+				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+			}
+		}
+
+	} catch ( phpmailerException $e ) {
+		$error = $e->errorMessage();
+		if ( $debug_level > 0 ) {
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+		}
+	} catch ( Exception $e ) {
+		$error = $e->getMessage();
+		if ( $debug_level > 0 ) {
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
+		}
+	}
+
+	if ( strcmp( $error, "" ) ) {
+		$now = gmdate( "Y-m-d H:i:s" );
+
+		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . addslashes( $error ) . "', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		//echo $sql;
+		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
+
+	} else {
+
+		$now = gmdate( "Y-m-d H:i:s" );
+
+		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
+
+	}
+
+	return $error;
+}
+
+############################
+
+function send_phpmail( $mail_row ) {
+
+	$debug_level = 0;
+	if ( defined( "EMAIL_DEBUG" ) && EMAIL_DEBUG == 'YES' ) {
+		$debug_level = 2;
+	}
+
+	$mail = new PHPMailer;
+
+	$error = "";
+	try {
+		$mail->CharSet = "UTF-8";
 		$mail->setFrom( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
 		$mail->addReplyTo( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
 		$mail->addAddress( $mail_row['to_address'], wp_specialchars_decode( $mail_row['to_name'] ) );

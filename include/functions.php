@@ -630,27 +630,6 @@ function pend_order ($user_id, $order_id) {
 
 
 }
-function func_mail_error($msg) {
-
-	$date = date("D, j M Y H:i:s O"); 
-	
-	$headers = "From: ". SITE_CONTACT_EMAIL ."\r\n";
-	$headers .= "Reply-To: ".SITE_CONTACT_EMAIL ."\r\n";
-	$headers .= "Return-Path: ".SITE_CONTACT_EMAIL ."\r\n";
-	$headers .= "X-Mailer: PHP" ."\r\n";
-	$headers .= "Date: $date" ."\r\n"; 
-	$headers .= "X-Sender-IP: $REMOTE_ADDR" ."\r\n";
-
-	$entry_line =  "(payal error detected) $msg\r\n "; 
-	$log_fp = @fopen("logs.txt", "a"); 
-	@fputs($log_fp, $entry_line); 
-	@fclose($log_fp);
-
-
-	@mail(SITE_CONTACT_EMAIL, "Error message from ".SITE_NAME." Jamit Paypal IPN script. ", $msg, $headers);
-
-}
-
 
 ########################################################
 
@@ -1357,31 +1336,25 @@ $html_message='', $template_id=0) {
 	}
 
 	// save to the database...
+    $attachments = 'N';
+    $now = ( gmdate( "Y-m-d H:i:s" ) );
+    $sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '" . addslashes( $to_address ) . "', '" . addslashes( $to_name ) . "', '" . addslashes( $from_address ) . "', '" . addslashes( $from_name ) . "', '" . addslashes( $subject ) . "', '" . addslashes( $message ) . "', '" . addslashes( $html_message ) . "', '$attachments', 'sent', '', 0, '$template_id', '$now')";
+    mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
+    $mail_id = mysqli_insert_id($GLOBALS['connection']);
 
-	$attachments='N';
-	
-	$now = (gmdate("Y-m-d H:i:s"));
+    $error = send_phpmail(array(
+	    'from_address' => $from_address,
+	    'from_name' => $from_name,
+	    'to_address' => $to_address,
+	    'to_name' => $to_name,
+	    'subject' => $subject,
+	    'html_message' => $html_message,
+	    'message' => $message,
+	    'mail_id' => $mail_id,
 
-	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".addslashes($to_address)."', '".addslashes($to_name)."', '".addslashes($from_address)."', '".addslashes($from_name)."', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($html_message)."', '$attachments', 'sent', '', 0, '$template_id', '$now')";
-	
-	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
+    ));
 
-	$mail_id = mysqli_insert_id($GLOBALS['connection']);
-
-	$to        = wp_specialchars_decode( $to_name ) . " <" . wp_specialchars_decode( $to_address ) . ">\n";
-	$return    = wp_specialchars_decode( $from_name ) . " <" . wp_specialchars_decode( $to_address ) . ">\n";
-	$subject   = wp_specialchars_decode( $subject );
-	$from_name = wp_specialchars_decode( $from_name ) . " <" . wp_specialchars_decode( $from_address ) . ">\n";
-	$message   = wp_specialchars_decode( $message );
-	//$html_message = wp_specialchars_decode( $html_message );
-
-	$headers = "Return-Path: " . $return . "\r\n";
-	$headers .= "From: " . $from_name;
-	$headers .= "MIME-Version: 1.0\n";
-	$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-	return mail( $to, $subject, $message, $headers );
-
+	return empty($error);
 }
 
 

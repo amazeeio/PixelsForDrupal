@@ -52,7 +52,7 @@ $filename = get_tmp_img_name();
 if ( file_exists( $filename ) ) {
 	$image = $imagine->open( $filename );
 } else {
-	$image = $imagine->load( __DIR__ . '/pointer.png' );
+	$image = $imagine->open( __DIR__ . '/pointer.png' );
 }
 
 // autorotate

@@ -39,31 +39,6 @@ function q_mail_error($s) {
 }
 
 #################################################
-# queue a 'carbon copy' of an email 
-function queue_mail_cc($mail_id, $to_name, $to_address) {
-
-	$sql = "select * from mail_queue where mail_id=".$mail_id;
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-	$row=mysqli_fetch_array($result);
-
-
-	$attachments=$row['attachments'];
-	
-	$now = (gmdate("Y-m-d H:i:s"));
-
-	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp, att1_name, att2_name, att3_name) VALUES('', '$now', '$to_address', '$to_name', '".addslashes($row['from_address'])."', '".addslashes($row['from_name'])."', '".addslashes($row['subject'])."', '".addslashes($row['message'])."', '".addslashes($row['html_message'])."', '".addslashes($row['attachments'])."', 'queued', '', 0, '".addslashes($row['template_id'])."', '$now', '".addslashes($row['att1_name'])."', '".addslashes($row['att2_name'])."', '".addslashes($row['att3_name'])."')";
-
-	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
-
-	$mail_id = mysqli_insert_id($GLOBALS['connection']);
-
-
-
-	return $mail_id;
-
-}
-
-#################################################
 
 function queue_mail($to_address, $to_name, $from_address, $from_name, $subject, $message, $html_message, $template_id, $att=false) {
 
@@ -120,59 +95,6 @@ function queue_mail($to_address, $to_name, $from_address, $from_name, $subject, 
 
 ############################
 
-function do_pop_before_smtp() {
-
-	$now = (gmdate("Y-m-d H:i:s"));
-	$unix_time = time();
-
-	// get the time of pop
-	$sql = "SELECT * FROM `config` where `key` = 'LAST_MAIL_POP' ";
-	$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
-	$t_row = @mysqli_fetch_array($result);
-
-	$twenty_min = 60 * 20;
-
-	if ($unix_time > $t_row['val']+$twenty_min) { // do the POP if 20 minutes elapsed.
-
-		require ("../mail/pop3.php");
-
-		$pop3=new pop3_class;
-		$pop3->hostname=EMAIL_POP_SERVER;      /* POP 3 server host name              */
-		$pop3->port=POP3_PORT;     /* POP 3 server host port              */
-		$pop3->tls=EMAIL_TLS;     /* Email tls setting        */
-		$user=EMAIL_SMTP_USER;                /* Authentication user name            */
-		$password=EMAIL_SMTP_PASS;           /* Authentication password             */
-		$pop3->realm="";                        /* Authentication realm or domain      */
-		$pop3->workstation="";                  /* Workstation for NTLM authentication */
-		$apop=0;                                /* Use APOP authentication             */
-		$pop3->authentication_mechanism="USER"; /* SASL authentication mechanism       */
-		$pop3->debug=0;                         /* Output debug information            */
-		$pop3->html_debug=0;                    /* Debug information is in HTML        */
-
-		if(($error=$pop3->Open())=="") {
-			
-			if(($error=$pop3->Login($user,$password,$apop))=="") {
-				
-				if(($error=$pop3->Statistics($messages,$size))=="") {
-
-				}
-			}
-		}
-
-		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_MAIL_POP', '$unix_time')  ";
-		$result = @mysqli_query($GLOBALS['connection'], $sql) or $DB_ERROR = mysqli_error($GLOBALS['connection']);
-
-	} 
-
-
-
-
-
-}
-
-
-############################
-
 function process_mail_queue($send_count=1) {
 
 	$now = (gmdate("Y-m-d H:i:s"));
@@ -213,7 +135,7 @@ function process_mail_queue($send_count=1) {
 
 	if ($unix_time > $t_row['val']+5) { // did 5 seconds elapse since last run?
 
-		if (func_num_args>1) {
+		if (func_num_args()>1) {
 			$mail_id = func_get_arg(1);
 
 			$and_mail_id = " AND mail_id=".$mail_id." ";
@@ -239,10 +161,32 @@ function process_mail_queue($send_count=1) {
 			//echo "(($now - $wait) > $time_stamp) status:".$row['status']."\n";
 			if (((($now - $wait) > $time_stamp) && ($row['status']=='error')) || ($row['status']=='queued')) {
 				$send_count--;
-				//echo "Sending mail: ".$row[mail_id]."<br>";
+				if ( defined( "EMAIL_DEBUG" ) && EMAIL_DEBUG == 'YES' ) {
+					echo "Sending mail: " . print_r( $row, true ) . "<br>";
+				}
 
-				//$error = send_email ( $to_address, $to_name, $from_address, $from_name, $subject, $message,  $html_message='', $template_id=0 );
-				$error = send_smtp_email($row);
+				if ( USE_SMTP == 'YES' ) {
+					$error = send_smtp_email( $row );
+				} else {
+
+					$sql    = "SELECT * FROM mail_queue WHERE mail_id=" . intval( $_REQUEST['mail_id'] );
+					$result = mysqli_query( $GLOBALS['connection'], $sql );
+					$row    = mysqli_fetch_array( $result );
+
+					$to        = wp_specialchars_decode( $row['to_name'] ) . " <" . wp_specialchars_decode( $row['to_address'] ) . ">\n";
+					$return    = wp_specialchars_decode( $row['from_name'] ) . " <" . wp_specialchars_decode( $row['from_address'] ) . ">\n";
+					$subject   = wp_specialchars_decode( $row['subject'] );
+					$from_name = wp_specialchars_decode( $row['from_name'] ) . " <" . wp_specialchars_decode( $row['from_address'] ) . ">\n";
+					$message   = wp_specialchars_decode( $row['message'] );
+					//$html_message = wp_specialchars_decode( $row['html_message'] );
+
+					$headers = "Return-Path: " . $return . "\r\n";
+					$headers .= "From: " . $from_name;
+					$headers .= "MIME-Version: 1.0\n";
+					$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+					mail( $to, $subject, $message, $headers );
+				}
 			}
 		}
 
@@ -336,13 +280,13 @@ function send_smtp_email( $mail_row ) {
 			$mail->Password = EMAIL_SMTP_PASS;
 		}
 
-		$mail->setFrom( $mail_row['from_address'], html_ent_to_utf8( $mail_row['from_name'] ) );
-		$mail->addReplyTo( $mail_row['from_address'], html_ent_to_utf8( $mail_row['from_name'] ) );
-		$mail->addAddress( $mail_row['to_address'], html_ent_to_utf8( $mail_row['to_name'] ) );
-		$mail->Subject = html_ent_to_utf8( $mail_row['subject'] );
+		$mail->setFrom( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addReplyTo( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addAddress( $mail_row['to_address'], wp_specialchars_decode( $mail_row['to_name'] ) );
+		$mail->Subject = wp_specialchars_decode( $mail_row['subject'] );
 
-		$html = html_ent_to_utf8( $mail_row['html_message'] );
-		$text = html_ent_to_utf8( $mail_row['message'] );
+		$html = wp_specialchars_decode( $mail_row['html_message'] );
+		$text = wp_specialchars_decode( $mail_row['message'] );
 		if(!empty($html)) {
 			$mail->msgHTML($html);
 		} else {
@@ -390,4 +334,73 @@ function send_smtp_email( $mail_row ) {
 	}
 
 	return $error;
+}
+
+// From WordPress /wp-includes/formatting.php
+/**
+ * Converts a number of HTML entities into their special characters.
+ *
+ * Specifically deals with: &, <, >, ", and '.
+ *
+ * $quote_style can be set to ENT_COMPAT to decode " entities,
+ * or ENT_QUOTES to do both " and '. Default is ENT_NOQUOTES where no quotes are decoded.
+ *
+ * @since 2.8.0
+ *
+ * @param string     $string The text which is to be decoded.
+ * @param string|int $quote_style Optional. Converts double quotes if set to ENT_COMPAT,
+ *                                both single and double if set to ENT_QUOTES or
+ *                                none if set to ENT_NOQUOTES.
+ *                                Also compatible with old _wp_specialchars() values;
+ *                                converting single quotes if set to 'single',
+ *                                double if set to 'double' or both if otherwise set.
+ *                                Default is ENT_NOQUOTES.
+ * @return string The decoded text without HTML entities.
+ */
+function wp_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
+	$string = (string) $string;
+
+	if ( 0 === strlen( $string ) ) {
+		return '';
+	}
+
+	// Don't bother if there are no entities - saves a lot of processing
+	if ( strpos( $string, '&' ) === false ) {
+		return $string;
+	}
+
+	// Match the previous behaviour of _wp_specialchars() when the $quote_style is not an accepted value
+	if ( empty( $quote_style ) ) {
+		$quote_style = ENT_NOQUOTES;
+	} elseif ( !in_array( $quote_style, array( 0, 2, 3, 'single', 'double' ), true ) ) {
+		$quote_style = ENT_QUOTES;
+	}
+
+	// More complete than get_html_translation_table( HTML_SPECIALCHARS )
+	$single = array( '&#039;'  => '\'', '&#x27;' => '\'' );
+	$single_preg = array( '/&#0*39;/'  => '&#039;', '/&#x0*27;/i' => '&#x27;' );
+	$double = array( '&quot;' => '"', '&#034;'  => '"', '&#x22;' => '"' );
+	$double_preg = array( '/&#0*34;/'  => '&#034;', '/&#x0*22;/i' => '&#x22;' );
+	$others = array( '&lt;'   => '<', '&#060;'  => '<', '&gt;'   => '>', '&#062;'  => '>', '&amp;'  => '&', '&#038;'  => '&', '&#x26;' => '&' );
+	$others_preg = array( '/&#0*60;/'  => '&#060;', '/&#0*62;/'  => '&#062;', '/&#0*38;/'  => '&#038;', '/&#x0*26;/i' => '&#x26;' );
+
+	if ( $quote_style === ENT_QUOTES ) {
+		$translation = array_merge( $single, $double, $others );
+		$translation_preg = array_merge( $single_preg, $double_preg, $others_preg );
+	} elseif ( $quote_style === ENT_COMPAT || $quote_style === 'double' ) {
+		$translation = array_merge( $double, $others );
+		$translation_preg = array_merge( $double_preg, $others_preg );
+	} elseif ( $quote_style === 'single' ) {
+		$translation = array_merge( $single, $others );
+		$translation_preg = array_merge( $single_preg, $others_preg );
+	} elseif ( $quote_style === ENT_NOQUOTES ) {
+		$translation = $others;
+		$translation_preg = $others_preg;
+	}
+
+	// Remove zero padding on numeric entities
+	$string = preg_replace( array_keys( $translation_preg ), array_values( $translation_preg ), $string );
+
+	// Replace characters according to translation table
+	return strtr( $string, $translation );
 }

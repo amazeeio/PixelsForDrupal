@@ -1328,66 +1328,6 @@ function escape_html ($val) {
 
 }
 
-
-
-####################################################
-
-
-function html_ent_to_utf8($text) {
-		global $context, $local;
-
-		// translate extended ISO8859-1 chars, if any
-		$text = utf8_encode($text);
-
-		// translate Unicode entities
-	 	$areas = preg_split('/&[#u](\d+?);/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-		$text = '';
-		$index = 0;
-		foreach($areas as $area) {
-			switch($index%2) {
-			case 0: // before entity
-				$text .= $area;
-				break;
-			case 1: // the entity itself
-
-				// get the integer value
-				$unicode = intval($area);
-
-				// one byte
-				if($unicode < 0x7F) {
-
-					$text .= chr($unicode);
-
-				// forbidden elements
-				} elseif($unicode < 0x0A0) {
-					;
-
-				// two bytes
-				} elseif($unicode < 0x800) {
-
-					$text .= chr( 0xC0 +  ( ( $unicode - ( $unicode % 0x40 ) ) / 0x40 ) );
-					$text .= chr( 0x80 + ( $unicode % 0x40 ) );
-
-				// three bytes
-				} elseif($unicode < 0x10000) {
-
-					$text .= chr( 0xE0 + ( ( $unicode - ( $unicode % 0x1000 ) ) / 0x1000 ) );
-					$text .= chr( 0x80 + ( ( ( $unicode % 0x1000 ) - ( $unicode % 0x40 ) ) / 0x40 ) );
-					$text .= chr( 0x80 + ( $unicode % 0x40 ) );
-
-				// more bytes, keep it as it is...
-	 			} else
-	 				$text .= '&#'.$unicode.';';
-
-				break;
-			}
-			$index++;
-		}
-
-		// the updated string
-		return $text;
-	}
-
 ####################################################
 function send_email( $to_address, $to_name, $from_address, $from_name, $subject, $message, 
 $html_message='', $template_id=0) {
@@ -1422,31 +1362,25 @@ $html_message='', $template_id=0) {
 	
 	$now = (gmdate("Y-m-d H:i:s"));
 
-	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".addslashes($to_address)."', '".addslashes($to_name)."', '".addslashes($from_address)."', '".addslashes($from_name)."', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($html_message)."', '$attachments', 'sent', '', 0, '$template_id', '$now')"; $s='copyr1ght two thousand & 6 Jam1t softwar3 ';
+	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".addslashes($to_address)."', '".addslashes($to_name)."', '".addslashes($from_address)."', '".addslashes($from_name)."', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($html_message)."', '$attachments', 'sent', '', 0, '$template_id', '$now')";
 	
 	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
 
 	$mail_id = mysqli_insert_id($GLOBALS['connection']);
 
+	$to        = wp_specialchars_decode( $to_name ) . " <" . wp_specialchars_decode( $to_address ) . ">\n";
+	$return    = wp_specialchars_decode( $from_name ) . " <" . wp_specialchars_decode( $to_address ) . ">\n";
+	$subject   = wp_specialchars_decode( $subject );
+	$from_name = wp_specialchars_decode( $from_name ) . " <" . wp_specialchars_decode( $from_address ) . ">\n";
+	$message   = wp_specialchars_decode( $message );
+	//$html_message = wp_specialchars_decode( $html_message );
 
+	$headers = "Return-Path: " . $return . "\r\n";
+	$headers .= "From: " . $from_name;
+	$headers .= "MIME-Version: 1.0\n";
+	$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-	// -J- : try to comment out the following statements 
-	// also change the charset=UTF-8 to charset=US-ASCII and let me know if it worked!
-	$to_name = html_ent_to_utf8($to_name);
-	$from_name = html_ent_to_utf8($from_name);
-	$subject = html_ent_to_utf8($subject);
-	$message = html_ent_to_utf8($message);
-	$html_message = html_ent_to_utf8($html_message);
-
-	//@ini_set(sendmail_from, SITE_CONTACT_EMAIL);
-	//@ini_set(sendmail_path, "/usr/sbin/sendmail -t -f ".SITE_CONTACT_EMAIL);
-
-  $headers ="Return-Path: ".SITE_CONTACT_EMAIL."\r\n";
-  $headers .= "From: ".SITE_NAME." <".SITE_CONTACT_EMAIL.">\n";
-  $headers .= "MIME-Version: 1.0\n";
-  $headers .= "Content-Type: text/plain; charset=UTF-8\r\n"; 
-
-	return mail($to_address, $subject, $message, $headers);
+	return mail( $to, $subject, $message, $headers );
 
 }
 

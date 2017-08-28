@@ -36,6 +36,10 @@ function load_price_zones($banner_id) {
 
 	global $price_table;
 
+	if(!isset($price_table) || !is_array($price_table)) {
+		$price_table = array();
+	}
+
 	if (isset($price_table['loaded'])) {
 		if($price_table['loaded']==1) {
 			return;
@@ -57,7 +61,6 @@ function load_price_zones($banner_id) {
 	}
 
 	$price_table['loaded'] = 1;
-
 
 }
 
@@ -143,13 +146,15 @@ function get_zone_price( $banner_id, $row, $col ) {
 		load_price_zones( $banner_id );
 	}
 
-	foreach ( $price_table as $key => $val ) {
-		if ( ( ( $price_table[ $key ]['row_from'] <= $row ) && ( $price_table[ $key ]['row_to'] >= $row ) ) &&
-		     ( ( $price_table[ $key ]['col_from'] <= $col ) && ( $price_table[ $key ]['col_to'] >= $col ) ) ) {
+	if ( is_array( $price_table ) ) {
+		foreach ( $price_table as $key => $val ) {
+			if ( ( ( $price_table[ $key ]['row_from'] <= $row ) && ( $price_table[ $key ]['row_to'] >= $row ) ) &&
+			     ( ( $price_table[ $key ]['col_from'] <= $col ) && ( $price_table[ $key ]['col_to'] >= $col ) ) ) {
 
-			$price = convert_to_default_currency( $price_table[ $key ]['currency'], $price_table[ $key ]['price'] );
+				$price = convert_to_default_currency( $price_table[ $key ]['currency'], $price_table[ $key ]['price'] );
 
-			return $price;
+				return $price;
+			}
 		}
 	}
 
@@ -193,14 +198,14 @@ while ($row=mysqli_fetch_array($result)) {
 
 // the x and y coordinates of the upper left and lower right corner
 
-	
-	
+
+
 ?>
 
 <area  shape="RECT" coords="<?php echo $row['col_from']*10;?>,<?php echo $row['row_from']*10;?>,<?php echo ($row['col_to']*10)+10;?>,<?php echo ($row['row_to']*10)+10;?>" href="" title="<?php echo htmlspecialchars($row['price']);?>" alt="<?php echo htmlspecialchars($row[price]);?>" onclick="return false; " target="_blank" />
 
 <?php
-	
+
 
 }
 
@@ -216,7 +221,7 @@ while ($row=mysqli_fetch_array($result)) {
 function display_price_table ($banner_id) {
 
 	global $label, $f2;
-	
+
 	$banner_id = $banner_id;
 
 	if (banner_get_packages($banner_id)) {
@@ -248,9 +253,9 @@ function display_price_table ($banner_id) {
 			<td><b><font face="Arial" size="2"><?php echo $label['advertiser_pf_torow'];?></font></b></td>
 			<td><b><font face="Arial" size="2"><?php echo $label['advertiser_pf_fromcol'];?></font></b></td>
 			<td><b><font face="Arial" size="2"><?php echo $label['advertiser_pf_tocol'];?></font></b></td>
-			
-	
-			
+
+
+
 		</tr>
 
 		<?php
@@ -258,19 +263,19 @@ function display_price_table ($banner_id) {
 ?>
 <tr bgcolor="#ffffff">
 			<td ><font face="Arial" size="2"><?php if ($row['price']==0) { echo $label['free'];} else { echo convert_to_default_currency_formatted($row['currency'], $row['price'], true) ; } ?></font></td>
-			<td bgcolor="<?php if ($row[color]=='yellow') { echo '#FFFF00';} elseif ($row['color']=='cyan') { echo '#00FFFF';} elseif ($row[color]=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php 
-					
+			<td bgcolor="<?php if ($row[color]=='yellow') { echo '#FFFF00';} elseif ($row['color']=='cyan') { echo '#00FFFF';} elseif ($row[color]=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php
+
 				echo $row['color'];
-				 
+
 				 ?>
-				
+
 				</font></td>
 				<td><font face="Arial" size="2"><?php echo $row[row_from];?></font></td>
 				<td><font face="Arial" size="2"><?php echo $row[row_to];?></font></td>
 				<td><font face="Arial" size="2"><?php echo $row[col_from];?></font></td>
 				<td><font face="Arial" size="2"><?php echo $row[col_to];?></font></td>
-				
-	
+
+
 				</tr>
 <?php
 		}
@@ -295,23 +300,23 @@ function calculate_price($banner_id, $blocks_str) {
 	}
 	$blocks = explode (",", $blocks_str);
 	foreach ($blocks as $block_id) {
-		
+
 		$sql = "SELECT price, currency FROM blocks where block_id='".$block_id."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
-		
+
 		//echo "call to get_block_price";
 
 		$price += get_block_price($banner_id, $block_id);
 
 		//echo ' finished get_block_price<br>';
 
-	
-		
+
+
 	}
 
 	//echo "price is".$price."<br>";
-	
+
 	return $price;
 }
 ?>

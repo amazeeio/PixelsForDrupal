@@ -510,8 +510,8 @@ $label['pay_by_authnet_button']="Pay via Authorize.net";
 $label['payment_authnet_name'] = "Authorize.Net";
 
 # BitPay.com
-$label['payment_bitpay_name']='BitPay'; 
-$label['payment_bitpay_descr']='Bitcoin Payment Gateway'; 
+$label['payment_bitpay_name']='BitPay';
+$label['payment_bitpay_descr']='Bitcoin Payment Gateway';
 
 ## payment_manager.php
 $label['payment_mab_btt']="Payment Button - Click to complete payment.";
@@ -853,5 +853,8 @@ $label['mouseover_ad_template']=
 %IMAGE%<br>
 ";
 	
-
-?>
+# list.php page
+$label['list_date_of_purchase']='Date of Purchase';
+$label['list_name']='Name';
+$label['list_ads']='Ads(s)';
+$label['list_pixels']='Pixels';

@@ -344,10 +344,10 @@ $label['pay_by_egold_button']='Pay by e-gold.com';
 $label['payment_egold_description']='Internet payments backed by 100% Gold'; 
 $label['payment_authnet_description']='Authorize.Net - Secure credit card payments'; 
 $label['pay_by_authnet_button']='Pay via Authorize.net'; 
-$label['payment_authnet_name']='Authorize.Net'; 
-$label['payment_bitpay_name']='BitPay'; 
-$label['payment_bitpay_descr']='Bitcoin Payment Gateway'; 
-$label['payment_mab_btt']='Payment Button - Click to complete payment.'; 
+$label['payment_authnet_name']='Authorize.Net';
+$label['payment_bitpay_name']='BitPay';
+$label['payment_bitpay_descr']='Bitcoin Payment Gateway';
+$label['payment_mab_btt']='Payment Button - Click to complete payment.';
 $label['payment_man_pt']='Payment Type'; 
 $label['payment_man_descr']='Description'; 
 $label['payment_return_thanks']='Thank you!'; 
@@ -648,4 +648,7 @@ $label['advertiser_publish_instructions2']='Your blocks are shown on the grid be
 </p>'; 
 $label['advertiser_home_youown']='You own %PIXEL_COUNT% pixels. <a href=\'publish.php\'>Manage my Pixels</a>'; 
 $label['advertiser_home_onorder']='You have %PIXEL_ORD_COUNT% pixels on order. <a href=\'select.php\'>Order Pixels</a> / <a href=\'orders.php\'>View Order History</a>'; 
-?>
+$label['list_date_of_purchase']='Date of Purchase';
+$label['list_name']='Name';
+$label['list_ads']='Ads(s)';
+$label['list_pixels']='Pixels';

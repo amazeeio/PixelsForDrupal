@@ -509,9 +509,13 @@ $label['payment_authnet_description'] = "Authorize.Net - Secure credit card paym
 $label['pay_by_authnet_button']="Pay via Authorize.net";
 $label['payment_authnet_name'] = "Authorize.Net";
 
-# BitPay.com
-$label['payment_bitpay_name']='BitPay';
-$label['payment_bitpay_descr']='Bitcoin Payment Gateway';
+# CoinPayments.net
+$label['payment_coinpayments_name'] = 'CoinPayments';
+$label['payment_coinpayments_descr'] = 'Pay with cryptocurrency such as Bitcoin, Litecoin or over 70 others';
+
+# LiqPay
+$label['payment_liqpay_name']='LiqPay';
+$label['payment_liqpay_descr']='Instant payments worldwide';
 
 ## payment_manager.php
 $label['payment_mab_btt']="Payment Button - Click to complete payment.";

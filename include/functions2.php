@@ -115,9 +115,11 @@ class functions2 {
 	}
 	
 	function write_log($text) {
-		$output_file = fopen(MDS_LOG_FILE,'a');
-		fwrite($output_file,$text."\n");
-		fclose($output_file);
+		if(DEBUG===true) {
+			$output_file = fopen( MDS_LOG_FILE, 'a' );
+			fwrite( $output_file, $text . "\n" );
+			fclose( $output_file );
+		}
 	}
 	
 	/** debug */
@@ -143,4 +145,3 @@ class functions2 {
 }
 
 class MDSException extends Exception { }
-?>

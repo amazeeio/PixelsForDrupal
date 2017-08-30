@@ -37,7 +37,7 @@ require_once '../include/functions2.php';
 $f2 = new functions2(); 
 
 require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
-$purifier = new HTMLPurifier(); 
+$purifier = new HTMLPurifier();
 
 if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (defined("MAIN_PHP") && MAIN_PHP=='1')) {
 	if (stripslashes($_REQUEST['pass']) == ADMIN_PASSWORD) {
@@ -46,7 +46,7 @@ if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (defined("MAIN_PHP"
 }
 if (!isset($_SESSION['ADMIN']) || empty($_SESSION['ADMIN'])) {
 	if (defined("MAIN_PHP") && MAIN_PHP=='1') {
-	?>
+		?>
 Please input admin password:<br>
 <form method='post'>
 <input type="password" name='pass'>
@@ -54,10 +54,10 @@ Please input admin password:<br>
 </form>
 	<?php
 
-	}
-
+	} else {
+		echo '<script type="text/javascript">parent.document.location.href = "' . BASE_HTTP_PATH . basename(SERVER_PATH_TO_ADMIN) . '";</script>';
+    }
 	die();
-
-} 
+}
 
 ?>

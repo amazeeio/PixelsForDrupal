@@ -173,19 +173,19 @@ userAgent should not be used, but since there is a bug in Opera, and there is
 no way to detect this bug unless userAgent is used...
 	*/
 
-	if ((navigator.userAgent.indexOf("Opera") != -1)) {
+	if ((navigator.userAgent.indexOf("Opera") !== -1)) {
 		// does not work in Opera
 		// cannot work out why?
 		return false;
 	} else {
 
-		if (navigator.userAgent.indexOf("Gecko") != -1){
+		if (navigator.userAgent.indexOf("Gecko") !== -1){
 			// gecko based browsers should be ok
 			// this includes safari?
 			// continue to other tests..
 
 		} else {
-			if (navigator.userAgent.indexOf("MSIE") == -1) {
+			if (navigator.userAgent.indexOf("MSIE") === -1) {
 				return false; // unknown..
 			}
 		}
@@ -203,32 +203,7 @@ no way to detect this bug unless userAgent is used...
 
 	// check if we can XMLHttpRequest
 
-	var xmlhttp=false;
-		/*@cc_on @*/
-		/*@if (@_jscript_version >= 5)
-		// JScript gives us Conditional compilation, we can cope with old IE versions.
-		// and security blocked creation of the objects.
-		 try {
-		  xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		 } catch (e) {
-		  try {
-		   xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		  } catch (E) {
-		   xmlhttp = false;
-		  }
-		 }
-		@end @*/
-		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-		  xmlhttp = new XMLHttpRequest();
-		}
-
-		if (!xmlhttp)
-		{
-			
-			return false
-		}
-
-		return true;
+    return typeof XMLHttpRequest !== 'undefined';
 
 }
 
@@ -243,98 +218,119 @@ function check_selection(OffsetX, OffsetY) {
 	var blk_width = <?php echo BLK_WIDTH; ?>;
 	var blk_height = <?php echo BLK_HEIGHT; ?>;
 
-	var map_x = OffsetX
-	var map_y = OffsetY
+	window.map_x = OffsetX;
+	window.map_y = OffsetY;
 
+	window.clicked_block = ((window.map_x) / blk_width) + ((window.map_y/blk_height) * (grid_width/blk_width)) ;
 
-	var clicked_block = ((map_x) / blk_width) + ((map_y/blk_height) * (grid_width/blk_width)) ;
-
-	//var clicked_block = ((map_y*grid_width)+map_x) / blk_width ;
-	if (clicked_block==0) {
+	if (window.clicked_block===0) {
 		// convert to string
-		clicked_block="0";
+		window.clicked_block="0";
 
 	}
-
-	//alert ('clicked block is: '+clicked_block+" map_y: "+map_y+" map_x: "+map_x+" grid_width: "+grid_width);
-
-	//return;
 
 	//////////////////////////////////////////////////
 	// Trip to the database.
 	//////////////////////////////////////////////////
 
-		var xmlhttp=false;
-		/*@cc_on @*/
-		/*@if (@_jscript_version >= 5)
-		// JScript gives us Conditional compilation, we can cope with old IE versions.
-		// and security blocked creation of the objects.
-		 try {
-		  xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		 } catch (e) {
-		  try {
-		   xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		  } catch (E) {
-		   xmlhttp = false;
-		  }
-		 }
-		@end @*/
-		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-		  xmlhttp = new XMLHttpRequest();
-		}
+	var xmlhttp;
 
-		// Note: do not use &amp; for & here
-		xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+OffsetX+"&map_y="+OffsetY+"&block_id="+clicked_block+"&BID=<?php 
+	if (typeof XMLHttpRequest !== "undefined") {
+		xmlhttp = new XMLHttpRequest();
+	}
+
+	// Note: do not use &amp; for & here
+	xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+OffsetX+"&map_y="+OffsetY+"&block_id="+window.clicked_block+"&BID=<?php
 		$sesname = ini_get('session.name');
 		if ($sesname==''){
 			$sesname = 'PHPSESSID';
 		}
 		echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
 
-		//alert("before trup_count:"+trip_count);
+	if (trip_count !== 0){ // trip_count: global variable counts how many times it goes to the server
+		document.getElementById('submit_button1').disabled=true;
+		document.getElementById('submit_button2').disabled=true;
+		var pointer = document.getElementById('block_pointer');
+		pointer.style.cursor='wait';
+		var pixelimg = document.getElementById('pixelimg');
+		pixelimg.style.cursor='wait';
 
-		if (trip_count != 0){ // trip_count: global variable counts how many times it goes to the server
-			document.getElementById('submit_button1').disabled=true;
-			document.getElementById('submit_button2').disabled=true;
-			var pointer = document.getElementById('block_pointer');
-			pointer.style.cursor='wait';
-			var pixelimg = document.getElementById('pixelimg');
-			pixelimg.style.cursor='wait';
-			
-		}
-		
-		xmlhttp.onreadystatechange=function() {
-			if (xmlhttp.readyState==4) {
-				//
-				
-				//alert(xmlhttp.responseText+clicked_block);
+	}
 
-				if (xmlhttp.responseText.indexOf('E432')>-1) { // bad selection - not available
-					alert(xmlhttp.responseText);
-					is_moving=true;
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState===4) {
 
-				}
+			// bad selection - not available
+			if (xmlhttp.responseText.indexOf('E432')>-1) {
+				alert(xmlhttp.responseText);
+				is_moving=true;
 
-				document.getElementById('submit_button1').disabled=false;
-				document.getElementById('submit_button2').disabled=false;
-
-				var pointer = document.getElementById('block_pointer');
-				pointer.style.cursor='pointer';
-				var pixelimg = document.getElementById('pixelimg');
-				pixelimg.style.cursor='pointer';
-				
 			}
-			
+
+			document.getElementById('submit_button1').disabled=false;
+			document.getElementById('submit_button2').disabled=false;
+
+			var pointer = document.getElementById('block_pointer');
+			pointer.style.cursor='pointer';
+			var pixelimg = document.getElementById('pixelimg');
+			pixelimg.style.cursor='pointer';
+
 		}
 
-		xmlhttp.send(null)
+	};
 
+	xmlhttp.send(null);
+
+}
+
+function make_selection(event) {
+
+	event.stopPropagation();
+	event.preventDefault();
+
+	window.reserving = true;
+
+	var xmlhttp;
+
+	if (typeof XMLHttpRequest !== "undefined") {
+		xmlhttp = new XMLHttpRequest();
+	}
+
+	// Note: do not use &amp; for & here
+	xmlhttp.open("GET", "make_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+window.map_x+"&map_y="+window.map_y+"&block_id="+window.clicked_block+"&BID=<?php
+		$sesname = ini_get('session.name');
+		if ($sesname==''){
+			$sesname = 'PHPSESSID';
+		}
+		echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
+
+	var pointer = document.getElementById('block_pointer');
+	pointer.style.cursor='wait';
+	var pixelimg = document.getElementById('pixelimg');
+	pixelimg.style.cursor='wait';
+	document.body.style.cursor='wait';
+    var submit1 = document.getElementById('submit_button1');
+    var submit2 = document.getElementById('submit_button2');
+    submit1.disabled=true;
+    submit2.disabled=true;
+    submit1.value = "<?php echo $label['reserving_pixels']; ?>";
+    submit2.value = "<?php echo $label['reserving_pixels']; ?>";
+	submit1.style.cursor='wait';
+	submit2.style.cursor='wait';
+
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState===4) {
+			document.form1.submit();
+		}
+	};
+
+	xmlhttp.send(null);
 }
 
 //////////////////////////////////////////
 // Initialize
 var block_str = "<?php echo $order_row["blocks"]; ?>";
-var trip_count = 0;
+trip_count = 0;
 
 //////////////////////////////////
 
@@ -379,33 +375,25 @@ button = document.getElementById('submit_button1');
 
 	var pixelimg = document.getElementById('pixelimg');
 	var pointer = document.getElementById('block_pointer');
-	//pointer.style.visibility='visible';
+
 	if(!is_moving) return;
 
-	//if (!pos) {
 		var pos = getObjCoords(pixelimg);
-	//}
-	
+
 	if (e.offsetX != undefined) {
 		var OffsetX = e.offsetX;
 		var OffsetY = e.offsetY;
 	} else {
 		var OffsetX = e.pageX - pos.x;
 		var OffsetY = e.pageY - pos.y;
-
 	}
 
 	OffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
 	OffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
 
-	//button = document.getElementById('submit_button1');
-	//button.value='OffsetX:'+OffsetX+" OffsetY:"+OffsetY;
-
-
 	if (isNaN(OffsetX)||isNaN(OffsetY))
 	{
 		return
-		//alert(OffsetX)
 	}
 	
 	if (pointer_height+OffsetY > <?php echo G_HEIGHT*BLK_HEIGHT;?>)
@@ -416,10 +404,6 @@ button = document.getElementById('submit_button1');
 		pointer.map_y=OffsetY;	
 	}
 
-
-	//button = document.getElementById('submit_button1');
-	//button.value=''+OffsetX+'/'+OffsetY+' pointer left:'+pointer.style.left+" pointer.map_x:"+pointer.map_x+pointer_width;
-
 	if (pointer_width+OffsetX > <?php echo G_WIDTH*BLK_WIDTH;?>)
 	{
 		
@@ -429,18 +413,12 @@ button = document.getElementById('submit_button1');
 		pointer.style.left=pos.x+OffsetX + 'px';
 	}
 
-	
-
 	return true;
-
-	
 
 }
 
 var i_count =0;
 ///////////////////////
-
-
 
 function show_pointer2 (e) {
 	//function called when mouse is over the actual pointing image
@@ -462,21 +440,15 @@ function show_pointer2 (e) {
 		var OffsetY = e.pageY - pos.y;
 		var ie = false;
 	}
-	// normalize.
-	//OffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
-	//OffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
-
 
 	if (ie) { // special routine for internet explorer...
-	
-			
-		rel_posx = p_pos.x-pos.x;
-		rel_posy = p_pos.y-pos.y;
+
+		var rel_posx = p_pos.x-pos.x;
+		var rel_posy = p_pos.y-pos.y;
 		
 		pointer.map_x = rel_posx;
 		pointer.map_y = rel_posy;
 
-	
 		if (isNaN(OffsetX)||isNaN(OffsetY)){
 			return
 		}
@@ -484,19 +456,11 @@ function show_pointer2 (e) {
 		if (OffsetX>=<?php echo BLK_WIDTH; ?>) { // move the pointer right
 			if (rel_posx+pointer_width >= <?php echo G_WIDTH*BLK_WIDTH; ?>) {
 			} else {
-				//pointer.map_x=rel_posx;
-				//pointer.style.left=pos.x+rel_posx;
-
 				pointer.map_x=p_pos.x+<?php echo BLK_WIDTH; ?>;
 				pointer.style.left=pointer.map_x + 'px';
 			}
 			
 		}
-
-		//i_count++; 
-		//button = document.getElementById('submit_button1');
-		//button.value='OffsetX:'+OffsetX+" OffsetY:"+OffsetY+" map_x:"+pointer.map_x+" map_y:"+pointer.map_y
-		//	+" left:"+pointer.style.left+" top:"+pointer.style.top+" relposx"+rel_posx;
 
 		if (OffsetY><?php echo BLK_HEIGHT; ?>) { // move the pointer down
 		
@@ -512,8 +476,8 @@ function show_pointer2 (e) {
 		
 	} else {
 
-		tOffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
-		tOffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
+		var tOffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
+		var tOffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
 
 		
 		if (isNaN(OffsetX)||isNaN(OffsetY)) {
@@ -545,16 +509,7 @@ function show_pointer2 (e) {
 
 		}
 
-	//	i_count++;
-//	button = document.getElementById('submit_button1');
-//	button.value='OffsetX:'+OffsetX+" OffsetY:"+OffsetY+" map_x:"+pointer.map_x+" map_y:"+pointer.map_y
-//		+" left:"+pointer.style.left+" top:"+pointer.style.top+"   "+i_count+" tOffsetX:"+tOffsetX+" tOffsetY:"+tOffsetY;
-
-
-
 	}
-	
-	
 
 }
 
@@ -569,25 +524,22 @@ function get_clicked_block() {
 	var blk_width = <?php echo BLK_WIDTH; ?>;
 	var blk_height = <?php echo BLK_HEIGHT; ?>;
 
-	//var clicked_block = ((pointer.map_y*grid_width)+pointer.map_x)/<?php echo BLK_HEIGHT; ?> ;
-	
 	var clicked_block = ((pointer.map_x) / blk_width) + ((pointer.map_y/blk_height) * (grid_width/blk_width)) ;
 
-	if (clicked_block==0) {
+	if (clicked_block===0) {
 		clicked_block="0";// convert to string
 
 	}
 	return clicked_block;
-	//alert ('clicked block'+clicked_block)
-
-
-
 }
 ////////////////////
 
-
 function do_block_click() {
-	
+
+	if(window.reserving) {
+		return;
+	}
+
 	if (is_moving) {
 		var cb = get_clicked_block();
 		var pointer = document.getElementById('block_pointer');
@@ -596,15 +548,10 @@ function do_block_click() {
 		low_x = pointer.map_x;
 		low_y = pointer.map_y;
 
-		
 		is_moving = false;
 	} else {
 		is_moving = true;
 	}
-
-	
-	
-
 }
 
 var low_x=0;
@@ -939,7 +886,7 @@ if (!$tmp_image_file) {
 	<input type="hidden" name="jEditOrder" value="true">
 	
 	<p>
-	<input  class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> type="button" name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick='document.form1.submit()'>
+	<input type="button" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
 	
 	</p>
 
@@ -961,7 +908,7 @@ if (!$tmp_image_file) {
 	<input type="hidden" name="selected_pixels" value=''>
 	<input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
 	<input type="hidden" value="<?php echo $BID;?>" name="BID">
-	<input type="submit" class='big_button' disabled  name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>'>
+	<input type="submit" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
 	<hr />
 	</form>
 

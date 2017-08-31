@@ -1,6 +1,6 @@
 <?php
 /**
- * @version        $Id: check_selection.php 137 2011-04-18 19:48:11Z ryan $
+ * @version        2.1
  * @package        mds
  * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
@@ -47,14 +47,48 @@ $_REQUEST['map_x']    = floor( $_REQUEST['map_x'] / BLK_WIDTH ) * BLK_WIDTH;
 $_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / BLK_HEIGHT ) * BLK_HEIGHT;
 $_REQUEST['block_id'] = floor( $_REQUEST['block_id'] );
 
-/**
- * Check available pixels
- *
- * @param $in_str
- *
- * @return bool
- */
-function check_pixels( $in_str ) {
+# place on temp order -> then
+function place_temp_order( $in_str ) {
+
+	global $f2;
+
+	// cannot place order if there is no session!
+	if ( session_id() == '' ) {
+		$f2->write_log( 'Cannot place order if there is no session!' );
+
+		return false;
+	}
+	$blocks = explode( ',', $in_str );
+
+	$quantity = sizeof( $blocks ) * ( BLK_WIDTH * BLK_HEIGHT );
+
+	$now = ( gmdate( "Y-m-d H:i:s" ) );
+
+	// preserve ad_id & block info...
+	$sql = "SELECT ad_id, block_info  FROM temp_orders WHERE session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "' ";
+	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+	$row        = mysqli_fetch_array( $result );
+	$ad_id      = intval( $row['ad_id'] );
+	$block_info = mysqli_real_escape_string( $GLOBALS['connection'], $row['block_info'] );
+
+	if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
+		$BID = $f2->bid( $_REQUEST['BID'] );
+	} else {
+		$BID = 1;
+	}
+
+	// DAYS_EXPIRE comes form load_banner_constants()
+	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "', '" . $in_str . "', '" . $now . "', '0', '" . $quantity . "', '" . DAYS_EXPIRE . "', '" . $BID . "', '" . get_default_currency() . "',  '$now', '$ad_id', '$block_info' );";
+	$f2->write_log( 'Placed Temp order. ' . $sql );
+	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
+
+}
+
+# reserves the pixels for the temp order..
+
+$price_table = '';
+
+function reserve_temp_order_pixels( $block_info, $in_str ) {
 
 	global $f2, $label;
 
@@ -70,15 +104,30 @@ function check_pixels( $in_str ) {
 
 	}
 
-	// check if it is free
-	$sql = "SELECT block_id FROM blocks WHERE banner_id='" . $BID . "' AND block_id IN($in_str) ";
+	$total = 0;
+	foreach ( $block_info as $key => $block ) {
 
-	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( $sql . mysqli_error( $GLOBALS['connection'] ) );
-	if ( mysqli_num_rows( $result ) > 0 ) {
-		echo js_out_prep( $label['check_sel_notavailable'] . " (E432)" );
+		$price = get_zone_price( $BID, $block['map_y'] / BLK_HEIGHT, $block['map_x'] / BLK_WIDTH );
 
-		return false;
+		$currency = get_default_currency();
+
+		// enhance block info...
+		$block_info[ $key ]['currency']  = $currency;
+		$block_info[ $key ]['price']     = $price;
+		$block_info[ $key ]['banner_id'] = $f2->bid( $_REQUEST['BID'] );
+
+		$total += $price;
 	}
+
+	$sql = "UPDATE temp_orders set price='$total' where session_id='" . session_id() . "'  ";
+	mysqli_query( $GLOBALS['connection'], $sql );
+
+	// save to file
+	$fh = fopen( SERVER_PATH_TO_ADMIN . 'temp/' . "info_" . md5( session_id() ) . ".txt", 'wb' );
+	fwrite( $fh, serialize( $block_info ) );
+	fclose( $fh );
+
+	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	return true;
 }
@@ -105,7 +154,7 @@ function check_selection_main() {
 		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 		if ( mysqli_affected_rows( $GLOBALS['connection'] ) == 0 ) {
-			// make sure it cannot be locked for more than 30 secs 
+			// make sure it cannot be locked for more than 30 secs
 			// This is in case the proccess fails inside the lock
 			// and does not release it.
 
@@ -143,7 +192,19 @@ function check_selection_main() {
 	$image = $imagine->open( $upload_image_file );
 	$size  = $image->getSize();
 
-	$cb_array = array();
+	$new_size = get_required_size( $size->getWidth(), $size->getHeight() );
+
+	if ( $size->getWidth() != $new_size[0] || $size->getHeight() != $new_size[1] ) {
+		$resize = new Imagine\Image\Box( $new_size[0], $new_size[1] );
+		$image->resize( $resize );
+	}
+
+	$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
+	$palette    = new Imagine\Image\Palette\RGB();
+	$color      = $palette->color( '#000', 0 );
+	//$zero_point = new Imagine\Image\Point( 0, 0 );
+
+	$block_info = $cb_array = array();
 	for ( $y = 0; $y < ( $size->getHeight() ); $y += BLK_HEIGHT ) {
 		for ( $x = 0; $x < ( $size->getWidth() ); $x += BLK_WIDTH ) {
 
@@ -153,12 +214,36 @@ function check_selection_main() {
 			$GRD_WIDTH  = BLK_WIDTH * G_WIDTH;
 			$cb         = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 			$cb_array[] = $cb;
+
+			$block_info[ $cb ]['map_x'] = $map_x;
+			$block_info[ $cb ]['map_y'] = $map_y;
+
+			// create new destination image
+			$dest = $imagine->create( $block_size, $color );
+
+			// crop a part from the tiled image
+			//$block = $image->copy();
+			//$block->crop( new Imagine\Image\Point( $x, $y ), $block_size );
+
+			// paste the block into the destination image
+			//$dest->paste( $block, $zero_point );
+
+			// much faster
+			imagecopy ( $dest->getGdResource(), $image->getGdResource(), 0, 0, $x, $y, BLK_WIDTH,  BLK_HEIGHT);
+
+			// save the image as a base64 encoded string
+			$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
+
+			$block_info[ $cb ]['image_data'] = $data;
 		}
 	}
 
 	$in_str = implode( ',', $cb_array );
+
+	// create a temporary order and place the blocks on a temp order
+	place_temp_order( $in_str );
 	$f2->write_log( "in_str is:" . $in_str );
-	check_pixels( $in_str );
+	reserve_temp_order_pixels( $block_info, $in_str );
 
 	###################################################
 

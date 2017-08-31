@@ -654,3 +654,4 @@ $label['list_date_of_purchase']='Date of Purchase';
 $label['list_name']='Name';
 $label['list_ads']='Ads(s)';
 $label['list_pixels']='Pixels';
+$label['reserving_pixels']='Please Wait! Reserving Pixels...';

@@ -809,7 +809,7 @@ if ($has_packages) {
 ?>
 <div class="fancy_heading" style="width:85%;"><?php echo $label['pixel_uploaded_head']; ?></div>
 <p>
-<?php $label['upload_pix_description']; ?>
+<?php echo $label['upload_pix_description']; ?>
 </p>
 <p>
 <?php
@@ -895,8 +895,6 @@ if (!$tmp_image_file) {
 
 
 	<img style="cursor: pointer;" id="pixelimg" <?php if ((USE_AJAX=='YES') || (USE_AJAX=='SIMPLE')) { ?> onmousemove="show_pointer(event)"  <?php } ?> type="image" name="map" value='Select Pixels.' width="<?php echo G_WIDTH*BLK_WIDTH; ?>"  height="<?php echo G_HEIGHT*BLK_HEIGHT; ?>" src="show_selection.php?BID=<?php echo $BID;?>&amp;gud=<?php echo time();?>" alt="" />
-
-	</form>
 
 	<input type="hidden" name="action" value="select">
 	</form>

@@ -80,9 +80,8 @@ function unfck($v) {
 
 ##################################################
 
-
-if (isset($_REQUEST['time']) && $_REQUEST['time']=='') {
-	if (defined(NO_HOUSE_KEEP) && NO_HOUSE_KEEP!='YES') {
+if ( isset( $_REQUEST['BID'] ) && ! empty( $_REQUEST['BID'] ) ) {
+	if ( ! defined( NO_HOUSE_KEEP ) || NO_HOUSE_KEEP != 'YES' ) {
 		expire_orders();
 	}
 }

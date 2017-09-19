@@ -426,7 +426,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 
 			 ?>
 			 <!--<input style="font-size: 8pt" type="button" value="Delete" onClick="if (!confirmLink(this, 'Delete, are you sure?')) {return false;} window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=delete&ad_id=<?php echo $prams['ad_id']; ?>'"><br>!-->
-				<input type="button" style="font-size: 8pt" value="Edit" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=edit&ad_id=<?php echo $prams['ad_id']; ?>'">
+				<input type="button" style="font-size: 8pt" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=edit&ad_id=<?php echo $prams['ad_id']; ?>'">
 
 				<?php
 			 
@@ -438,7 +438,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 
 			 ?>
 			 <!--<input style="font-size: 8pt" type="button" value="Delete" onClick="if (!confirmLink(this, 'Delete, are you sure?')) {return false;} window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=delete&ad_id=<?php echo $prams['ad_id']; ?>'"><br>-->
-				<input type="button" style="font-size: 8pt" value="Edit" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?ad_id=<?php echo $prams['ad_id']; ?>'">
+				<input type="button" style="font-size: 8pt" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?ad_id=<?php echo $prams['ad_id']; ?>'">
 
 				<?php
 			 

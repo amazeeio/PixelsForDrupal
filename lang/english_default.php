@@ -31,6 +31,7 @@
  */
 
 # ads.inc.php
+$label['ads_inc_edit']='Edit';
 
 $label['ads_inc_pixels_col']  = "Pixels";
 $label['ads_inc_expires_col'] = 'Expires';
@@ -461,10 +462,10 @@ $label['payment_2co_name']="2Checkout";
 $label['payment_2co_descr']= "2Checkout - Accepts: Visa, Mastercard, American Express, Discover, JCB, Diners";
 $label['payment_2co_submit_butt']="Buy From 2Checkout.com";
 
-# Bannk payment
+# Bank payment
 
-
-$label['payment_bank_name'] ="Bank:";
+$label['payment_bank_name']='Bank';
+$label['payment_bank_description']='Wire Transfer - Funds transfer to a bank account.';
 $label['payment_bank_addr'] ="Bank Address:";
 $label['payment_bank_ac_name']="Account Name:";
 $label['payment_bank_ac_number']="Account Number:";
@@ -523,6 +524,7 @@ $label['payment_man_pt']="Payment Type";
 $label['payment_man_descr']="Description";
 
 $label['payment_return_thanks'] = 'Thank you!';
+$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed when your payment has cleared.";
 
 # Ad form
 $label['ad_save_error'] = "ERROR: Cannot save your ad for the following reasons: ";

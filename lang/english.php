@@ -30,7 +30,8 @@
  *
  */
 
-$label['ads_inc_pixels_col']='Pixels'; 
+$label['ads_inc_edit']='Edit';
+$label['ads_inc_pixels_col']='Pixels';
 $label['ads_inc_expires_col']='Expires'; 
 $label['ads_inc_expied_stat']='Expired!'; 
 $label['ads_inc_nyp_stat']='Not Yet Published'; 
@@ -44,9 +45,9 @@ $label['ad_list_status']='Status';
 $label['ad_list_st_pending']='Awaiting Payment...'; 
 $label['ad_list_st_completed']='Active'; 
 $label['ad_list_st_cancelled']='Cancelled'; 
-$label['ad_list_st_confirmed']='Confirmed'; 
-$label['ad_list_st_new']='New'; 
-$label['expired']='Expired'; 
+$label['ad_list_st_confirmed']='Confirmed';
+$label['ad_list_st_new']='New';
+$label['expired']='Expired';
 $label['deleted']='Deleted'; 
 $label['min_pixels_required']='Sorry, you are required to upload an image with at least %MIN_PIXELS% pixels. This image only has %COUNT% pixels...'; 
 $label['max_pixels_required']='Sorry, the uploaded image is too big. This image has %COUNT% pixels... A limit of %MAX_PIXELS% pixels per order is set.'; 
@@ -58,7 +59,7 @@ $label['upload_image_size']='The uploaded image is %WIDTH% pixels wide and %HEIG
 $label['your_uploaded_pix']='Your uploaded pixes:'; 
 $label['upload_pix_description']='- Upload a GIF, JPEG or PNG graphics file<br>
 - Click \'Browse\' to find your file on your computer, then click \'Upload\'.<br>
-- Once uploaded, you will be able to position your file over the grid.<br>'; 
+- Once uploaded, you will be able to position your file over the grid.<br>';
 $label['upload_your_pix']='Upload your pixels:'; 
 $label['pix_upload_button']='Upload'; 
 $label['not_logged_in']='You are not logged in. Please log in or sign up for a new account. The pixels that you have placed on order are saved and will be available once you log in.'; 
@@ -317,9 +318,10 @@ $label['payment_paypal_accepts']='PayPal accepts: Visa, Mastercard';
 $label['payment_paypal_bttn_alt']='Make payments with PayPal - it\'s fast, free and secure!'; 
 $label['payment_2co_name']='2Checkout'; 
 $label['payment_2co_descr']='2Checkout - Accepts: Visa, Mastercard, American Express, Discover, JCB, Diners'; 
-$label['payment_2co_submit_butt']='Buy From 2Checkout.com'; 
-$label['payment_bank_name']='Bank:'; 
-$label['payment_bank_addr']='Bank Address:'; 
+$label['payment_2co_submit_butt']='Buy From 2Checkout.com';
+$label['payment_bank_name']='Bank';
+$label['payment_bank_description']='Wire Transfer - Funds transfer to a bank account.';
+$label['payment_bank_addr']='Bank Address:';
 $label['payment_bank_ac_name']='Account Name:'; 
 $label['payment_bank_ac_number']='Account Number:'; 
 $label['payment_bank_branch_number']='Branch number:'; 
@@ -352,7 +354,8 @@ $label['payment_liqpay_descr']='Instant payments worldwide';
 $label['payment_mab_btt']='Payment Button - Click to complete payment.';
 $label['payment_man_pt']='Payment Type'; 
 $label['payment_man_descr']='Description'; 
-$label['payment_return_thanks']='Thank you!'; 
+$label['payment_return_thanks']='Thank you!';
+$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed when your payment has cleared.";
 $label['ad_save_error']='ERROR: Cannot save your ad for the following reasons: '; 
 $label['ad_save_button']='Save Ad'; 
 $label['delete_image_button']='Delete Image'; 

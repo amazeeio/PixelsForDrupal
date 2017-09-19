@@ -1429,7 +1429,7 @@ function nav_pages_struct(&$result, $q_string, $count, $REC_PER_PAGE) {
 	}
 
 	if ($prev > -1) {
-	    $nav['prev'] =  "<a  href='".$page."?offset=".$prev.$q_string.$show_emp.$cat.$order_by."'>".$label["navigation_prev"] ."</a> ";
+	    $nav['prev'] =  "<a href='".urlencode($page."?offset=".$prev.$q_string.$show_emp.$cat.$order_by)."'>".$label["navigation_prev"] ."</a> ";
 	  
 	}
 	for ($i=0; $i < $count; $i=$i+$REC_PER_PAGE) {
@@ -1451,7 +1451,7 @@ function nav_pages_struct(&$result, $q_string, $count, $REC_PER_PAGE) {
 	  $off = $off + $REC_PER_PAGE;
 	}
 	if ($next < $count ) 
-		$nav['next'] = " | <a  href='".$page."?offset=".$next.$q_string.$show_emp.$cat.$order_by."'> ".$label["navigation_next"]."</a>";
+		$nav['next'] = " | <a  href='".urlencode($page."?offset=".$next.$q_string.$show_emp.$cat.$order_by)."'> ".$label["navigation_next"]."</a>";
 
 	return $nav;
 }
@@ -1466,7 +1466,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 		$page = 'hot.php';
 		echo $label['post_list_more_sponsored']." ";
 	} else {
-		$page = $_SERVER[PHP_SELF];
+		$page = $_SERVER['PHP_SELF'];
 	}
 
 	$offset = $_REQUEST["offset"];
@@ -1492,10 +1492,11 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 	}
 	echo $nav_pages_struct['prev'];
 	$b_count = count($nav_pages_struct['pages_before']);
+	$pipe = "";
 	for ($i = $b_count-$LINKS; $i <= $b_count; $i++) {
 		if ($i>0) {
 			//echo " <a href='?offset=".$nav['pages_before'][$i]."'>".$i."</a></b>";
-			echo " | <a  href='".$page."?offset=".$nav_pages_struct['pages_before'][$i]."$q_string$show_emp$cat$order_by'>".$i."</a>";
+			echo " | <a  href='".urlencode($page."?offset=".$nav_pages_struct['pages_before'][$i].$q_string.$show_emp.$cat.$order_by)."'>".$i."</a>";
 			$pipe = "|";
 		}
 	}
@@ -1508,7 +1509,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 				break;
 			}
 			//echo " <a href='?offset=".$pa."'>".$key."</a>";
-			echo " | <a  href='".$page."?offset=".$pa."$q_string$show_emp$cat$order_by'>".$key."</a>  ";
+			echo " | <a  href='".urlencode($page."?offset=".$pa.$q_string.$show_emp.$cat.$order_by)."'>".$key."</a>  ";
 		}
 	}
 

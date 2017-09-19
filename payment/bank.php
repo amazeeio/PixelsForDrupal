@@ -43,8 +43,8 @@ function b_mail_error($msg) {
 	$headers .= "Reply-To: ".SITE_CONTACT_EMAIL ."\r\n";
 	$headers .= "Return-Path: ".SITE_CONTACT_EMAIL ."\r\n";
 	$headers .= "X-Mailer: PHP" ."\r\n";
-	$headers .= "Date: $date" ."\r\n"; 
-	$headers .= "X-Sender-IP: $REMOTE_ADDR" ."\r\n";
+	$headers .= "Date: $date" ."\r\n";
+	$headers .= "X-Sender-IP: " . $_SERVER['REMOTE_ADDR'] . "\r\n";
 
 	@mail(SITE_CONTACT_EMAIL, "Error message from ".SITE_NAME." Jamit bank payment mod. ", $msg, $headers);
 
@@ -72,12 +72,16 @@ function b_log_entry ($entry_line) {
 
 class bank {
 
-	var $name="Bank";
-	var $description="Wire Transfer - Funds transfer to a bank account .";
+	var $name;
+	var $description;
 	var $className="bank";
-	
 
-	function bank() {
+	function __construct() {
+
+	    global $label;
+
+		$this->name        = $label["payment_bank_name"];
+		$this->description = $label["payment_bank_description"];
 
 		if ($this->is_installed()) {
 
@@ -398,7 +402,7 @@ class bank {
 				<table width="70%"><tr><td>
 				<b><?php echo $label['payment_bank_heading'];?></b><br>
 				<?php if ( BANK_NAME != '') { ?>
-				<b><?php echo $label['payment_bank_name'];?></b> <?php echo BANK_NAME; ?><br>
+				<b><?php echo $label['payment_bank_name'];?>:</b> <?php echo BANK_NAME; ?><br>
 				<?php }  ?>
 				<?php if ( BANK_ADDRESS != '') { ?>
 				<b><?php echo $label['payment_bank_addr'];?></b> <?php echo BANK_ADDRESS; ?><br>

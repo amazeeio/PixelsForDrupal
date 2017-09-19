@@ -67,7 +67,17 @@ along with the Million Dollar Script.  If not, see <http://www.gnu.org/licenses/
 <p></p>
 
 <p>&nbsp;</p>
-<h3><center><?php echo $label['payment_return_thanks'];?></center></h3>
+<h3>
+    <center>
+        <?php
+        if(isset($_REQUEST['nhezk5']) && !empty($_REQUEST['nhezk5'])) {
+            echo $label['payment_return_thanks_manual'];
+        } else {
+	        echo $label['payment_return_thanks'];
+        }
+        ?>
+    </center>
+</h3>
 
 
 <?php

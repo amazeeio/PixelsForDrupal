@@ -109,49 +109,6 @@
         ]
     },
     {
-        "name": "ckeditor/ckeditor",
-        "version": "4.7.2",
-        "version_normalized": "4.7.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ckeditor/ckeditor-releases.git",
-            "reference": "e1db4f159d7743c076e464ce90dc8b421ebc8ef0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/e1db4f159d7743c076e464ce90dc8b421ebc8ef0",
-            "reference": "e1db4f159d7743c076e464ce90dc8b421ebc8ef0",
-            "shasum": ""
-        },
-        "time": "2017-08-17T17:01:28+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "GPL-2.0+",
-            "LGPL-2.1+",
-            "MPL-1.1+"
-        ],
-        "authors": [
-            {
-                "name": "CKSource",
-                "homepage": "http://cksource.com"
-            }
-        ],
-        "description": "JavaScript WYSIWYG web text editor.",
-        "homepage": "http://ckeditor.com",
-        "keywords": [
-            "CKEditor",
-            "editor",
-            "fckeditor",
-            "html",
-            "javascript",
-            "richtext",
-            "text",
-            "wysiwyg"
-        ]
-    },
-    {
         "name": "phpmailer/phpmailer",
         "version": "v5.2.25",
         "version_normalized": "5.2.25.0",
@@ -229,5 +186,48 @@
             }
         ],
         "description": "PHPMailer is a full-featured email creation and transfer class for PHP"
+    },
+    {
+        "name": "ckeditor/ckeditor",
+        "version": "4.7.3",
+        "version_normalized": "4.7.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ckeditor/ckeditor-releases.git",
+            "reference": "97b8f412f6b36985c734daf0717e81009a885dba"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/97b8f412f6b36985c734daf0717e81009a885dba",
+            "reference": "97b8f412f6b36985c734daf0717e81009a885dba",
+            "shasum": ""
+        },
+        "time": "2017-09-13T13:09:47+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-2.0+",
+            "LGPL-2.1+",
+            "MPL-1.1+"
+        ],
+        "authors": [
+            {
+                "name": "CKSource",
+                "homepage": "http://cksource.com"
+            }
+        ],
+        "description": "JavaScript WYSIWYG web text editor.",
+        "homepage": "http://ckeditor.com",
+        "keywords": [
+            "CKEditor",
+            "editor",
+            "fckeditor",
+            "html",
+            "javascript",
+            "richtext",
+            "text",
+            "wysiwyg"
+        ]
     }
 ]

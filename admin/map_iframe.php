@@ -709,7 +709,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBA
 
 		}
 
-		$alt_text = "<b>Customer:</b> ".$user_row['FirstName']." ".$user_row['LastName']." <br><b>Username:</b> ".$user_row['Username']."<br><b>Email:</b> ".$user_row['Email']."<br><b>Order</b> # : ".$row['order_id']." <br> <b>Block Status:</b> ".$row['status']."<br><b>Published:</b> ".$order_row['published']."<br><b>Approved:</b> ".$order_row['published']."<br><b>Expires:</b> ".$days."<br><b>Click Count:</b> ".$row['click_count']."<br><b>Co-ordinate:</b> x:".$row['x'].", y:".$row['y']."";
+		$alt_text = "<b>Customer:</b> ".$user_row['FirstName']." ".$user_row['LastName']." <br><b>Username:</b> ".$user_row['Username']."<br><b>Email:</b> ".$user_row['Email']."<br><b>Order</b> # : ".$row['order_id']." <br> <b>Block Status:</b> ".$row['status']."<br><b>Published:</b> ".$order_row['published']."<br><b>Approved:</b> ".$order_row['published']."<br><b>Expires:</b> ".$days."<br><b>Click Count:</b> ".$row['click_count']."<br><b>Block ID:</b> ".$row['block_id']."<br><b>Co-ordinate:</b> x:".$row['x'].", y:".$row['y']."";
 
 		//if (strlen($row['image_data'])>0) {
 	?>

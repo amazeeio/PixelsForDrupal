@@ -387,21 +387,22 @@ function complete_order ($user_id, $order_id) {
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
 
-		$blocks = explode (",", $order_row['blocks']);
-		foreach ($blocks as $key => $val) {
-			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=".$order_row['banner_id'];
-			
-			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-
-
+		if ( strpos( $order_row['blocks'], "," ) !== false ) {
+			$blocks = explode( ",", $order_row['blocks'] );
+		} else {
+			$blocks = array( 0 => $order_row['blocks'] );
+		}
+		foreach ( $blocks as $key => $val ) {
+			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=" . $order_row['banner_id'];
+			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
 
 		$sql = "SELECT * from users where ID='$user_id' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array ($result);
 
-		if ($order_row[days_expire]==0) {
-			$order_row[days_expire]=$label['advertiser_ord_never'];
+		if ($order_row['days_expire']==0) {
+			$order_row['days_expire']=$label['advertiser_ord_never'];
 		}
 
 		$label_reset = $label["order_completed_email_template"];
@@ -957,12 +958,15 @@ function complete_renew_order ($order_id) {
 		$sql = "SELECT * from orders where order_id='$order_id' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
-		$blocks = explode (",", $order_row['blocks']);
-		foreach ($blocks as $key => $val) {
-			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=".$order_row['banner_id'];
-			
-			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
+		if ( strpos( $order_row['blocks'], "," ) !== false ) {
+			$blocks = explode( ",", $order_row['blocks'] );
+		} else {
+			$blocks = array( 0 => $order_row['blocks'] );
+		}
+		foreach ( $blocks as $key => $val ) {
+			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=" . $order_row['banner_id'];
+			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
 
 		$sql = "SELECT * from users where ID='$user_id' ";

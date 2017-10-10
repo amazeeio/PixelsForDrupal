@@ -57,6 +57,7 @@ echo "updating config....";
 define('VERSION_INFO', addslashes($_REQUEST['version_info']));
 
 define('BASE_HTTP_PATH', addslashes($_REQUEST['base_http_path']));
+define('BASE_PATH', addslashes($_REQUEST['base_path']));
 define('SERVER_PATH_TO_ADMIN', addslashes($_REQUEST['server_path_to_admin']));
 define('UPLOAD_PATH', addslashes($_REQUEST['upload_path']));
 define('UPLOAD_HTTP_PATH', addslashes($_REQUEST['upload_http_path']));
@@ -133,8 +134,6 @@ define('MEMORY_LIMIT', addslashes($_REQUEST['memory_limit']));
 define('REDIRECT_SWITCH', addslashes($_REQUEST['redirect_switch']));
 define('REDIRECT_URL', addslashes($_REQUEST['redirect_url']));
 
-define('ADVANCED_CLICK_COUNT', addslashes($_REQUEST['advanced_click_count']));
-
 define('HIDE_TIMEOUT', addslashes($_REQUEST['hide_timeout']));
 define('MDS_AGRESSIVE_CACHE', addslashes($_REQUEST['mds_agressive_cache']));
 
@@ -155,6 +154,7 @@ define('MDS_LOG_FILE', dirname(__FILE__).'/.mds.log');
 define('VERSION_INFO', 'v 2.1 (Oct 2010)');
 
 define('BASE_HTTP_PATH', '".BASE_HTTP_PATH."'); 
+define('BASE_PATH', '".BASE_PATH."');
 define('SERVER_PATH_TO_ADMIN', '".SERVER_PATH_TO_ADMIN."');
 define('UPLOAD_PATH', '".UPLOAD_PATH."');
 define('UPLOAD_HTTP_PATH', '".UPLOAD_HTTP_PATH."');
@@ -286,19 +286,15 @@ define('ERROR_REPORTING', ".ERROR_REPORTING.");
 	//escape_gpc();
 
 function get_banner_dir() {
-	if (BANNER_DIR=='BANNER_DIR') {	
+	if ( BANNER_DIR == 'BANNER_DIR' ) {
 
-		\$file_path = SERVER_PATH_TO_ADMIN; // eg e:/apache/htdocs/ojo/admin/
+		\$base = BASE_PATH;
+		if ( \$base == 'BASE_PATH' ) {
+			\$base = __DIR__;
+		}
+		\$dest = \$base . '/banners/';
 
-		\$p = preg_split ('%[/\\\]%', \$file_path);
-		
-		array_pop(\$p);
-		array_pop(\$p);
-	
-		\$dest = implode('/', \$p);
-		\$dest = \$dest.'/banners/';
-
-		if (file_exists(\$dest)) {
+		if ( file_exists( \$dest ) ) {
 			\$BANNER_DIR = 'banners/';
 		} else {
 			\$BANNER_DIR = 'pixels/';
@@ -306,8 +302,9 @@ function get_banner_dir() {
 	} else {
 		\$BANNER_DIR = BANNER_DIR;
 	}
+
 	return \$BANNER_DIR;
- 
+
 }
 
 ?>";

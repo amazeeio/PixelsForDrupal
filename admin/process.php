@@ -96,27 +96,14 @@ if ($_REQUEST['process']=='1') {
 
 	</p>
 	<?php
-	
-	//$file_path = getcwd();
-	
-	$file_path = SERVER_PATH_TO_ADMIN;
-	$file_path = str_replace("\\", "/",  $file_path);
-	#echo "*** [$file_path] %%%% ";
-	#$file_path = $_SERVER['SCRIPT_FILENAME']; // eg e:/apache/htdocs/ojo/admin/edit_config.php
-	$file_path = explode ("/", $file_path);
-	array_pop($file_path); // get rid of filename
-    array_pop($file_path); // get rid of /admin
-    $file_path = implode ("/", $file_path);
-	$file_path = $file_path."/";
 
 if (!is_writable(SERVER_PATH_TO_ADMIN."temp/")) {
-	echo "<b>Warning:</b> The script does not have permission write to $file_path"."admin/temp/ or the directory does not exist <br>";
+	echo "<b>Warning:</b> The script does not have permission write to " . SERVER_PATH_TO_ADMIN. "admin/temp/ or the directory does not exist <br>";
 
 }
-$BANNER_DIR = get_banner_dir();
-
-if (!is_writable($file_path.$BANNER_DIR)) {
-	echo "<b>Warning:</b> The script does not have permission write to $file_path"."$BANNER_DIR or the directory does not exist<br>";
+$BANNER_PATH = BASE_PATH . "/" . get_banner_dir();
+if (!is_writable($BANNER_PATH)) {
+	echo "<b>Warning:</b> The script does not have permission write to " . $BANNER_PATH . " or the directory does not exist<br>";
 
 }
 
@@ -137,7 +124,7 @@ if ($c >0) {
 
 ?>
 <p>
-Here you can process the images. This is where the script gets all the user's approved pixels, and merges it into a single image. It automatically publishes the final grid  into the <?php echo $BANNER_DIR; ?> directory where the grid images are served from. Click the button below after approving pixels.
+Here you can process the images. This is where the script gets all the user's approved pixels, and merges it into a single image. It automatically publishes the final grid  into the <?php echo $BANNER_PATH; ?> directory where the grid images are served from. Click the button below after approving pixels.
 </p>
 <form method='post' action='<?php $_SERVER['PHP_SELF']; ?>'>
 <input value='1' name="process" type="hidden">

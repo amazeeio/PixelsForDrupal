@@ -81,7 +81,11 @@
   array_pop($file_path); // get rid of /admin
   $file_path = implode ("/", $file_path);
  // echo "<b> $file_path </b>";
-  
+
+  if ( ! defined( "BASE_PATH" ) ) {
+	  define( "BASE_PATH", $file_path );
+  }
+
   ?>
   <p>&nbsp;</p>
   <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
@@ -94,8 +98,17 @@
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
       <input type="text" name="base_http_path" size="55" value="<?php echo htmlentities(BASE_HTTP_PATH); ?>"><br>Recommended: <b>http://<?php echo $host.$http_url."/"; ?></b></span></td>
     </tr>
-   
-	 <tr>
+
+      <tr>
+          <td bgcolor="#e6f2ea">
+              <span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Server Path to MDS Root Directory</span>
+          </td>
+          <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
+      <input type="text" name="base_path" size="55" value="<?php echo htmlentities( BASE_PATH ); ?>"><br>Recommended: <b><?php echo $file_path; ?></b></span>
+          </td>
+      </tr>
+
+      <tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Server Path to Admin</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
       <input type="text" name="server_path_to_admin" size="55" value="<?php echo htmlentities(SERVER_PATH_TO_ADMIN); ?>" ><br>Recommended: <b><?php echo str_replace('\\', '/', getcwd());?>/</b></span></td>

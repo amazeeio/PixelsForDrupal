@@ -43,7 +43,8 @@ define('MDS_LOG_FILE', dirname(__FILE__).'/.mds.log');
 
 define('VERSION_INFO', 'Version 2.1 (Oct 2010)');
 
-define('BASE_HTTP_PATH', ''); 
+define('BASE_HTTP_PATH', '');
+define('BASE_PATH', '');
 define('SERVER_PATH_TO_ADMIN', '');
 define('UPLOAD_PATH', '');
 define('UPLOAD_HTTP_PATH', '');
@@ -201,19 +202,15 @@ $clean_html = $purifier->purify();
 	//escape_gpc();
 
 function get_banner_dir() {
-	if (BANNER_DIR=='BANNER_DIR') {	
+	if ( BANNER_DIR == 'BANNER_DIR' ) {
 
-		$file_path = SERVER_PATH_TO_ADMIN; // eg e:/apache/htdocs/ojo/admin/
+		$base = BASE_PATH;
+		if ( $base == 'BASE_PATH' ) {
+			$base = __DIR__;
+		}
+		$dest = $base . '/banners/';
 
-		$p = preg_split ('%[/\\]%', "$file_path");
-
-		array_pop($p);
-		array_pop($p);
-	
-		$dest = implode('/', $p);
-		$dest = $dest.'/banners/';
-
-		if (file_exists($dest)) {
+		if ( file_exists( $dest ) ) {
 			$BANNER_DIR = 'banners/';
 		} else {
 			$BANNER_DIR = 'pixels/';
@@ -221,7 +218,8 @@ function get_banner_dir() {
 	} else {
 		$BANNER_DIR = BANNER_DIR;
 	}
+
 	return $BANNER_DIR;
- 
+
 }
 ?>

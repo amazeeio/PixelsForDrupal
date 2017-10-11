@@ -39,13 +39,21 @@ process_login();
 
 require ("header.php");
 
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
+$sql = "SELECT grid_width,grid_height, block_width, block_height, bgcolor, time_stamp FROM banners WHERE (banner_id = '$BID')";
+$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+$b_row = mysqli_fetch_array($result);
+
+if (!$b_row['block_width']) { $b_row['block_width'] = 10;}
+if (!$b_row['block_height']) { $b_row['block_height'] = 10;}
+
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='sold' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-$pixels = mysqli_num_rows($result) * 100;
+$pixels = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
 
 $sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='ordered' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-$ordered = mysqli_num_rows($result) * 100;
+$ordered = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
 
 $sql = "select * from users where ID='".$_SESSION['MDS_ID']."' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));

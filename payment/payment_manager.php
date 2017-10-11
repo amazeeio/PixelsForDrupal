@@ -35,11 +35,7 @@
 
 // include all the payment modules
 
-$p = explode ("/",SERVER_PATH_TO_ADMIN);
-array_pop($p);
-array_pop($p);
-$PAYMENT_PATH = implode ("/",$p);
-$PAYMENT_PATH .= "/payment/";
+$PAYMENT_PATH = BASE_PATH . "/payment/";
 
 $dir = dirname(__FILE__);
 $dir = preg_split ('%[/\\\]%', $dir);

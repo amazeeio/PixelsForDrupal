@@ -1121,8 +1121,7 @@ function send_published_pixels_notification($user_id, $BID) {
 	}
 	
 	$arr = explode ("/",SERVER_PATH_TO_ADMIN);
-	$admin_folder = array_pop($arr);
-	$admin_folder = array_pop($arr);
+	$admin_folder = array_pop(array_pop($arr));
 
 	$view_url = BASE_HTTP_PATH.$admin_folder."/remote_admin.php?key=".substr(md5(ADMIN_PASSWORD),1,15)."&user_id=$user_id&BID=$BID";
 

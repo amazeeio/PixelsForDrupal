@@ -91,11 +91,7 @@ require_once("../include/dynamic_forms.php");
 	
 <?php
 
-	$p = explode ("/",SERVER_PATH_TO_ADMIN);
-	 array_pop($p);
-	 array_pop($p);
-	$check_path = implode ("/",$p);
-	$check_path .= "/payment/check.php";
+	$check_path = BASE_PATH . "/payment/check.php";
 
 	if (file_exists($check_path)) {
 		echo "<b><font color='red'>Upgrade reminder: Please delete the file check.php from the payment/ file.</font></b>";

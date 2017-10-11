@@ -763,8 +763,6 @@ function insert_ad_data() {
 function validate_ad_data($form_id) {
 
 	return validate_form_data(1);
-	
-	return $error;
 }
 
 ################################################################

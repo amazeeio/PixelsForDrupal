@@ -207,11 +207,7 @@ function show_map($BID = 1) {
 		$BANNER_DIR = BANNER_DIR;
 	}
 
-	$p = explode ("/",SERVER_PATH_TO_ADMIN);
-	 array_pop($p);
-	 array_pop($p);
-	$BANNER_PATH = implode ("/",$p);
-	$BANNER_PATH .= "/".$BANNER_DIR;
+	$BANNER_PATH = BASE_PATH . "/" . $BANNER_DIR;
 
 	$sql = "SELECT grid_width,grid_height, block_width, block_height, bgcolor, time_stamp FROM banners WHERE (banner_id = '$BID')";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -741,13 +737,7 @@ function get_map_file_name($BID) {
 		$BANNER_DIR = BANNER_DIR;
 	}
 
-	//$p = explode ("/",SERVER_PATH_TO_ADMIN);
-	$p = preg_split ('%[/\\\]%', SERVER_PATH_TO_ADMIN);
-
-	 array_pop($p);
-	 array_pop($p);
-	$BANNER_PATH = implode ("/",$p);
-	$BANNER_PATH .= "/".$BANNER_DIR;
+	$BANNER_PATH = BASE_PATH . "/" . $BANNER_DIR;
 
 	$map_file = $BANNER_PATH."map_$BID.inc";
 

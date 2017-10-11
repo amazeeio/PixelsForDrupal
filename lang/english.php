@@ -260,7 +260,7 @@ $label['advertiser_ord_status']='Status:';
 $label['advertiser_home_welcome']='Welcome to your account'; 
 $label['advertiser_home_line2']='Here you can manage your pixels.'; 
 $label['advertiser_home_blkyouown']='You own %PIXEL_COUNT% blocks. <a href=\'publish.php\'>Manage my Pixels</a>'; 
-$label['advertiser_home_blkonorder']='You have %PIXEL_ORD_COUNT% blocks on order. <a href=\'select.php\'>Order Pixels</a> / <a href=\'orders.php\'>View Order History</a>'; 
+$label['advertiser_home_blkonorder']='You have %PIXEL_ORD_COUNT% pixels on order. <a href=\'select.php\'>Order Pixels</a> / <a href=\'orders.php\'>View Order History</a>';
 $label['advertiser_home_click_count']='Your pixels were clicked %CLICK_COUNT% times.'; 
 $label['advertiser_home_sub_head']='Here is what you can do:'; 
 $label['advertiser_home_selectlink']='- <a href=\'select.php\'>Order</a>: Choose and order new pixels.'; 

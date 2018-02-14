@@ -333,10 +333,29 @@ function output_grid( $show, $file, $BID, $types ) {
 	// blend in the background
 	if ( isset( $background ) ) {
 
-		// calculate coords to paste at
+		// Background image size
 		$bgsize = $background->getSize();
-		$bgx    = ( $size->getHeight() / 2 ) - ( $bgsize->getHeight() / 2 );
-		$bgy    = ( $size->getWidth() / 2 ) - ( $bgsize->getWidth() / 2 );
+
+		// Rescale image to fit within the size of the grid
+		$new_dimensions = resize_dimensions( $size->getWidth(), $size->getHeight(), $bgsize->getWidth(), $bgsize->getHeight() );
+
+		// Resize to max size
+		$background->resize( new Imagine\Image\Box( $new_dimensions['width'], $new_dimensions['height'] ) );
+
+		// Get new size
+		$bgsize = $background->getSize();
+
+		// calculate coords to paste at
+		$bgx = ( $size->getWidth() / 2 ) - ( $bgsize->getWidth() / 2 );
+		$bgy = ( $size->getHeight() / 2 ) - ( $bgsize->getHeight() / 2 );
+
+		// make sure coords aren't outside the box
+		if ( $bgx < 0 ) {
+			$bgx = 0;
+		}
+		if ( $bgy < 0 ) {
+			$bgy = 0;
+		}
 
 		// paste background image into grid
 		$map->paste( $background, new Imagine\Image\Point( $bgx, $bgy ) );

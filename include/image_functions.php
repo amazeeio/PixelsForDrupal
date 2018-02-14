@@ -142,3 +142,32 @@ function get_stats_html_code( $BID ) {
 }
 
 #########################################################
+
+
+/**
+ * Calculates restricted dimensions with a maximum of $goal_width by $goal_height
+ *
+ * @link https://stackoverflow.com/questions/6606445/calculating-width-and-height-to-resize-image/7877615#7877615
+ *
+ * @param $goal_width
+ * @param $goal_height
+ * @param $width
+ * @param $height
+ *
+ * @return array
+ */
+function resize_dimensions( $goal_width, $goal_height, $width, $height ) {
+	$return = array( 'width' => $width, 'height' => $height );
+
+	// If the ratio > goal ratio and the width > goal width resize down to goal width
+	if ( $width / $height > $goal_width / $goal_height && $width > $goal_width ) {
+		$return['width']  = $goal_width;
+		$return['height'] = $goal_width / $width * $height;
+	} // Otherwise, if the height > goal, resize down to goal height
+	else if ( $height > $goal_height ) {
+		$return['width']  = $goal_height / $height * $width;
+		$return['height'] = $goal_height;
+	}
+
+	return $return;
+}

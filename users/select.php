@@ -62,16 +62,16 @@ if (!is_numeric($BID)) {
 
 if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 
-	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
+	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".intval($_SESSION['MDS_ID'])."'";
 //	echo $sql;
 	
 	$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //		echo "here:".mysqli_num_rows($result);
 	while ($row=mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
-		$sql = "delete from orders where order_id=".$row['order_id'];
+		$sql = "delete from orders where order_id=".intval($row['order_id']);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "delete from blocks where order_id=".$row['order_id'];
+		$sql = "delete from blocks where order_id=".intval($row['order_id']);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 
@@ -81,7 +81,7 @@ if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 # load order from php
 # only allowed 1 new order per banner
 
- $sql = "SELECT * from orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
+ $sql = "SELECT * from orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
  $order_result = mysqli_query($GLOBALS['connection'], $sql);
  $order_row = mysqli_fetch_array($order_result);
@@ -93,8 +93,8 @@ if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 
  }
 
- if (($_SESSION[MDS_order_id]=='')||(USE_AJAX=='YES')) { // guess the order id
-	$_SESSION[MDS_order_id]=$order_row[order_id];
+ if (($_SESSION['MDS_order_id']=='')||(USE_AJAX=='YES')) { // guess the order id
+	$_SESSION['MDS_order_id']=$order_row['order_id'];
  }
 
 /*
@@ -112,15 +112,15 @@ if (isset($_REQUEST['banner_change']) && !empty($_REQUEST['banner_change'])) {
 		
 		$_SESSION['MDS_order_id'] = ''; // clear the current order
 
-		$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".$_SESSION['MDS_ID']."'";
+		$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='".intval($_SESSION['MDS_ID'])."'";
 //	echo $sql;
 		
 		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //		echo "here:".mysqli_num_rows($result);
 		while ($row=mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-			$sql = "delete from orders where order_id=".$row['order_id'];
+			$sql = "delete from orders where order_id=".intval($row['order_id']);
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-			$sql = "delete from blocks where order_id=".$row['order_id'];
+			$sql = "delete from blocks where order_id=".intval($row['order_id']);
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		}
 

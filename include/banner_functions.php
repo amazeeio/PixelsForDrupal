@@ -37,7 +37,7 @@ function load_banner_row($BID) {
 		return false;
 	}
 
-	$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
+	$sql = "SELECT * FROM `banners` WHERE `banner_id`='".intval($BID)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 

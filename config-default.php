@@ -44,9 +44,10 @@ define('MDS_LOG_FILE', dirname(__FILE__).'/.mds.log');
 define('VERSION_INFO', 'Version 2.1 (Oct 2010)');
 
 define('BASE_HTTP_PATH', '');
-define('BASE_PATH', '');
-define('SERVER_PATH_TO_ADMIN', '');
-define('UPLOAD_PATH', '');
+
+define('BASE_PATH', __DIR__);
+define('SERVER_PATH_TO_ADMIN', __DIR__ . '/admin/');
+define('UPLOAD_PATH', __DIR__ . '/upload_files/');
 define('UPLOAD_HTTP_PATH', '');
 define('MYSQL_HOST', ''); # mysql database host
 define('MYSQL_USER', ''); #mysql user name
@@ -205,7 +206,7 @@ function get_banner_dir() {
 	if ( BANNER_DIR == 'BANNER_DIR' ) {
 
 		$base = BASE_PATH;
-		if ( $base == 'BASE_PATH' ) {
+		if ( empty(BASE_PATH) || $base == 'BASE_PATH' ) {
 			$base = __DIR__;
 		}
 		$dest = $base . '/banners/';

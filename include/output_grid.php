@@ -51,9 +51,11 @@
  *                          'sold'
  *                       )
  *
+ * @param int $user_id
+ *
  * @return string Progress output.
  */
-function output_grid( $show, $file, $BID, $types ) {
+function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	if ( ! is_numeric( $BID ) ) {
 		return false;
@@ -77,6 +79,8 @@ function output_grid( $show, $file, $BID, $types ) {
 	$tmp_block     = $imagine->load( USR_GRID_BLOCK );
 	$tmp_block->resize( $block_size );
 	$default_block->paste( $tmp_block, $zero_point );
+
+	$and_user = "";
 
 	foreach ( $types as $type ) {
 		switch ( $type ) {
@@ -146,16 +150,20 @@ function output_grid( $show, $file, $BID, $types ) {
 			case 'price_zones_text':
 				$show_price_zones_text = true;
 				break;
+			case 'user':
+				$user = $user_id;
+				$and_user = " AND `user_id`=" . intval($user);
+				break;
 			default:
 				break;
 		}
 	}
 
-	$blocks = $orders = $price_zones = array();
+	$blocks = $orders = $price_zones = $users = array();
 
 	// preload nfs blocks
 	if ( isset( $default_nfs_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='nfs' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='nfs' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -165,7 +173,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload nfs_front blocks (nfs blocks appearing in front of the background)
 	if ( isset( $default_nfs_front_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='nfs' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='nfs' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -175,7 +183,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload ordered blocks
 	if ( isset( $default_ordered_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='ordered' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='ordered' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -185,7 +193,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload reserved blocks
 	if ( isset( $default_reserved_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='reserved' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='reserved' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -195,7 +203,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload selected blocks
 	if ( isset( $default_selected_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='onorder' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='onorder' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -205,7 +213,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload sold blocks
 	if ( isset( $default_sold_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='sold' AND banner_id='$BID' ";
+		$sql = "SELECT block_id FROM blocks WHERE `status`='sold' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -215,7 +223,7 @@ function output_grid( $show, $file, $BID, $types ) {
 
 	// preload orders
 	if ( isset( $show_orders ) ) {
-		$sql = "SELECT block_id,x,y,image_data FROM blocks WHERE approved='Y' AND `status`='sold' AND image_data <> '' AND banner_id='$BID' ";
+		$sql = "SELECT block_id,image_data FROM blocks WHERE approved='Y' AND `status`='sold' AND image_data <> '' AND banner_id='" . intval( $BID ) . "' " . $and_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -232,6 +240,28 @@ function output_grid( $show, $file, $BID, $types ) {
 
 			$blocks[ $row['block_id'] ] = 'order';
 			$orders[ $row['block_id'] ] = $block;
+		}
+	}
+
+	// Show user's blocks
+	if ( isset( $user ) ) {
+		$sql = "SELECT block_id,image_data FROM blocks WHERE `user_id`='" . intval( $user ) . "' AND image_data <> '' AND banner_id='" . intval( $BID ) . "' ";
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+
+		while ( $row = mysqli_fetch_array( $result ) ) {
+
+			$data = $row['image_data'];
+
+			// get block image output
+			if ( strlen( $data ) != 0 ) {
+				$block = $imagine->load( base64_decode( $data ) );
+			} else {
+				$block = $default_block->copy();
+			}
+			$block->resize( $block_size );
+
+			$blocks[ $row['block_id'] ] = 'user';
+			$users[ $row['block_id'] ]  = $block;
 		}
 	}
 
@@ -285,6 +315,8 @@ function output_grid( $show, $file, $BID, $types ) {
 
 				if ( isset( $show_orders ) && $blocks[ $cell ] == "order" ) {
 					$grid_front[ $x ][ $y ] = $orders[ $cell ];
+				} else if ( isset( $user ) && $blocks[ $cell ] == "user" ) {
+					$grid_front[ $x ][ $y ] = $users[ $cell ];
 				} else if ( isset( $default_nfs_block ) && $blocks[ $cell ] == "nfs" ) {
 					$grid_back[ $x ][ $y ] = $default_nfs_block;
 				} else if ( isset( $default_nfs_front_block ) && $blocks[ $cell ] == "nfs_front" ) {

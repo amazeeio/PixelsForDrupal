@@ -130,9 +130,9 @@ function expire_orders() {
 
 		// Delete Temp Orders
 
-		$session_duration = ini_get("session.gc_maxlifetime");
+		$session_duration = intval(ini_get("session.gc_maxlifetime"));
 		
-		$sql = "SELECT session_id, order_date FROM `temp_orders` WHERE  DATE_SUB('$now', INTERVAL $session_duration SECOND) >= temp_orders.order_date AND session_id <> '".addslashes(session_id())."' ";
+		$sql = "SELECT session_id, order_date FROM `temp_orders` WHERE  DATE_SUB('$now', INTERVAL $session_duration SECOND) >= temp_orders.order_date AND session_id <> '".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 
 		$result=mysqli_query($GLOBALS['connection'], $sql);
 		
@@ -176,7 +176,7 @@ function expire_orders() {
 
 		if (HOURS_UNCONFIRMED!=0) {
 
-			$sql = "SELECT * from orders where (status='new') AND DATE_SUB('$now',INTERVAL ".HOURS_UNCONFIRMED." HOUR) >= date_stamp AND date_stamp IS NOT NULL ";
+			$sql = "SELECT * from orders where (status='new') AND DATE_SUB('$now',INTERVAL ".intval(HOURS_UNCONFIRMED)." HOUR) >= date_stamp AND date_stamp IS NOT NULL ";
 
 			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
@@ -185,7 +185,7 @@ function expire_orders() {
 
 				// Now really delete the order.
 
-				$sql = "delete from orders where order_id='".$row['order_id']."'";
+				$sql = "delete from orders where order_id='".intval($row['order_id'])."'";
 				@mysqli_query($GLOBALS['connection'], $sql);
 				global $f2;
 				$f2->debug("Deleted unconfirmed order - ".$sql);
@@ -197,7 +197,7 @@ function expire_orders() {
 
 		// unpaid Orders
 		if (DAYS_CONFIRMED!=0) {
-			$sql = "SELECT * from orders where (status='new' OR status='confirmed') AND DATE_SUB('$now',INTERVAL ".DAYS_CONFIRMED." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
+			$sql = "SELECT * from orders where (status='new' OR status='confirmed') AND DATE_SUB('$now',INTERVAL ".intval(DAYS_CONFIRMED)." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
 			
 			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
@@ -212,7 +212,7 @@ function expire_orders() {
 
 		if (DAYS_RENEW!=0) { 
 
-			$sql = "SELECT * from orders where status='expired' AND DATE_SUB('$now',INTERVAL ".DAYS_RENEW." DAY) >= date_stamp AND date_stamp IS NOT NULL";
+			$sql = "SELECT * from orders where status='expired' AND DATE_SUB('$now',INTERVAL ".intval(DAYS_RENEW)." DAY) >= date_stamp AND date_stamp IS NOT NULL";
 
 			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
@@ -227,7 +227,7 @@ function expire_orders() {
 
 		if (DAYS_CANCEL!=0) {
 
-			$sql = "SELECT * from orders where status='cancelled' AND DATE_SUB('$now',INTERVAL ".DAYS_CANCEL." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
+			$sql = "SELECT * from orders where status='cancelled' AND DATE_SUB('$now',INTERVAL ".intval(DAYS_CANCEL)." DAY) >= date_stamp AND date_stamp IS NOT NULL ";
 
 			$result = @mysqli_query($GLOBALS['connection'], $sql);
 
@@ -260,7 +260,7 @@ function expire_orders() {
 function delete_temp_order($sid, $delete_ad=true) {
 	
 
-	$sid = addslashes($sid);
+	$sid = mysqli_real_escape_string( $GLOBALS['connection'], $sid);
 
 	$sql = "select * from temp_orders where session_id='".$sid."' ";
 	$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
@@ -273,7 +273,7 @@ function delete_temp_order($sid, $delete_ad=true) {
 	mysqli_query($GLOBALS['connection'], $sql);
 
 	if ($delete_ad) {
-		$sql = "DELETE FROM ads WHERE ad_id='".$order_row['ad_id']."' ";
+		$sql = "DELETE FROM ads WHERE ad_id='".intval($order_row['ad_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql);
 	}
 	
@@ -311,7 +311,7 @@ function credit_transaction($order_id, $amount, $currency, $txn_id, $reason, $or
 
 	$date = (gmdate("Y-m-d H:i:s"));
 
-	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='CREDIT' ";
+	$sql = "SELECT * FROM transactions where txn_id='".intval($txn_id)."' and `type`='CREDIT' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($sql));
 	if (mysqli_num_rows($result)!=0) {
 		return; // there already is a credit for this txn_id
@@ -319,11 +319,11 @@ function credit_transaction($order_id, $amount, $currency, $txn_id, $reason, $or
 
 // check to make sure that there is a debit for this transaction
 
-	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='DEBIT' ";
+	$sql = "SELECT * FROM transactions where txn_id='".intval($txn_id)."' and `type`='DEBIT' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($sql));
 	if (mysqli_num_rows($result)>0) {
 
-		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('$txn_id', '$date', '$order_id', '$type', '$amount', '$currency', '$reason', '$origin')";
+		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('".intval($txn_id)."', '$date', '".intval($order_id)."', '$type', '".floatval($amount)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $currency)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $reason)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $origin)."')";
 
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	}
@@ -352,10 +352,10 @@ function debit_transaction($order_id, $amount, $currency, $txn_id, $reason, $ori
 	$date = (gmdate("Y-m-d H:i:s"));
 // check to make sure that there is no debit for this transaction already
 
-	$sql = "SELECT * FROM transactions where txn_id='$txn_id' and `type`='DEBIT' ";
+	$sql = "SELECT * FROM transactions where txn_id='".intval($txn_id)."' and `type`='DEBIT' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	if (mysqli_fetch_array($result)==0) {
-		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('$txn_id', '$date', '$order_id', '$type', '$amount', '$currency', '$reason', '$origin')";
+		$sql = "INSERT INTO transactions (`txn_id`, `date`, `order_id`, `type`, `amount`, `currency`, `reason`, `origin`) VALUES('".intval($txn_id)."', '$date', '".intval($order_id)."', '$type', '".floatval($amount)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $currency)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $reason)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $origin)."')";
 
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
@@ -367,7 +367,7 @@ function debit_transaction($order_id, $amount, $currency, $txn_id, $reason, $ori
 function complete_order ($user_id, $order_id) {
 	global $label;
 
-	$sql = "SELECT * from orders where order_id='$order_id' ";
+	$sql = "SELECT * from orders where order_id='".intval($order_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array ($result);
 
@@ -375,15 +375,14 @@ function complete_order ($user_id, $order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id='".$order_id."'";
+		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id='".intval($order_id)."'";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// insert a transaction
 
 		// mark pixels as sold.
 		
-
-		$sql = "SELECT * from orders where order_id='$order_id' ";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
 
@@ -393,11 +392,11 @@ function complete_order ($user_id, $order_id) {
 			$blocks = array( 0 => $order_row['blocks'] );
 		}
 		foreach ( $blocks as $key => $val ) {
-			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=" . $order_row['banner_id'];
+			$sql = "UPDATE blocks set status='sold' where block_id='".intval($val)."' and banner_id=" . intval($order_row['banner_id']);
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
 
-		$sql = "SELECT * from users where ID='$user_id' ";
+		$sql = "SELECT * from users where ID='".intval($user_id)."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array ($result);
 
@@ -469,7 +468,7 @@ function complete_order ($user_id, $order_id) {
 function confirm_order ($user_id, $order_id) {
 	global $label;
 
-	$sql = "SELECT *, t1.blocks as BLK FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id=t2.ID AND order_id='$order_id' ";
+	$sql = "SELECT *, t1.blocks as BLK FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id=t2.ID AND order_id='".intval($order_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 	//echo $sql;
@@ -478,15 +477,15 @@ function confirm_order ($user_id, $order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='confirmed', date_stamp='$now' WHERE order_id='".$order_id."' ";
+		$sql = "UPDATE orders set status='confirmed', date_stamp='$now' WHERE order_id='".intval($order_id)."' ";
 		//echo $sql."<br>";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		//echo "User id: ".$_SESSION['MDS_ID'];
 
-		$_SESSION['MDS_order_id']==''; // destroy order id
+		$_SESSION['MDS_order_id']=''; // destroy order id
 
-		$sql = "UPDATE blocks set status='ordered' WHERE order_id='".$order_id."' and banner_id='".$row['banner_id']."'";
+		$sql = "UPDATE blocks set status='ordered' WHERE order_id='".intval($order_id)."' and banner_id='".intval($row['banner_id'])."'";
 
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -505,19 +504,19 @@ function confirm_order ($user_id, $order_id) {
 
 		*/
 
-		if ($row[days_expire]==0) {
-			$row[days_expire]=$label['advertiser_ord_never'];
+		if ($row['days_expire']==0) {
+			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
 		$label_reset = $label["order_confirmed_email_template"];
 
 		$label["order_confirmed_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%FNAME%", $row[FirstName], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%LNAME%", $row[LastName], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%ORDER_ID%", $row[order_id], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_COUNT%", $row[quantity], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_DAYS%", $row[days_expire], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row[currency], $row[price]), $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_confirmed_email_template"]);
+		$label["order_confirmed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_confirmed_email_template"]);
 		$label["order_confirmed_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_confirmed_email_template"]);
 		$label["order_confirmed_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_confirmed_email_template"]);
 		$message = $label["order_confirmed_email_template"];
@@ -529,10 +528,10 @@ function confirm_order ($user_id, $order_id) {
 		if (EMAIL_USER_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
+				$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
 			}
 
 			//@mail($to,$subject,$message,$headers);
@@ -542,10 +541,10 @@ function confirm_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
+				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
 			}
 			//@mail(trim(SITE_CONTACT_EMAIL),$subject,$message,$headers);
 		}
@@ -562,7 +561,7 @@ function confirm_order ($user_id, $order_id) {
 
 function pend_order ($user_id, $order_id) {
 	global $label;
-	$sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".$user_id."' AND order_id='$order_id' ";
+	$sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".intval($user_id)."' AND order_id='".intval($order_id)."' ";
 	
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
@@ -571,7 +570,7 @@ function pend_order ($user_id, $order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='pending', date_stamp='$now' WHERE order_id='".$order_id."' ";
+		$sql = "UPDATE orders set status='pending', date_stamp='$now' WHERE order_id='".intval($order_id)."' ";
 		//echo $sql;
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -579,25 +578,25 @@ function pend_order ($user_id, $order_id) {
 		//echo $order_row['blocks'];
 		foreach ($blocks as $key => $val) {
 
-			$sql = "UPDATE blocks set status='ordered' WHERE block_id='".$val."' and banner_id='".$row['banner_id']."'";
+			$sql = "UPDATE blocks set status='ordered' WHERE block_id='".intval($val)."' and banner_id='".intval($row['banner_id'])."'";
 			//echo $sql;
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		}
 
 
-		if ($row[days_expire]==0) {
-			$row[days_expire]=$label['advertiser_ord_never'];
+		if ($row['days_expire']==0) {
+			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
 		$label_reset = $label["order_pending_email_template"];
 	
 		$label["order_pending_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%FNAME%", $row[FirstName], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%LNAME%", $row[LastName], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%ORDER_ID%", $row[order_id], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PIXEL_COUNT%", $row[quantity], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PIXEL_DAYS%", $row[days_expire], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row[currency], $row[price]), $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_pending_email_template"]);
+		$label["order_pending_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_pending_email_template"]);
 		$label["order_pending_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_pending_email_template"]);
 		$label["order_pending_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_pending_email_template"]);
 		$message = $label["order_pending_email_template"];
@@ -608,9 +607,9 @@ function pend_order ($user_id, $order_id) {
 		
 		if (EMAIL_USER_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				queue_mail(addslashes($to), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
+				queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
 			} else {
-				send_email( $to, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
 			}
 			//@mail($to,$subject,$message,$headers);
 		}
@@ -618,10 +617,10 @@ function pend_order ($user_id, $order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
+				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
 			}
 			//@mail(trim(SITE_CONTACT_EMAIL),$subject,$message,$headers);
 		}
@@ -635,7 +634,7 @@ function pend_order ($user_id, $order_id) {
 
 function expire_order ($order_id) {
 	global $label;
-	$sql = "SELECT *, t1.banner_id as BID, t1.user_id as UID FROM orders as t1, users as t2 where t1.user_id=t2.ID AND  order_id='$order_id' ";
+	$sql = "SELECT *, t1.banner_id as BID, t1.user_id as UID FROM orders as t1, users as t2 where t1.user_id=t2.ID AND  order_id='".intval($order_id)."' ";
 	//echo "$sql<br>";
 	//days_expire
 
@@ -648,11 +647,11 @@ function expire_order ($order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='expired', date_stamp='$now' WHERE order_id='".$order_id."' ";
+		$sql = "UPDATE orders set status='expired', date_stamp='$now' WHERE order_id='".intval($order_id)."' ";
 		//echo "$sql<br>";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".$order_id."' and banner_id='".$row['BID']."'";
+		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".intval($order_id)."' and banner_id='".intval($row['BID'])."'";
 			//echo "$sql<br>";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql." (expire order)");
 
@@ -673,7 +672,7 @@ function expire_order ($order_id) {
 
 		// update approve status on orders.
 
-		$sql = "UPDATE orders SET `approved`='N' WHERE order_id='".$order_id."'";
+		$sql = "UPDATE orders SET `approved`='N' WHERE order_id='".intval($order_id)."'";
 		//echo "$sql<br>";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql." (expire order)");
 
@@ -682,19 +681,19 @@ function expire_order ($order_id) {
 		}
 
 
-		if ($row[days_expire]==0) {
-			$row[days_expire]=$label['advertiser_ord_never'];
+		if ($row['days_expire']==0) {
+			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
 		$label_reset = $label["order_expired_email_template"];
 
 		$label["order_expired_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%FNAME%", $row[FirstName], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%LNAME%", $row[LastName], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%ORDER_ID%", $row[order_id], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PIXEL_COUNT%", $row[quantity], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PIXEL_DAYS%", $row[days_expire], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row[currency], $row[price]), $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_expired_email_template"]);
+		$label["order_expired_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_expired_email_template"]);
 		$label["order_expired_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_expired_email_template"]);
 		$label["order_expired_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_expired_email_template"]);
 		$message = $label["order_expired_email_template"];
@@ -706,10 +705,10 @@ function expire_order ($order_id) {
 		
 		if (EMAIL_USER_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
+				$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
 			}
 			//@mail($to,$subject,$message,$headers);
 		}
@@ -717,10 +716,10 @@ function expire_order ($order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
+				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
 			}
 			//@mail(trim(EMAIL_ADMIN_ORDER_EXPIRED),$subject,$message,$headers);
 		}
@@ -736,7 +735,7 @@ function expire_order ($order_id) {
 function delete_order ($order_id) {
 
 	global $label;
-	$sql = "SELECT * FROM orders where order_id='$order_id' ";
+	$sql = "SELECT * FROM orders where order_id='".intval($order_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($result);
 
@@ -744,14 +743,14 @@ function delete_order ($order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='deleted', date_stamp='$now' WHERE order_id='".$order_id."'";
+		$sql = "UPDATE orders set status='deleted', date_stamp='$now' WHERE order_id='".intval($order_id)."'";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// DELETE BLOCKS
 
 		if ($order_row['blocks']!='') {
 
-			$sql = "DELETE FROM blocks where order_id='$order_id' and banner_id=".$order_row['banner_id'];
+			$sql = "DELETE FROM blocks where order_id='".intval($order_id)."' and banner_id=".intval($order_row['banner_id']);
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
@@ -773,7 +772,7 @@ function delete_order ($order_id) {
 			require_once("ads.inc.php");
 		}
 		delete_ads_files ($order_row['ad_id']);
-		$sql = "DELETE from ads where ad_id='".$order_row['ad_id']."' ";
+		$sql = "DELETE from ads where ad_id='".intval($order_row['ad_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		
 
@@ -787,7 +786,7 @@ function delete_order ($order_id) {
 function cancel_order ($order_id) {
 
 	global $label;
-	$sql = "SELECT * FROM orders where order_id='$order_id' ";
+	$sql = "SELECT * FROM orders where order_id='".intval($order_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	//echo $sql."<br>";
@@ -795,10 +794,10 @@ function cancel_order ($order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='cancelled', date_stamp='$now', approved='N' WHERE order_id='".$order_id."'";
+		$sql = "UPDATE orders set status='cancelled', date_stamp='$now', approved='N' WHERE order_id='".intval($order_id)."'";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		//echo $sql."<br>";
-		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".$order_id."' and banner_id='".$row['banner_id']."'";
+		$sql = "UPDATE blocks set status='ordered', `approved`='N' WHERE order_id='".intval($order_id)."' and banner_id='".intval($row['banner_id'])."'";
 			//echo $sql."<br>";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql. " (cancel order) ");
 
@@ -836,7 +835,7 @@ function cancel_order ($order_id) {
 # (Orders can be paid and cont be completed until the previous order expires)
 function is_renew_order_paid($original_order_id) {
 	
-	$sql = "SELECT * from orders WHERE original_order_id='$original_order_id' AND status='renew_paid' ";
+	$sql = "SELECT * from orders WHERE original_order_id='".intval($original_order_id)."' AND status='renew_paid' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)>0) {
 		return true;
@@ -860,15 +859,15 @@ function allocate_renew_order($original_order_id) {
 	}
 	// are there any 
 	// renew_wait orders?
-	$sql = "SELECT * FROM orders WHERE original_order_id='$original_order_id' and status='renew_wait' ";
+	$sql = "SELECT * FROM orders WHERE original_order_id='".intval($original_order_id)."' and status='renew_wait' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (($row = mysqli_fetch_array($result))==false) {
 		// copy the original order to create a new renew_wait order
-		$sql = "SELECT * FROM orders WHERE order_id='$original_order_id' ";
+		$sql = "SELECT * FROM orders WHERE order_id='".intval($original_order_id)."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection'])); 
 		$row = mysqli_fetch_array($result);
 
-		$sql = "INSERT INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved, original_order_id) VALUES ('".$row['user_id']."', '', '".$row['blocks']."', 'renew_wait', NOW(), '".$row['price']."', '".$row['quantity']."', '".$row['banner_id']."', '".$row['currency']."', ".$row['days_expire'].", '$now', '".$row['approved']."', '".$original_order_id."') ";
+		$sql = "INSERT INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved, original_order_id) VALUES ('".intval($row['user_id'])."', '', '".intval($row['blocks'])."', 'renew_wait', NOW(), '".floatval($row['price'])."', '".intval($row['quantity'])."', '".intval($row['banner_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $row['currency'])."', ".intval($row['days_expire']).", '$now', '".mysqli_real_escape_string( $GLOBALS['connection'], $row['approved'])."', '".intval($original_order_id)."') ";
 
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$order_id = mysqli_insert_id($GLOBALS['connection']);
@@ -893,7 +892,7 @@ function pay_renew_order($original_order_id) {
 	
 	$wait_order_id = allocate_renew_order($original_order_id);
 	if ($wait_order_id !== false) {
-		$sql = "UPDATE orders set status='renew_paid' WHERE order_id='$wait_order_id' and status='renew_wait' ";
+		$sql = "UPDATE orders set status='renew_paid' WHERE order_id='".intval($wait_order_id)."' and status='renew_wait' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		
 	}
@@ -932,7 +931,7 @@ function process_paid_renew_orders() {
 function complete_renew_order ($order_id) {
 	global $label;
 
-	$sql = "SELECT * from orders where order_id='$order_id' and status='renew_paid' ";
+	$sql = "SELECT * from orders where order_id='".intval($order_id)."' and status='renew_paid' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array ($result);
 
@@ -940,22 +939,22 @@ function complete_renew_order ($order_id) {
 
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id=".$order_id;
+		$sql = "UPDATE orders set status='completed', date_published=NULL, date_stamp='$now' WHERE order_id=".intval($order_id);
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// update pixel's order_id
 
-		$sql = "UPDATE blocks SET order_id='".$order_row['order_id']."' WHERE order_id='".$order_row['original_order_id']."' AND banner_id='".$row['banner_id']."' ";
+		$sql = "UPDATE blocks SET order_id='".intval($order_row['order_id'])."' WHERE order_id='".intval($order_row['original_order_id'])."' AND banner_id='".intval($order_row['banner_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// update ads' order id
 
-		$sql = "UPDATE ads SET order_id='".$order_row['order_id']."' WHERE order_id='".$order_row['original_order_id']."' AND banner_id='".$row['banner_id']."' ";
+		$sql = "UPDATE ads SET order_id='".intval($order_row['order_id'])."' WHERE order_id='".intval($order_row['original_order_id'])."' AND banner_id='".intval($order_row['banner_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 		// mark pixels as sold.
 		
-		$sql = "SELECT * from orders where order_id='$order_id' ";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array ($result);
 
@@ -965,11 +964,11 @@ function complete_renew_order ($order_id) {
 			$blocks = array( 0 => $order_row['blocks'] );
 		}
 		foreach ( $blocks as $key => $val ) {
-			$sql = "UPDATE blocks set status='sold' where block_id='$val' and banner_id=" . $order_row['banner_id'];
+			$sql = "UPDATE blocks set status='sold' where block_id='".intval($val)."' and banner_id=" . intval($order_row['banner_id']);
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
 
-		$sql = "SELECT * from users where ID='$user_id' ";
+		$sql = "SELECT * from users where ID='".intval($order_row['user_id']);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array ($result);
 
@@ -980,14 +979,14 @@ function complete_renew_order ($order_id) {
 		$label_reset = $label["order_completed_renewal_email_template"];
 
 		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%FNAME%", $user_row[FirstName], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%LNAME%", $user_row[LastName], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%ORDER_ID%", $order_row[order_id], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%ORIGINAL_ORDER_ID%", $order_row[original_order_id], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%FNAME%", $user_row['FirstName'], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%LNAME%", $user_row['LastName'], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%ORDER_ID%", $order_row['order_id'], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%ORIGINAL_ORDER_ID%", $order_row['original_order_id'], $label["order_completed_renewal_email_template"]);
 		
-		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_COUNT%", $order_row[quantity], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_DAYS%", $order_row[days_expire], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row[currency], $order_row[price]), $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $label["order_completed_renewal_email_template"]);
+		$label["order_completed_renewal_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row['currency'], $order_row['price']), $label["order_completed_renewal_email_template"]);
 		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_completed_renewal_email_template"]);
 		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_completed_renewal_email_template"]);
 		$message = $label["order_completed_renewal_email_template"];
@@ -999,10 +998,10 @@ function complete_renew_order ($order_id) {
 		if (EMAIL_USER_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($user_row[FirstName]." ".$user_row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
+				$mail_id=queue_mail(addslashes($to), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $user_row[FirstName]." ".$user_row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
 			}
 			
 		}
@@ -1012,10 +1011,10 @@ function complete_renew_order ($order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row[FirstName]." ".$user_row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
+				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $user_row[FirstName]." ".$user_row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
 			}
 			
 		}
@@ -1040,7 +1039,7 @@ function send_confirmation_email($email) {
 
 	global $label;
 
-	$sql = "SELECT * FROM users where Email='$email' ";
+	$sql = "SELECT * FROM users where Email='".mysqli_real_escape_string( $GLOBALS['connection'], $email)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$row = mysqli_fetch_array($result);
 
@@ -1050,8 +1049,8 @@ function send_confirmation_email($email) {
 	
 	$label_reset = $label["confirmation_email_templaltev2"];
 	
-	$label["confirmation_email_templaltev2"] = str_replace ("%FNAME%", $row[FirstName], $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%LNAME%", $row[LastName], $label["confirmation_email_templaltev2"]);
+	$label["confirmation_email_templaltev2"] = str_replace ("%FNAME%", $row['FirstName'], $label["confirmation_email_templaltev2"]);
+	$label["confirmation_email_templaltev2"] = str_replace ("%LNAME%", $row['LastName'], $label["confirmation_email_templaltev2"]);
 	$label["confirmation_email_templaltev2"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH."users/", $label["confirmation_email_templaltev2"]);
 	$label["confirmation_email_templaltev2"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["confirmation_email_templaltev2"]);
 	$label["confirmation_email_templaltev2"] = str_replace ("%VERIFY_URL%", $verify_url, $label["confirmation_email_templaltev2"]);
@@ -1059,8 +1058,8 @@ function send_confirmation_email($email) {
 
 	$message = $label["confirmation_email_templaltev2"];
 
-	$html_msg = str_replace ("%FNAME%", $row[FirstName], $label["confirmation_html_email_templaltev2"]);
-	$html_msg = str_replace ("%LNAME%", $row[LastName], $html_msg);
+	$html_msg = str_replace ("%FNAME%", $row['FirstName'], $label["confirmation_html_email_templaltev2"]);
+	$html_msg = str_replace ("%LNAME%", $row['LastName'], $html_msg);
 	$html_msg = str_replace ("%SITE_URL%", BASE_HTTP_PATH."users/", $html_msg);
 	$html_msg = str_replace ("%SITE_NAME%", SITE_NAME, $html_msg);
 	$html_msg = str_replace ("%VERIFY_URL%", $verify_url, $html_msg);
@@ -1073,10 +1072,10 @@ function send_confirmation_email($email) {
 	$label["confirmation_email_templaltev2"] = $label_reset;
 		
 	if (USE_SMTP=='YES') {
-		$mail_id = queue_mail(addslashes($to), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), addslashes($html_msg), 5);
+		$mail_id = queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), addslashes($html_msg), 5);
 		process_mail_queue(2, $mail_id);
 	} else {
-		send_email( $to, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
+		send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
 	}
 
 	if (EMAIL_ADMIN_ACTIVATION=='YES') {
@@ -1103,15 +1102,15 @@ function send_published_pixels_notification($user_id, $BID) {
 	$subject = $label['publish_pixels_email_subject'];
 	$subject  = str_replace ("%SITE_NAME%", SITE_NAME, $subject );
 
-	$sql = "SELECT * from banners where banner_id='$BID'";
+	$sql = "SELECT * from banners where banner_id='".intval($BID)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$b_row = mysqli_fetch_array($result);
 
-	$sql = "SELECT * from users where ID='$user_id'";
+	$sql = "SELECT * from users where ID='".intval($user_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$u_row = mysqli_fetch_array($result);
 
-	$sql = "SELECT  url, alt_text FROM blocks where user_id='$user_id' AND banner_id='$BID' GROUP by url, alt_text ";
+	$sql = "SELECT  url, alt_text FROM blocks where user_id='".intval($user_id)."' AND banner_id='".intval($BID)."' GROUP by url, alt_text ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$url_list = '';
 	while ($row = mysqli_fetch_array($result)) {
@@ -1156,7 +1155,8 @@ function send_expiry_reminder($order_id) {
 function display_order ($order_id, $BID) {
 
 	global $label;
-	$order_id = addslashes($order_id);
+	$order_id = intval($order_id);
+	$BID = intval($BID);
 	$sql = "select * from banners where banner_id='$BID'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
@@ -1212,14 +1212,14 @@ function display_packages ($order_id, $BID) {
 
 	global $f2, $label;
 
-	$order_id 	= $order_id;
-	$BID 		= $BID;
+	$order_id 	= intval($order_id);
+	$BID 		= intval($BID);
 
 	$sql = "select * from banners where banner_id='$BID'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
-	$sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."' and banner_id='$BID'";
+	$sql = "SELECT * from orders where order_id='".intval($_SESSION['MDS_order_id'])."' and banner_id='$BID'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 
@@ -1239,16 +1239,16 @@ Please choose the duration of the campaign you desire:<p>
 <tr>
 <td><b><?php echo $label['advertiser_ord_quantity'];?></b></td><td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix'];?></td>
 </tr>
-<td><b>Duration/Price</b></td><td><?php if ($b_row[days_expire]==0) { echo $label['advertiser_ord_never']; } else { 
+<tr><td><b>Duration/Price</b></td><td><?php if ($b_row['days_expire']==0) { echo $label['advertiser_ord_never']; } else {
 // viday pricing dropdown
 	?> <select name="packages"> <?php
-        $sql = "SELECT * from packages where banner_id='$BID' order by price asc";
+        $sql = "SELECT * from packages where banner_id='".intval($BID)."' order by price asc";
         $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
          while ($packages_row=mysqli_fetch_array($result)) {
 		echo "<option value=\"".$packages_row['days_expire']."-".$packages_row['price']."\">".$packages_row['days_expire']." days - $".$packages_row['price']."</option>";
 	}	
-	echo "</select>";	
-	$get_blocks = split(",",$order_row['blocks']);
+	echo "</select>";
+    $get_blocks = explode( ",", $order_row['blocks'] );
 	$num_blocks = count($get_blocks);
 	echo "<br>Prices are per block, you have chosen ".$num_blocks;
 	if ($num_blocks == "1") { echo " block."; } else {
@@ -1340,7 +1340,7 @@ $html_message='', $template_id=0) {
 	// save to the database...
     $attachments = 'N';
     $now = ( gmdate( "Y-m-d H:i:s" ) );
-    $sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '" . addslashes( $to_address ) . "', '" . addslashes( $to_name ) . "', '" . addslashes( $from_address ) . "', '" . addslashes( $from_name ) . "', '" . addslashes( $subject ) . "', '" . addslashes( $message ) . "', '" . addslashes( $html_message ) . "', '$attachments', 'sent', '', 0, '$template_id', '$now')";
+    $sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $subject ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $message ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $html_message ) . "', '$attachments', 'sent', '', 0, '".intval($template_id)."', '$now')";
     mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
     $mail_id = mysqli_insert_id($GLOBALS['connection']);
 
@@ -1398,7 +1398,7 @@ function nav_pages_struct(&$result, $q_string, $count, $REC_PER_PAGE) {
 	if ($list_mode=='PREMIUM') {
 		$page = 'hot.php';		
 	} else {
-		$page = $_SERVER[PHP_SELF];
+		$page = $_SERVER['PHP_SELF'];
 	}
 	$offset = $_REQUEST["offset"];
 	$show_emp = $_REQUEST["show_emp"];
@@ -1420,7 +1420,7 @@ function nav_pages_struct(&$result, $q_string, $count, $REC_PER_PAGE) {
 	// estimate number of pages.
 	$pages = ceil($count / $REC_PER_PAGE);
 	if ($pages == 1) {
-	   return;
+	   return "";
 	}
 	$off = 0;
 	$p=1;
@@ -1560,7 +1560,7 @@ function select_block ($map_x, $map_y) {
 		$clicked_block="0";// convert to string
 	}
 
-	$sql = "select Rank from users where ID=".$_SESSION['MDS_ID'];
+	$sql = "select Rank from users where ID=".intval($_SESSION['MDS_ID']);
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);
 
@@ -1617,7 +1617,7 @@ function select_block ($map_x, $map_y) {
 
 	//$sql = "SELECT status, user_id FROM blocks where `x`=$map_x AND `y`=$map_y and banner_id=$BID ";
 	
-	$sql = "SELECT status, user_id, ad_id FROM blocks where block_id='$clicked_block' AND banner_id='$BID' ";
+	$sql = "SELECT status, user_id, ad_id FROM blocks where block_id='".intval($clicked_block)."' AND banner_id='".intval($BID)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -1627,7 +1627,7 @@ function select_block ($map_x, $map_y) {
 
 	
 		// put block on order
-		$sql = "SELECT * FROM orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
+		$sql = "SELECT * FROM orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='".intval($BID)."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 		if ($row['blocks']!='') {
@@ -1668,20 +1668,21 @@ function select_block ($map_x, $map_y) {
 
 		if (!$max_selected) {
 
-		
+
+		    $price = $total = 0;
 			$blocks = $new_blocks;
 			$quantity = sizeof($blocks)*(BLK_WIDTH*BLK_HEIGHT);
 			//$row['blocks']=implode(",",$blocks);
 			$blocks = implode (",", $blocks); // change to string
-			$now = (gmdate("Y-m-d H:i:s")); 
+			$now = (gmdate("Y-m-d H:i:s"));
 
-			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('".$_SESSION['MDS_ID']."', '".intval($row['order_id'])."', '".$blocks."', 'new', NOW(), '".$price."', '".$quantity."', '".$BID."', '".get_default_currency()."', ".$b_row['days_expire'].", '$now', '".AUTO_APPROVE."') ";
+			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('" . intval( $_SESSION['MDS_ID'] ) . "', '" . intval( $row['order_id'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $blocks ) . "', 'new', NOW(), '" . floatval( $price ) . "', '" . intval( $quantity ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', " . intval( $b_row['days_expire'] ) . ", '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], AUTO_APPROVE ) . "') ";
 		
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$_SESSION['MDS_order_id'] = mysqli_insert_id($GLOBALS['connection']);
 			$order_id = $_SESSION['MDS_order_id'];
 
-			$sql = "delete from blocks where user_id='".$_SESSION['MDS_ID']."' AND status = 'reserved' AND banner_id='$BID' ";
+			$sql = "delete from blocks where user_id='".intval($_SESSION['MDS_ID'])."' AND status = 'reserved' AND banner_id='".intval($BID)."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			
 
@@ -1694,7 +1695,7 @@ function select_block ($map_x, $map_y) {
 
 						$price = get_zone_price( $BID, $y, $x );
 
-						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('$cell',  '" . $_SESSION['MDS_ID'] . "' , 'reserved' , '" . ( $x ) . "' , '" . ( $y ) . "' , '' , '' , '', '" . AUTO_APPROVE . "', '" . $BID . "', '" . get_default_currency() . "', '" . $price . "', '" . $_SESSION['MDS_order_id'] . "')";
+						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('".intval($cell)."',  '" . intval($_SESSION['MDS_ID']) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], AUTO_APPROVE ). "', '" . intval($BID ). "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "', '" . floatval($price ). "', '" . intval($_SESSION['MDS_order_id']) . "')";
 
 						$total += $price;
 
@@ -1708,30 +1709,26 @@ function select_block ($map_x, $map_y) {
 			// update price
 
 
-			$sql = "UPDATE orders SET price='$total' WHERE order_id='".$_SESSION['MDS_order_id']."'";
+			$sql = "UPDATE orders SET price='".intval($total)."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			
-			$sql = "UPDATE orders SET original_order_id='".$_SESSION['MDS_order_id']."' WHERE order_id='".$_SESSION['MDS_order_id']."'";
+			$sql = "UPDATE orders SET original_order_id='".intval($_SESSION['MDS_order_id'])."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			// check that we have ad_id, if not then create an ad for this order.
 
 			if (!$row['ad_id']) {
 
-				
-
-				$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='http://';
-				$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 				$_REQUEST['order_id'] = $order_id;
 				$_REQUEST['banner_id'] = $BID;
 				$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 
 				$ad_id = insert_ad_data();
 
-				$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='$order_id' ";
+				$sql = "UPDATE orders SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($order_id)."' ";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-				$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='$order_id' ";
+				$sql = "UPDATE blocks SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($order_id)."' ";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 				$_REQUEST['ad_id'] = $ad_id;
@@ -1856,7 +1853,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 	$in_str = $temp_order_row['blocks'];
 
-	$sql = "select block_id from blocks where banner_id='".$temp_order_row['banner_id']."' and block_id IN(".$in_str.") ";
+	$sql = "select block_id from blocks where banner_id='".intval($temp_order_row['banner_id'])."' and block_id IN(".mysqli_real_escape_string( $GLOBALS['connection'], $in_str).") ";
 //echo $sql."<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection'])); 
 	if (mysqli_num_rows($result)>0) {
@@ -1869,7 +1866,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 	$now = (gmdate("Y-m-d H:i:s")); 
 
-	$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, package_id, ad_id, approved) VALUES ('".$_SESSION['MDS_ID']."', 0, '".$in_str."', 'new', '".$now."', '".$temp_order_row['price']."', '".$temp_order_row['quantity']."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', ".$temp_order_row['days_expire'].", '".$now."', ".$temp_order_row['package_id'].", ".$temp_order_row['ad_id'].", '".$approved."') ";
+	$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, package_id, ad_id, approved) VALUES ('".intval($_SESSION['MDS_ID'])."', 0, '".mysqli_real_escape_string( $GLOBALS['connection'], $in_str)."', 'new', '".$now."', '".floatval($temp_order_row['price'])."', '".intval($temp_order_row['quantity'])."', '".intval($temp_order_row['banner_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."', ".intval($temp_order_row['days_expire']).", '".$now."', ".intval($temp_order_row['package_id']).", ".intval($temp_order_row['ad_id']).", '".mysqli_real_escape_string( $GLOBALS['connection'], $approved)."') ";
 		
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_id = mysqli_insert_id($GLOBALS['connection']); 
@@ -1878,11 +1875,11 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	$f2->debug("Changed temp order to a real order - ".$sql);
 //echo "<hr>";echo $sql; echo "<hr>";
 	
-	$sql = "UPDATE ads SET user_id='".$_SESSION['MDS_ID']."', order_id='".$order_id."' where ad_id='".$temp_order_row['ad_id']."' ";
+	$sql = "UPDATE ads SET user_id='".intval($_SESSION['MDS_ID'])."', order_id='".intval($order_id)."' where ad_id='".intval($temp_order_row['ad_id'])."' ";
 	//echo $sql;
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-	$sql = "UPDATE orders SET original_order_id='".$order_id."' where order_id='".$order_id."' ";
+	$sql = "UPDATE orders SET original_order_id='".intval($order_id)."' where order_id='".intval($order_id)."' ";
 	//echo $sql;
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -1895,7 +1892,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 //echo "<P>url: $url, alt_text: $alt_text </p>";
 	
 	foreach ($block_info as $key=>$block) {
-		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`, `click_count`) VALUES ('".$key."',  '".$_SESSION['MDS_ID']."' , 'reserved' , '".($block['map_x'])."' , '".($block['map_y'])."' , '".$block['image_data']."' , '".addslashes($url)."' , '".addslashes($alt_text)."', '".$approved."', '".$temp_order_row['banner_id']."', '".get_default_currency()."', '".$block['price']."', '".$order_id."', '".$temp_order_row['ad_id']."', 0)";
+		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`, `click_count`) VALUES ('".intval($key)."',  '".intval($_SESSION['MDS_ID'])."' , 'reserved' , '".intval($block['map_x'])."' , '".intval($block['map_y'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $block['image_data'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $url)."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $alt_text)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $approved)."', '".intval($temp_order_row['banner_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."', '".floatval($block['price'])."', '".intval($order_id)."', '".intval($temp_order_row['ad_id'])."', 0)";
 //echo $sql."<br>";
 		
 		global $f2;
@@ -1961,7 +1958,7 @@ function get_block_position($block_id) {
 
 function is_block_free($block_id, $banner_id) {
 	
-	$sql = "SELECT * from blocks where block_id='$block_id' AND banner_id='$banner_id' ";
+	$sql = "SELECT * from blocks where block_id='".intval($block_id)."' AND banner_id='".intval($banner_id)."' ";
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)==0) {
@@ -1992,7 +1989,7 @@ function move_block($block_from, $block_to, $banner_id) {
 
 
 	#load block_from
-	$sql = "SELECT * from blocks where block_id='$block_from' AND banner_id='$banner_id' ";
+	$sql = "SELECT * from blocks where block_id='".intval($block_from)."' AND banner_id='".intval($banner_id)."' ";
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$source_block = mysqli_fetch_array($result);
@@ -2018,7 +2015,7 @@ function move_block($block_from, $block_to, $banner_id) {
 	}
 
 	
-	$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `file_name`, `mime_type`,  `approved`, `published`, `banner_id`, `currency`, `price`, `order_id`, `click_count`, `ad_id`) VALUES ('$block_to',  '".$source_block['user_id']."' , '".$source_block['status']."' , '".$x."' , '".$y."' , '".$source_block['image_data']."' , '".addslashes($source_block['url'])."' , '".addslashes($source_block['alt_text'])."', '".$source_block['file_name']."', '".$source_block['mime_type']."', '".$source_block['approved']."', '".$source_block['published']."', '".$banner_id."', '".$source_block['currency']."', '".$source_block['price']."', '".$source_block['order_id']."', '".$source_block['click_count']."', '".$source_block['ad_id']."')";
+	$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `file_name`, `mime_type`,  `approved`, `published`, `banner_id`, `currency`, `price`, `order_id`, `click_count`, `ad_id`) VALUES ('".intval($block_to)."',  '".intval($source_block['user_id'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['status'])."' , '".intval($x)."' , '".intval($y)."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['image_data'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['url'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['alt_text'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['file_name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['mime_type'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['approved'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['published'])."', '".intval($banner_id)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['currency'])."', '".floatval($source_block['price'])."', '".intval($source_block['order_id'])."', '".intval($source_block['click_count'])."', '".intval($source_block['ad_id'])."')";
 
 //echo "<p>$sql</p>";
 
@@ -2030,7 +2027,7 @@ function move_block($block_from, $block_to, $banner_id) {
 
 	# delete 'from' block
 
-	$sql = "DELETE from blocks WHERE block_id='".$block_from."' AND banner_id='".$banner_id."' ";
+	$sql = "DELETE from blocks WHERE block_id='".intval($block_from)."' AND banner_id='".intval($banner_id)."' ";
 //echo "<p>$sql</p>";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
@@ -2038,7 +2035,7 @@ function move_block($block_from, $block_to, $banner_id) {
 
 	// Update the order record
 
-	$sql = "SELECT * from orders WHERE order_id='".$source_block['order_id']."' AND banner_id='$banner_id' ";
+	$sql = "SELECT * from orders WHERE order_id='".intval($source_block['order_id'])."' AND banner_id='".intval($banner_id)."' ";
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($result);
@@ -2051,10 +2048,12 @@ function move_block($block_from, $block_to, $banner_id) {
 		if ($block_from == $item) {
 			$item = $block_to;//echo '<b>found!</b>';
 		}
-		$new_blocks[] = $item; 
+		$new_blocks[] = intval($item);
 	}
 
-	$sql = "UPDATE orders set blocks='".implode(',', $new_blocks)."' WHERE order_id='".$source_block['order_id']."' ";
+	$sql_blocks = implode( ',', $new_blocks );
+
+	$sql = "UPDATE orders SET blocks='" . $sql_blocks . "' WHERE order_id='" . intval($source_block['order_id']) . "' ";
 	# update the customer's order
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
@@ -2095,12 +2094,12 @@ function move_order($block_from, $block_to, $banner_id) {
 
 	// get the order
 
-	$sql = "SELECT * from blocks where block_id='$block_from' AND banner_id='$banner_id' ";
+	$sql = "SELECT * from blocks where block_id='".intval($block_from)."' AND banner_id='".intval($banner_id)."' ";
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$source_block = mysqli_fetch_array($result);
 
-	$sql = "SELECT * from blocks WHERE order_id='".$source_block['order_id']."' AND banner_id='$banner_id' ";
+	$sql = "SELECT * from blocks WHERE order_id='".intval($source_block['order_id'])."' AND banner_id='".intval($banner_id)."' ";
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
@@ -2173,7 +2172,7 @@ function get_clicks_for_today($BID, $user_id=0) {
 	
 	$date = gmDate('Y')."-".gmDate('m')."-".gmDate('d');
 	
-	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID' AND `date`='$date' GROUP BY banner_id, block_id, user_id, date";
+	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='".intval($BID)."' AND `date`='$date' GROUP BY banner_id, block_id, user_id, date";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -2186,7 +2185,7 @@ function get_clicks_for_today($BID, $user_id=0) {
 # If $BID is null then return for all banners
 function get_clicks_for_banner($BID='') {
 	
-	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='$BID'  GROUP BY banner_id, block_id, user_id, date";
+	$sql = "SELECT *, SUM(clicks) AS clk FROM `clicks` where banner_id='".intval($BID)."'  GROUP BY banner_id, block_id, user_id, date";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -2205,7 +2204,7 @@ then check how many orders the user had.
 function can_user_order($b_row, $user_id, $package_id=0) {
 	// check rank
 	
-	$sql = "select Rank from users where ID='".$user_id."'";
+	$sql = "select Rank from users where ID='".intval($user_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);
 
@@ -2232,7 +2231,7 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 		// check againts the banner. (Banner has no packages)
 		if (($b_row['max_orders'] > 0))  {
 
-			$sql = "SELECT order_id FROM orders where `banner_id`='".$b_row['banner_id']."' and `status` <> 'deleted' and `status` <> 'new' AND user_id='".$user_id."'";
+			$sql = "SELECT order_id FROM orders where `banner_id`='".intval($b_row['banner_id'])."' and `status` <> 'deleted' and `status` <> 'new' AND user_id='".intval($user_id)."'";
 			
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 			$count = mysqli_num_rows($result);
@@ -2255,12 +2254,12 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 
 function get_blocks_min_max($block_id, $banner_id) {
 	
-	$sql = "SELECT * FROM blocks where block_id='".$block_id."' and banner_id='".$banner_id."' ";
+	$sql = "SELECT * FROM blocks where block_id='".intval($block_id)."' and banner_id='".intval($banner_id)."' ";
 
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
-	$sql = "select * from blocks where order_id='".$row['order_id']."' ";
+	$sql = "select * from blocks where order_id='".intval($row['order_id'])."' ";
 	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	//echo $sql;
@@ -2269,6 +2268,7 @@ function get_blocks_min_max($block_id, $banner_id) {
 	// find high x, y & low x, y
 	// low x,y is the top corner, high x,y is the bottom corner
 
+    $high_x = $high_y = $low_x = $low_y = "";
 	while ($block_row = mysqli_fetch_array($result3)) {
 
 		if ($high_x=='') {
@@ -2491,7 +2491,7 @@ function saveImage($field_id) {
 
 function deleteImage($table_name, $object_name, $object_id, $field_id) {
 	
-   $sql = "SELECT `$field_id` FROM `$table_name` WHERE `$object_name`='$object_id'";
+   $sql = "SELECT `".mysqli_real_escape_string( $GLOBALS['connection'], $field_id)."` FROM `".mysqli_real_escape_string( $GLOBALS['connection'], $table_name)."` WHERE `".mysqli_real_escape_string( $GLOBALS['connection'], $object_name)."`='".intval($object_id)."'";
    $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
    $row = mysqli_fetch_array ($result, MYSQLI_ASSOC);
    if ($row[$field_id] != '') {
@@ -2509,31 +2509,21 @@ function deleteImage($table_name, $object_name, $object_id, $field_id) {
 
 ##########################################################
 
-function saveFile($field_id) {
+function saveFile( $field_id ) {
 
 	global $f2;
 
-	$uploaddir = UPLOAD_PATH.'docs/';
-			
-	$ext = substr(strrchr($_FILES[$field_id]['name'], "."), 1);
-	$name = reverse_strrchr($_FILES[$field_id]['name'], ".");
-	$name = substr($name, 0, -1);
-	if ($_SESSION['MDS_ID'] != '') {
-		$name = $_SESSION['MDS_ID']."_".$name;
-	}
-   // echo "<b>NAMEis:[$name]</b>";
-	$name = ereg_replace("[ '\"]+", "_", $name); // strip quotes, spaces
-	
-	$new_name = $name.time().".".$ext;
-	$uploadfile = $uploaddir . $new_name; //$uploaddir . $file_name;
-	
-	//echo "te,p Image is:".$_FILES[$field_id]['tmp_name']." upload file:".$uploadfile;
-
-
-	if (move_uploaded_file($_FILES[$field_id]['tmp_name'], $uploadfile)) {
-		//echo "File is valid, and was successfully uploaded.\n";
-	} else {
-		//echo "Possible file upload attack ($uploadfile)!\n";
+	$uploaddir = UPLOAD_PATH . 'docs/';
+	$new_name  = "";
+	foreach ( $_FILES[ $field_id ]["error"] as $key => $error ) {
+		if ( $error == UPLOAD_ERR_OK ) {
+			$tmp_name   = $_FILES[ $field_id ]["tmp_name"][ $key ];
+			$tmp_name   = basename( $tmp_name );
+			$path_parts = pathinfo( $tmp_name );
+			$tmp_name   = preg_replace( '/[^a-z0-9]+/', '-', strtolower( $tmp_name ) );
+			$new_name   = $tmp_name . time() . "." . $path_parts['extension'];
+			move_uploaded_file( $tmp_name, "$uploaddir/$new_name" );
+		}
 	}
 
 	return $new_name;
@@ -2544,7 +2534,7 @@ function saveFile($field_id) {
 
 function deleteFile($table_name, $object_name, $object_id, $field_id) {
 	
-   $sql = "SELECT `$field_id` FROM `$table_name` WHERE `$object_name`='$object_id'";
+   $sql = "SELECT `".mysqli_real_escape_string( $GLOBALS['connection'], $field_id)."` FROM `".mysqli_real_escape_string( $GLOBALS['connection'], $table_name)."` WHERE `".mysqli_real_escape_string( $GLOBALS['connection'], $object_name)."`='".intval($object_id)."'";
    $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
    $row = mysqli_fetch_array ($result, MYSQLI_ASSOC);
    if ($row[$field_id] != '') {
@@ -2566,17 +2556,14 @@ function is_filetype_allowed ($file_name) {
 	$a = explode(".",$file_name);
 	$ext = strtolower(array_pop($a));
 
-	if (ALLOWED_EXT=='ALLOWED_EXT') { 
+	if ( ! defined( 'ALLOWED_EXT' ) || ALLOWED_EXT == 'ALLOWED_EXT' ) {
 		$ALLOWED_EXT= 'jpg, jpeg, gif, png, doc, pdf, wps, hwp, txt, bmp, rtf, wri';
 	} else { 
 		$ALLOWED_EXT=trim(strtolower(ALLOWED_EXT));
 	}
 
-	//$ext_list = explode (',',$ALLOWED_EXT);
-	$ext_list =preg_split ("/[\s,]+/", ($ALLOWED_EXT));
+	$ext_list = preg_split ("/[\s,]+/", ($ALLOWED_EXT));
 	return in_array($ext, $ext_list);
-
-
 }
 
 ###########################################################
@@ -2623,7 +2610,7 @@ function get_tmp_img_name ($session_id='') {
 function update_temp_order_timestamp() {
 	
 	$now = (gmdate("Y-m-d H:i:s")); 
-	$sql = "UPDATE temp_orders SET order_date='$now' WHERE session_id='".addslashes(session_id())."' ";
+	$sql = "UPDATE temp_orders SET order_date='$now' WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 	mysqli_query($GLOBALS['connection'], $sql);
 
 }
@@ -2868,7 +2855,7 @@ function truncate_html_str ($s, $MAX_LENGTH, &$trunc_str_len) {
 // assumming that load_banner_constants($_REQUEST['BID']); was called...
 function get_pixel_image_size($order_id) {
 	
-	$sql = "SELECT * FROM blocks WHERE order_id='$order_id' ";
+	$sql = "SELECT * FROM blocks WHERE order_id='".intval($order_id)."' ";
 
 	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	
@@ -2970,9 +2957,7 @@ function js_out_prep($str) {
 function echo_copyright() {
 
 	?>
-
-	<div style="font-size:xx-small; text-align:center">Powered By <a target="_blank" style="font-size:7pt;color:black" href="http://www.milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2011</div>
-
+	<div style="font-size:xx-small; text-align:center">Powered By <a target="_blank" style="font-size:7pt;color:black" href="http://www.milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date("Y"); ?></div>
 	<?php
 
 }

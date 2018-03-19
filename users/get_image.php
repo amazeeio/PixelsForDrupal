@@ -43,13 +43,13 @@ require ('../config.php');
 
 
 
-$sql = "SELECT * FROM blocks where block_id='".$_REQUEST['block_id']."' banner_id='$BID' ";
+$sql = "SELECT * FROM blocks where block_id='".intval($_REQUEST['block_id'])."' banner_id='$BID' ";
 $result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
 
-if ($row[image_data]=='') {
+if ($row['image_data']=='') {
 
 	if ($row['status']=="sold") {
 		$file_name = 'ordered_block.png';

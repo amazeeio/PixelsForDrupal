@@ -47,5 +47,6 @@ output_grid( true, "", $BID, array(
 	'ordered',
 	'reserved',
 	'selected',
-	'sold'
-) );
+	'sold',
+	'user'
+), $_REQUEST['user_id'] );

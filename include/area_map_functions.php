@@ -81,7 +81,7 @@ function process_map($BID, $map_file='') {
 	$sql = "UPDATE orders SET published='N' where `status`='expired' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
-	$sql = "SELECT * FROM `banners` WHERE `banner_id`='$BID' ";
+	$sql = "SELECT * FROM `banners` WHERE `banner_id`='".intval($BID)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$b_row = mysqli_fetch_array($result);
 
@@ -104,7 +104,7 @@ function process_map($BID, $map_file='') {
                      FROM blocks
                     WHERE (published = 'Y')
 					  AND (status = 'sold' ) 
-                      AND (banner_id = '$BID')
+                      AND (banner_id = '".intval($BID)."')
                       AND (image_data > '')
                       AND (image_data = image_data)
                  GROUP BY order_id, user_id,url,image_data,block_id,alt_text";
@@ -124,10 +124,10 @@ function process_map($BID, $map_file='') {
 						   FROM blocks
 						  WHERE (published = 'Y')
 							AND (status = 'sold' ) 
-							AND (banner_id = '$BID')
+							AND (banner_id = '".intval($BID)."')
 							AND (image_data > '')
 							AND (image_data = image_data)
-							AND (order_id = ".$row['order_id'].")
+							AND (order_id = ".intval($row['order_id']).")
 					   GROUP BY y";
 	  $res_i = mysqli_query($GLOBALS['connection'], $sql_i) or die(mysqli_error($GLOBALS['connection']));
 	  while ($row_i = mysqli_fetch_array($res_i)) {
@@ -141,11 +141,11 @@ function process_map($BID, $map_file='') {
 					  FROM blocks
 					 WHERE (published = 'Y')
 					   AND (status = 'sold' ) 
-					   AND (banner_id = '$BID')
+					   AND (banner_id = '".intval($BID)."')
 					   AND (image_data > '')
 					   AND (image_data = image_data)
-					   AND (order_id = ".$row['order_id'].")
-					   AND (y = ".$row_i['y1'].")";
+					   AND (order_id = ".intval($row['order_id']).")
+					   AND (y = ".intval($row_i['y1']).")";
 		  $res_r = mysqli_query($GLOBALS['connection'], $sql_r);
 		  while ($row_r = mysqli_fetch_array($res_r)) {
 			// render single block RECT
@@ -209,7 +209,7 @@ function show_map($BID = 1) {
 
 	$BANNER_PATH = BASE_PATH . "/" . $BANNER_DIR;
 
-	$sql = "SELECT grid_width,grid_height, block_width, block_height, bgcolor, time_stamp FROM banners WHERE (banner_id = '$BID')";
+	$sql = "SELECT grid_width,grid_height, block_width, block_height, bgcolor, time_stamp FROM banners WHERE (banner_id = '".intval($BID)."')";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 

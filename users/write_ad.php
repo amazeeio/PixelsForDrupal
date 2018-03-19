@@ -37,7 +37,7 @@ require_once ("../include/ads.inc.php");
 
 $BID = $f2->bid($_REQUEST['BID']);
 
-$sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
+$sql = "select * from temp_orders where session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 
 $order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
@@ -93,11 +93,11 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 		//display_ad_intro();
 		display_ad_form (1, $mode, '');
 	} else {
-		$ad_id = insert_ad_data();
+		$ad_id = intval(insert_ad_data());
 
 		// save ad_id with the temp order...
 
-		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".$user_id."' ";
+		$sql = "UPDATE temp_orders SET ad_id='$ad_id' where session_id='".mysqli_real_escape_string( $GLOBALS['connection'], $user_id)."' ";
 		//echo $sql;
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
@@ -114,7 +114,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 
 	// get the ad_id form the temp_orders table..
 
-	$sql = "SELECT ad_id FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
+	$sql = "SELECT ad_id FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	$ad_id = $row['ad_id'];

@@ -71,9 +71,9 @@ if ($_REQUEST['action']=='save') {
 		unset($remnfs);
 	}
 
-	$cell = $x = $y = "0";
+	$cell = $x = $y = 0;
 		for ($i = 0; $i < G_HEIGHT; $i++) {
-			$x = "0";
+			$x = 0;
 			for ($j = 0; $j < G_WIDTH; $j++) {
 				if (isset($addnfs) && in_array($cell, $addnfs)) {
 					$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
@@ -242,7 +242,7 @@ jQuery(function($){
 				}
 			}
 		}
-		$sql = "select block_id, status, user_id FROM blocks WHERE banner_id=$BID";
+		$sql = "select block_id, status, user_id FROM blocks WHERE banner_id=" . intval($BID);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		while ($row=mysqli_fetch_array($result)) {
 			$blocks[$row["block_id"]] = $row['status'];

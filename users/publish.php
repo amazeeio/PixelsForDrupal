@@ -54,15 +54,15 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 	$BID = $f2->bid($_REQUEST['BID']);
 	
 } elseif (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
-	$sql = "select banner_id from ads where ad_id='".$_REQUEST['ad_id']."'";
+	$sql = "select banner_id from ads where ad_id='".intval($_REQUEST['ad_id'])."'";
 	$res = mysqli_query($GLOBALS['connection'], $sql);
 	$row = mysqli_fetch_array($res);
 	$BID = $row['banner_id'];
 } else {
 	// get the banner_id of one if the blocks the customer owns
-	$sql = "SELECT DISTINCT(blocks.banner_id) as banner_id, name FROM blocks, banners where blocks.banner_id=banners.banner_id AND user_id='".$_SESSION['MDS_ID']."' and (status='sold' or status='expired') LIMIT 1";
+	//$sql = "SELECT DISTINCT(blocks.banner_id) as banner_id, name FROM blocks, banners where blocks.banner_id=banners.banner_id AND user_id='".$_SESSION['MDS_ID']."' and (status='sold' or status='expired') LIMIT 1";
 	
-	$sql = "select *, banners.banner_id AS BID FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id order by orders.banner_id ";
+	$sql = "select *, banners.banner_id AS BID FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".intval($_SESSION['MDS_ID'])." and (orders.status='completed' or status='expired') group by orders.banner_id order by orders.banner_id ";
 
 	$res = mysqli_query($GLOBALS['connection'], $sql);
 	if ($row = mysqli_fetch_array($res)) {
@@ -78,7 +78,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 load_banner_constants($BID);
 
-$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $user_row = mysqli_fetch_array($result);
 
@@ -90,7 +90,7 @@ if ($_REQUEST['action']=='complete') {
 
 	if ($_REQUEST['order_id']=='temp') { // convert the temp order to an order.
 
-		$sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
+		$sql = "select * from temp_orders where session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 		$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 		if (mysqli_num_rows($order_result)==0) { // no order id found...
@@ -126,7 +126,7 @@ if ($_REQUEST['action']=='complete') {
 
 	}
 
-	$sql="select * from orders where order_id='".$_REQUEST['order_id']."' AND user_id='".$_SESSION['MDS_ID']."' ";
+	$sql="select * from orders where order_id='".intval($_REQUEST['order_id'])."' AND user_id='".intval($_SESSION['MDS_ID'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	if (($row['price']==0)||($user_row['Rank']==2)) {
@@ -150,7 +150,7 @@ if ($_REQUEST['action']=='complete') {
 # Banner Selection form
 # Load this form only if more than 1 grid exists with pixels purchased.
 
-$sql = "select DISTINCT banners.banner_id, banners.name FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".$_SESSION['MDS_ID']." and (orders.status='completed' or status='expired') group by orders.banner_id, orders.order_id, banners.banner_id order by `name`";
+$sql = "select DISTINCT banners.banner_id, banners.name FROM orders, banners where orders.banner_id=banners.banner_id  AND user_id=".intval($_SESSION['MDS_ID'])." and (orders.status='completed' or status='expired') group by orders.banner_id, orders.order_id, banners.banner_id order by `name`";
 
 $res = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
@@ -178,7 +178,7 @@ if (mysqli_num_rows($res)>1) {
 
 if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 
-	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."'";
+	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".intval($_REQUEST['block_id'])."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$blk_row = mysqli_fetch_array($result);
 
@@ -193,9 +193,9 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 		$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 		$ad_id = insert_ad_data();
 
-		$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
+		$sql = "UPDATE orders SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($blk_row['order_id'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-		$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
+		$sql = "UPDATE blocks SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($blk_row['order_id'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 		$_REQUEST['ad_id'] = $ad_id;
@@ -204,7 +204,7 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 
 	// make sure the ad exists..
 
-		$sql = "select * from ads where ad_id='".$blk_row['ad_id']."' ";
+		$sql = "select * from ads where ad_id='".intval($blk_row['ad_id'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		//echo $sql;
 		if (mysqli_num_rows($result)==0) {
@@ -216,9 +216,9 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 			$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 			$ad_id = insert_ad_data();
 
-			$sql = "UPDATE orders SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
+			$sql = "UPDATE orders SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($blk_row['order_id'])."' ";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-			$sql = "UPDATE blocks SET ad_id='$ad_id' WHERE order_id='".$blk_row['order_id']."' ";
+			$sql = "UPDATE blocks SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($blk_row['order_id'])."' ";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 			$_REQUEST['ad_id'] = $ad_id;
@@ -229,7 +229,7 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 		}
 		// bug in previous versions resulted in saving the ad's user_id with a session_id
 		// fix user_id here
-		$sql = "UPDATE ads SET user_id='".$blk_row['user_id']."' WHERE order_id='".$blk_row['order_id']."' AND user_id <> '".$_SESSION['MDS_ID']."' limit 1 ";
+		$sql = "UPDATE ads SET user_id='".intval($blk_row['user_id'])."' WHERE order_id='".intval($blk_row['order_id'])."' AND user_id <> '".intval($_SESSION['MDS_ID'])."' limit 1 ";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 		
@@ -243,10 +243,10 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 
 function disapprove_modified_order($order_id, $BID) {
 
-	$sql = "UPDATE orders SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
+	$sql = "UPDATE orders SET approved='N' WHERE order_id='".intval($order_id)."' AND banner_id='".intval($BID)."' ";
 	//echo $sql;
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-	$sql = "UPDATE blocks SET approved='N' WHERE order_id='".$order_id."' AND banner_id='".$BID."' ";
+	$sql = "UPDATE blocks SET approved='N' WHERE order_id='".intval($order_id)."' AND banner_id='".intval($BID)."' ";
 	///echo $sql;
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
@@ -258,7 +258,7 @@ function disapprove_modified_order($order_id, $BID) {
 if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 	$imagine = new Imagine\Gd\Imagine();
 
-	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . $_SESSION['MDS_ID'] . " and t1.banner_id='$BID' and t1.ad_id='" . $_REQUEST['ad_id'] . "' AND t1.order_id=t2.order_id ";
+	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . intval($_SESSION['MDS_ID']) . " and t1.banner_id='".intval($BID)."' and t1.ad_id='" . intval($_REQUEST['ad_id']) . "' AND t1.order_id=t2.order_id ";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
 	$row      = mysqli_fetch_array( $result );
@@ -268,7 +268,7 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 	$size   = get_pixel_image_size( $row['order_id'] );
 	$pixels = $size['x'] * $size['y'];
 
-	$sql = "SELECT * from blocks WHERE order_id='" . $order_id . "'";
+	$sql = "SELECT * from blocks WHERE order_id='" . intval($order_id) . "'";
 	$blocks_result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
 	if ( isset( $_REQUEST['change_pixels'] ) && ! empty( $_REQUEST['change_pixels'] ) ) {
@@ -393,7 +393,7 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 
 							// save to db
-							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . $cb . "' AND banner_id='" . $BID . "' ";
+							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . intval($cb) . "' AND banner_id='" . intval($BID) . "' ";
 							mysqli_query( $GLOBALS['connection'], $sql );
 						}
 					}
@@ -551,7 +551,7 @@ if ($count > 0) {
 	
 	// infrom the user about the approval status of the iamges.
 
-	$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='N' and banner_id='$BID' ";
+	$sql = "select * from orders where user_id='".intval($_SESSION['MDS_ID'])."' AND status='completed' and  approved='N' and banner_id='".intval($BID)."' ";
 	$result4 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])); 
 
 	if (mysqli_num_rows($result4)>0) {	
@@ -560,7 +560,7 @@ if ($count > 0) {
 		<?php
 	} else {
 
-		$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='Y' and published='Y' and banner_id='$BID' ";
+		$sql = "select * from orders where user_id='".intval($_SESSION['MDS_ID'])."' AND status='completed' and  approved='Y' and published='Y' and banner_id='".intval($BID)."' ";
 		//echo $sql;
 		$result4 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])); 
 
@@ -570,7 +570,7 @@ if ($count > 0) {
 			<?php
 		} else {
 
-			$sql = "select * from orders where user_id='".$_SESSION['MDS_ID']."' AND status='completed' and  approved='Y' and published='N' and banner_id='$BID' ";
+			$sql = "select * from orders where user_id='".intval($_SESSION['MDS_ID'])."' AND status='completed' and  approved='Y' and published='N' and banner_id='".intval($BID)."' ";
 			
 			$result4 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])); 
 
@@ -593,7 +593,7 @@ if ($count > 0) {
 
 	// Generate the Area map form the current sold blocks.
 
-	$sql = "SELECT * FROM blocks WHERE user_id='".$_SESSION['MDS_ID']."' AND status='sold' and banner_id='$BID' ";
+	$sql = "SELECT * FROM blocks WHERE user_id='".intval($_SESSION['MDS_ID'])."' AND status='sold' and banner_id='".intval($BID)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	?>

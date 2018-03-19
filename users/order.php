@@ -57,10 +57,10 @@ if ($has_packages && $_REQUEST['pack']!='') {
 
 	// check to make sure this advertiser can order this package
 
-	if (can_user_get_package($_SESSION['MDS_ID'], $_REQUEST['pack'], $_SESSION['MDS_order_id'])) {
+	if (can_user_get_package($_SESSION['MDS_ID'], $_REQUEST['pack'])) {
 
 
-		$sql = "SELECT quantity FROM orders WHERE order_id='".$_REQUEST['order_id']."'";
+		$sql = "SELECT quantity FROM orders WHERE order_id='".intval($_REQUEST['order_id'])."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		$quantity = $row['quantity'];
@@ -76,7 +76,7 @@ if ($has_packages && $_REQUEST['pack']!='') {
 		$total = convert_to_default_currency($pack['currency'], $total);
 		
 
-		$sql = "UPDATE orders SET package_id='".$_REQUEST['pack']."', price='".$total."',  days_expire='".$pack['days_expire']."', currency='".get_default_currency()."' WHERE order_id='".$_SESSION['MDS_order_id']."'";
+		$sql = "UPDATE orders SET package_id='".intval($_REQUEST['pack'])."', price='".floatval($total)."',  days_expire='".intval($pack['days_expire'])."', currency='".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -93,7 +93,7 @@ if ($has_packages && $_REQUEST['pack']!='') {
 
 // check to make sure MIN_BLOCKS were selected.
 
-$sql = "SELECT block_id FROM blocks WHERE user_id='".$_SESSION['MDS_ID']."' AND status='reserved' AND banner_id='$BID' ";
+$sql = "SELECT block_id FROM blocks WHERE user_id='".intval($_SESSION['MDS_ID'])."' AND status='reserved' AND banner_id='$BID' ";
 $res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $count = mysqli_num_rows($res);
 if ($count < $b_row['min_blocks']) {
@@ -112,7 +112,7 @@ echo $label['advertiser_o_navmap'];
 
 <?php
 
-$sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."' and banner_id='$BID'";
+$sql = "SELECT * from orders where order_id='".intval($_SESSION['MDS_order_id'])."' and banner_id='$BID'";
 
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 $order_row = mysqli_fetch_array($result);
@@ -160,7 +160,7 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 
 		if ($cannot_get_package) {
 
-			$sql = "SELECT * from packages where package_id='".$selected_pack."'";
+			$sql = "SELECT * from packages where package_id='".intval($selected_pack)."'";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 			$row = mysqli_fetch_array($result);
 
@@ -172,7 +172,7 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 
 	} else {
 		display_order($_SESSION['MDS_order_id'], $BID);
-		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+		$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$u_row = mysqli_fetch_array($result);
 

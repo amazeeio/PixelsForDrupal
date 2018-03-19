@@ -83,7 +83,7 @@ global $label;
 	                <span style="font-family: arial,sans-serif; font-size: small; "><?php
 
 		                $br = "";
-		                $sql = "Select * FROM  `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id='" . $row['order_id'] . "' AND t1.user_id='" . $row['user_id'] . "' AND status='completed' AND approved='Y' ORDER BY `ad_date`";
+		                $sql = "Select * FROM  `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id='" . intval($row['order_id']) . "' AND t1.user_id='" . intval($row['user_id']) . "' AND status='completed' AND approved='Y' ORDER BY `ad_date`";
 		                $m_result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 		                while ( $prams = mysqli_fetch_array( $m_result, MYSQLI_ASSOC ) ) {
 

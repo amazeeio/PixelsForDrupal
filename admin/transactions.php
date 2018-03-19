@@ -49,19 +49,19 @@ if ($_REQUEST['action']=='refund') {
 
 	$t_id = $_REQUEST['transaction_id'];
 
-	$sql = "SELECT * from transactions, orders, users where transactions.order_id=orders.order_id AND orders.user_id=users.ID and transactions.transaction_id=$t_id";
+	$sql = "SELECT * from transactions, orders, users where transactions.order_id=orders.order_id AND orders.user_id=users.ID and transactions.transaction_id=".intval($t_id);
 
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	
-	if ($row[status]!='completed') {
+	if ($row['status']!='completed') {
 		// check that there's no other refund...
-		$sql = "SELECT * FROM transactions where txn_id='".$row['txn_id']."' AND type='CREDIT' ";
+		$sql = "SELECT * FROM transactions where txn_id='".intval($row['txn_id'])."' AND type='CREDIT' ";
 		$r = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($r)==0) {
 			// do the refund
-			cancel_order($row[order_id]);
-			credit_transaction($row[order_id], $row[price], $row[currency], $row[txn_id], 'Refund', 'Admin');
+			cancel_order($row['order_id']);
+			credit_transaction($row['order_id'], $row['price'], $row['currency'], $row['txn_id'], 'Refund', 'Admin');
 
 		} else {
 
@@ -72,7 +72,7 @@ if ($_REQUEST['action']=='refund') {
 
 	} else {
 
-		echo $row[status];
+		echo $row['status'];
 
 		
 		echo "<b>Error: The system can only refund orders that are completed, please cancel the order first</b><br>";
@@ -307,8 +307,8 @@ Balance: <?php echo $bal; ?><br>
 </tr>
 
 <?php
-		$from_date = $_REQUEST['from_year']."-".$_REQUEST['from_month']."-".$_REQUEST['from_day']." 00:00:00";
-		$to_date = $_REQUEST['to_year']."-".$_REQUEST['to_month']."-".$_REQUEST['to_day']." 23:59:59";
+		$from_date = intval($_REQUEST['from_year'])."-".intval($_REQUEST['from_month'])."-".intval($_REQUEST['from_day'])." 00:00:00";
+		$to_date = intval($_REQUEST['to_year'])."-".intval($_REQUEST['to_month'])."-".intval($_REQUEST['to_day'])." 23:59:59";
 
 		$where_date = " (`date` >= '$from_date' AND `date` <= '$to_date' ) ";
 

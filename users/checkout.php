@@ -57,7 +57,7 @@ process_login();
 # MAIN
 ########################################################
 
-$sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
+$sql = "select * from temp_orders where session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 $order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 
@@ -92,7 +92,7 @@ if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
 //echo "the order id is: $order_id<br>";
 
 		// check the user's rank
-		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+		$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 		$u_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$u_row = mysqli_fetch_array($u_result);
 
@@ -125,7 +125,7 @@ if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
 }
 ##########################
 if ($_REQUEST['action']=='confirm') {
-	$sql = "SELECT * from orders where order_id='".$order_id."'";
+	$sql = "SELECT * from orders where order_id='".intval($order_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 

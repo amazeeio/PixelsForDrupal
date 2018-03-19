@@ -60,7 +60,7 @@ href="style.css" />
 		<td><span>
 			<?php
 				if (do_login()) {
-					$ok = str_replace ( "%username%", $_SESSION['MDS_Username'], $label[advertiser_login_success2]);
+					$ok = str_replace ( "%username%", $_SESSION['MDS_Username'], $label['advertiser_login_success2']);
 					$ok = str_replace ( "%firstname%", $_SESSION['MDS_FirstName'], $ok);
 					$ok = str_replace ( "%lastname%", $_SESSION['MDS_LastName'], $ok);
 					$ok = str_replace ( "%target_page%", $target_page, $ok);

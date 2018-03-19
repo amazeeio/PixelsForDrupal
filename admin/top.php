@@ -60,7 +60,7 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 			$sel ='';
 
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 	}
 	?>
 </select>

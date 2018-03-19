@@ -176,7 +176,7 @@ class bank {
 
 		global $label;
 
-		$sql = "SELECT * from orders where order_id='".$order_id."'";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 	
@@ -290,23 +290,23 @@ class bank {
 	function save_config() {
 
 		
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '".$_REQUEST['bank_name']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_NAME', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_name'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '".$_REQUEST['bank_address']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ADDRESS', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_address'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '".$_REQUEST['bank_account_name']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NAME', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_account_name'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '".$_REQUEST['bank_branch_number']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_BRANCH_NUMBER', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_branch_number'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '".$_REQUEST['bank_account_number']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_ACCOUNT_NUMBER', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_account_number'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', '".$_REQUEST['bank_currency']."')";
-		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '".$_REQUEST['bank_swift']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_CURRENCY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_currency'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '".$_REQUEST['bank_email_confirm']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_SWIFT', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_swift'])."')";
+		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('BANK_EMAIL_CONFIRM', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bank_email_confirm'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
@@ -382,7 +382,7 @@ class bank {
 		<p align="center"><center>
 				<?php
 
-				$sql = "SELECT * from orders where order_id='".$_REQUEST['order_id']."' and user_id='".$_SESSION['MDS_ID']."'";
+				$sql = "SELECT * from orders where order_id='".intval($_REQUEST['order_id'])."' and user_id='".intval($_SESSION['MDS_ID'])."'";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 

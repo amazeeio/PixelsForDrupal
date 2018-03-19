@@ -47,15 +47,15 @@ $b_row = mysqli_fetch_array($result);
 if (!$b_row['block_width']) { $b_row['block_width'] = 10;}
 if (!$b_row['block_height']) { $b_row['block_height'] = 10;}
 
-$sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='sold' ";
+$sql = "select block_id from blocks where user_id='".intval($_SESSION['MDS_ID'])."' and status='sold' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $pixels = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
 
-$sql = "select block_id from blocks where user_id='".$_SESSION['MDS_ID']."' and status='ordered' ";
+$sql = "select block_id from blocks where user_id='".intval($_SESSION['MDS_ID'])."' and status='ordered' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $ordered = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
 
-$sql = "select * from users where ID='".$_SESSION['MDS_ID']."' ";
+$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $user_row = mysqli_fetch_array($result);
 

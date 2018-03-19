@@ -83,7 +83,7 @@ die ();
 	} else {
       // update last_request_time
 	  $now = (gmdate("Y-m-d H:i:s"));
-       $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='1000-01-01 00:00:00' WHERE `Username`='".$_SESSION['MDS_Username']."'";
+       $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='1000-01-01 00:00:00' WHERE `Username`='".mysqli_real_escape_string($GLOBALS['connection'], $_SESSION['MDS_Username'])."'";
        mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
 	   
 
@@ -177,7 +177,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
    }
 	$now = (gmdate("Y-m-d H:i:s"));
     // everything Ok, create account and send out emails.
-    $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated, Aboutme) values('$REMOTE_ADDR', '$now', '$FirstName', '$LastName', '$CompName', '$Username', '$Password', '$Email', '" . intval($Newsletter) . "', '" . intval($Notification1) . "', '" . intval($Notification2) . "', '$validated', '')";
+    $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated, Aboutme) values('".mysqli_real_escape_string($GLOBALS['connection'], $REMOTE_ADDR)."', '".mysqli_real_escape_string($GLOBALS['connection'], $now)."', '".mysqli_real_escape_string($GLOBALS['connection'], $FirstName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $LastName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $CompName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $Username)."', '$Password', '".mysqli_real_escape_string($GLOBALS['connection'], $Email)."', '" . intval($Newsletter) . "', '" . intval($Notification1) . "', '" . intval($Notification2) . "', '$validated', '')";
     mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection']));
     $res = mysqli_affected_rows($GLOBALS['connection']);
 
@@ -189,7 +189,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
        $success=false;
        $error = $label['advertiser_could_not_signup'];
     }
-    $advertiser_signup_success = str_replace ( "%FirstName%", stripslashes($FirstName), $label[advertiser_signup_success]);
+    $advertiser_signup_success = str_replace ( "%FirstName%", stripslashes($FirstName), $label['advertiser_signup_success']);
     $advertiser_signup_success = str_replace ( "%LastName%", stripslashes($LastName), $advertiser_signup_success);
     $advertiser_signup_success = str_replace ( "%SITE_NAME%", SITE_NAME, $advertiser_signup_success);
 	$advertiser_signup_success = str_replace ( "%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $advertiser_signup_success);
@@ -210,6 +210,7 @@ function validate_signup_form() {
 
 	global $label; 
 
+	$error = "";
 	if ($_REQUEST['Password']!=$_REQUEST['Password2']) {
 		$error .= $label["advertiser_signup_error_pmatch"];
 	}
@@ -225,11 +226,11 @@ function validate_signup_form() {
 		//$error .= "* Please fill in Your Member I.D.<br/>";
 		$error .= $label["advertiser_signup_error_user"];
 	} else {
-		$sql = "SELECT * FROM `users` WHERE `Username`='".$_REQUEST['Username']."' ";
+		$sql = "SELECT * FROM `users` WHERE `Username`='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['Username'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result) ;
 		if ($row['Username'] != '' ) {
-			$error .= str_replace ( "%username%", $username, $label['advertiser_signup_error_inuse']);
+			$error .= str_replace ( "%username%", $row['Username'], $label['advertiser_signup_error_inuse']);
 
 		}
 
@@ -247,7 +248,7 @@ function validate_signup_form() {
 	if ($_REQUEST['Email']=='') {
 		$error .= $label["advertiser_signup_error_email"];
 	} else {
-		$sql = "SELECT * from `users` WHERE `Email`='".$_REQUEST['Email']."'";
+		$sql = "SELECT * FROM `users` WHERE `Email`='" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['Email']) . "'";
 		//echo $sql;
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$row=mysqli_fetch_array($result);
@@ -419,7 +420,7 @@ function do_login() {
 	$Password = md5($_REQUEST['Password']);
 
 		   
-	$result = mysqli_query($GLOBALS['connection'], "Select * From `users` Where username='$Username'") or die (mysqli_error($GLOBALS['connection']));
+	$result = mysqli_query($GLOBALS['connection'], "Select * From `users` Where username='" . mysqli_real_escape_string($GLOBALS['connection'], $Username) . "'") or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	if (!$row['Username']) {
 		echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
@@ -438,7 +439,7 @@ function do_login() {
 			}
 
 			$now = (gmdate("Y-m-d H:i:s"));
-			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`='1000-01-01 00:00:00', `login_count`=`login_count`+1 WHERE `Username`='".$row['Username']."' ";
+			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`='1000-01-01 00:00:00', `login_count`=`login_count`+1 WHERE `Username`='" . mysqli_real_escape_string($GLOBALS['connection'], $row['Username']) . "' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 			if ($row['Validated']=="0") {

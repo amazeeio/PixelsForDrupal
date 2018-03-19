@@ -34,7 +34,7 @@
 //if(!empty($_POST)) extract($_POST);
 global $f2;
 if (isset($_REQUEST["lang"]) && $_REQUEST["lang"]!='' && basename($_SERVER['PHP_SELF']) != "thanks.php") {
-	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['lang']."'";
+	$sql = "SELECT * FROM lang WHERE `lang_code`='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lang'])."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result)>0) {
 		$_SESSION['MDS_LANG'] = $_REQUEST["lang"];

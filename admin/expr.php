@@ -83,7 +83,7 @@ require ('admin_common.php');
 	<td><font face="Arial" size="2">#<?php echo $row['order_id'];?></font></td>
 	<td><font face="Arial" size="2"><?php 
 
-		$sql = "select * from banners where banner_id=".$row['banner_id'];
+		$sql = "select * from banners where banner_id=".intval($row['banner_id']);
 $b_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $b_row = mysqli_fetch_array($b_result);
 		

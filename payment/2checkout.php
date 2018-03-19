@@ -178,7 +178,7 @@ class _2CO {
 
 		global $label;
 
-		$sql = "SELECT * from orders where order_id='".$order_id."'";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 		
@@ -350,19 +350,19 @@ U.S. Dollar (USD)
 	}
 
 	function save_config() {
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '".$_REQUEST['_2co_private_key']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PRIVATE_KEY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_private_key'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '".$_REQUEST['_2co_publishable_key']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_PUBLISHABLE_KEY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_publishable_key'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '".$_REQUEST['_2co_sid']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SID', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_sid'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', '".$_REQUEST['_2co_demo']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_DEMO', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_demo'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', '".$_REQUEST['_2co_verify_ssl']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_VERIFY_SSL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_verify_ssl'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '".$_REQUEST['_2co_secret_word']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_SECRET_WORD', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_secret_word'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '".$_REQUEST['_2co_x_receipt_link_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('_2CO_X_RECEIPT_LINK_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['_2co_x_receipt_link_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 	}
 
@@ -453,7 +453,7 @@ U.S. Dollar (USD)
 				//$_2CO = new _2CO(); // load in the constants..
 
 				// get customer's order
-				$sql = "SELECT * FROM orders where order_id='".$order_id."'";
+				$sql = "SELECT * FROM orders where order_id='".intval($order_id)."'";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 

@@ -46,10 +46,10 @@ $imagine = new Imagine\Gd\Imagine();
 
 // get the order id
 if ( isset( $_REQUEST['block_id'] ) && $_REQUEST['block_id'] != '' ) {
-	$sql = "SELECT * FROM blocks WHERE block_id='" . $_REQUEST['block_id'] . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
+	$sql = "SELECT * FROM blocks WHERE block_id='" . intval($_REQUEST['block_id']) . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
 
 } elseif ( isset( $_REQUEST['aid'] ) && $_REQUEST['aid'] != '' ) {
-	$sql = "SELECT * FROM ads WHERE ad_id='" . $_REQUEST['aid'] . "' ";
+	$sql = "SELECT * FROM ads WHERE ad_id='" . intval($_REQUEST['aid']) . "' ";
 
 }
 
@@ -57,7 +57,7 @@ $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GL
 $row = mysqli_fetch_array( $result );
 
 // load all the blocks wot
-$sql = "SELECT * FROM blocks WHERE order_id='" . $row['order_id'] . "' ";
+$sql = "SELECT * FROM blocks WHERE order_id='" . intval($row['order_id']) . "' ";
 $result3 = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 $blocks = array();

@@ -615,7 +615,7 @@ if (isset($_REQUEST['move_type']) && !empty($_REQUEST['move_type'])) {
 
 }
 
-$sql = "SELECT * FROM blocks WHERE  banner_id='$BID'";
+$sql = "SELECT * FROM blocks WHERE  banner_id='".intval($BID)."'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 
@@ -631,7 +631,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBA
 
 	while ($row=mysqli_fetch_array($result)) {
 
-		$sql = "select * from users where ID='".$row['user_id']."'";
+		$sql = "select * from users where ID='".intval($row['user_id'])."'";
 		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$user_row = mysqli_fetch_array($res);
 
@@ -642,7 +642,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBA
 
 		}
 
-		$sql = "select * from orders where order_id='".$row['order_id']."'";
+		$sql = "select * from orders where order_id='".intval($row['order_id'])."'";
 		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($res);
 

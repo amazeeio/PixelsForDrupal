@@ -45,19 +45,19 @@ if ($_REQUEST['action']=='delall') {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 
-		if ($row[att1_name]!='') {
-			unlink($row[att1_name]);
+		if ($row['att1_name']!='') {
+			unlink($row['att1_name']);
 		}
 
-		if ($row[att2_name]!='') {
-			unlink($row[att2_name]);
+		if ($row['att2_name']!='') {
+			unlink($row['att2_name']);
 		}
 
-		if ($row[att3_name]!='') {
-			unlink($row[att3_name]);
+		if ($row['att3_name']!='') {
+			unlink($row['att3_name']);
 		}
 
-		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
+		$sql = "DELETE FROM mail_queue where mail_id='".intval($row['mail_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	}
@@ -68,19 +68,19 @@ if ($_REQUEST['action']=='delsent') {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 
-		if ($row[att1_name]!='') {
-			unlink($row[att1_name]);
+		if ($row['att1_name']!='') {
+			unlink($row['att1_name']);
 		}
 
-		if ($row[att2_name]!='') {
-			unlink($row[att2_name]);
+		if ($row['att2_name']!='') {
+			unlink($row['att2_name']);
 		}
 
-		if ($row[att3_name]!='') {
-			unlink($row[att3_name]);
+		if ($row['att3_name']!='') {
+			unlink($row['att3_name']);
 		}
 
-		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
+		$sql = "DELETE FROM mail_queue where mail_id='".intval($row['mail_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	}
@@ -91,19 +91,19 @@ if ($_REQUEST['action']=='delerror') {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	while ($row = mysqli_fetch_array($result)) {
 
-		if ($row[att1_name]!='') {
-			unlink($row[att1_name]);
+		if ($row['att1_name']!='') {
+			unlink($row['att1_name']);
 		}
 
-		if ($row[att2_name]!='') {
-			unlink($row[att2_name]);
+		if ($row['att2_name']!='') {
+			unlink($row['att2_name']);
 		}
 
-		if ($row[att3_name]!='') {
-			unlink($row[att3_name]);
+		if ($row['att3_name']!='') {
+			unlink($row['att3_name']);
 		}
 
-		$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
+		$sql = "DELETE FROM mail_queue where mail_id='".intval($row['mail_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	}
@@ -111,7 +111,7 @@ if ($_REQUEST['action']=='delerror') {
 }
 if ($_REQUEST['action']=='resend') {
 
-	$sql = "UPDATE mail_queue SET status='queued' WHERE mail_id=".$_REQUEST['mail_id'];
+	$sql = "UPDATE mail_queue SET status='queued' WHERE mail_id=".intval($_REQUEST['mail_id']);
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	process_mail_queue(1, $_REQUEST['mail_id']);
@@ -255,32 +255,32 @@ if (USE_SMTP!='YES') {
 <?php
 
 if ($q_to_add != '') {
-	$where_sql .= " AND `to_address` like '%$q_to_add%' "; 
+	$where_sql .= " AND `to_address` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $q_to_add)."%' ";
 
 }
 
 if ($q_to_name != '') {
-	$where_sql .= " AND `to_name` like '%$q_to_name%' "; 
+	$where_sql .= " AND `to_name` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $q_to_name)."%' ";
 
 }
 
 if ($q_msg != '') {
-	$where_sql .= " AND `message` like '%$q_msg%' "; 
+	$where_sql .= " AND `message` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $q_msg)."%' ";
 
 }
 
 if ($q_subj != '') {
-	$where_sql .= " AND `subject` like '%$q_subj%' "; 
+	$where_sql .= " AND `subject` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $q_subj)."%' ";
 
 }
 
 if ($q_type != '') {
-	$where_sql .= " AND `template_id` like '$q_type' "; 
+	$where_sql .= " AND `template_id` like '".mysqli_real_escape_string( $GLOBALS['connection'], $q_type)."' ";
 
 }
 
 if ($q_status !='') {
-	$where_sql .= " AND `status`='$q_status' ";
+	$where_sql .= " AND `status`='".mysqli_real_escape_string( $GLOBALS['connection'], $q_status)."' ";
 
 }
 
@@ -339,7 +339,7 @@ while (($row=mysqli_fetch_array($result)) && ($i<$records_per_page)) {
 
 	$i++;
 
-	$new_window = "onclick=\"window.open('show_email.php?mail_id=".$row[mail_id]."', '', 'toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=yes,resizable=1,width=600,height=600,left = 50,top = 50');return false;\"";	
+	$new_window = "onclick=\"window.open('show_email.php?mail_id=".$row['mail_id']."', '', 'toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=yes,resizable=1,width=600,height=600,left = 50,top = 50');return false;\"";
 
 ?>
 
@@ -357,7 +357,7 @@ while (($row=mysqli_fetch_array($result)) && ($i<$records_per_page)) {
 		<td><font size="2" color="<?php if ($row['status']=='sent') { echo 'green'; } ?>"><?php echo $row['status']; ?></font></td>
 		<td><font size="1"><?php echo $row['error_msg']; ?></font></td>
 		<td><font size="1"><?php echo $row['retry_count']; ?></font></td>
-		<td><b><font size="1"><a href='email_queue.php?action=resend&mail_id=<?php echo $row[mail_id].$q_string;?>'>Resend</a></b></font></td>
+		<td><b><font size="1"><a href='email_queue.php?action=resend&mail_id=<?php echo $row['mail_id'].$q_string;?>'>Resend</a></b></font></td>
 	</tr>
 
 <?php

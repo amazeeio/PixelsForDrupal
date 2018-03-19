@@ -38,7 +38,7 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 require_once ("../config.php");
 
-$block_id=$_REQUEST['block_id'];
+$block_id=intval($_REQUEST['block_id']);
 $BID=$f2->bid($_REQUEST['BID']);
 
 if($_SESSION['MDS_ID']=='') {
@@ -48,14 +48,18 @@ if($_SESSION['MDS_ID']=='') {
 
 load_banner_constants($BID);
 
+if (!is_numeric($BID)) {
+	die();
+}
+
 if ($_REQUEST['user_id']!='') {
 	
-	$user_id = $_REQUEST['user_id'];
+	$user_id = intval($_REQUEST['user_id']);
 	if (!is_numeric($_REQUEST['user_id'])) die();
 
 } else {
 
-	$user_id = $_SESSION['MDS_ID'];
+	$user_id = intval($_SESSION['MDS_ID']);
 
 }
 $sql = "select * from banners where banner_id='$BID'";
@@ -97,10 +101,10 @@ $row=mysqli_fetch_array($result);
 //	die();
 
 //}
-$order_id=$_SESSION['MDS_order_id'];
+$order_id=intval($_SESSION['MDS_order_id']);
 $update_order = false;
 
-if (($row['status']=='reserved') && ($row[user_id]==$user_id)) {
+if (($row['status']=='reserved') && ($row['user_id']==$user_id)) {
 	// the block was already selected by the client, this is a double click
 	echo 'new'; 
 	$update_order = true;

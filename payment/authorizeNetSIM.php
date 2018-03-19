@@ -183,13 +183,13 @@ class authorizeNet {
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RELAY_URL', '')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', 'http://$host".$http_url."/users/index.php"."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', 'http://".mysqli_real_escape_string( $GLOBALS['connection'], $host.$http_url)."/users/index.php"."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_METHOD', 'POST"."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".SITE_NAME."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".mysqli_real_escape_string( $GLOBALS['connection'], SITE_NAME)."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
 
@@ -197,7 +197,7 @@ class authorizeNet {
 		mysqli_query($GLOBALS['connection'], $sql);
 
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".SITE_LOGO_URL."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], SITE_LOGO_URL)."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_BACKGROUND_URL', '')";
@@ -290,7 +290,7 @@ class authorizeNet {
 
 		global $label;
 
-		$sql = "SELECT * from orders where order_id='".$order_id."'";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 
@@ -554,35 +554,35 @@ class authorizeNet {
 	function save_config() {
 
 	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_LOGIN_ID', '".$_REQUEST['authnet_login_id']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_LOGIN_ID', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_login_id'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_CURRENCY', '".$_REQUEST['authnet_currency']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_CURRENCY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_currency'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_TEST_MODE', '".$_REQUEST['authnet_test_mode']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_TEST_MODE', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_test_mode'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RELAY_URL', '".$_REQUEST['authnet_x_relay_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RELAY_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_relay_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_METHOD', '".$_REQUEST['authnet_x_receipt_link_method']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_METHOD', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_receipt_link_method'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', '".$_REQUEST['authnet_x_receipt_link_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_receipt_link_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".$_REQUEST['authnet_x_receipt_link_text']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_RECEIPT_LINK_TEXT', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_receipt_link_text'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_TRAN_KEY', '".$_REQUEST['authnet_x_tran_key']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_TRAN_KEY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_tran_key'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_BACKGROUND_URL', '".$_REQUEST['authnet_x_background_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_BACKGROUND_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_background_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_BACKGROUND', '".$_REQUEST['authnet_x_color_background']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_BACKGROUND', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_color_background'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_LINK', '".$_REQUEST['authnet_x_color_link']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_LINK', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_color_link'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_TEXT', '".$_REQUEST['authnet_x_color_text']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_COLOR_TEXT', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_color_text'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".$_REQUEST['authnet_x_logo_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_LOGO_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_logo_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_HEADER_HTML_PAYMENT_FORM', '".$_REQUEST['authnet_x_header_html_payment_form']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_HEADER_HTML_PAYMENT_FORM', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_header_html_payment_form'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_FOOTER_HTML_PAYMENT_FORM', '".$_REQUEST['authnet_x_footer_html_payment_form']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('AUTHNET_X_FOOTER_HTML_PAYMENT_FORM', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['authnet_x_footer_html_payment_form'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);	
 		
 
@@ -649,7 +649,7 @@ class authorizeNet {
 
 			$working_sig = strtoupper (md5($merchant_id.$transaction_id.$secret.$mb_amount.$mb_currency.$status));
 
-			$sql = "SELECT * FROM orders where order_id='".$_POST['x_invoice_num']."'";
+			$sql = "SELECT * FROM orders where order_id='".intval($_POST['x_invoice_num'])."'";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$order_row = mysqli_fetch_array($result);
 

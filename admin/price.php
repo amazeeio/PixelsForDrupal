@@ -158,11 +158,12 @@ if ($BID!='') {
 					// check database..
 
 					if ($_REQUEST['submit']!='') {
+					    $and_price="";
 						if ($_REQUEST['price_id'] !='') {
-							$and_price = "and price_id <>".$_REQUEST['price_id'];
+							$and_price = "and price_id <>".intval($_REQUEST['price_id']);
 
 						}
-						$sql = "SELECT * FROM prices where row_from <= ".$_REQUEST['row_to']." AND row_to >=".$_REQUEST['row_from']." AND col_from <= ".$_REQUEST['col_to']." AND col_to >=".$_REQUEST['col_from']." $and_price AND banner_id=$BID";
+						$sql = "SELECT * FROM prices where row_from <= ".intval($_REQUEST['row_to'])." AND row_to >=".intval($_REQUEST['row_from'])." AND col_from <= ".intval($_REQUEST['col_to'])." AND col_to >=".intval($_REQUEST['col_from'])." $and_price AND banner_id=".intval($BID);
 						//echo "$sql<br>";
 						$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 						if (mysqli_num_rows($result)>0) {
@@ -206,7 +207,7 @@ if ($BID!='') {
 
 	if ($_REQUEST['action'] == 'delete') {
 		
-		$sql = "DELETE FROM prices WHERE price_id='".$_REQUEST['price_id']."' ";
+		$sql = "DELETE FROM prices WHERE price_id='".intval($_REQUEST['price_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		
 	}
@@ -233,7 +234,7 @@ if ($BID!='') {
 			$_REQUEST['block_id_to'] = ((($_REQUEST['row_to']) * G_WIDTH)-1);
 
 
-			$sql = "REPLACE INTO prices(price_id, banner_id, row_from, row_to, col_from, col_to, block_id_from, block_id_to, price, currency, color) VALUES ('".$_REQUEST['price_id']."', '".$BID."', '".$_REQUEST['row_from']."', '".$_REQUEST['row_to']."', '".$_REQUEST['col_from']."', '".$_REQUEST['col_to']."', '".$_REQUEST['block_id_from']."', '".$_REQUEST['block_id_to']."', '".$_REQUEST['price']."', '".$_REQUEST['currency']."', '".$_REQUEST['color']."') ";
+			$sql = "REPLACE INTO prices(price_id, banner_id, row_from, row_to, col_from, col_to, block_id_from, block_id_to, price, currency, color) VALUES ('".intval($_REQUEST['price_id'])."', '".intval($BID)."', '".intval($_REQUEST['row_from'])."', '".intval($_REQUEST['row_to'])."', '".intval($_REQUEST['col_from'])."', '".intval($_REQUEST['col_to'])."', '".intval($_REQUEST['block_id_from'])."', '".intval($_REQUEST['block_id_to'])."', '".floatval($_REQUEST['price'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['color'])."') ";
 
 			//echo $sql;
 
@@ -253,7 +254,7 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysqli_query($GLOBALS['connection'], "select * FROM prices  where banner_id=$BID") or die (mysqli_error($GLOBALS['connection']));
+	$result = mysqli_query($GLOBALS['connection'], "select * FROM prices  where banner_id=".intval($BID)) or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)>0) {
 	?>
@@ -321,7 +322,7 @@ if ($BID!='') {
 	if ($_REQUEST['action']=='edit') {
 		echo "<h4>Edit Price Zone:</h4>";
 
-		$sql = "SELECT * FROM prices WHERE `price_id`='".$_REQUEST['price_id']."' ";
+		$sql = "SELECT * FROM prices WHERE `price_id`='".intval($_REQUEST['price_id'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 

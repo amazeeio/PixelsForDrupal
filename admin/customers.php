@@ -36,7 +36,7 @@ require('admin_common.php');
 require('../include/ads.inc.php');
 
 function validate_advertiser ($user_id) {
-	$sql = "UPDATE users set Validated='1' where ID=".$user_id;
+	$sql = "UPDATE users set Validated='1' where ID=".intval($user_id);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
@@ -49,13 +49,13 @@ if ($_REQUEST['action']=='validate') {
 function delete_advertiser($user_id) {
 
 	
-	$sql = "SELECT * FROM orders where status<> 'new' AND user_id=".$user_id;
+	$sql = "SELECT * FROM orders where status<> 'new' AND user_id=".intval($user_id);
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	//$row = mysqli_fetch_array($result);
 	if (mysqli_num_rows($result)>0) {
-		echo "<font color='red'>Error: Cannot delete because this user has some orders. (<a href='customers.php?delete_anyway=1&user_id=".$user_id."'>Click here to delete anyway</a>)<br></font>";
+		echo "<span style=\"color: red; \">Error: Cannot delete because this user has some orders. (<a href='customers.php?delete_anyway=1&user_id=" . $user_id . "'>Click here to delete anyway</a>)<br></span>";
 	} else {
-		$sql = "DELETE FROM users where ID=".$user_id;
+		$sql = "DELETE FROM users where ID=".intval($user_id);
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 	
@@ -68,22 +68,22 @@ if ($_REQUEST['action']=='delete') {
 
 if ($_REQUEST['delete_anyway']!='') {
 
-	$sql = "DELETE FROM orders where user_id=".$_REQUEST['user_id'];
+	$sql = "DELETE FROM orders where user_id=".intval($_REQUEST['user_id']);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
-	$sql = "DELETE FROM blocks where user_id=".$_REQUEST['user_id'];
+	$sql = "DELETE FROM blocks where user_id=".intval($_REQUEST['user_id']);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
-	$sql = "DELETE FROM users where ID=".$_REQUEST['user_id'];
+	$sql = "DELETE FROM users where ID=".intval($_REQUEST['user_id']);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	// DELETE ADS
-	$sql = "select * FROM ads where user_id='".$_REQUEST['user_id']."' ";
+	$sql = "select * FROM ads where user_id='".intval($_REQUEST['user_id'])."' ";
 	$res2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	while ($row2=mysqli_fetch_array($res2)) {
 
 		delete_ads_files ($row2['ad_id']);
-		$sql = "DELETE from ads where ad_id='".$row2['ad_id']."' ";
+		$sql = "DELETE from ads where ad_id='".intval($row2['ad_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	}
 
@@ -157,7 +157,7 @@ if ($_REQUEST['mass_val']!='') {
 		$q_email = $_REQUEST['q_email'];
 		$q_company = $_REQUEST['q_company'];
 		$search = $_REQUEST['search'];
-		$q_string = "&q_name=$q_name&q_username=$q_username&q_news=$q_news&q_resumes=$q_resumes&q_email=$q_email&q_aday=$q_aday&q_amon=$q_amon&q_ayear=$q_ayear&q_company=$q_company&search=$search";
+		$q_string = mysqli_real_escape_string( $GLOBALS['connection'], "&q_name=$q_name&q_username=$q_username&q_news=$q_news&q_resumes=$q_resumes&q_email=$q_email&q_aday=$q_aday&q_amon=$q_amon&q_ayear=$q_ayear&q_company=$q_company&search=$search");
 ?>
 <p>
 
@@ -168,23 +168,22 @@ if ($_REQUEST['mass_val']!='') {
   
     <tr>
       <td width="63" bgcolor="#EDF8FC" valign="top">
-      <p align="right"><font size="2" face="Arial"><b>Name</b></font></td>
+      <p align="right"><span style="font-size: x-small; font-family: Arial,serif; "><b>Name</b></span></p></td>
       <td width="286" bgcolor="#EDF8FC" valign="top">
-      <font face="Arial">
-      <input type="text" name="q_name" size="39" value="<?php echo $q_name;?>" /></font></td>
+      <span style="font-family: Arial; ">
+      <input type="text" name="q_name" size="39" value="<?php echo $q_name;?>" /></span></td>
       <td width="71" bgcolor="#EDF8FC" valign="top">
-      <p align="right"><b><font face="Arial" size="2">Username</font></b></td>
+          <p align="right"><b><span style="font-family: Arial; font-size: x-small; ">Username</span></b></p></td>
       <td width="299" bgcolor="#EDF8FC" valign="top">
-      
       <input type="text" name="q_username" size="28" value="<?php echo $q_username; ?>"/></td>
     </tr>
     <tr>
       <td width="63" bgcolor="#EDF8FC" valign="top">
-      <p align="right"><b><font face="Arial" size="2">Signed Up After:</font></b></td>
+      <p align="right"><b><span style="font-family: Arial; font-size: x-small; ">Signed Up After:</span></b></td>
       <td width="286" bgcolor="#EDF8FC" valign="top">
      <b>
-       <font face="Arial" size="2"></font></b><font size="2" face="Arial"><b> 
-       </b></font>
+       <span style="font-family: Arial; font-size: x-small; "></span></b><span style="font-size: x-small; font-family: Arial; "><b>
+       </b></span>
 <?php
 
 if ($q_aday == '') {
@@ -250,7 +249,7 @@ if ($q_aday == '') {
 	 
 	 </td>
       <td width="71" bgcolor="#EDF8FC" valign="top">
-      <p align="right"><b><font face="Arial" size="2">Email</font></b></td>
+      <p align="right"><b><span style="font-family: Arial; font-size: x-small; ">Email</span></b></td>
       <td width="299" bgcolor="#EDF8FC" valign="top">
       
       <input type="text" name="q_email" size="28" value="<?php echo $q_email; ?>" /></td>
@@ -258,8 +257,8 @@ if ($q_aday == '') {
   
     <tr>
       <td width="731" bgcolor="#EDF8FC" colspan="4">
-      <font face="Arial"><b>
-      <input type="submit" value="Find" name="B1" style="float: left"><?php if ($_REQUEST['search']=='search') { ?>&nbsp; </b></font><b>[<font face="Arial"><a href="<?php echo $_SERVER['PHP_SELF']?>">Start a New Search</a></font>]</b><?php } ?></td>
+      <span style="font-family: Arial; "><b>
+      <input type="submit" value="Find" name="B1" style="float: left"><?php if ($_REQUEST['search']=='search') { ?>&nbsp; </b></span><b>[<span style="font-family: Arial; "><a href="<?php echo $_SERVER['PHP_SELF']?>">Start a New Search</a></span>]</b><?php } ?></td>
     </tr>
     </table>
 
@@ -271,14 +270,14 @@ if ($q_aday == '') {
 <p>Listing advertisers. Click on a username to edit details / change password / change status<p>
 
 <?php
-$q_aday = $_REQUEST['q_aday'];
-$q_amon = $_REQUEST['q_amon'];
-$q_ayear = $_REQUEST['q_ayear'];
-$q_name = $_REQUEST['q_name'];
-$q_username = $_REQUEST['q_username'];
-$q_resumes = $_REQUEST['q_resumes'];
-$q_news = $_REQUEST['q_news'];
-$q_email = $_REQUEST['q_email'];
+$q_aday = intval($_REQUEST['q_aday']);
+$q_amon = intval($_REQUEST['q_amon']);
+$q_ayear = intval($_REQUEST['q_ayear']);
+$q_name = mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['q_name']);
+$q_username = mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['q_username']);
+$q_resumes = mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['q_resumes']);
+$q_news = mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['q_news']);
+$q_email = mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['q_email']);
 
 if ($q_name != '') {
 	$list = preg_split ("/[\s,]+/", $q_name);
@@ -302,10 +301,10 @@ if ($q_email != '') {
 	$q_email = trim ($q_email);
 	$list = preg_split ("/[\s,]+/", $q_email);
     for ($i=1; $i < sizeof($list); $i++) {
-		$or .=" OR (`Email` like '%".$list[$i]."%')";
+		$or .=" OR (`Email` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $list[$i])."%')";
 		//$or2 .=" OR (`FirstName` like '%".$list[$i]."%')";
     }
-    $where_sql .= " AND ((`Email` like '%$list[0]%') $or)";
+    $where_sql .= " AND ((`Email` like '%".mysqli_real_escape_string( $GLOBALS['connection'], $list[0])."%') $or)";
 	//$where_sql .= " AND ((`FirstName` like '%$list[0]%') $or2)";
 }
 
@@ -351,7 +350,7 @@ if ($count > $records_per_page) {
 	//	echo "<span > ".$label["navigation_page"]."</span> ";
 		$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
 		$LINKS = 10;
-		render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
 	}
 ?>
@@ -361,18 +360,18 @@ if ($count > $records_per_page) {
 <td colspan="12">With selected: <input type="submit" value='Delete' name='mass_del' > | <input type="submit" value='Validate' name='mass_val' ></td>
 </tr>
 <tr>
-	<td><b><font face="Arial" size="2"><input type="checkbox" onClick="checkBoxes(this, 'users[]');"></td>
-    <td><b><font face="Arial" size="2">Name</font></b></td>
-    <td><b><font face="Arial" size="2">Username</font></b></td>
-    <td><b><font face="Arial" size="2">Email</font></b></td>
-	<td><b><font face="Arial" size="2">Company</font></b></td>
-	<td><b><font face="Arial" size="2">Signup Date</font></b></td>
-	<td><b><font face="Arial" size="2">Validated?</font></b></td>
-	<td><b><font face="Arial" size="2">I.P</font></b></td>
-	<td><b><font face="Arial" size="2">Orders</font></b></td>
-	<td><b><font face="Arial" size="2">Pixels</font></b></td>
-	<td><b><font face="Arial" size="2">Clicks</font></b></td>
-	<td><b><font face="Arial" size="2">Action</font></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; "><input type="checkbox" onClick="checkBoxes(this, 'users[]');"></td>
+    <td><b><span style="font-family: Arial; font-size: x-small; ">Name</span></b></td>
+    <td><b><span style="font-family: Arial; font-size: x-small; ">Username</span></b></td>
+    <td><b><span style="font-family: Arial; font-size: x-small; ">Email</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Company</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Signup Date</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Validated?</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">I.P</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Orders</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Pixels</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Clicks</span></b></td>
+	<td><b><span style="font-family: Arial; font-size: x-small; ">Action</span></b></td>
 	</tr>
 <?php
 
@@ -380,11 +379,11 @@ if ($count > $records_per_page) {
   while (($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) && ($i<$records_per_page)) {
 	  $i++;
 
-	$sql = "SELECT SUM(quantity) as Pixels FROM orders where (status='completed' OR status='confirmed' OR status='pending') AND user_id=".$row['ID'];
+	$sql = "SELECT SUM(quantity) as Pixels FROM orders where (status='completed' OR status='confirmed' OR status='pending') AND user_id=".intval($row['ID']);
 	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result2);
 
-	$sql = "SELECT * FROM orders where user_id='".$row['ID']."' AND status <> 'new' ";
+	$sql = "SELECT * FROM orders where user_id='".intval($row['ID'])."' AND status <> 'new' ";
 	$result3 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//$row = mysqli_fetch_array($result);
 	
@@ -392,19 +391,19 @@ if ($count > $records_per_page) {
 	?>
 	<tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
 <td><input type="checkbox" name="users[]" value="<?php echo $row[ID]; ?>"></td>
-	<td><font face="Arial" size="2"><?php echo $row[FirstName]." ".$row[LastName];?></font></td>
-    <td><font face="Arial" size="2"><a href="edit.php?user_id=<?php echo $row[ID]; ?>" name="Edit"><?php echo $row[Username];?></a></font></td>
-    <td><font face="Arial" size="2"><?php echo $row[Email];?></font></td>
-	<td><font face="Arial" size="1"><?php echo $row[CompName];?></font></td>
-	<td><font face="Arial" size="1"><?php echo get_local_time($row[SignupDate]);?></font></td>
-	<td><font face="Arial" size="2"><?php  if ($row[Validated]==1){ echo "Yes"; } else { echo "No"; } ?><?php if ($row[Rank]==2) { echo "  <b>Privileged</b>"; }?></font></td>
-	<td><font face="Arial" size="1"><?php echo $row[IP];?></font></td>
-	<td><font face="Arial" size="1"><?php echo mysqli_num_rows($result3); ?></font></td>
-	<td><font face="Arial" size="1"><?php echo $order_row[Pixels];?></font></td>
-	<td><font face="Arial" size="1"><?php echo $row[click_count];?></font></td>
-	<td><font face="Arial" size="1">
-	<?php if ($row[Validated]==0) {?>
-	<input style="font-size: 9px;" type="button" value="Validate" onclick="if ( !confirmLink(this, 'Validate account?')) return false; window.location='<?php echo $_SERVER['PHP_SELF'];?>?action=validate&user_id=<?php echo $row[ID].$q_string;?>'"><?php } ?> <input style="font-size: 9px;" type="button" value="Delete" onclick="if ( !confirmLink(this, 'Delete account?')) return false; window.location='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&user_id=<?php echo $row[ID].$q_string;?>' "></font></td>
+	<td><span style="font-family: Arial; font-size: x-small; "><?php echo $row['FirstName'] . " " . $row['LastName'];?></span></td>
+    <td><span style="font-family: Arial; font-size: x-small; "><a href="edit.php?user_id=<?php echo $row['ID']; ?>" name="Edit"><?php echo $row['Username'];?></a></span></td>
+    <td><span style="font-family: Arial; font-size: x-small; "><?php echo $row['Email'];?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo $row['CompName'];?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo get_local_time($row['SignupDate']);?></span></td>
+	<td><span style="font-family: Arial; font-size: x-small; "><?php  if ( $row['Validated'] == 1){ echo "Yes"; } else { echo "No"; } ?><?php if ( $row['Rank'] == 2) { echo "  <b>Privileged</b>"; }?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo $row['IP'];?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo mysqli_num_rows($result3); ?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo $order_row['Pixels'];?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; "><?php echo $row['click_count'];?></span></td>
+	<td><span style="font-family: Arial; font-size: xx-small; ">
+	<?php if ($row['Validated']==0) {?>
+	<input style="font-size: 9px;" type="button" value="Validate" onclick="if ( !confirmLink(this, 'Validate account?')) return false; window.location='<?php echo $_SERVER['PHP_SELF'];?>?action=validate&user_id=<?php echo $row['ID'].$q_string;?>'"><?php } ?> <input style="font-size: 9px;" type="button" value="Delete" onclick="if ( !confirmLink(this, 'Delete account?')) return false; window.location='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&user_id=<?php echo $row['ID'].$q_string;?>' "></span></td>
 	</tr>
 	<?php
 
@@ -418,7 +417,7 @@ if ($count > $records_per_page)  {
 		
 		$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
 		$LINKS = 10;
-		render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
 	}
 ?>

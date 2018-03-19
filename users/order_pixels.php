@@ -75,7 +75,7 @@ $tmp_image_file = get_tmp_img_name();
 # load order from php
 # only allowed 1 new order per banner
 
- $sql = "SELECT * from orders where user_id='".$_SESSION['MDS_ID']."' and status='new' and banner_id='$BID' ";
+ $sql = "SELECT * from orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
  $order_result = mysqli_query($GLOBALS['connection'], $sql);
  $order_row = mysqli_fetch_array($order_result);
@@ -568,7 +568,7 @@ $low_y = G_HEIGHT*BLK_HEIGHT;
 
 //$sql = "select x,y  from blocks where session_id='".session_id()."' ";
 
-$sql = "SELECT block_info FROM temp_orders WHERE session_id='".addslashes(session_id())."' ";
+$sql = "SELECT block_info FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 
 //echo $sql;
 $result = mysqli_query($GLOBALS['connection'], $sql);
@@ -825,7 +825,6 @@ if (USE_AJAX=='SIMPLE') {
 <strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;' /><br />
 <input type='hidden' name='BID' value='<?php echo $BID;?>' />
 <input type='submit' value='<?php echo $label['pix_upload_button']; ?>' style=' font-size:18px;' />
-</p>
 
 <?php
 

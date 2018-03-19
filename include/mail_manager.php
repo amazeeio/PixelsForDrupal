@@ -56,45 +56,17 @@ function queue_mail($to_address, $to_name, $from_address, $from_name, $subject, 
 	$now = (gmdate("Y-m-d H:i:s"));
 
 
-	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '$to_address', '$to_name', '$from_address', '$from_name', '$subject', '$message', '$html_message', '$attachments', 'queued', '', 0, '$template_id', '$now')"; // 2006 copyr1ght jam1t softwar3 
+	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $subject)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $message)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $html_message)."', '$attachments', 'queued', '', 0, '".intval($template_id)."', '$now')"; // 2006 copyr1ght jam1t softwar3
 
 	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
 
 	$mail_id = mysqli_insert_id($GLOBALS['connection']);
 
-	//echo "mail $mail_id queued.";
-
-	if ($att) {
-
-		if ($_FILES['att1']['name']!='') {
-			$filename = move_uploaded_attachment ($mail_id, 'att1', $from_name);
-			$sql = "UPDATE mail_queue SET attachments='Y', att1_name='$filename' WHERE mail_id=$mail_id ";
-			mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
-
-		}
-		
-		if ($_FILES['att2']['name']!='') {
-			$filename = move_uploaded_attachment ($mail_id, 'att2', $from_name);
-			$sql = "UPDATE mail_queue SET attachments='Y', att2_name='$filename' WHERE mail_id=$mail_id ";
-			mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
-		}
-		
-		if ($_FILES['att3']['name']!='') {
-			$filename = move_uploaded_attachment ($mail_id, 'att3', $from_name);
-			$sql = "UPDATE mail_queue SET attachments='Y', att3_name='$filename' WHERE mail_id=$mail_id ";
-			mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
-		}
-
-	}
 	return $mail_id;
-
-
 
 }
 
-
 ############################
-
 function process_mail_queue($send_count=1) {
 
 	$now = (gmdate("Y-m-d H:i:s"));
@@ -135,10 +107,11 @@ function process_mail_queue($send_count=1) {
 
 	if ($unix_time > $t_row['val']+5) { // did 5 seconds elapse since last run?
 
+		$and_mail_id = "";
 		if (func_num_args()>1) {
 			$mail_id = func_get_arg(1);
 
-			$and_mail_id = " AND mail_id=".$mail_id." ";
+			$and_mail_id = " AND mail_id=".intval($mail_id)." ";
 
 		}
 
@@ -152,7 +125,7 @@ function process_mail_queue($send_count=1) {
 			$EMAILS_ERROR_WAIT = 10;
 		}
 
-		$sql = "SELECT * from mail_queue where (status='queued' OR status='error') AND retry_count <= ".$EMAILS_MAX_RETRY." $and_mail_id order by mail_date DESC";
+		$sql = "SELECT * from mail_queue where (status='queued' OR status='error') AND retry_count <= ".intval($EMAILS_MAX_RETRY)." $and_mail_id order by mail_date DESC";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
 		while (($row = mysqli_fetch_array($result))&&($send_count > 0)) {
 			$time_stamp = strtotime($row['date_stamp']);
@@ -197,34 +170,28 @@ function process_mail_queue($send_count=1) {
 
 			$now = (gmdate("Y-m-d H:i:s"));
 
-			$sql = "SELECT mail_id, att1_name, att2_name, att3_name from mail_queue where status='sent' AND DATE_SUB('$now',INTERVAL ".EMAILS_DAYS_KEEP." DAY) >= date_stamp  ";
+			$sql = "SELECT mail_id, att1_name, att2_name, att3_name from mail_queue where status='sent' AND DATE_SUB('$now',INTERVAL ".intval(EMAILS_DAYS_KEEP)." DAY) >= date_stamp  ";
 
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 			while ($row=mysqli_fetch_array($result)) {
 
-				if ($row[att1_name]!='') {
-					unlink($row[att1_name]);
+				if ($row['att1_name']!='') {
+					unlink($row['att1_name']);
 				}
 
-				if ($row[att2_name]!='') {
-					unlink($row[att2_name]);
+				if ($row['att2_name']!='') {
+					unlink($row['att2_name']);
 				}
 
-				if ($row[att3_name]!='') {
-					unlink($row[att3_name]);
+				if ($row['att3_name']!='') {
+					unlink($row['att3_name']);
 				}
 
-				$sql = "DELETE FROM mail_queue where mail_id='".$row[mail_id]."' ";
+				$sql = "DELETE FROM mail_queue where mail_id='".intval($row['mail_id'])."' ";
 				mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-
-
-
 			}
-
 		}
-
-
 	}
 
 	// release the poor man's lock
@@ -319,7 +286,7 @@ function send_smtp_email( $mail_row ) {
 	if ( strcmp( $error, "" ) ) {
 		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . addslashes( $error ) . "', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . mysqli_real_escape_string( $GLOBALS['connection'], $error ) . "', `date_stamp`='$now' WHERE mail_id=" . intval($mail_row['mail_id']);
 		//echo $sql;
 		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
@@ -327,7 +294,7 @@ function send_smtp_email( $mail_row ) {
 
 		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . intval($mail_row['mail_id']);
 		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	}
@@ -389,7 +356,7 @@ function send_phpmail( $mail_row ) {
 	if ( strcmp( $error, "" ) ) {
 		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . addslashes( $error ) . "', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		$sql = "UPDATE mail_queue SET status='error', retry_count=retry_count+1,  error_msg='" . mysqli_real_escape_string( $GLOBALS['connection'], $error ) . "', `date_stamp`='$now' WHERE mail_id=" . intval($mail_row['mail_id']);
 		//echo $sql;
 		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
@@ -397,7 +364,7 @@ function send_phpmail( $mail_row ) {
 
 		$now = gmdate( "Y-m-d H:i:s" );
 
-		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . $mail_row['mail_id'];
+		$sql = "UPDATE mail_queue SET status='sent', `date_stamp`='$now' WHERE mail_id=" . intval($mail_row['mail_id']);
 		mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	}

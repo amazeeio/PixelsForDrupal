@@ -48,9 +48,9 @@ require ("header.php");
 
 <?php
 
-if ($_REQUEST[action]=='changepass') {
+if ($_REQUEST['action']=='changepass') {
 
-	$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+	$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -61,7 +61,7 @@ if ($_REQUEST[action]=='changepass') {
 
 		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
 
-			$sql = "UPDATE users set password='$newpass' where ID='".$_SESSION['MDS_ID']."'";
+			$sql = "UPDATE users set password='$newpass' where ID='".intval($_SESSION['MDS_ID'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			echo "<h3><font color=green>".$label['advertiser_edit_passok'].
 			"</font></h3><br>";
@@ -106,11 +106,11 @@ if ($_REQUEST[action]=='changepass') {
 <p>
 <?php
 
-if ($_REQUEST[action]=='update') {
+if ($_REQUEST['action']=='update') {
 
 	//print_r ($_REQUEST);
 
-	$sql = "UPDATE users set FirstName='".$_REQUEST['firstname']."', LastName='".$_REQUEST['lastname']."', CompName='".$_REQUEST['compname']."', Email='".$_REQUEST['email']."' where ID='".$_SESSION['MDS_ID']."'";
+	$sql = "UPDATE users set FirstName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['firstname'])."', LastName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lastname'])."', CompName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['compname'])."', Email='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['email'])."' where ID='".mysqli_real_escape_string( $GLOBALS['connection'], $_SESSION['MDS_ID'])."'";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
@@ -119,7 +119,7 @@ if ($_REQUEST[action]=='update') {
 
 }
 
-$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);

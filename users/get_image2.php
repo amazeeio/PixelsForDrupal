@@ -42,13 +42,13 @@ if ($BID=='') {
 }
 
 
-$sql = "SELECT * FROM blocks where banner_id='$BID' AND block_id='".$_REQUEST['block_id']."' ";
+$sql = "SELECT * FROM blocks where banner_id='$BID' AND block_id='".intval($_REQUEST['block_id'])."' ";
 $result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 if ($row['status']=="sold") {
 
-	if ($row[image_data]=='') {
+	if ($row['image_data']=='') {
 
 		# hard coded above file to save a file read...
 

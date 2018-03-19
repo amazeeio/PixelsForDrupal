@@ -34,7 +34,6 @@ session_start();
 require ('../config.php');
 require ("admin_common.php");
 require_once ('../include/dynamic_forms.php');
-//require_once ('../include/category.inc.php');
 require_once ('../include/ads.inc.php');
 
 $mode = $_REQUEST['mode'];

@@ -59,7 +59,7 @@ if ($_REQUEST['order_id']!='') {
 
 }
 
-$sql = "SELECT * from orders where banner_id='$BID' AND order_id='".$order_id."'";
+$sql = "SELECT * from orders where banner_id='$BID' AND order_id='".intval($order_id)."'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 $order_row = mysqli_fetch_array($result);
 
@@ -74,7 +74,7 @@ if ($_REQUEST['action']=='confirm') {
 }
 ##########################
 
-$sql = "SELECT * from orders where order_id='".$_SESSION['MDS_order_id']."'";
+$sql = "SELECT * from orders where order_id='".intval($_SESSION['MDS_order_id'])."'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 $order_row = mysqli_fetch_array($result);
 

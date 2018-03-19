@@ -215,11 +215,11 @@ for ($i=1; $i <= 31; $i++) {
 
 
 
-$from = $_REQUEST['from_year']."-".$_REQUEST['from_month']."-".$_REQUEST['from_day'];
+$from = intval($_REQUEST['from_year'])."-".intval($_REQUEST['from_month'])."-".intval($_REQUEST['from_day']);
 
-$to = $_REQUEST['to_year']."-".$_REQUEST['to_month']."-".$_REQUEST['to_day'];
+$to = intval($_REQUEST['to_year'])."-".intval($_REQUEST['to_month'])."-".intval($_REQUEST['to_day']);
 
-$sql = "SELECT *, SUM(clicks) as CLICKSUM FROM clicks WHERE banner_id='$BID' AND `date` >= '$from' AND `date` <= '$to' GROUP BY date ";
+$sql = "SELECT *, SUM(clicks) as CLICKSUM FROM clicks WHERE banner_id='".intval($BID)."' AND `date` >= '$from' AND `date` <= '$to' GROUP BY date ";
 
 
 

@@ -90,14 +90,14 @@ while (strlen($pass) < 5) {
 if ($email != '') {
 
 
-$sql = "select * from users where `Email`='$email'";
+$sql = "select * from users where `Email`='" . mysqli_real_escape_string( $GLOBALS['connection'], $email) . "'";
 //echo $sql;
 $result=mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 
-if ($row[Email] != '') {
+if ($row['Email'] != '') {
 
-   if ($row[Validated]=='0') {
+   if ($row['Validated']=='0') {
 	$label["advertiser_forgot_error1"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL , $label["advertiser_forgot_error1"]);
       echo "<center>".$label["advertiser_forgot_error1"]."</center>";
 
@@ -107,7 +107,7 @@ if ($row[Email] != '') {
       $pass = make_password();
       //echo " $pass";
       $md5pass = md5 ($pass);
-      $sql = "update `users` SET `Password`='$md5pass' where `ID`='".$row[ID]."'";
+      $sql = "update `users` SET `Password`='$md5pass' where `ID`='".mysqli_real_escape_string( $GLOBALS['connection'], $row['ID'])."'";
       mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
@@ -125,8 +125,8 @@ if ($row[Email] != '') {
 	 
 	 $subject = str_replace ("%MEMBERID%", $Username, $subject);
 
-	 $EmailMessage = str_replace ("%FNAME%", $row[FirstName], $EmailMessage);
-	 $EmailMessage = str_replace ("%LNAME%", $row[LastName], $EmailMessage);
+	 $EmailMessage = str_replace ("%FNAME%", $row['FirstName'], $EmailMessage);
+	 $EmailMessage = str_replace ("%LNAME%", $row['LastName'], $EmailMessage);
 	 $EmailMessage = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $EmailMessage);
 	 $EmailMessage = str_replace ("%SITE_NAME%", SITE_NAME, $EmailMessage);
 	 $EmailMessage = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $EmailMessage);
@@ -139,10 +139,10 @@ if ($row[Email] != '') {
 		$message = $EmailMessage;
 
 		if (USE_SMTP=='YES') {
-			$mail_id=queue_mail(addslashes($to), addslashes($row[FirstName]." ".$row[LastName]), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 6);
+			$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 6);
 			process_mail_queue(2, $mail_id);
 		} else {
-			send_email( $to, $row[FirstName]." ".$row[LastName], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);
+			send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);
 		}
 
 		$str = str_replace("%BASE_HTTP_PATH%", BASE_HTTP_PATH,$label["advertiser_forgot_success1"] );

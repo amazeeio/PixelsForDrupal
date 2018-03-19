@@ -71,7 +71,7 @@ function check_pixels( $in_str ) {
 	}
 
 	// check if it is free
-	$sql = "SELECT block_id FROM blocks WHERE banner_id='" . $BID . "' AND block_id IN($in_str) ";
+	$sql = "SELECT block_id FROM blocks WHERE banner_id='" . intval($BID) . "' AND block_id IN(".mysqli_real_escape_string( $GLOBALS['connection'], $in_str) . ")";
 
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( $sql . mysqli_error( $GLOBALS['connection'] ) );
 	if ( mysqli_num_rows( $result ) > 0 ) {
@@ -147,8 +147,8 @@ function check_selection_main() {
 	for ( $y = 0; $y < ( $size->getHeight() ); $y += BLK_HEIGHT ) {
 		for ( $x = 0; $x < ( $size->getWidth() ); $x += BLK_WIDTH ) {
 
-			$map_x = $x + $_REQUEST['map_x'];
-			$map_y = $y + $_REQUEST['map_y'];
+			$map_x = $x + intval($_REQUEST['map_x']);
+			$map_y = $y + intval($_REQUEST['map_y']);
 
 			$GRD_WIDTH  = BLK_WIDTH * G_WIDTH;
 			$cb         = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );

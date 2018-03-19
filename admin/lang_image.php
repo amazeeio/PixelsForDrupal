@@ -35,14 +35,14 @@ require("../config.php");
 require ('admin_common.php');
 
 
-$sql = "SELECT * FROM lang where lang_code='".$_REQUEST['code']."' ";
+$sql = "SELECT * FROM lang where lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 $result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
 
-header ("Content-type: ".$row[mime_type]);
+header ("Content-type: ".$row['mime_type']);
 
-echo base64_decode( $row[image_data]);
+echo base64_decode( $row['image_data']);
 
 
 ?>

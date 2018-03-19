@@ -148,7 +148,7 @@ class check {
 		
 		global $label;
 
-		$sql = "SELECT * from orders where order_id=".$order_id;
+		$sql = "SELECT * from orders where order_id=".intval($order_id);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 	
@@ -235,19 +235,19 @@ class check {
 	function save_config() {
 
 		
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_NAME', '".$_REQUEST['check_name']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_NAME', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['check_name'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_PAYABLE', '".$_REQUEST['check_payable']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_PAYABLE', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['check_payable'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_ADDRESS', '".$_REQUEST['check_address']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_ADDRESS', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['check_address'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_CURRENCY', '".$_REQUEST['check_currency']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_CURRENCY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['check_currency'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_EMAIL_CONFIRM', '".$_REQUEST['check_email_confirm']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('CHECK_EMAIL_CONFIRM', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['check_email_confirm'])."')";
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 
@@ -322,7 +322,7 @@ class check {
 		<p align="center"><center>
 				<?php
 
-				$sql = "SELECT * from orders where order_id='".$_REQUEST['order_id']."' and user_id='".$_SESSION['MDS_ID']."'";
+				$sql = "SELECT * from orders where order_id='".intval($_REQUEST['order_id'])."' and user_id='".intval($_SESSION['MDS_ID'])."'";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 				$order_row = mysqli_fetch_array($result);
 			

@@ -78,7 +78,7 @@ function place_temp_order( $in_str ) {
 	}
 
 	// DAYS_EXPIRE comes form load_banner_constants()
-	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "', '" . $in_str . "', '" . $now . "', '0', '" . $quantity . "', '" . DAYS_EXPIRE . "', '" . $BID . "', '" . get_default_currency() . "',  '$now', '$ad_id', '$block_info' );";
+	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "', '" . $in_str . "', '" . $now . "', '0', '" . intval($quantity) . "', '" . intval(DAYS_EXPIRE) . "', '" . $BID . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "',  '$now', '$ad_id', '$block_info' )";
 	$f2->write_log( 'Placed Temp order. ' . $sql );
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
@@ -119,7 +119,7 @@ function reserve_temp_order_pixels( $block_info, $in_str ) {
 		$total += $price;
 	}
 
-	$sql = "UPDATE temp_orders set price='$total' where session_id='" . session_id() . "'  ";
+	$sql = "UPDATE temp_orders set price='".floatval($total)."' where session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id()) . "'  ";
 	mysqli_query( $GLOBALS['connection'], $sql );
 
 	// save to file

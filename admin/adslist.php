@@ -35,7 +35,6 @@ session_start();
 require ('../config.php');
 
 require ("admin_common.php");
-require_once ('../include/category.inc.php');
 require_once ('../include/ads.inc.php');
 require_once ('../include/dynamic_forms.php');
 error_reporting(E_ALL & ~E_NOTICE);
@@ -81,14 +80,14 @@ $mode = $_REQUEST['mode'];
 
 if ($_REQUEST['action']=='del') {
 
-	$sql = "DELETE FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
+	$sql = "DELETE FROM form_lists WHERE column_id='".intval($_REQUEST['column_id'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 
 
 }
 
 if ($_REQUEST['column_id']!='') {
-	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
+	$sql = "SELECT * FROM form_lists WHERE column_id='".intval($_REQUEST['column_id'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$col_row = mysqli_fetch_array($result);
 
@@ -113,7 +112,7 @@ if ($_REQUEST['save_col']!='') {
 
 	if (is_numeric($_REQUEST['field_id'])) {
 
-		$sql = "SELECT * from form_fields WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'  ";
+		$sql = "SELECT * from form_fields WHERE form_id=1 AND field_id='".intval($_REQUEST['field_id'])."'  ";
 		$result = mysqli_query($GLOBALS['connection'], $sql);
 		$field_row = mysqli_fetch_array($result);
 
@@ -153,7 +152,7 @@ if ($_REQUEST['save_col']!='') {
 
 		// update form field
 
-		$sql = "UPDATE form_fields SET `template_tag`='".$field_row['template_tag']."' WHERE form_id=1 AND field_id='".$_REQUEST['field_id']."'";
+		$sql = "UPDATE form_fields SET `template_tag`='".mysqli_real_escape_string( $GLOBALS['connection'],$field_row['template_tag'])."' WHERE form_id=1 AND field_id='".intval($_REQUEST['field_id'])."'";
 		mysqli_query($GLOBALS['connection'], $sql);
 
 	}
@@ -167,29 +166,21 @@ if ($_REQUEST['save_col']!='') {
 	}
 
 
-	$sql = "REPLACE INTO form_lists (`column_id`, `template_tag`, `field_id`, `sort_order`, `field_type`, `form_id`, `admin`, `truncate_length`, `linked`, `clean_format`, `is_bold`, `no_wrap`, `is_sortable`) VALUES ('".$_REQUEST['column_id']."', '".$field_row['template_tag']."', '".$field_row['field_id']."', '".$_REQUEST['sort_order']."', '".$field_row['field_type']."', '1', '".$_REQUEST['admin_only']."', '".$_REQUEST['truncate_length']."', '".$_REQUEST['linked']."',  '".$_REQUEST['clean_format']."', '".$_REQUEST['is_bold']."', '".$_REQUEST['no_wrap']."', '".$_REQUEST['is_sortable']."')";
+	$sql = "REPLACE INTO form_lists (`column_id`, `template_tag`, `field_id`, `sort_order`, `field_type`, `form_id`, `admin`, `truncate_length`, `linked`, `clean_format`, `is_bold`, `no_wrap`, `is_sortable`) VALUES ('".intval($_REQUEST['column_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'],$field_row['template_tag'])."', '".intval($field_row['field_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'],$_REQUEST['sort_order'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $field_row['field_type'])."', '1', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['admin_only'])."', '".intval($_REQUEST['truncate_length'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['linked'])."',  '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['clean_format'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['is_bold'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['no_wrap'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['is_sortable'])."')";
 
 	
 	if ($error=='') {
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-		//echo $sql;
-		if ((CACHE_ENABLED=='YES')) {
-			$CACHE_ENABLED = 'NO';
-			include ('../include/codegen_functions.php');
-			generate_form_cache(1);
-	
-			$CACHE_ENABLED='YES';
-		}
 		echo "Column Updated.<br>";
 	} else {
-		echo "<font color='red'>Cannot save due to the following errors:</font><br>";
+		echo "<span style=\"color: red; \">Cannot save due to the following errors:</span><br>";
 		echo $error;
 
 	}
 
 	// load new values
 
-	$sql = "SELECT * FROM form_lists WHERE column_id='".$_REQUEST['column_id']."' ";
+	$sql = "SELECT * FROM form_lists WHERE column_id='".intval($_REQUEST['column_id'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$col_row = mysqli_fetch_array($result);
 

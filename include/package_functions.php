@@ -34,7 +34,7 @@
 function display_package_options_table($banner_id, $selected='', $selection_ability) {
 	global $label, $f2;
 
-	$banner_id = $banner_id;
+	$banner_id = intval($banner_id);
 	
 	$sql = "SELECT * FROM packages WHERE banner_id='$banner_id' ORDER BY price ASC ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
@@ -144,7 +144,7 @@ $pack['days_expire']
 */
 function get_package($package_id) {
 
-	$sql = "SELECT * FROM packages where package_id='$package_id'";
+	$sql = "SELECT * FROM packages where package_id='".intval($package_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
 
@@ -168,7 +168,7 @@ the package was ordered, and compres it with max_orders
 function can_user_get_package($user_id, $package_id) {
 
 
-	$sql = "SELECT max_orders, banner_id FROM packages WHERE package_id='".$package_id."'";
+	$sql = "SELECT max_orders, banner_id FROM packages WHERE package_id='".intval($package_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$p_row = mysqli_fetch_array($result);
 //echo $sql;
@@ -180,7 +180,7 @@ function can_user_get_package($user_id, $package_id) {
 	
 	// count the orders the user made for this package
 
-	$sql = "SELECT count(*) AS order_count, banner_id FROM orders WHERE status <> 'deleted' AND status <> 'new' AND package_id='".$package_id."' AND user_id='$user_id' GROUP BY user_id, banner_id LIMIT 1";
+	$sql = "SELECT count(*) AS order_count, banner_id FROM orders WHERE status <> 'deleted' AND status <> 'new' AND package_id='".intval($package_id)."' AND user_id='".intval($user_id)."' GROUP BY user_id, banner_id LIMIT 1";
 	//echo " $sql ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	$u_row = mysqli_fetch_array($result);
@@ -229,25 +229,3 @@ function get_default_package($banner_id) {
 	return $row['package_id'];
 
 }
-
-
-#################################################
-
-function add_package_to_order($order_id, $package_id) {
-
-	$pack = get_package($package_id);
-
-	//user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stam
-
-	$sql = "SELECT * FROM orders WHERE order_id='$order_id'";
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-	$row = mysqli_fetch_array($result);
-
-	$total = ($row['quantity'] / 100) * $pack['price'];
-	$total = convert_to_default_currency($pack['currency'], $total);
-
-	$sql = "UPDATE orders set price='$total', currency='".get_default_currency()."' expire_days='".$pack['expire_days']."' WHERE order_id=$order_id ";
-
-}
-
-?>

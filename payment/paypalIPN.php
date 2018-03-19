@@ -138,7 +138,7 @@ if ($_POST['txn_id']!='') {
 
 	$invoice_id = pp_strip_order_id($_POST['invoice']);
 
-	$sql = "select * FROM orders where order_id='".$invoice_id."'";
+	$sql = "select * FROM orders where order_id='".intval($invoice_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or pp_mail_error(mysqli_error($GLOBALS['connection']).$sql);
 	$order_row = mysqli_fetch_array($result);
 	//pp_log_entry($sql."");
@@ -176,7 +176,7 @@ if ($_POST['txn_id']!='') {
 
 				// check so that transactrion id cannot be reused
 
-				$sql = "SELECT * FROM transactions WHERE txn_id='$txn_id' ";
+				$sql = "SELECT * FROM transactions WHERE txn_id='".intval($txn_id)."' ";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or pp_mail_error (mysqli_error($GLOBALS['connection']).$sql); 
 				if (mysqli_num_rows($result)> 0) { 
 					//pp_mail_error ("Possible fraud. Transaction id: $txn_id is already in the database. \n");
@@ -288,7 +288,7 @@ if ($_POST['txn_id']!='') {
 						// Funds successfully transferred
 					// complete_order ($user_id, $order_id);
 
-						$sql = "select user_id FROM orders where order_id='".$invoice_id."'";
+						$sql = "select user_id FROM orders where order_id='".intval($invoice_id)."'";
 						$result = mysqli_query($GLOBALS['connection'], $sql) or pp_mail_error(mysqli_error($GLOBALS['connection']).$sql);
 						$row = mysqli_fetch_array($result);
 
@@ -307,7 +307,7 @@ if ($_POST['txn_id']!='') {
 						
 						break;
 					case "Pending":
-						$sql = "select user_id FROM orders where order_id='".$invoice_id."'";
+						$sql = "select user_id FROM orders where order_id='".intval($invoice_id)."'";
 						$result = mysqli_query($GLOBALS['connection'], $sql) or pp_mail_error(mysqli_error($GLOBALS['connection']).$sql);
 						$row = mysqli_fetch_array($result);
 
@@ -459,7 +459,7 @@ class PayPal {
 
 		global $label;
 
-		$sql = "SELECT * from orders where order_id='".$order_id."'";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$order_row = mysqli_fetch_array($result);
 
@@ -690,30 +690,30 @@ class PayPal {
 
 		//$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_ENABLED', 'N')";
 		//mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_EMAIL', '".$_REQUEST['paypal_email']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_EMAIL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_email'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_CURRENCY', '".$_REQUEST['paypal_currency']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_CURRENCY', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_currency'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_BUTTON_URL', '".$_REQUEST['paypal_button_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_BUTTON_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_button_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_IPN_URL', '".$_REQUEST['paypal_ipn_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_IPN_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_ipn_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_RETURN_URL', '".$_REQUEST['paypal_return_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_RETURN_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_return_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_CANCEL_RETURN_URL', '".$_REQUEST['paypal_cancel_return_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_CANCEL_RETURN_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_cancel_return_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_PAGE_STYLE', '".$_REQUEST['paypal_page_style']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_PAGE_STYLE', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_page_style'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SERVER', '".$_REQUEST['paypal_server']."')";
-		mysqli_query($GLOBALS['connection'], $sql);
-
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_AUTH_TOKEN', '".$_REQUEST['paypal_auth_token']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SERVER', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_server'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_MODE', '".$_REQUEST['paypal_subscr_mode']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_AUTH_TOKEN', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_auth_token'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_BUTTON_URL', '".$_REQUEST['paypal_subscr_button_url']."')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_MODE', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_subscr_mode'])."')";
+		mysqli_query($GLOBALS['connection'], $sql);
+
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_BUTTON_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_subscr_button_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
 
 		

@@ -58,7 +58,7 @@ if ($_REQUEST['email']!='') {
 
 	
 
-	$sql = "SELECT * FROM users where Email='".$_REQUEST['email']."' ";
+	$sql = "SELECT * FROM users where Email='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['email'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 
 
@@ -68,7 +68,7 @@ if ($_REQUEST['email']!='') {
 
 		if ($_REQUEST['code']==$code) {
 
-			$sql = "UPDATE users SET Validated=1 WHERE Email='".$_REQUEST['email']."'";
+			$sql = "UPDATE users SET Validated=1 WHERE Email='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['email'])."'";
 			mysqli_query($GLOBALS['connection'], $sql);
 
 			echo "<p>&nbsp;</p><center><h3><font color='green'>".$label[advertiser_valid_complete]."</font></h3></center>";

@@ -62,12 +62,12 @@ $result = mysqli_query($GLOBALS['connection'], $sql);
 
 while ($row=mysqli_fetch_array($result)) {
 
-	$sql = "SELECT order_id FROM orders WHERE banner_id='".$row['banner_id']."' AND  order_id='".$row['order_id']."'";
+	$sql = "SELECT order_id FROM orders WHERE banner_id='".intval($row['banner_id'])."' AND  order_id='".intval($row['order_id'])."'";
 	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	if (mysqli_num_rows($result2)==0) { // there is no order matching
 		// delete the blocks.
 		echo "Deleting block #".$row['block_id']."<br>";
-		$sql = "DELETE from blocks WHERE block_id='".$row['block_id']."' AND banner_id='".$row['banner_id']."' ";
+		$sql = "DELETE from blocks WHERE block_id='".intval($row['block_id'])."' AND banner_id='".intval($row['banner_id'])."' ";
 		mysqli_query($GLOBALS['connection'], $sql);
 		
 

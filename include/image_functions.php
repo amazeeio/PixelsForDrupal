@@ -70,37 +70,37 @@ function publish_image( $BID ) {
 	$tile->save( $dest . "bg-main$BID.gif" );
 
 	// update the records
-	$sql = "SELECT * FROM blocks WHERE approved='Y' and status='sold' AND image_data <> '' AND banner_id='$BID' ";
+	$sql = "SELECT * FROM blocks WHERE approved='Y' AND status='sold' AND image_data <> '' AND banner_id='" . intval( $BID ) . "' ";
 	$r = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	while ( $row = mysqli_fetch_array( $r ) ) {
 		// set the 'date_published' only if it was not set before, date_published can only be set once.
 		$now = ( gmdate( "Y-m-d H:i:s" ) );
-		$sql = "UPDATE orders set `date_published`='$now' where order_id='" . $row['order_id'] . "' AND date_published IS NULL ";
+		$sql = "UPDATE orders set `date_published`='$now' where order_id='" . intval($row['order_id']) . "' AND date_published IS NULL ";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		// update the published status, always updated to Y
-		$sql = "UPDATE orders SET `published`='Y' WHERE order_id='" . $row['order_id'] . "'  ";
+		$sql = "UPDATE orders SET `published`='Y' WHERE order_id='" . intval($row['order_id']) . "'  ";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
-		$sql = "UPDATE blocks set `published`='Y' where block_id='" . $row['block_id'] . "' AND banner_id='$BID'";
+		$sql = "UPDATE blocks set `published`='Y' where block_id='" . intval($row['block_id']) . "' AND banner_id='" . intval( $BID ) . "'";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 	}
 
 	//Make sure to un-publish any blocks that are not approved...
-	$sql = "SELECT block_id, order_id FROM blocks WHERE approved='N' AND status='sold' AND banner_id='$BID' ";
+	$sql = "SELECT block_id, order_id FROM blocks WHERE approved='N' AND status='sold' AND banner_id='" . intval( $BID ) . "' ";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 	while ( $row = mysqli_fetch_array( $result ) ) {
-		$sql = "UPDATE blocks set `published`='N' where block_id='" . $row['block_id'] . "'  AND banner_id='$BID'  ";
+		$sql = "UPDATE blocks set `published`='N' where block_id='" . intval($row['block_id']) . "'  AND banner_id='" . intval( $BID ) . "'  ";
 		mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
-		$sql = "UPDATE orders set `published`='N' where order_id='" . $row['order_id'] . "'  AND banner_id='$BID'  ";
+		$sql = "UPDATE orders set `published`='N' where order_id='" . intval($row['order_id']) . "'  AND banner_id='" . intval( $BID ) . "'  ";
 		mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 	}
 
 	// update the time-stamp on the banner
-	$sql = "UPDATE banners SET time_stamp='" . time() . "' WHERE banner_id='" . $BID . "' ";
+	$sql = "UPDATE banners SET time_stamp='" . time() . "' WHERE banner_id='" . intval( $BID ) . "' ";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 }
 
@@ -121,7 +121,7 @@ function process_image( $BID ) {
 
 function get_html_code( $BID ) {
 
-	$sql = "SELECT * FROM banners WHERE banner_id='" . $BID . "'";
+	$sql = "SELECT * FROM banners WHERE banner_id='" . intval( $BID ) . "'";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 	$b_row = mysqli_fetch_array( $result );
 

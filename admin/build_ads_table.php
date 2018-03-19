@@ -41,8 +41,8 @@ require_once ('../config.php');
 $sql = "SELECT * FROM `form_fields` where form_id=1 AND field_type != 'BLANK' AND field_type !='SEPERATOR' AND field_type !='NOTE' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-	$fields[$row[field_id]]['field_id'] = $row['field_id'];
-	$fields[$row[field_id]]['field_type'] = $row['field_type'];
+	$fields[$row['field_id']]['field_id'] = $row['field_id'];
+	$fields[$row['field_id']]['field_type'] = $row['field_type'];
 
 }
 // Essential fields, always exists.

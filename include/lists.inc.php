@@ -62,7 +62,7 @@ function echo_list_head_data($form_id, $admin) {
 
 	$colspan = 0;
 
-	$sql = "SELECT * FROM form_lists where form_id='$form_id' ORDER BY sort_order ASC ";
+	$sql = "SELECT * FROM form_lists where form_id='".intval($form_id)."' ORDER BY sort_order ASC ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$colspan++;
@@ -257,7 +257,7 @@ function field_type_option_list ($form_id, $selected) {
 
 	}
 
-	$sql = "SELECT *, t2.field_label AS NAME FROM form_fields AS t1, form_field_translations AS t2 WHERE t1.field_id=t2.field_id AND lang='".$_SESSION['MDS_LANG']."' AND t1.form_id='".$form_id."' AND  field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' and t2.field_label <>'' " ;
+	$sql = "SELECT *, t2.field_label AS NAME FROM form_fields AS t1, form_field_translations AS t2 WHERE t1.field_id=t2.field_id AND lang='".get_lang()."' AND t1.form_id='".intval($form_id)."' AND  field_type != 'SEPERATOR' AND field_type != 'BLANK' AND field_type != 'NOTE' and t2.field_label <>'' " ;
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 
@@ -270,11 +270,7 @@ function field_type_option_list ($form_id, $selected) {
 		}
 
 		echo "<option $sel value='".$row['field_id']."'>".escape_html($row['NAME'])."</option>\n";
-
-
 	}
-
-
 }
 
 
@@ -284,8 +280,7 @@ function echo_list_head_data_admin($form_id) {
 
 	global $q_string, $column_list;
 
-
-	$sql = "SELECT * FROM form_lists where form_id='$form_id' ORDER BY sort_order ASC ";
+	$sql = "SELECT * FROM form_lists where form_id='".intval($form_id)."' ORDER BY sort_order ASC ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		$column_list[$row['field_id']]=$row['template_tag'];

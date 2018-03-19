@@ -76,7 +76,7 @@ function confirmLink(theLink, theConfirmMsg)
 
 $label = array();
 
-$sql = "SELECT * FROM lang WHERE lang_code='".$_REQUEST['target_lang']."' ";
+$sql = "SELECT * FROM lang WHERE lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['target_lang'])."' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 
@@ -141,7 +141,6 @@ if (!is_writeable("../lang/".$lang_filename)) {
 
 ?>
 <form method="POST" name="form1" action="translation_tool.php">
-<p>
 <table ><tr><td>
 <!--
 <input type="radio" onclick="document.form1.submit()" <?php if ($_REQUEST['edit_mode']!='entities') { echo " checked ";  }  ?> name="edit_mode" value="no" > <font size="2">Edit as text (Helps you see what is edited)</font>
@@ -149,7 +148,6 @@ if (!is_writeable("../lang/".$lang_filename)) {
 <input type="radio" onclick="document.form1.submit()" <?php if ($_REQUEST['edit_mode']=='entities') { echo " checked ";  }  ?> name="edit_mode" value="entities" ><font size="2">Edit with encoded HTML Entities (Recommended for final save)</font>
 -->
 </td></tr></table>
-</p>
 <input type="hidden" name="target_lang" value="<?php echo $_REQUEST['target_lang'] ?>" >
 
 <table align="center" width="750" border="0" cellSpacing="2" cellPadding="3" bgColor="#d9d9d9" >
@@ -217,5 +215,5 @@ foreach ($source_label as $key => $val) {
 ?>
 <tr bgcolor='#BDD5E6'><td></td><td><input type='submit' name='save' value='Save'></td></tr>
 </table>
-
+</form>
 </body>

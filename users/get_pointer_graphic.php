@@ -30,47 +30,54 @@
  *
  */
 
-session_start();
-define( 'NO_HOUSE_KEEP', 'YES' );
+try {
 
-require( '../config.php' );
+	session_start();
+	define( 'NO_HOUSE_KEEP', 'YES' );
 
-$imagine = new Imagine\Gd\Imagine();
+	require( '../config.php' );
 
-if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
-	$BID = $f2->bid( $_REQUEST['BID'] );
-} else {
-	$BID = 1;
+	$imagine = new Imagine\Gd\Imagine();
+
+	if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
+		$BID = $f2->bid( $_REQUEST['BID'] );
+	} else {
+		$BID = 1;
+	}
+
+	load_banner_constants( $BID );
+
+	$imagine = new Imagine\Gd\Imagine();
+
+	$user_id  = $_SESSION['MDS_ID'];
+	$filename = get_tmp_img_name();
+	if ( file_exists( $filename ) ) {
+		$image = $imagine->open( $filename );
+	} else {
+		$image = $imagine->open( __DIR__ . '/pointer.png' );
+	}
+
+	// autorotate
+	$imagine->setMetadataReader( new \Imagine\Image\Metadata\ExifMetadataReader() );
+	$filter = new Imagine\Filter\Transformation();
+	$filter->add( new Imagine\Filter\Basic\Autorotate() );
+	$filter->apply( $image );
+
+	// image size
+	$box = $image->getSize();
+
+	// make it smaller
+	if ( MDS_RESIZE == 'YES' ) {
+		$new_size = get_required_size( $box->getWidth(), $box->getHeight() );
+		$resize   = new Imagine\Image\Box( $new_size[0], $new_size[1] );
+		//$out->resize( $resize );
+		$image->resize( $resize );
+	}
+
+	// show
+	$image->show( "png", array( 'png_compression_level' => 9 ) );
+} catch(Exception $e) {
+
+	file_put_contents(__DIR__ . "/error_log", $e->getMessage());
+	file_put_contents(__DIR__ . "/error_log", $e->getTraceAsString());
 }
-
-load_banner_constants( $BID );
-
-$imagine = new Imagine\Gd\Imagine();
-
-$user_id  = $_SESSION['MDS_ID'];
-$filename = get_tmp_img_name();
-if ( file_exists( $filename ) ) {
-	$image = $imagine->open( $filename );
-} else {
-	$image = $imagine->open( __DIR__ . '/pointer.png' );
-}
-
-// autorotate
-$imagine->setMetadataReader( new \Imagine\Image\Metadata\ExifMetadataReader() );
-$filter = new Imagine\Filter\Transformation();
-$filter->add( new Imagine\Filter\Basic\Autorotate() );
-$filter->apply( $image );
-
-// image size
-$box = $image->getSize();
-
-// make it smaller
-if ( MDS_RESIZE == 'YES' ) {
-	$new_size = get_required_size( $box->getWidth(), $box->getHeight() );
-	$resize   = new Imagine\Image\Box( $new_size[0], $new_size[1] );
-	//$out->resize( $resize );
-	$image->resize( $resize );
-}
-
-// show
-$image->show( "png", array( 'png_compression_level' => 9 ) );

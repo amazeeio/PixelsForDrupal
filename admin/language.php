@@ -35,7 +35,6 @@ require("../config.php");
 require ('admin_common.php');
 require_once ('../include/dynamic_forms.php');
 require_once ('../include/code_functions.php');
-require_once ('../include/category.inc.php');
 
 
 ?>
@@ -105,14 +104,14 @@ function validate_input () {
 
 if ($_REQUEST['action']=='activate') {
 
-	$sql = "UPDATE lang set is_active='Y' where lang_code='".$_REQUEST['code']."' ";
+	$sql = "UPDATE lang set is_active='Y' where lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
 if ($_REQUEST['action']=='deactivate') {
 
-	$sql = "UPDATE lang set is_active='N' where lang_code='".$_REQUEST['code']."' ";
+	$sql = "UPDATE lang set is_active='N' where lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
@@ -122,14 +121,14 @@ if ($_REQUEST['action']=='default') {
 	$sql = "UPDATE lang set is_default='N' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
-	$sql = "UPDATE lang set is_default='Y' where lang_code='".$_REQUEST['code']."' ";
+	$sql = "UPDATE lang set is_default='Y' where lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 }
 
 if ($_REQUEST['action']=='delete') {
 
-	$sql = "DELETE FROM lang WHERE lang_code='".$_REQUEST['code']."' ";
+	$sql = "DELETE FROM lang WHERE lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	
@@ -158,11 +157,11 @@ if ($_REQUEST['submit']!='') {
 
 		if ($_REQUEST['action']=='edit') {
 
-			$sql = "UPDATE `lang` SET name='".$_REQUEST['name']."', $image_sql charset='".$_REQUEST['charset']."', lang_filename='".$_REQUEST['lang_filename']."' WHERE `lang_code`='$_REQUEST[lang_code]' ";
+			$sql = "UPDATE `lang` SET name='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', ".mysqli_real_escape_string( $GLOBALS['connection'], $image_sql)." charset='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['charset'])."', lang_filename='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lang_filename'])."' WHERE `lang_code`='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lang_code'])."' ";
 
 		} else {
 		
-			$sql = "INSERT INTO `lang` ( `lang_code` , `lang_filename` , `lang_image` , `is_active` , `name` , `image_data`, `mime_type`, `is_default`, `charset` ) VALUES ('".$_REQUEST['lang_code']."', '".$_REQUEST['lang_filename']."', '$image_file', 'Y', '".$_REQUEST['name']."', '$data', '$mime_type', 'N', '".$_REQUEST['charset']."')";
+			$sql = "INSERT INTO `lang` ( `lang_code` , `lang_filename` , `lang_image` , `is_active` , `name` , `image_data`, `mime_type`, `is_default`, `charset` ) VALUES ('".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lang_code'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lang_filename'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $image_file)."', 'Y', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $data)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $mime_type)."', 'N', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['charset'])."')";
 		}
 		//echo "Temp file is: ".$_FILES['lang_image']['tmp_name']."<br>";
 		//echo "$sql";
@@ -301,7 +300,7 @@ if ($_REQUEST['charset']=='') {
 
 if ($_REQUEST['action']=='edit') {
 
-	$sql = "SELECT * FROM lang WHERE `lang_code`='".$_REQUEST['code']."' ";
+	$sql = "SELECT * FROM lang WHERE `lang_code`='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 	

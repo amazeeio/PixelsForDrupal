@@ -154,14 +154,14 @@ if ($BID!='') {
 
 	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 
-		$sql = "SELECT * FROM orders where package_id='".$_REQUEST['package_id']."'";
+		$sql = "SELECT * FROM orders where package_id='".intval($_REQUEST['package_id'])."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql);
 		if ((mysqli_num_rows($result)>0) && ($_REQUEST['really']=='')) {
 			echo "<font color='red'>Cannot delete package: This package is a part of another order</font> (<a href='packs.php?BID=$BID&package_id=".$_REQUEST['package_id']."&action=delete&really=yes'>Click here to delete anyway</a>)";
 
 		} else {
 		
-			$sql = "DELETE FROM packages WHERE package_id='".$_REQUEST['package_id']."' ";
+			$sql = "DELETE FROM packages WHERE package_id='".intval($_REQUEST['package_id'])."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		}
 		
@@ -171,15 +171,15 @@ if ($BID!='') {
 
 		global $BID;
 
-		$sql = "SELECT * FROM packages where is_default='Y' and banner_id=$BID ";
+		$sql = "SELECT * FROM packages where is_default='Y' and banner_id=".intval($BID);
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		$old_default = $row['package_id'];
 
-		$sql = "UPDATE packages SET is_default='N' WHERE banner_id=$BID ";
+		$sql = "UPDATE packages SET is_default='N' WHERE banner_id=".intval($BID);
 		
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-		$sql = "UPDATE packages SET is_default='Y' WHERE package_id='".$package_id."' AND banner_id=$BID";
+		$sql = "UPDATE packages SET is_default='Y' WHERE package_id='".intval($package_id)."' AND banner_id=".intval($BID);
 		mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 		if ($old_default == '') {
@@ -187,7 +187,7 @@ if ($BID!='') {
 			// update previous orders which are blank, to the default.
 			// in the 1.7.0 database, all orders must have packages
 
-			$sql = "UPDATE orders SET package_id='".$package_id."' WHERE package_id='' AND banner_id='".$BID."' ";
+			$sql = "UPDATE orders SET package_id='".intval($package_id)."' WHERE package_id='' AND banner_id=".intval($BID);
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 
@@ -221,7 +221,7 @@ if ($BID!='') {
 			$_REQUEST['block_id_to'] = ((($_REQUEST['row_to']) * G_HEIGHT)-1);
 
 
-			$sql = "REPLACE INTO packages(package_id, banner_id, price, currency, days_expire,  max_orders, description, is_default) VALUES ('".intval($_REQUEST['package_id'])."', '".$BID."', '".$_REQUEST['price']."', '".$_REQUEST['currency']."', '".$_REQUEST['days_expire']."',  '".$_REQUEST['max_orders']."', '".$_REQUEST['description']."', '".$_REQUEST['is_default']."')";
+			$sql = "REPLACE INTO packages(package_id, banner_id, price, currency, days_expire,  max_orders, description, is_default) VALUES ('".intval($_REQUEST['package_id'])."', '".intval($BID)."', '".floatval($_REQUEST['price'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".intval($_REQUEST['days_expire'])."',  '".intval($_REQUEST['max_orders'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['description'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['is_default'])."')";
 
 			//echo $sql;
 
@@ -248,7 +248,7 @@ if ($BID!='') {
 
 	<?php
 
-	$result = mysqli_query($GLOBALS['connection'], "select * FROM packages  where banner_id=$BID") or die (mysqli_error($GLOBALS['connection']));
+	$result = mysqli_query($GLOBALS['connection'], "select * FROM packages  where banner_id=".intval($BID)) or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)>0) {
 	?>
@@ -306,7 +306,7 @@ if ($BID!='') {
 	if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 		echo "<h4>Edit Package:</h4>";
 
-		$sql = "SELECT * FROM packages WHERE `package_id`='".$_REQUEST['package_id']."' ";
+		$sql = "SELECT * FROM packages WHERE `package_id`='".intval($_REQUEST['package_id'])."' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 

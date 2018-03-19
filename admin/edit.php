@@ -48,7 +48,7 @@ Here you can edit a user's name, email, company name and change their password.
 
 if ($_REQUEST[action]=='changepass') {
 
-	$sql = "select * from users where ID=".$user_id;
+	$sql = "select * from users where ID=".intval($user_id);
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
@@ -59,7 +59,7 @@ if ($_REQUEST[action]=='changepass') {
 
 		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
 
-			$sql = "UPDATE users set password='$newpass' where ID=".$user_id;
+			$sql = "UPDATE users set password='$newpass' where ID=".intval($user_id);
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			echo "<h3><font color=green>OK: Password was changed.</font></h3><br>";
 
@@ -99,11 +99,11 @@ if ($_REQUEST[action]=='changepass') {
 <p>
 <?php
 
-if ($_REQUEST[action]=='update') {
+if ($_REQUEST['action']=='update') {
 
 	//print_r ($_REQUEST);
 
-	$sql = "UPDATE users set FirstName='".$_REQUEST['firstname']."', LastName='".$_REQUEST['lastname']."', CompName='".$_REQUEST['compname']."', Email='".$_REQUEST['email']."' where ID=".$user_id;
+	$sql = "UPDATE users set FirstName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['firstname'])."', LastName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['lastname'])."', CompName='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['compname'])."', Email='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['email'])."' where ID=".intval($user_id);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
@@ -113,7 +113,7 @@ if ($_REQUEST[action]=='update') {
 
 if ($_REQUEST['action']=='rank') {
 
-	$sql = "UPDATE users set Rank='".$_REQUEST['rank']."' where ID=".$user_id;
+	$sql = "UPDATE users set Rank='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['rank'])."' where ID=".intval($user_id);
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 //echo $sql;
 
@@ -121,7 +121,7 @@ if ($_REQUEST['action']=='rank') {
 
 }
 
-$sql = "select * from users where ID=".$_REQUEST['user_id'];
+$sql = "select * from users where ID=".intval($_REQUEST['user_id']);
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result);
 $lastname = $row['LastName'];

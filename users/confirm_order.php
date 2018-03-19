@@ -59,9 +59,14 @@ function display_edit_order_button ($order_id) {
 
 update_temp_order_timestamp();
 
-$sql = "select * from temp_orders where session_id='".addslashes(session_id())."' ";
+$sql = "select * from temp_orders where session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 $order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
+if (USE_AJAX=='SIMPLE') {
+	$order_page = 'order_pixels.php';
+} else {
+	$order_page = 'select.php';
+}
 
 if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
@@ -75,9 +80,7 @@ if (mysqli_num_rows($order_result)==0) {
 
 } else {
 	$order_row =mysqli_fetch_array($order_result);
-
 }
-
 
 //print_r($order_row);
 // get the banner ID
@@ -178,7 +181,7 @@ show_nav_status (3);
 		if (can_user_get_package($_SESSION['MDS_ID'], $_REQUEST['pack'])) {
 
 			
-			$sql = "SELECT quantity FROM temp_orders WHERE session_id='".addslashes(session_id())."'";
+			$sql = "SELECT quantity FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."'";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$row = mysqli_fetch_array($result);
 			$quantity = $row['quantity'];
@@ -194,7 +197,7 @@ show_nav_status (3);
 			$total = convert_to_default_currency($pack['currency'], $total);
 		
 
-			$sql = "UPDATE temp_orders SET package_id='".$_REQUEST['pack']."', price='".$total."',  days_expire='".$pack['days_expire']."', currency='".get_default_currency()."' WHERE session_id='".addslashes(session_id())."'";
+			$sql = "UPDATE temp_orders SET package_id='".intval($_REQUEST['pack'])."', price='".floatval($total)."',  days_expire='".intval($pack['days_expire'])."', currency='".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."' WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."'";
  
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -229,7 +232,7 @@ show_nav_status (3);
 
 		if ($cannot_get_package) {
 
-			$sql = "SELECT * from packages where package_id='".$selected_pack."'";
+			$sql = "SELECT * from packages where package_id='".intval($selected_pack)."'";
 			$p_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		    $p_row = mysqli_fetch_array($p_result);
 			$p_max_ord = $p_row['max_orders'];
@@ -243,7 +246,7 @@ show_nav_status (3);
 	} else {
 		display_order(session_id(), $BID);
 
-		$sql = "select * from users where ID='".$_SESSION['MDS_ID']."'";
+		$sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$u_row = mysqli_fetch_array($result);
 

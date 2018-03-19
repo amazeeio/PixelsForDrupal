@@ -144,7 +144,7 @@ if ( isset( $_POST['txn_id'] ) && $_POST['txn_id'] != '' ) {
 
 			// error_log( print_r( $transaction, true ) );
 
-			$sql = "SELECT * FROM orders WHERE order_id='" . $transaction['invoice'] . "'";
+			$sql = "SELECT * FROM orders WHERE order_id='" . intval($transaction['invoice']) . "'";
 			$result = mysqli_query( $GLOBALS['connection'], $sql ) or coinpayments_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 			$row = mysqli_fetch_array( $result );
 
@@ -186,9 +186,9 @@ class CoinPayments {
 	function install() {
 		echo "Installing CoinPayments...<br>";
 
-		$coinpayments_ipn_url     = BASE_HTTP_PATH . 'payment/coinpayments.php';
-		$coinpayments_success_url = BASE_HTTP_PATH . "users/thanks.php?m=" . $this->className;
-		$coinpayments_cancel_url  = BASE_HTTP_PATH . "users/";
+		$coinpayments_ipn_url     = mysqli_real_escape_string( $GLOBALS['connection'], BASE_HTTP_PATH . 'payment/coinpayments.php');
+		$coinpayments_success_url = mysqli_real_escape_string( $GLOBALS['connection'], BASE_HTTP_PATH . "users/thanks.php?m=" . $this->className);
+		$coinpayments_cancel_url  = mysqli_real_escape_string( $GLOBALS['connection'], BASE_HTTP_PATH . "users/");
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES 
                 ('COINPAYMENTS_ENABLED', 'N'),
@@ -232,7 +232,7 @@ class CoinPayments {
 
 		$order_id = intval( $order_id );
 
-		$sql = "SELECT * FROM orders WHERE order_id='" . $order_id . "'";
+		$sql = "SELECT * FROM orders WHERE order_id='" . intval($order_id) . "'";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		$order = mysqli_fetch_array( $result );
 
@@ -449,7 +449,7 @@ class CoinPayments {
 	}
 
 	function save_config() {
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('COINPAYMENTS_TEST_MODE', '" . $_REQUEST['coinpayments_test_mode'] . "'),('COINPAYMENTS_PUBLIC_KEY', '" . $_REQUEST['coinpayments_public_key'] . "'),('COINPAYMENTS_PRIVATE_KEY', '" . $_REQUEST['coinpayments_private_key'] . "'),('COINPAYMENTS_MERCHANT_ID', '" . $_REQUEST['coinpayments_merchant_id'] . "'),('COINPAYMENTS_CURRENCY', '" . $_REQUEST['coinpayments_currency'] . "'),('COINPAYMENTS_IPN_MODE', '" . $_REQUEST['coinpayments_ipn_mode'] . "'),('COINPAYMENTS_IPN_SECRET', '" . $_REQUEST['coinpayments_ipn_secret'] . "'),('COINPAYMENTS_IPN_URL', '" . $_REQUEST['coinpayments_ipn_url'] . "'),('COINPAYMENTS_SUCCESS_URL', '" . $_REQUEST['coinpayments_success_url'] . "'),('COINPAYMENTS_CANCEL_URL', '" . $_REQUEST['coinpayments_cancel_url'] . "'),('COINPAYMENTS_BUTTON', '" . $_REQUEST['coinpayments_button'] . "')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('COINPAYMENTS_TEST_MODE', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_test_mode']) . "'),('COINPAYMENTS_PUBLIC_KEY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_public_key']) . "'),('COINPAYMENTS_PRIVATE_KEY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_private_key']) . "'),('COINPAYMENTS_MERCHANT_ID', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_merchant_id']) . "'),('COINPAYMENTS_CURRENCY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_currency']) . "'),('COINPAYMENTS_IPN_MODE', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_ipn_mode']) . "'),('COINPAYMENTS_IPN_SECRET', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_ipn_secret']) . "'),('COINPAYMENTS_IPN_URL', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_ipn_url']) . "'),('COINPAYMENTS_SUCCESS_URL', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_success_url']) . "'),('COINPAYMENTS_CANCEL_URL', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_cancel_url']) . "'),('COINPAYMENTS_BUTTON', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['coinpayments_button']) . "')";
 		mysqli_query( $GLOBALS['connection'], $sql );
 	}
 

@@ -32,4 +32,5 @@
 ?>
 </div>
 <?php echo_copyright(); ?>
+</body>
 </html>

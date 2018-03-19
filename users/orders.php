@@ -71,7 +71,7 @@ function confirmLink(theLink, theConfirmMsg)
 <h4><?php echo $label['advertiser_ord_hist_list']; ?></h4>
 
 <?php
-$sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".$_SESSION['MDS_ID']."' ORDER BY t1.order_date DESC ";
+$sql = "SELECT * FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id='".intval($_SESSION['MDS_ID'])."' ORDER BY t1.order_date DESC ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 
@@ -104,7 +104,7 @@ if (mysqli_num_rows($result)==0) {
 	<td><font face="Arial" size="2"><?php echo $row['quantity'];?></font></td>
 	<td><font face="Arial" size="2"><?php 
 
-			$sql = "select * from banners where banner_id=".$row['banner_id'];
+			$sql = "select * from banners where banner_id=".intval($row['banner_id']);
 			$b_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$b_row = mysqli_fetch_array($b_result);
 		
@@ -169,7 +169,7 @@ if (mysqli_num_rows($result)==0) {
 
 			// check to see if there is a renew_wait or renew_paid order
 
-			$sql = "select order_id from orders where (status = 'renew_paid' OR status = 'renew_wait') AND original_order_id='".$row['original_order_id']."' ";
+			$sql = "select order_id from orders where (status = 'renew_paid' OR status = 'renew_wait') AND original_order_id='".intval($row['original_order_id'])."' ";
 			$res_c = mysqli_query($GLOBALS['connection'], $sql);
 			if (mysqli_num_rows($res_c)==0) {
  

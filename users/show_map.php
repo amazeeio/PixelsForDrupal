@@ -43,5 +43,6 @@ output_grid( true, "", $BID, array(
 	'background',
 	'orders',
 	'grid',
-	'sold'
-) );
+	'sold',
+	'user'
+), $_SESSION['MDS_ID'] );

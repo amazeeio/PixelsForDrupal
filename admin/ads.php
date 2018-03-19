@@ -97,7 +97,7 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 	//echo "load const ";
 	load_banner_constants( $prams['banner_id'] );
 
-	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . $prams['user_id'] . " and t1.banner_id='" . $prams['banner_id'] . "' and t1.ad_id='" . $prams['ad_id'] . "' AND t1.order_id=t2.order_id ";
+	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . intval($prams['user_id']) . " and t1.banner_id='" . intval($prams['banner_id']) . "' and t1.ad_id='" . intval($prams['ad_id']) . "' AND t1.order_id=t2.order_id ";
 	//echo $sql."<br>";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
@@ -111,7 +111,7 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 	//echo "order id:".$row['order_id']."<br>";
 	//echo "$sql<br>";
 
-	$sql = "SELECT * from blocks WHERE order_id='" . $order_id . "'";
+	$sql = "SELECT * from blocks WHERE order_id='" . intval($order_id) . "'";
 	$blocks_result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	if ( $_REQUEST['change_pixels'] ) {
@@ -231,13 +231,13 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 							$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
 
 							// some variables
-							$map_x     = $j + $low_x;
-							$map_y     = $i + $low_y;
+							$map_x     = $x + $low_x;
+							$map_y     = $y + $low_y;
 							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
 							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
 
 							// save to db
-							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . $cb . "' AND banner_id='" . $BID . "' ";
+							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . intval($cb) . "' AND banner_id='" . intval($BID) . "' ";
 							mysqli_query( $GLOBALS['connection'], $sql );
 						}
 					}
@@ -344,7 +344,7 @@ if ($_REQUEST['ad_id']!='') {
 
 	}
 	$prams = load_ad_values ($_REQUEST['ad_id']);
-	$sql = "select * FROM users where ID='".$prams['user_id']."' ";
+	$sql = "select * FROM users where ID='".intval($prams['user_id'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql);
 	$u_row = mysqli_fetch_array($result);
 	

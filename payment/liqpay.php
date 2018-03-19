@@ -141,7 +141,7 @@ if ( isset( $_POST['data'] ) && $_POST['data'] != '' ) {
 		$transaction['moment_part']         = filter_var( $data['moment_part'], FILTER_VALIDATE_BOOLEAN );
 		$transaction['transaction_id']      = filter_var( $data['transaction_id'], FILTER_VALIDATE_INT );
 
-		$sql = "SELECT * FROM orders WHERE order_id='" . $transaction['order_id'] . "'";
+		$sql = "SELECT * FROM orders WHERE order_id='" . intval($transaction['order_id']) . "'";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or liqpay_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		$row = mysqli_fetch_array( $result );
 
@@ -182,8 +182,8 @@ class LiqPay {
 	function install() {
 		echo "Installing LiqPay...<br>";
 
-		$liqpay_ipn_url     = BASE_HTTP_PATH . 'payment/liqpay.php';
-		$liqpay_success_url = BASE_HTTP_PATH . "users/thanks.php?m=" . $this->className;
+		$liqpay_ipn_url     = mysqli_real_escape_string( $GLOBALS['connection'], BASE_HTTP_PATH . 'payment/liqpay.php');
+		$liqpay_success_url = mysqli_real_escape_string( $GLOBALS['connection'], BASE_HTTP_PATH . "users/thanks.php?m=" . $this->className);
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES 
                 ('LIQPAY_ENABLED', 'N'),
@@ -217,7 +217,7 @@ class LiqPay {
 
 		$order_id = intval( $order_id );
 
-		$sql = "SELECT * FROM orders WHERE order_id='" . $order_id . "'";
+		$sql = "SELECT * FROM orders WHERE order_id='" . intval($order_id) . "'";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		$order = mysqli_fetch_array( $result );
 
@@ -329,7 +329,7 @@ class LiqPay {
 	}
 
 	function save_config() {
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('LIQPAY_TEST_MODE', '" . $_REQUEST['liqpay_test_mode'] . "'),('LIQPAY_PUBLIC_KEY', '" . $_REQUEST['liqpay_public_key'] . "'),('LIQPAY_PRIVATE_KEY', '" . $_REQUEST['liqpay_private_key'] . "'),('LIQPAY_CURRENCY', '" . $_REQUEST['liqpay_currency'] . "'),('LIQPAY_IPN_URL', '" . $_REQUEST['liqpay_ipn_url'] . "'),('LIQPAY_SUCCESS_URL', '" . $_REQUEST['liqpay_success_url'] . "')";
+		$sql = "REPLACE INTO config (`key`, val) VALUES ('LIQPAY_TEST_MODE', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_test_mode']) . "'),('LIQPAY_PUBLIC_KEY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_public_key']) . "'),('LIQPAY_PRIVATE_KEY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_private_key']) . "'),('LIQPAY_CURRENCY', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_currency']) . "'),('LIQPAY_IPN_URL', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_ipn_url']) . "'),('LIQPAY_SUCCESS_URL', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['liqpay_success_url']) . "')";
 		mysqli_query( $GLOBALS['connection'], $sql );
 	}
 

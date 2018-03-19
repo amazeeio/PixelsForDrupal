@@ -46,7 +46,7 @@ function load_price_zones($banner_id) {
 		}
 	}
 
-	$sql = "SELECT * FROM prices where banner_id='$banner_id' ";
+	$sql = "SELECT * FROM prices where banner_id='".intval($banner_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$key=0;
 	while ($row = mysqli_fetch_array($result)) {
@@ -93,7 +93,7 @@ function get_zone_color( $banner_id, $row, $col ) {
 function get_block_color($banner_id, $block_id) {
 	// Returns as default currency.
 
-	$sql = "select color from prices where block_id_from <= '$block_id' AND block_id_to >= '$block_id' AND banner_id='$banner_id' ";
+	$sql = "select color from prices where block_id_from <= '".intval($block_id)."' AND block_id_to >= '".intval($block_id)."' AND banner_id='".intval($banner_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)==0) {
@@ -115,7 +115,7 @@ function get_block_price($banner_id, $block_id) {
 
 	// get co-ords of the block
 
-	$sql = "select x, y from blocks where block_id='$block_id' and banner_id='$banner_id' ";
+	$sql = "select x, y from blocks where block_id='".intval($block_id)."' and banner_id='".intval($banner_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$block_row = mysqli_fetch_array($result);
 
@@ -159,7 +159,7 @@ function get_zone_price( $banner_id, $row, $col ) {
 	}
 
 	// If not found then get the default price per block for the grid
-	$sql = "select price_per_block as price, currency from banners where  banner_id='$banner_id' ";
+	$sql = "select price_per_block as price, currency from banners where  banner_id='".intval($banner_id)."' ";
 	$result2 = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 	$block_row = mysqli_fetch_array( $result2 );
 
@@ -174,13 +174,13 @@ function get_zone_price( $banner_id, $row, $col ) {
 
 function show_price_area($banner_id) {
 
-	$sql = "select grid_width, grid_height from banners where  banner_id='$banner_id' ";
+	$sql = "select grid_width, grid_height from banners where  banner_id='".intval($banner_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	$grid_width = $row['grid_width'];
 	$grid_height = $row['grid_height'];
 
-	$sql = "SELECT * FROM prices where banner_id='$banner_id'";
+	$sql = "SELECT * FROM prices where banner_id='".intval($banner_id)."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	?>
@@ -231,12 +231,12 @@ function display_price_table ($banner_id) {
 	}
 
 	// get the default price
-	$sql = "select price_per_block as price, currency from banners where  banner_id='$banner_id' ";
+	$sql = "select price_per_block as price, currency from banners where  banner_id='".intval($banner_id)."' ";
 	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result2);
 	$price=$row['price'];
 
-	$sql = "SELECT * FROM prices where banner_id='$banner_id' order by row_from";
+	$sql = "SELECT * FROM prices where banner_id='".intval($banner_id)."' order by row_from";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 	if (mysqli_num_rows($result)> 0) {
@@ -296,12 +296,13 @@ function display_price_table ($banner_id) {
 function calculate_price($banner_id, $blocks_str) {
 
 	if ($blocks_str=='') {
-		return;
+		return 0;
 	}
 	$blocks = explode (",", $blocks_str);
+	$price = 0;
 	foreach ($blocks as $block_id) {
 
-		$sql = "SELECT price, currency FROM blocks where block_id='".$block_id."'";
+		$sql = "SELECT price, currency FROM blocks where block_id='".intval($block_id)."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 		$row = mysqli_fetch_array($result);
 

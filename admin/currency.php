@@ -127,7 +127,7 @@ if ($_REQUEST['action'] == 'delete') {
 	
 		if (!is_reserved_currency ($_REQUEST['code'])) {
 
-			$sql = "DELETE FROM currencies WHERE code='".$_REQUEST['code']."' ";
+			$sql = "DELETE FROM currencies WHERE code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		} else {
 
@@ -139,10 +139,10 @@ if ($_REQUEST['action'] == 'delete') {
 }
 
 if ($_REQUEST['action'] == 'set_default') {
-	$sql = "UPDATE currencies SET is_default = 'N' WHERE code <> '".$_REQUEST['code']."' ";
+	$sql = "UPDATE currencies SET is_default = 'N' WHERE code <> '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
-	$sql = "UPDATE currencies SET is_default = 'Y' WHERE code = '".$_REQUEST['code']."' ";
+	$sql = "UPDATE currencies SET is_default = 'Y' WHERE code = '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 }
@@ -158,7 +158,7 @@ if ($_REQUEST['submit']!='') {
 
 	} else {
 
-		$sql = "REPLACE INTO currencies(code, name, rate, sign, decimal_places, decimal_point, thousands_sep, is_default) VALUES ('".$_REQUEST['code']."', '".$_REQUEST['name']."', '".$_REQUEST['rate']."',  '".$_REQUEST['sign']."', '".$_REQUEST['decimal_places']."', '".$_REQUEST['decimal_point']."', '".$_REQUEST['thousands_sep']."', '".$_REQUEST['is_default']."') ";
+		$sql = "REPLACE INTO currencies(code, name, rate, sign, decimal_places, decimal_point, thousands_sep, is_default) VALUES ('".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', '".floatval($_REQUEST['rate'])."',  '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['sign'])."', '".intval($_REQUEST['decimal_places'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['decimal_point'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['thousands_sep'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['is_default'])."') ";
 
 		//echo $sql;
 
@@ -178,15 +178,15 @@ if ($_REQUEST['submit']!='') {
 All prices will be displayed in the default currency.<br>
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
 			<tr bgColor="#eaeaea">
-				<td><font size="2"><b>Currency</b></font></td>
-				<td><font size="2"><b>Code</b></font></td>
-				<td><font size="2"><b>Rate</b></font></td>
-				<td><font size="2"><b>Sign</b></font></td>
-				<td><font size="2"><b>Decimal<br>Places</b></font></td>
-				<td><font size="2"><b>Decimal<br>Point</b></font></td>
-				<td><font size="2"><b>Thousands<br>Seperator</b></font></td>
-				<td><font size="2"><b>Is Default</b></font></td>
-				<td><font size="2"><b>Action</b></font></td>
+				<td><span style="font-size: x-small; "><b>Currency</b></span></td>
+				<td><span style="font-size: x-small; "><b>Code</b></span></td>
+				<td><span style="font-size: x-small; "><b>Rate</b></span></td>
+				<td><span style="font-size: x-small; "><b>Sign</b></span></td>
+				<td><span style="font-size: x-small; "><b>Decimal<br>Places</b></span></td>
+				<td><span style="font-size: x-small; "><b>Decimal<br>Point</b></span></td>
+				<td><span style="font-size: x-small; "><b>Thousands<br>Seperator</b></span></td>
+				<td><span style="font-size: x-small; "><b>Is Default</b></span></td>
+				<td><span style="font-size: x-small; "><b>Action</b></span></td>
 			</tr>
 <?php
 
@@ -197,15 +197,15 @@ All prices will be displayed in the default currency.<br>
 
 				<tr bgcolor="#ffffff">
 
-				<td><font size="2"><?php echo $row['name'];?></font></td>
-				<td><font size="2"><?php echo $row['code'];?></font></td>
-				<td><font size="2"><?php echo $row['rate'];?></font></td>
-				<td><font size="2"><?php echo $row['sign'];?></font></td>
-				<td><font size="2"><?php echo $row['decimal_places'];?></font></td>
-				<td><font size="2"><?php echo $row['decimal_point'];?></font></td>
-				<td><font size="2"><?php echo $row['thousands_sep'];?></font></td>
-				<td><font size="2"><?php echo $row['is_default'];?></font></td>
-				<td><font size="2"><?php if ($row['is_default']!='Y') { ?><a href='<?php echo $SERVER[PHP_SELF];?>?action=set_default&code=<?php echo $row['code'];?>'>Set to Default</a> /<?php } ?> <a href='<?php echo $SERVER[PHP_SELF];?>?action=edit&code=<?php echo $row['code'];?>'>Edit</a> / <a href='<?php echo $SERVER[PHP_SELF];?>?action=delete&code=<?php echo $row['code'];?>'>Delete</a></font></td>
+				<td><span style="font-size: x-small; "><?php echo $row['name'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['code'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['rate'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['sign'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['decimal_places'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['decimal_point'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['thousands_sep'];?></span></td>
+				<td><span style="font-size: x-small; "><?php echo $row['is_default'];?></span></td>
+				<td><span style="font-size: x-small; "><?php if ( $row['is_default'] != 'Y') { ?><a href='<?php echo $_SERVER['PHP_SELF'];?>?action=set_default&code=<?php echo $row['code'];?>'>Set to Default</a> /<?php } ?> <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=edit&code=<?php echo $row['code'];?>'>Edit</a> / <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&code=<?php echo $row['code'];?>'>Delete</a></span></td>
 				
 				</tr>
 
@@ -225,7 +225,7 @@ if ($_REQUEST['new']=='1') {
 if ($_REQUEST['action']=='edit') {
 	echo "<h4>Edit Currency:</h4>";
 
-	$sql = "SELECT * FROM currencies WHERE `code`='".$_REQUEST['code']."' ";
+	$sql = "SELECT * FROM currencies WHERE `code`='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	$_REQUEST['name'] = $row['name'];
@@ -246,13 +246,13 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 <input type="hidden" value="<?php echo $_REQUEST['lang_code']?>" name="lang_code" >
 <input type="hidden" value="<?php echo $_REQUEST['is_default']?>" name="is_default" >
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9">
-<tr bgcolor="#ffffff" ><td><font size="2">Currency Name:</font></td><td><input size="30" type="text" name="name" value="<?php echo $_REQUEST['name']; ?>"/> eg. Korean Won</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Currency Code:</font></td><td><input <?php echo $disabled; ?> size="2" type="text" name="code" value="<?php echo $_REQUEST['code']; ?>"/> eg. KRW</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Currency Rate:</font></td><td><input <?php echo $disabled; ?> size="5" type="text" name="rate" value="<?php echo $_REQUEST['rate']; ?>"/>($1 USD = x in this currency)</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Currency Sign:</font></td><td><input <?php echo $disabled; ?> size="1" type="text" name="sign" value="<?php echo $_REQUEST['sign']; ?>"/>(eg. &#165;)</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Currency Decimals:</font></td><td><input <?php echo $disabled; ?> size="1" type="text" name="decimal_places" value="<?php echo $_REQUEST['decimal_places']; ?>"/>(eg. 2)</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Decimal Point:</font></td><td><input  size="1" type="text" name="decimal_point" value="<?php echo $_REQUEST['decimal_point']; ?>"/>(eg. .)</td></tr>
-<tr bgcolor="#ffffff" ><td><font size="2">Thousands Seperator:</font></td><td><input  size="1" type="text" name="thousands_sep" value="<?php echo $_REQUEST['thousands_sep']; ?>"/>(eg. ,)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Name:</span></td><td><input size="30" type="text" name="name" value="<?php echo $_REQUEST['name']; ?>"/> eg. Korean Won</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Code:</span></td><td><input <?php echo $disabled; ?> size="2" type="text" name="code" value="<?php echo $_REQUEST['code']; ?>"/> eg. KRW</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Rate:</span></td><td><input <?php echo $disabled; ?> size="5" type="text" name="rate" value="<?php echo $_REQUEST['rate']; ?>"/>($1 USD = x in this currency)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Sign:</span></td><td><input <?php echo $disabled; ?> size="1" type="text" name="sign" value="<?php echo $_REQUEST['sign']; ?>"/>(eg. &#165;)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Decimals:</span></td><td><input <?php echo $disabled; ?> size="1" type="text" name="decimal_places" value="<?php echo $_REQUEST['decimal_places']; ?>"/>(eg. 2)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Decimal Point:</span></td><td><input size="1" type="text" name="decimal_point" value="<?php echo $_REQUEST['decimal_point']; ?>"/>(eg. .)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Thousands Seperator:</span></td><td><input size="1" type="text" name="thousands_sep" value="<?php echo $_REQUEST['thousands_sep']; ?>"/>(eg. ,)</td></tr>
 </table>
 <input type="submit" name="submit" value="Submit">
 </form>

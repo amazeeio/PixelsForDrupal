@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ckeditor/ckeditor",
-            "version": "4.7.3",
+            "version": "4.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ckeditor/ckeditor-releases.git",
-                "reference": "97b8f412f6b36985c734daf0717e81009a885dba"
+                "reference": "a8497c4d9c8b8b559ac1e2fb99b397fd2167ae27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/97b8f412f6b36985c734daf0717e81009a885dba",
-                "reference": "97b8f412f6b36985c734daf0717e81009a885dba",
+                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/a8497c4d9c8b8b559ac1e2fb99b397fd2167ae27",
+                "reference": "a8497c4d9c8b8b559ac1e2fb99b397fd2167ae27",
                 "shasum": ""
             },
             "type": "library",
@@ -45,20 +45,20 @@
                 "text",
                 "wysiwyg"
             ],
-            "time": "2017-09-13T13:09:47+00:00"
+            "time": "2018-03-15T07:19:37+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
-            "version": "v4.9.3",
+            "version": "v4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "95e1bae3182efc0f3422896a3236e991049dac69"
+                "reference": "d85d39da4576a6934b72480be6978fb10c860021"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/95e1bae3182efc0f3422896a3236e991049dac69",
-                "reference": "95e1bae3182efc0f3422896a3236e991049dac69",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/d85d39da4576a6934b72480be6978fb10c860021",
+                "reference": "d85d39da4576a6934b72480be6978fb10c860021",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
             "keywords": [
                 "html"
             ],
-            "time": "2017-06-03T02:28:16+00:00"
+            "time": "2018-02-23T01:58:20+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -154,16 +154,16 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.25",
+            "version": "v5.2.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "2baf20b01690fba8cf720c1ebcf9b988eda50915"
+                "reference": "70362997bda4376378be7d92d81e2200550923f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/2baf20b01690fba8cf720c1ebcf9b988eda50915",
-                "reference": "2baf20b01690fba8cf720c1ebcf9b988eda50915",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/70362997bda4376378be7d92d81e2200550923f7",
+                "reference": "70362997bda4376378be7d92d81e2200550923f7",
                 "shasum": ""
             },
             "require": {
@@ -227,7 +227,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-08-28T11:12:07+00:00"
+            "time": "2017-11-04T09:26:05+00:00"
         }
     ],
     "packages-dev": [],

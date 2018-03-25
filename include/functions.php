@@ -1153,18 +1153,16 @@ function send_expiry_reminder($order_id) {
 
 #########################
 function display_order ($order_id, $BID) {
-
 	global $label;
-	$order_id = intval($order_id);
 	$BID = intval($BID);
 	$sql = "select * from banners where banner_id='$BID'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$b_row = mysqli_fetch_array($result);
 
 	if (is_numeric($order_id)) {
-		$sql = "SELECT * from orders where order_id='".$order_id."' and banner_id='$BID'";
+		$sql = "SELECT * from orders where order_id='".intval($order_id)."' and banner_id='$BID'";
 	} else {
-		$sql = "SELECT * from temp_orders where session_id='".$order_id."' and banner_id='$BID'";
+		$sql = "SELECT * from temp_orders where session_id='".mysqli_real_escape_string( $GLOBALS['connection'],$order_id)."' and banner_id='$BID'";
 	}
 	
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);

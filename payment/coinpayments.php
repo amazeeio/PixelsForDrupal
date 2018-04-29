@@ -262,7 +262,7 @@ class CoinPayments {
 
 		// https://www.coinpayments.net/merchant-tools-simple
 		?>
-        <form action="https://www.coinpayments.net/index.php" method="post">
+        <form action="https://www.coinpayments.net/index.php" method="post" target="_top">
             <input type="hidden" name="cmd" value="_pay_simple">
             <input type="hidden" name="reset" value="1">
             <input type="hidden" name="merchant" value="<?php echo COINPAYMENTS_MERCHANT_ID; ?>">

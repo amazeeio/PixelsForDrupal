@@ -574,7 +574,7 @@ class PayPal {
 				<?php
 			}
  ?>
-	  </select> (PayPal accepts a number of currencies, and the local currency amount, if not supported, will be converted during checkout. See <a target="_blank" href="https://developer.paypal.com/docs/classic/api/currency_codes/">here for more information.)
+	  </select> (PayPal accepts a number of currencies, and the local currency amount, if not supported, will be converted during checkout. See <a target="_blank" href="https://developer.paypal.com/docs/classic/api/currency_codes/">here</a> for more information.)
      </td>
     </tr>
 	

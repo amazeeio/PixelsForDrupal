@@ -31,11 +31,9 @@
  */
 require_once "../config.php";
 
-
 $_PAYMENT_OBJECTS['PayPal'] = new PayPal;//"paypal";
 
 define (IPN_LOGGING, 'Y');
-
 
 function pp_mail_error($msg) {
 
@@ -46,47 +44,33 @@ function pp_mail_error($msg) {
 	$headers .= "Return-Path: ".SITE_CONTACT_EMAIL ."\r\n";
 	$headers .= "X-Mailer: PHP" ."\r\n";
 	$headers .= "Date: $date" ."\r\n"; 
-	$headers .= "X-Sender-IP: $REMOTE_ADDR" ."\r\n";
+	$headers .= "X-Sender-IP: " . $_SERVER['REMOTE_ADDR'] . "\r\n";
 
 	$entry_line =  "(payal error detected) $msg\r\n "; 
 	$log_fp = @fopen("logs.txt", "a"); 
 	@fputs($log_fp, $entry_line); 
 	@fclose($log_fp);
 
-
 	@mail(SITE_CONTACT_EMAIL, "Error message from ".SITE_NAME." Jamit Paypal IPN script. ", $msg, $headers);
-
 }
 
 function pp_log_entry ($entry_line) {
-
 	if (IPN_LOGGING == 'Y') {
 
 		$entry_line =  "$entry_line\r\n "; 
 		$log_fp = @fopen("logs.txt", "a"); 
 		@fputs($log_fp, $entry_line); 
 		@fclose($log_fp);
-
 	}
-
-
 }
-
 
 function pp_prefix_order_id($order_id) {
-
 	return substr(md5(SITE_NAME), 1, 5).$order_id;
-
 }
-
 
 function pp_strip_order_id($order_id) {
-
 	return substr($order_id, 5);
 }
-
-
-
 
 #####################################################################################
 
@@ -147,8 +131,6 @@ if ($_POST['txn_id']!='') {
 
 	$VERIFIED = false;
 
-
-
 	if (!$fp) {
 	// HTTP ERROR
 		$entry_line =  "HTTP ERROR! cannot post back to PayPal\r\n "; 
@@ -156,7 +138,6 @@ if ($_POST['txn_id']!='') {
 	} else {
 
 		fputs ($fp, $header . $req); // post to paypal
-
 
 		while (!feof($fp)) {
 		$res = fgets ($fp, 1024);
@@ -171,7 +152,7 @@ if ($_POST['txn_id']!='') {
 				if(strcmp(strtolower(PAYPAL_EMAIL), strtolower($business))!=0) {
 					pp_mail_error ("Possible fraud. Error with receiver_email. ".strtolower(PAYPAL_EMAIL)." != ".strtolower($business)."\n");
 					pp_log_entry("Possible fraud. Error with receiver_email. ".strtolower(PAYPAL_EMAIL)." != ".strtolower($business));
-					$VERIFIED = false;	
+					$VERIFIED = false;
 				} 
 
 				// check so that transactrion id cannot be reused
@@ -181,7 +162,7 @@ if ($_POST['txn_id']!='') {
 				if (mysqli_num_rows($result)> 0) { 
 					//pp_mail_error ("Possible fraud. Transaction id: $txn_id is already in the database. \n");
 					pp_log_entry("transaction $txn_id already processed");
-					$VERIFIED = false;	
+					$VERIFIED = false;
 					die();
 
 				}
@@ -192,23 +173,9 @@ if ($_POST['txn_id']!='') {
 				if (($amount != $mc_gross)) {
 					//pp_mail_error ("Transaction has incorrect currency. $amount=$mc_gross\n");
 					pp_log_entry($order_row['price'].$order_row['currency']."Transaction has incorrect currency. $amount=$mc_gross invoice_id: $invoice_id\n");
-					$VERIFIED = false;	
-
-				}
-
-				// we only accept web payments.
-				// txn_type: 'cart', 'send_money', 'web_accept'
-				// 'subscr_signup', 'subscr_cancel', 'subscr_failed', 'subscr_payment', 'subscr_eot', 'subscr_modify'
-
-				/*
-				if ($txn_type != 'web_accept' ) { 
-					pp_mail_error ("Transaction has incorrect type. txn_type = $txn_type \n");
 					$VERIFIED = false;
 
 				}
-				*/
-				
-				
 
 				$entry_line =  "verified: $res";
 				pp_log_entry($entry_line);
@@ -220,6 +187,7 @@ if ($_POST['txn_id']!='') {
 				
 			}
 		}
+
 		fclose ($fp);
 
 		// if VERIFIED=1 process payment
@@ -227,27 +195,17 @@ if ($_POST['txn_id']!='') {
 			
 			if ($txn_type=='subscr_signup') {
 
-
 			}
 
-		
 			if ($txn_type=='subscr_cancel') {
 
-				
-
 			}
-
-			
 
 			if ($txn_type=='subscr_modify') {
 
 			}
 
 			if ($txn_type=='subscr_payment') {
-
-				//$invoice_id;
-
-				//$original_order_id
 
 				if (!$order_row['original_order_id']) {
 					// this is a renew
@@ -258,10 +216,7 @@ if ($_POST['txn_id']!='') {
 
 				}
 
-
-				debit_transaction($invoice_id, $amount, $currency, $txn_id, $reason, "PayPal", $product_type);
-
-
+				debit_transaction($invoice_id, $amount, $currency, $txn_id, $reason, "PayPal");
 			}
 
 			if ($txn_type=='subscr_failed') {
@@ -272,11 +227,7 @@ if ($_POST['txn_id']!='') {
 
 			}
 
-			
-
 			if (($txn_type=='web_accept') || ($txn_type=='')) { // transaction came from a button or straight from paypal
-
-			
 
 				switch ($payment_status) {
 					case "Canceled_Reversal":
@@ -303,8 +254,6 @@ if ($_POST['txn_id']!='') {
 					case "Failed":
 						// only happens when payment is from customers' bank account
 						//insert_transaction ($employer_id, $payment_status, $pending_reason, $reason_code, $payment_date, $txn_id, $parent_txn_id, $txn_type, $payment_type, $mc_gross, $mc_currency, $item_name, $item_number, $invoice_id);
-
-						
 						break;
 					case "Pending":
 						$sql = "select user_id FROM orders where order_id='".intval($invoice_id)."'";
@@ -342,18 +291,14 @@ if ($_POST['txn_id']!='') {
 
 } // end IPN routine
 
-
 ###########################################################################
 # Payment Object
-
-
 
 class PayPal {
 
 	var $name;
 	var $description;
 	var $className="PayPal";
-	
 
 	function PayPal() {
 
@@ -372,18 +317,12 @@ class PayPal {
 				define ($row['key'], $row['val']);
 
 			}
-
 		}
-
-
 	}
 
 	function get_currency() {
-
 		return PAYPAL_CURRENCY;
-
 	}
-
 
 	function install() {
 
@@ -415,17 +354,12 @@ class PayPal {
 		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_BUTTON_URL', 'https://www.paypal.com/en_US/i/btn/x-click-butcc-subscribe.gif')";
 		mysqli_query($GLOBALS['connection'], $sql);
-		
-		
-
-		
 	}
 
 	function uninstall() {
 
 		echo "Uninstall PayPal..<br>";
 
-	
 		$sql = "DELETE FROM config where `key`='PAYPAL_ENABLED'";
 		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='PAYPAL_EMAIL'";
@@ -450,9 +384,6 @@ class PayPal {
 		mysqli_query($GLOBALS['connection'], $sql);
 		$sql = "DELETE FROM config where `key`='PAYPAL_SUBSCR_BUTTON_URL'";
 		mysqli_query($GLOBALS['connection'], $sql);
-		
-		
-
 	}
 
 	function payment_button($order_id) {
@@ -477,8 +408,7 @@ class PayPal {
 		?>
 
 		<center><b><?php echo $label['payment_paypal_head']; ?></b>
-		
-		
+
 		<form action="https://<?php echo PAYPAL_SERVER; ?>/cgi-bin/webscr" name="form1" method="post" target="_parent">
 
 		<center><?php echo $label['payment_paypal_accepts']; ?></center>
@@ -500,10 +430,10 @@ class PayPal {
 		?>
 		<input type="hidden" value="<?php echo PAYPAL_EMAIL; ?>" name="business">
 		<input type="hidden" value="<?php echo PAYPAL_IPN_URL; ?>" name="notify_url">
-		<input type="hidden" value="<?php echo SITE_NAME; ?> Order #<?php echo $order_row[order_id];?>" name="item_name">
+		<input type="hidden" value="<?php echo SITE_NAME; ?> Order #<?php echo $order_row['order_id'];?>" name="item_name">
 		<input type="hidden" value="<?php echo PAYPAL_RETURN_URL; ?>" name="return">
 		<input type="hidden" value="<?php echo PAYPAL_CANCEL_RETURN_URL; ?>" name="cancel_return"/>
-		<input type="hidden" value="<?php echo pp_prefix_order_id($order_row[order_id]);?>" name="invoice" >
+		<input type="hidden" value="<?php echo pp_prefix_order_id($order_row['order_id']);?>" name="invoice" >
 		<?php 
 		if ($is_subscription) { 
 		?>
@@ -516,8 +446,8 @@ class PayPal {
 		<?php
 		}
 		?>
-		<input type="hidden" value="<?php echo $order_row[order_id];?>" name="item_number">
-		<input type="hidden" value="<?php echo $order_row[user_id];?>" name="custom">
+		<input type="hidden" value="<?php echo $order_row['order_id'];?>" name="item_number">
+		<input type="hidden" value="<?php echo $order_row['user_id'];?>" name="custom">
 		<input type="hidden" value="<?php echo PAYPAL_PAGE_STYLE;?>" name="page_style">
 
 		<input type="hidden" value="1" name="no_shipping"/>
@@ -537,9 +467,7 @@ class PayPal {
 		} ?>
 		</p>
 	</form>
-
 		<?php
-
 	}
 
 	function config_form() {
@@ -605,27 +533,27 @@ class PayPal {
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Paypal 
       Identity token</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="paypal_auth_token" size="50" value="<?php echo $paypal_auth_token; ?>"><br><font face="Verdana" size="1">Required for PDT (Payment Data Transfer). You can find the Identity token under Profile -> 'Website Payment Prefrences' page in your PayPal account. Also, turn 'Auto Return' to 'On', and insert the 'PayPal Return URL' that is show here below. If you have another website using the Auto Return feature then leave it as it is - the million dollar script will tell PayPal what to do to make sure it does not conflict with your other sites. </font></td>
+      <input type="text" name="paypal_auth_token" size="50" value="<?php echo $paypal_auth_token; ?>"><br><font face="Verdana" size="1">This setting is not normally required. Required for PDT (Payment Data Transfer). You can find the Identity token under Profile -> 'Website Payment Prefrences' page in your PayPal account. Also, turn 'Auto Return' to 'On', and insert the 'PayPal Return URL' that is show here below. If you have another website using the Auto Return feature then leave it as it is - the Million Dollar Script will tell PayPal what to do to make sure it does not conflict with your other sites. </font></td>
     </tr>
 	 
 	 <tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Paypal 
       IPN URL</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="paypal_ipn_url" size="50" value="<?php echo $paypal_ipn_url; ?>"><br>Recommended: <b>http://<?php echo $host.$http_url."/payment/paypalIPN.php"; ?></font></td>
+      <input type="text" name="paypal_ipn_url" size="50" value="<?php echo $paypal_ipn_url; ?>"><br>Recommended: <b>https://<?php echo $host.$http_url."/payment/paypalIPN.php"; ?></font></td>
     </tr>
 	 
 	<tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Paypal 
       Return URL</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="paypal_return_url" size="50" value="<?php echo $paypal_return_url; ?>"><br>(recommended: <b>http://<?php echo $host.$http_url."/users/thanks.php?m=".$this->className; ?></b> Note: This URL should also be entered as the 'Return URL' on the 'Website Payment prefrences in your PayPal account)</font></td>
+      <input type="text" name="paypal_return_url" size="50" value="<?php echo $paypal_return_url; ?>"><br>(recommended: <b>https://<?php echo $host.$http_url."/users/thanks.php?m=".$this->className; ?></b> Note: This URL should also be entered as the 'Return URL' on the 'Website Payment prefrences in your PayPal account)</font></td>
     </tr>
 	<tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Paypal 
       Cancelled Return URL</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="paypal_cancel_return_url" size="50" value="<?php echo $paypal_cancel_return_url; ?>"><br>(eg. http://<?php echo $host.$http_url."/users/"; ?>)</font></td>
+      <input type="text" name="paypal_cancel_return_url" size="50" value="<?php echo $paypal_cancel_return_url; ?>"><br>(eg. https://<?php echo $host.$http_url."/users/"; ?>)</font></td>
     </tr>
 	<tr>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">Paypal 
@@ -638,13 +566,15 @@ class PayPal {
       Currency</font></td>
       <td  bgcolor="#e6f2ea"><font face="Verdana" size="1">
 	  <select name="paypal_currency">
-		<option value="USD" <?php if ($paypal_currency=='USD') { echo " selected "; }  ?> >USD</option>
-		<option value="AUD" <?php if ($paypal_currency=='AUD') { echo " selected "; }  ?> >AUD</option>
-		<option value="EUR" <?php if ($paypal_currency=='EUR') { echo " selected "; }  ?> >EUR</option>
-		<option value="CAD" <?php if ($paypal_currency=='CAD') { echo " selected "; }  ?> >CAD</option>
-		<option value="JPY" <?php if ($paypal_currency=='JPY') { echo " selected "; }  ?> >JPY</option>
-		<option value="GBP" <?php if ($paypal_currency=='GBP') { echo " selected "; }  ?> >GBP</option>
-	  </select> (PayPal currently accepts 5 currencies, and the local currency amount, if not supported, will be converted during checkout)
+	  <?php
+			$result = mysqli_query($GLOBALS['connection'], "select * FROM currencies order by name") or die (mysqli_error($GLOBALS['connection']));
+			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+				?>
+		        <option value="<?php echo $row['code']; ?>" <?php if ($paypal_currency==$row['code']) { echo " selected "; }  ?> ><?php echo $row['code']; ?></option>
+				<?php
+			}
+ ?>
+	  </select> (PayPal accepts a number of currencies, and the local currency amount, if not supported, will be converted during checkout. See <a target="_blank" href="https://developer.paypal.com/docs/classic/api/currency_codes/">here for more information.)
      </td>
     </tr>
 	
@@ -679,14 +609,9 @@ class PayPal {
   </form>
 
   <?php
-
-		
-
 	}
 
 	function save_config() {
-
-	
 
 		//$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_ENABLED', 'N')";
 		//mysqli_query($GLOBALS['connection'], $sql);
@@ -715,27 +640,18 @@ class PayPal {
 
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('PAYPAL_SUBSCR_BUTTON_URL', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['paypal_subscr_button_url'])."')";
 		mysqli_query($GLOBALS['connection'], $sql);
-
-		
-
-		
-
 	}
 
 	// true or false
 	function is_enabled() {
-
 		$sql = "SELECT val from config where `key`='PAYPAL_ENABLED' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		if ($row['val']=='Y') {
 			return true;
-
 		} else {
 			return false;
-
 		}
-
 	}
 
 	// true or false
@@ -747,27 +663,19 @@ class PayPal {
 
 		if (mysqli_num_rows($result)>0) {
 			return true;
-
 		} else {
 			return false;
-
 		}
-
 	}
 
 	function enable() {
-
 		$sql = "UPDATE config set val='Y' where `key`='PAYPAL_ENABLED' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-
-
 	}
 
 	function disable() {
-
 		$sql = "UPDATE config set val='N' where `key`='PAYPAL_ENABLED' ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-
 	}
 
 	function process_payment_return() {
@@ -782,14 +690,5 @@ class PayPal {
 		$req .= "&tx=$tx_token&at=$auth_token";
 
 		//print_r($_REQUEST);
-
-
-		
-
 	}
-
 }
-
-
-
-?>

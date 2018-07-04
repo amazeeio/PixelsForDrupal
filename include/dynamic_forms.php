@@ -34,10 +34,6 @@ require_once( "code_functions.php" );
 
 global $f2;
 
-function get_lang() {
-	return preg_replace( '/[^a-zA-Z0-9]/', '', $_SESSION['MDS_LANG'] );
-}
-
 function format_field_translation_table( $form_id ) {
 	global $AVAILABLE_LANGS;
 	$form_id = intval( $form_id );

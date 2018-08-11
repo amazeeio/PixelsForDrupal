@@ -57,27 +57,14 @@ along with the Million Dollar Script.  If not, see <http://www.gnu.org/licenses/
 
 */
 	
-?>
-<?php echo $f2->get_doc(); ?>
+echo $f2->get_doc();
 
-<link rel="stylesheet" type="text/css" href="style.css" />
-<style type="text/css">
-<!--
-.style1 {
-	color: #FFFFFF;
-	font-weight: bold;
-}
--->
-</style>
-<?php
+require ("header.php");
 
 $label["advertiser_signup_heading1"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_signup_heading1"]);
 
 ?>
-</head>
-<body>
-<center><img src="<?php echo SITE_LOGO_URL; ?>"/> <br/>
-      <h3 ><?php echo $label["advertiser_signup_heading1"]; ?></h3></center> 
+<h3 ><?php echo $label["advertiser_signup_heading1"]; ?></h3>
 <table width="60%" align="center" width="100%"  border="0" cellspacing="0" cellpadding="0" >
 	<tr>
 		<td width="35" height="26">&nbsp;</td>
@@ -117,6 +104,7 @@ $label["advertiser_signup_heading1"] = str_replace ("%SITE_NAME%", SITE_NAME , $
 	</tr>
 </table>
 
-</body>
+<?php
 
-</html>
+require ("footer.php");
+?>

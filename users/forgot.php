@@ -56,14 +56,11 @@ along with the Million Dollar Script.  If not, see <http://www.gnu.org/licenses/
 $submit = $_REQUEST['submit'];
 $email = $_REQUEST['email'];
 ?>
-<?php echo $f2->get_doc(); ?>
+<?php echo $f2->get_doc();
 
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
+require ("header.php");
 
-<body>
-
-<center><img alt="" src="<?php echo SITE_LOGO_URL; ?>"/> <br/>
+?>
       <h3><?php echo $label["advertiser_forgot_title"]; ?></h3></center>
  <p align='center'>     
 <center>
@@ -165,5 +162,7 @@ if ($row['Email'] != '') {
 
 <center><h3><a href="../"><?php echo $label["advertiser_forgot_go_back"];?></a></h3></center>
 
-</body>
-</html>
+<?php
+
+require ("footer.php");
+?>

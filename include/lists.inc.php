@@ -30,14 +30,14 @@
  *
  */
 
-$column_list; // column structure, global variable to cache the column info
-$column_info;
+$column_list = array(); // column structure, global variable to cache the column info
+$column_info = array();
 
 /*
 Display table heading, initalize column_struct.
 */
 function echo_list_head_data($form_id, $admin) { 
-	global $f2, $CACHE_ENABLED;
+	global $CACHE_ENABLED;
 	if ($CACHE_ENABLED=='YES') {
 		$colspan=0;
 		if (!is_numeric($form_id)) return false;

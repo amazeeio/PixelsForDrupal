@@ -78,6 +78,6 @@ try {
 	$image->show( "png", array( 'png_compression_level' => 9 ) );
 } catch(Exception $e) {
 
-	file_put_contents(__DIR__ . "/error_log", $e->getMessage());
-	file_put_contents(__DIR__ . "/error_log", $e->getTraceAsString());
+	file_put_contents(__DIR__ . "/error_log", $e->getMessage(), FILE_APPEND);
+	file_put_contents(__DIR__ . "/error_log", $e->getTraceAsString(), FILE_APPEND);
 }

@@ -56,7 +56,7 @@
 			if ($data['ad_id']>0) {
 			  $data['alt_text'] = $data['alt_text'].'<img src="'.BASE_HTTP_PATH.'periods.gif" border="0">';
 		  }
-		  fwrite($fh, "onmouseover=\"sB(event,'".htmlspecialchars(str_replace("'","\'",($data['alt_text'])))."',this, ".$data['ad_id'].")\" onmousemove=\"sB(event,'".htmlspecialchars(str_replace("'","\'",($data['alt_text'])))."',this, ".$data['ad_id'].")\" onmouseout=\"hI()\" ");
+		fwrite( $fh, "onmouseover=\"sB(event,'" . htmlspecialchars( $data['alt_text'] ) . "',this, " . $data['ad_id'] . ")\" onmousemove=\"sB(event,'" . htmlspecialchars( $data['alt_text'] ) . "',this, " . $data['ad_id'] . ")\" onmouseout=\"hI()\" " );
 		}
 		fwrite($fh, "coords=\"".$data['x1'].",".$data['y1'].",".($x2+$b_row['block_width']).",".($y2+$b_row['block_height'])."\"");
 		if (ENABLE_MOUSEOVER=='NO') {

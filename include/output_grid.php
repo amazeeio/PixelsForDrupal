@@ -46,9 +46,10 @@
  *                          'ordered',
  *                          'reserved',
  *                          'selected',
+ *                          'sold',
  *                          'price_zones',
  *                          'price_zones_text',
- *                          'sold'
+ *                          'user'
  *                       )
  *
  * @param int $user_id

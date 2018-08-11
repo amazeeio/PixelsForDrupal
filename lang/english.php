@@ -68,7 +68,7 @@ $label['confirm_instructions']='Fill in your details, it will only take a minute
 $label['confirm_login']='Log in'; 
 $label['confirm_member']='Already a Member? Login here.'; 
 $label['sorry_head']='Pixel Reservation Not Yet Completed...'; 
-$label['sorry_head2']='We are sorry, it looks like the pixels we tried to reserve for you were snapped up by someone else in the mean time! Please go <a href="%ORDER_PAGE%">here</a> to move your pixels to another area.'; 
+$label['sorry_head2']='We are sorry, it looks like you took too long! Either your session has timed out or the pixels we tried to reserve for you were snapped up by someone else in the mean time! Please go <a href="%ORDER_PAGE%">here</a> and try again.';
 $label['check_sel_notavailable']='This space is not available! Please try to place your pixels in a different area.'; 
 $label['ads_list_days_ago']='Days ago'; 
 $label['ads_list_day_ago']='Day ago'; 

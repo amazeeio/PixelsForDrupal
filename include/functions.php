@@ -1842,10 +1842,16 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	}
 	####################################################
 
-	$filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt";
-	$fh = fopen ($filename, 'rb');
-	$block_info = fread($fh, filesize($filename));
-	fclose($fh);
+	try {
+		$filename   = SERVER_PATH_TO_ADMIN . 'temp/' . "info_" . md5( session_id() ) . ".txt";
+		$fh         = fopen( $filename, 'rb' );
+		$block_info = fread( $fh, filesize( $filename ) );
+		fclose( $fh );
+	} catch(Exception $e) {
+		// Session may have expired if they waited too long so tell them to start over, even though we might still have the file it doesn't match the current session id anymore.
+		// TODO: Implement our own cookies instead of PHP sessions to allow longer sessions. Maybe can recover the old session file automatically somehow or another.
+		return false;
+	}
 
 	//$block_info = unserialize($temp_order_row['block_info']);
 	$block_info = unserialize($block_info);

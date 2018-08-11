@@ -42,10 +42,8 @@ $BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2
 
 output_grid( true, "", $BID, array(
 	'background',
-	//'orders',
+	'orders',
 	'grid',
-	'ordered',
 	'reserved',
 	'selected',
-	'sold',
 ));

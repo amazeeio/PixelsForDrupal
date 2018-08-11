@@ -1338,7 +1338,7 @@ $html_message='', $template_id=0) {
 	// save to the database...
     $attachments = 'N';
     $now = ( gmdate( "Y-m-d H:i:s" ) );
-    $sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $subject ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $message ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $html_message ) . "', '$attachments', 'sent', '', 0, '".intval($template_id)."', '$now')";
+    $sql = "INSERT INTO mail_queue (mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $to_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_address ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $from_name ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $subject ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $message ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $html_message ) . "', '$attachments', 'sent', '', 0, '".intval($template_id)."', '$now')";
     mysqli_query( $GLOBALS['connection'], $sql ) or q_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
     $mail_id = mysqli_insert_id($GLOBALS['connection']);
 
@@ -1386,73 +1386,78 @@ function move_uploaded_image ($img_key) {
 
 
 }
-# c o p y r i g h t - J a m i t S o f t w a r e - 2 0 0 6
-######################################
 
-function nav_pages_struct(&$result, $q_string, $count, $REC_PER_PAGE) {
- 
-	global $f2, $label, $list_mode;
-	
-	if ($list_mode=='PREMIUM') {
-		$page = 'hot.php';		
+function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
+
+	global $label, $list_mode;
+
+	if ( $list_mode == 'PREMIUM' ) {
+		$page = 'hot.php';
 	} else {
 		$page = $_SERVER['PHP_SELF'];
 	}
-	$offset = $_REQUEST["offset"];
+
+	$offset   = $_REQUEST["offset"];
 	$show_emp = $_REQUEST["show_emp"];
-	
-	if ($show_emp != '') {
-	  $show_emp = ("&show_emp=$show_emp");
+
+	if ( $show_emp != '' ) {
+		$show_emp = "&show_emp=" . urlencode( $show_emp );
 	}
 	$cat = $_REQUEST["cat"];
-	if ($cat != '') {
-	  $cat = ("&cat=$cat");
+	if ( $cat != '' ) {
+		$cat = ( "&cat=$cat" );
 	}
 	$order_by = $_REQUEST["order_by"];
-	if ($order_by != '') {
-	  $order_by = ("&order_by=$order_by");
+	if ( $order_by != '' ) {
+		$order_by = "&order_by=" . urlencode( $order_by );
 	}
 
 	$cur_page = $offset / $REC_PER_PAGE;
-	$cur_page++;
+	$cur_page ++;
+
 	// estimate number of pages.
-	$pages = ceil($count / $REC_PER_PAGE);
-	if ($pages == 1) {
-	   return "";
-	}
-	$off = 0;
-	$p=1;
-	$prev = $offset-$REC_PER_PAGE;
-	$next = $offset+$REC_PER_PAGE;
-
-	if ($prev===0) {
-		$prev='';
+	$pages = ceil( $count / $REC_PER_PAGE );
+	if ( $pages == 1 ) {
+		return "";
 	}
 
-	if ($prev > -1) {
-	    $nav['prev'] =  "<a href='".urlencode($page."?offset=".$prev.$q_string.$show_emp.$cat.$order_by)."'>".$label["navigation_prev"] ."</a> ";
-	  
+	$off  = 0;
+	$p    = 1;
+	$prev = $offset - $REC_PER_PAGE;
+	$next = $offset + $REC_PER_PAGE;
+
+	if ( $prev === 0 ) {
+		$prev = '';
 	}
-	for ($i=0; $i < $count; $i=$i+$REC_PER_PAGE) {
-	  if ($p == $cur_page) {
-		 $nav['cur_page'] = $p;
-		 
-		 
-	  } else {
-		  if ($off===0) {
-			$off='';
+
+	$nav = array();
+	if ( $prev > - 1 ) {
+		$nav['prev'] = "<a href='" . htmlspecialchars( $page . "?offset=" . $prev . $q_string . $show_emp . $cat . $order_by ) . "'>" . $label["navigation_prev"] . "</a> ";
+	}
+
+	for ( $i = 0; $i < $count; $i = $i + $REC_PER_PAGE ) {
+		if ( $p == $cur_page ) {
+			$nav['cur_page'] = $p;
+
+		} else {
+			if ( $off === 0 ) {
+				$off = '';
+			}
+
+			if ( $nav['cur_page'] != '' ) {
+				$nav['pages_after'][ $p ] = $off;
+			} else {
+				$nav['pages_before'][ $p ] = $off;
+			}
 		}
-		 if ($nav['cur_page'] !='') {
-			 $nav['pages_after'][$p] = $off;
-		 } else {
-			$nav['pages_before'][$p] = $off;
-		 }
-	  }
-	  $p++;
-	  $off = $off + $REC_PER_PAGE;
+
+		$p ++;
+		$off = $off + $REC_PER_PAGE;
 	}
-	if ($next < $count ) 
-		$nav['next'] = " | <a  href='".urlencode($page."?offset=".$next.$q_string.$show_emp.$cat.$order_by)."'> ".$label["navigation_next"]."</a>";
+
+	if ( $next < $count ) {
+		$nav['next'] = " | <a  href='" . htmlspecialchars( $page . "?offset=" . $next . $q_string . $show_emp . $cat . $order_by ) . "'> " . $label["navigation_next"] . "</a>";
+	}
 
 	return $nav;
 }
@@ -1474,7 +1479,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 	$show_emp = $_REQUEST["show_emp"];
 	
 	if ($show_emp != '') {
-	  $show_emp = ("&show_emp=$show_emp");
+		$show_emp = "&show_emp=" . urlencode( $show_emp );
 	}
 	$cat = $_REQUEST["cat"];
 	if ($cat != '') {
@@ -1482,7 +1487,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 	}
 	$order_by = $_REQUEST["order_by"];
 	if ($order_by != '') {
-	  $order_by = ("&order_by=$order_by");
+		$order_by = "&order_by=" . urlencode( $order_by );
 	}
 
 	if ($nav_pages_struct['cur_page'] > $LINKS-1) {
@@ -1497,7 +1502,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 	for ($i = $b_count-$LINKS; $i <= $b_count; $i++) {
 		if ($i>0) {
 			//echo " <a href='?offset=".$nav['pages_before'][$i]."'>".$i."</a></b>";
-			echo " | <a  href='".urlencode($page."?offset=".$nav_pages_struct['pages_before'][$i].$q_string.$show_emp.$cat.$order_by)."'>".$i."</a>";
+			echo " | <a  href='".htmlspecialchars($page."?offset=".$nav_pages_struct['pages_before'][$i].$q_string.$show_emp.$cat.$order_by)."'>".$i."</a>";
 			$pipe = "|";
 		}
 	}
@@ -1510,13 +1515,11 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 				break;
 			}
 			//echo " <a href='?offset=".$pa."'>".$key."</a>";
-			echo " | <a  href='".urlencode($page."?offset=".$pa.$q_string.$show_emp.$cat.$order_by)."'>".$key."</a>  ";
+			echo " | <a  href='".htmlspecialchars($page."?offset=".$pa.$q_string.$show_emp.$cat.$order_by)."'>".$key."</a>  ";
 		}
 	}
 
 	echo $nav_pages_struct['next'];
-
-
 }
 
 function do_log_entry ($entry_line) {

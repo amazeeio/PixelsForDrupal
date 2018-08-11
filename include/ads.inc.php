@@ -126,7 +126,7 @@ function load_ad_values ($ad_id) {
 
 				$prams[$fields['field_id']] = "$year-$month-$day";
 
-			} elseif (($fields['field_type']=='MSELECT') || ($row['field_type']=='CHECK'))  {
+			} elseif (($fields['field_type']=='MSELECT') || ($fields['field_type']=='CHECK'))  {
 				if (is_array($_REQUEST[$row['field_id']])) {	
 					$prams[$fields['field_id']] = implode (",", $_REQUEST[$fields['field_id']]);
 				} else {
@@ -355,7 +355,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 			$label["navigation_page"] =  str_replace ("%CUR_PAGE%", $cur_page, $label["navigation_page"]);
 			$label["navigation_page"] =  str_replace ("%PAGES%", $pages, $label["navigation_page"]);
 			echo "<span > ".$label["navigation_page"]."</span> ";
-			$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
+			$nav = nav_pages_struct($q_string, $count, $records_per_page);
 			$LINKS = 10;
 			render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
 			echo "</center>";

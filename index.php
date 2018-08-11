@@ -39,7 +39,8 @@ if(!file_exists(MDSROOT . "/config.php")) {
 		if(rename(MDSROOT . "/config-default.php", MDSROOT . "/config.php")){
 			$host  = $_SERVER['HTTP_HOST'];
 			$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-			$loc   = "http://$host$uri/admin/install.php";
+			$protocol = ( ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] != 'off' ) || $_SERVER['SERVER_PORT'] == 443 ) ? "https://" : "http://";
+			$loc   = $protocol . $host . $uri . "/admin/install.php";
 			header("Location: $loc");
 		}
 	}

@@ -348,7 +348,7 @@ if ($count > $records_per_page) {
 		$label["navigation_page"] =  str_replace ("%CUR_PAGE%", $cur_page, $label["navigation_page"]);
 		$label["navigation_page"] =  str_replace ("%PAGES%", $pages, $label["navigation_page"]);
 	//	echo "<span > ".$label["navigation_page"]."</span> ";
-		$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
+		$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 		$LINKS = 10;
 		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
@@ -415,7 +415,7 @@ if ($count > $records_per_page) {
 if ($count > $records_per_page)  {
 		echo "<center>";
 		
-		$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
+		$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 		$LINKS = 10;
 		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";

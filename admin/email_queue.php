@@ -304,7 +304,7 @@ if ($count > $records_per_page)  {
 	<center><b><?php echo $count; ?> Emails on Queue returned (<?php echo $pages;?> pages) </b></center>
 	<?php
 	echo "Page $cur_page of $pages - ";
-	$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
+	$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 	$LINKS = 10;
 	render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
 	echo "</center>";
@@ -379,7 +379,7 @@ if ($count > $records_per_page)  {
 	
 	<?php
 	echo "Page $cur_page of $pages - ";
-	$nav = nav_pages_struct($result, $q_string, $count, $records_per_page);
+	$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 	$LINKS = 10;
 	render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
 	echo "</center>";

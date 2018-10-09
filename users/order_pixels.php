@@ -50,7 +50,7 @@ $_SESSION['BID'] = $BID;
 if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='') {
 
 	$_SESSION['MDS_order_id']=$_REQUEST['order_id'];
-	
+
 	if ((!is_numeric($_REQUEST['order_id'])) && ($_REQUEST['order_id']!='temp')) die();
 
 }
@@ -65,7 +65,7 @@ if ( (isset($_REQUEST['banner_change']) && $_REQUEST['banner_change']!='') || (i
 
 
 	delete_temp_order(session_id());
-	
+
 }
 
 #################################
@@ -75,20 +75,20 @@ $tmp_image_file = get_tmp_img_name();
 # load order from php
 # only allowed 1 new order per banner
 
- $sql = "SELECT * from orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='$BID' ";
+$sql = "SELECT * from orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='$BID' ";
 //$sql = "SELECT * from orders where order_id=".$_SESSION[MDS_order_id];
- $order_result = mysqli_query($GLOBALS['connection'], $sql);
- $order_row = mysqli_fetch_array($order_result);
+$order_result = mysqli_query($GLOBALS['connection'], $sql);
+$order_row = mysqli_fetch_array($order_result);
 
- if (($order_row['user_id']!='') && $order_row['user_id']!=$_SESSION['MDS_ID']) { // do a test, just in case.
-	 
-	 die('you do not own this order!');
+if (($order_row['user_id']!='') && $order_row['user_id']!=$_SESSION['MDS_ID']) { // do a test, just in case.
 
- }
+	die('you do not own this order!');
 
- if (($_SESSION["MDS_order_id"]=='')||(USE_AJAX=='YES')) { // guess the order id
+}
+
+if (($_SESSION["MDS_order_id"]=='')||(USE_AJAX=='YES')) { // guess the order id
 	$_SESSION["MDS_order_id"]=$order_row["order_id"];
- }
+}
 
 ###############################
 
@@ -117,534 +117,568 @@ require ("header.php");
 
 ?>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-var browser_compatible=false;
-var browser_checked=false;
-var selectedBlocks= new Array();
-var selBlocksIndex = 0;
+		var browser_compatible=false;
+		var browser_checked=false;
+		var selectedBlocks= new Array();
+		var selBlocksIndex = 0;
 
-function refreshSelectedLayers() {
-	var pointer = document.getElementById('block_pointer');
-		
-} //End testing()
-//End -J- Edit: Custom functions for resize bug
+		function refreshSelectedLayers() {
+			var pointer = document.getElementById('block_pointer');
 
-//Begin -J- Edit: Custom functions for resize bug
-//Taken from http://www.quirksmode.org/js/findpos.html; but modified
-function findPosX(obj)
-{
-	var curleft = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
+		} //End testing()
+		//End -J- Edit: Custom functions for resize bug
+
+		//Begin -J- Edit: Custom functions for resize bug
+		//Taken from http://www.quirksmode.org/js/findpos.html; but modified
+		function findPosX(obj)
 		{
-			curleft += obj.offsetLeft
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.x)
-		curleft += obj.x;
-	return curleft;
-}
-
-//Taken from http://www.quirksmode.org/js/findpos.html; but modified
-function findPosY(obj)
-{
-	var curtop = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curtop += obj.offsetTop
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.y)
-		curtop += obj.y;
-	return curtop;
-}
-
-
-function is_browser_compatible() {
-
-	/*
-userAgent should not be used, but since there is a bug in Opera, and there is
-no way to detect this bug unless userAgent is used...
-	*/
-
-	if ((navigator.userAgent.indexOf("Opera") !== -1)) {
-		// does not work in Opera
-		// cannot work out why?
-		return false;
-	} else {
-
-		if (navigator.userAgent.indexOf("Gecko") !== -1){
-			// gecko based browsers should be ok
-			// this includes safari?
-			// continue to other tests..
-
-		} else {
-			if (navigator.userAgent.indexOf("MSIE") === -1) {
-				return false; // unknown..
+			var curleft = 0;
+			if (obj.offsetParent)
+			{
+				while (obj.offsetParent)
+				{
+					curleft += obj.offsetLeft;
+					obj = obj.offsetParent;
+				}
 			}
+			else if (obj.x)
+				curleft += obj.x;
+			return curleft;
 		}
 
-		//return false; // mozilla incompatible
-
-	}
-
-	// check if we can get by element id
-
-	if (!document.getElementById ){
-		
-		return false;
-	}
-
-	// check if we can XMLHttpRequest
-
-    return typeof XMLHttpRequest !== 'undefined';
-
-}
-
-///////////////////////////////////////////////
-var trip_count = 0;
-
-function check_selection(OffsetX, OffsetY) {
-
-	var grid_width=<?php echo G_WIDTH*BLK_WIDTH; ?>;
-	var grid_height=<?php echo G_HEIGHT*BLK_HEIGHT; ?>;
-
-	var blk_width = <?php echo BLK_WIDTH; ?>;
-	var blk_height = <?php echo BLK_HEIGHT; ?>;
-
-	window.map_x = OffsetX;
-	window.map_y = OffsetY;
-
-	window.clicked_block = ((window.map_x) / blk_width) + ((window.map_y/blk_height) * (grid_width/blk_width)) ;
-
-	if (window.clicked_block===0) {
-		// convert to string
-		window.clicked_block="0";
-
-	}
-
-	//////////////////////////////////////////////////
-	// Trip to the database.
-	//////////////////////////////////////////////////
-
-	var xmlhttp;
-
-	if (typeof XMLHttpRequest !== "undefined") {
-		xmlhttp = new XMLHttpRequest();
-	}
-
-	// Note: do not use &amp; for & here
-	xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+OffsetX+"&map_y="+OffsetY+"&block_id="+window.clicked_block+"&BID=<?php
-		$sesname = ini_get('session.name');
-		if ($sesname==''){
-			$sesname = 'PHPSESSID';
+		//Taken from http://www.quirksmode.org/js/findpos.html; but modified
+		function findPosY(obj)
+		{
+			var curtop = 0;
+			if (obj.offsetParent)
+			{
+				while (obj.offsetParent)
+				{
+					curtop += obj.offsetTop;
+					obj = obj.offsetParent;
+				}
+			}
+			else if (obj.y)
+				curtop += obj.y;
+			return curtop;
 		}
-		echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
 
-	if (trip_count !== 0){ // trip_count: global variable counts how many times it goes to the server
-		document.getElementById('submit_button1').disabled=true;
-		document.getElementById('submit_button2').disabled=true;
-		var pointer = document.getElementById('block_pointer');
-		pointer.style.cursor='wait';
-		var pixelimg = document.getElementById('pixelimg');
-		pixelimg.style.cursor='wait';
 
-	}
+		function is_browser_compatible() {
 
-	xmlhttp.onreadystatechange=function() {
-		if (xmlhttp.readyState===4) {
+			/*
+		userAgent should not be used, but since there is a bug in Opera, and there is
+		no way to detect this bug unless userAgent is used...
+			*/
 
-			// bad selection - not available
-			if (xmlhttp.responseText.indexOf('E432')>-1) {
-				alert(xmlhttp.responseText);
-				is_moving=true;
+			if ((navigator.userAgent.indexOf("Opera") !== -1)) {
+				// does not work in Opera
+				// cannot work out why?
+				return false;
+			} else {
+
+				if (navigator.userAgent.indexOf("Gecko") !== -1){
+					// gecko based browsers should be ok
+					// this includes safari?
+					// continue to other tests..
+
+				} else {
+					if (navigator.userAgent.indexOf("MSIE") === -1) {
+						return false; // unknown..
+					}
+				}
+
+				//return false; // mozilla incompatible
 
 			}
 
-			document.getElementById('submit_button1').disabled=false;
-			document.getElementById('submit_button2').disabled=false;
+			// check if we can get by element id
+
+			if (!document.getElementById ){
+
+				return false;
+			}
+
+			// check if we can XMLHttpRequest
+
+			return typeof XMLHttpRequest !== 'undefined';
+
+		}
+
+		///////////////////////////////////////////////
+		var trip_count = 0;
+
+		function check_selection(OffsetX, OffsetY) {
+
+			var grid_width=<?php echo G_WIDTH*BLK_WIDTH; ?>;
+			var grid_height=<?php echo G_HEIGHT*BLK_HEIGHT; ?>;
+
+			var blk_width = <?php echo BLK_WIDTH; ?>;
+			var blk_height = <?php echo BLK_HEIGHT; ?>;
+
+			window.map_x = OffsetX;
+			window.map_y = OffsetY;
+
+			window.clicked_block = ((window.map_x) / blk_width) + ((window.map_y/blk_height) * (grid_width/blk_width)) ;
+
+			if (window.clicked_block===0) {
+				// convert to string
+				window.clicked_block="0";
+
+			}
+
+			//////////////////////////////////////////////////
+			// Trip to the database.
+			//////////////////////////////////////////////////
+
+			var xmlhttp;
+
+			if (typeof XMLHttpRequest !== "undefined") {
+				xmlhttp = new XMLHttpRequest();
+			}
+
+			// Note: do not use &amp; for & here
+			xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+OffsetX+"&map_y="+OffsetY+"&block_id="+window.clicked_block+"&BID=<?php
+				$sesname = ini_get('session.name');
+				if ($sesname==''){
+					$sesname = 'PHPSESSID';
+				}
+				echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
+
+			if (trip_count !== 0){ // trip_count: global variable counts how many times it goes to the server
+				document.getElementById('submit_button1').disabled=true;
+				document.getElementById('submit_button2').disabled=true;
+				var pointer = document.getElementById('block_pointer');
+				pointer.style.cursor='wait';
+				var pixelimg = document.getElementById('pixelimg');
+				pixelimg.style.cursor='wait';
+
+			}
+
+			xmlhttp.onreadystatechange=function() {
+				if (xmlhttp.readyState===4) {
+
+					// bad selection - not available
+					if (xmlhttp.responseText.indexOf('E432')>-1) {
+						alert(xmlhttp.responseText);
+						is_moving=true;
+
+					}
+
+					document.getElementById('submit_button1').disabled=false;
+					document.getElementById('submit_button2').disabled=false;
+
+					var pointer = document.getElementById('block_pointer');
+					pointer.style.cursor='pointer';
+					var pixelimg = document.getElementById('pixelimg');
+					pixelimg.style.cursor='pointer';
+
+				}
+
+			};
+
+			xmlhttp.send(null);
+
+		}
+
+		function make_selection(event) {
+
+			event.stopPropagation();
+			event.preventDefault();
+
+			window.reserving = true;
+
+			var xmlhttp;
+
+			if (typeof XMLHttpRequest !== "undefined") {
+				xmlhttp = new XMLHttpRequest();
+			}
+
+			// Note: do not use &amp; for & here
+			xmlhttp.open("GET", "make_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+window.map_x+"&map_y="+window.map_y+"&block_id="+window.clicked_block+"&BID=<?php
+				$sesname = ini_get('session.name');
+				if ($sesname==''){
+					$sesname = 'PHPSESSID';
+				}
+				echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
 
 			var pointer = document.getElementById('block_pointer');
-			pointer.style.cursor='pointer';
+			pointer.style.cursor='wait';
 			var pixelimg = document.getElementById('pixelimg');
-			pixelimg.style.cursor='pointer';
+			pixelimg.style.cursor='wait';
+			document.body.style.cursor='wait';
+			var submit1 = document.getElementById('submit_button1');
+			var submit2 = document.getElementById('submit_button2');
+			submit1.disabled=true;
+			submit2.disabled=true;
+			submit1.value = "<?php echo $label['reserving_pixels']; ?>";
+			submit2.value = "<?php echo $label['reserving_pixels']; ?>";
+			submit1.style.cursor='wait';
+			submit2.style.cursor='wait';
 
+			xmlhttp.onreadystatechange=function() {
+				if (xmlhttp.readyState===4) {
+					document.form1.submit();
+				}
+			};
+
+			xmlhttp.send(null);
 		}
 
-	};
+		//////////////////////////////////////////
+		// Initialize
+		var block_str = "<?php echo $order_row["blocks"]; ?>";
+		trip_count = 0;
 
-	xmlhttp.send(null);
+		//////////////////////////////////
 
-}
-
-function make_selection(event) {
-
-	event.stopPropagation();
-	event.preventDefault();
-
-	window.reserving = true;
-
-	var xmlhttp;
-
-	if (typeof XMLHttpRequest !== "undefined") {
-		xmlhttp = new XMLHttpRequest();
-	}
-
-	// Note: do not use &amp; for & here
-	xmlhttp.open("GET", "make_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x="+window.map_x+"&map_y="+window.map_y+"&block_id="+window.clicked_block+"&BID=<?php
-		$sesname = ini_get('session.name');
-		if ($sesname==''){
-			$sesname = 'PHPSESSID';
-		}
-		echo $BID."&t=".time()."&$sesname=".session_id(); ?>",true);
-
-	var pointer = document.getElementById('block_pointer');
-	pointer.style.cursor='wait';
-	var pixelimg = document.getElementById('pixelimg');
-	pixelimg.style.cursor='wait';
-	document.body.style.cursor='wait';
-    var submit1 = document.getElementById('submit_button1');
-    var submit2 = document.getElementById('submit_button2');
-    submit1.disabled=true;
-    submit2.disabled=true;
-    submit1.value = "<?php echo $label['reserving_pixels']; ?>";
-    submit2.value = "<?php echo $label['reserving_pixels']; ?>";
-	submit1.style.cursor='wait';
-	submit2.style.cursor='wait';
-
-	xmlhttp.onreadystatechange=function() {
-		if (xmlhttp.readyState===4) {
-			document.form1.submit();
-		}
-	};
-
-	xmlhttp.send(null);
-}
-
-//////////////////////////////////////////
-// Initialize
-var block_str = "<?php echo $order_row["blocks"]; ?>";
-trip_count = 0;
-
-//////////////////////////////////
-
-var pos;
-function getObjCoords (obj) {
-  var pos = { x: 0, y: 0 };
-	var curtop = 0;
-	var curleft = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curtop += obj.offsetTop
-			curleft += obj.offsetLeft
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.y) {
-		curtop += obj.y;
-		curleft += obj.x;
-	}
-	pos.x = curleft;
-	pos.y = curtop;
-	return pos;
-}
-
-///////////////////////////////////////////////////
-
-function show_pointer (e) {
-button = document.getElementById('submit_button1');
-	
-	//return;
-	if (!browser_checked){
-		browser_compatible = is_browser_compatible();
-	}
-
-	if (!browser_compatible){
-		return false;
-	}
-
-	browser_checked=true;
-
-	var pixelimg = document.getElementById('pixelimg');
-	var pointer = document.getElementById('block_pointer');
-
-	if(!is_moving) return;
-
-		var pos = getObjCoords(pixelimg);
-
-	if (e.offsetX != undefined) {
-		var OffsetX = e.offsetX;
-		var OffsetY = e.offsetY;
-	} else {
-		var OffsetX = e.pageX - pos.x;
-		var OffsetY = e.pageY - pos.y;
-	}
-
-	OffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
-	OffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
-
-	if (isNaN(OffsetX)||isNaN(OffsetY))
-	{
-		return
-	}
-	
-	if (pointer_height+OffsetY > <?php echo G_HEIGHT*BLK_HEIGHT;?>)
-	{
-		
-	} else {
-		pointer.style.top=pos.y+OffsetY + 'px';
-		pointer.map_y=OffsetY;	
-	}
-
-	if (pointer_width+OffsetX > <?php echo G_WIDTH*BLK_WIDTH;?>)
-	{
-		
-	} else {
-		pointer.map_x=pos.x+OffsetX;
-	
-		pointer.style.left=pos.x+OffsetX + 'px';
-	}
-
-	return true;
-
-}
-
-var i_count =0;
-///////////////////////
-
-function show_pointer2 (e) {
-	//function called when mouse is over the actual pointing image
-
-	if(!is_moving) return;
-
-	var pixelimg = document.getElementById('pixelimg');
-	var pointer = document.getElementById('block_pointer');
-
-	var pos = getObjCoords(pixelimg);
-	var p_pos = getObjCoords(pointer);
-	
-	if (e.offsetX != undefined) {
-		var OffsetX = e.offsetX;
-		var OffsetY = e.offsetY;
-		var ie = true; 
-	} else {
-		var OffsetX = e.pageX - pos.x;
-		var OffsetY = e.pageY - pos.y;
-		var ie = false;
-	}
-
-	if (ie) { // special routine for internet explorer...
-
-		var rel_posx = p_pos.x-pos.x;
-		var rel_posy = p_pos.y-pos.y;
-		
-		pointer.map_x = rel_posx;
-		pointer.map_y = rel_posy;
-
-		if (isNaN(OffsetX)||isNaN(OffsetY)){
-			return
-		}
-		
-		if (OffsetX>=<?php echo BLK_WIDTH; ?>) { // move the pointer right
-			if (rel_posx+pointer_width >= <?php echo G_WIDTH*BLK_WIDTH; ?>) {
-			} else {
-				pointer.map_x=p_pos.x+<?php echo BLK_WIDTH; ?>;
-				pointer.style.left=pointer.map_x + 'px';
+		var pos;
+		function getObjCoords (obj) {
+			var pos = { x: 0, y: 0 };
+			var curtop = 0;
+			var curleft = 0;
+			if (obj.offsetParent)
+			{
+				while (obj.offsetParent)
+				{
+					curtop += obj.offsetTop;
+					curleft += obj.offsetLeft;
+					obj = obj.offsetParent;
+				}
 			}
-			
+			else if (obj.y) {
+				curtop += obj.y;
+				curleft += obj.x;
+			}
+			pos.x = curleft;
+			pos.y = curtop;
+			return pos;
 		}
 
-		if (OffsetY><?php echo BLK_HEIGHT; ?>) { // move the pointer down
-		
-			if (rel_posy+pointer_height >= <?php echo G_HEIGHT*BLK_HEIGHT; ?>) {
+		///////////////////////////////////////////////////
 
-				//return
-			} else {
+		function getRect(elem){
+			var rect = elem.getBoundingClientRect();
+			var win = elem.ownerDocument.defaultView;
 
-				pointer.map_y=p_pos.y+<?php echo BLK_HEIGHT; ?>;
-				pointer.style.top=pointer.map_y + 'px';
-			}	
+			return {
+				height: rect.height,
+				width: rect.width,
+				top: rect.top + win.pageYOffset,
+				bottom: rect.bottom + win.pageYOffset,
+				left: rect.left + win.pageXOffset,
+				right: rect.right + win.pageYOffset
+			};
 		}
-		
-	} else {
 
-		var tOffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
-		var tOffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
+		function show_pointer(event) {
 
-		
-		if (isNaN(OffsetX)||isNaN(OffsetY)) {
-			//alert ('naan');
-			return
-			
-		}
-		if (OffsetX>tOffsetX) {
+			var pixelimg = document.getElementById('pixelimg');
+			var pixelimgRect = getRect(pixelimg);
 
-			if (pointer_width+tOffsetX > <?php echo G_WIDTH*BLK_WIDTH;?>) {
-				// dont move left
-			} else {
-				pointer.map_x=tOffsetX;
-				pointer.style.left=pos.x+tOffsetX + 'px';
+			var pointer = document.getElementById('block_pointer');
+			var pointerRect = getRect(pointer);
+
+			if (!is_moving) return;
+
+			//var pos = getObjCoords(pixelimg);
+
+			// https://stackoverflow.com/a/7790764/311458
+			var eventDoc, doc, body, pageX, pageY;
+
+			event = event || window.event; // IE-ism
+
+			// If pageX/Y aren't available and clientX/Y are,
+			// calculate pageX/Y - logic taken from jQuery.
+			// (This is to support old IE)
+			if (event.pageX == null && event.clientX != null) {
+				eventDoc = (event.target && event.target.ownerDocument) || document;
+				doc = eventDoc.documentElement;
+				body = eventDoc.body;
+
+				event.pageX = event.clientX +
+					(doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+					(doc && doc.clientLeft || body && body.clientLeft || 0);
+				event.pageY = event.clientY +
+					(doc && doc.scrollTop || body && body.scrollTop || 0) -
+					(doc && doc.clientTop || body && body.clientTop || 0);
 			}
 
+			// Use event.pageX / event.pageY here
+
+			// cursor position aligned to the grid
+			var X = Math.trunc((event.pageX - pixelimgRect.left) / <?php echo BLK_WIDTH; ?>) * <?php echo BLK_WIDTH; ?>;
+			var Y = Math.trunc((event.pageY - pixelimgRect.top) / <?php echo BLK_HEIGHT; ?>) * <?php echo BLK_HEIGHT; ?>;
+
+			//console.log("X " + X);
+			//console.log("Y " + Y);
+
+			// X
+			var pointer_left = Math.trunc(pointerRect.left);
+			var pixelimg_left = Math.trunc(pixelimgRect.left);
+			var pointer_right = Math.trunc(pointerRect.right);
+			var pixelimg_right = Math.trunc(pixelimgRect.right);
+			if (pointer_left >= pixelimg_left && pointer_right <= pixelimg_right) {
+				pointer.style.left = Math.min(X + pixelimg_left, pixelimg_right - pointerRect.width) + 'px';
+				pointer.map_x = X;
+			}
+
+			// Y
+			var pointer_top = Math.trunc(pointerRect.top);
+			var pixelimg_top = Math.trunc(pixelimgRect.top);
+			var pointer_bottom = Math.trunc(pointerRect.bottom);
+			var pixelimg_bottom = Math.trunc(pixelimgRect.bottom);
+			if (pointer_top >= pixelimg_top && pointer_bottom <= pixelimg_bottom) {
+				pointer.style.top = Math.min(Y + pixelimg_top, pixelimg_bottom - pointerRect.height) + 'px';
+				pointer.map_y = Y;
+			}
+
+			// correct position if outside in case scrollbar moves
+			if (pointer_right > pixelimg_right) {
+				pointer.style.left = pixelimg_right - pointerRect.width + 'px';
+			}
+			if (pointer_left < pixelimg_left) {
+				pointer.style.left = pixelimg_left + 'px';
+			}
+
+			//console.log("pointerRect:");
+			//console.log(pointerRect);
+			//console.log("pixelimgRect:");
+			//console.log(pixelimgRect);
+
+			return true;
 		}
 
-		if (OffsetY>tOffsetY) {
+		var i_count =0;
+		///////////////////////
 
-			if (pointer_height+tOffsetY > <?php echo G_HEIGHT*BLK_HEIGHT;?>)
-			{ // dont move down
-				
+		function show_pointer2 (e) {
+			//function called when mouse is over the actual pointing image
+
+			if(!is_moving) return;
+
+			var pixelimg = document.getElementById('pixelimg');
+			var pointer = document.getElementById('block_pointer');
+
+			var pos = getObjCoords(pixelimg);
+			var p_pos = getObjCoords(pointer);
+
+			if (e.offsetX != undefined) {
+				var OffsetX = e.offsetX;
+				var OffsetY = e.offsetY;
+				var ie = true;
+			} else {
+				var OffsetX = e.pageX - pos.x;
+				var OffsetY = e.pageY - pos.y;
+				var ie = false;
+			}
+
+			if (ie) { // special routine for internet explorer...
+
+				var rel_posx = p_pos.x-pos.x;
+				var rel_posy = p_pos.y-pos.y;
+
+				pointer.map_x = rel_posx;
+				pointer.map_y = rel_posy;
+
+				if (isNaN(OffsetX)||isNaN(OffsetY)){
+					return
+				}
+
+				if (OffsetX>=<?php echo BLK_WIDTH; ?>) { // move the pointer right
+					if (rel_posx+pointer_width >= <?php echo G_WIDTH*BLK_WIDTH; ?>) {
+					} else {
+						pointer.map_x=p_pos.x+<?php echo BLK_WIDTH; ?>;
+						pointer.style.left=pointer.map_x + 'px';
+					}
+
+				}
+
+				if (OffsetY><?php echo BLK_HEIGHT; ?>) { // move the pointer down
+
+					if (rel_posy+pointer_height >= <?php echo G_HEIGHT*BLK_HEIGHT; ?>) {
+
+						//return
+					} else {
+
+						pointer.map_y=p_pos.y+<?php echo BLK_HEIGHT; ?>;
+						pointer.style.top=pointer.map_y + 'px';
+					}
+				}
+
 			} else {
 
-				pointer.style.top=pos.y+tOffsetY + 'px';
-				pointer.map_y=tOffsetY;	
+				var tOffsetX = Math.floor (OffsetX / <?php echo BLK_WIDTH; ?>)*<?php echo BLK_WIDTH; ?>;
+				var tOffsetY = Math.floor (OffsetY / <?php echo BLK_HEIGHT; ?>)*<?php echo BLK_HEIGHT; ?>;
+
+
+				if (isNaN(OffsetX)||isNaN(OffsetY)) {
+					//alert ('naan');
+					return
+
+				}
+				if (OffsetX>tOffsetX) {
+
+					if (pointer_width+tOffsetX > <?php echo G_WIDTH*BLK_WIDTH;?>) {
+						// dont move left
+					} else {
+						pointer.map_x=tOffsetX;
+						pointer.style.left=pos.x+tOffsetX + 'px';
+					}
+
+				}
+
+				if (OffsetY>tOffsetY) {
+
+					if (pointer_height+tOffsetY > <?php echo G_HEIGHT*BLK_HEIGHT;?>)
+					{ // dont move down
+
+					} else {
+
+						pointer.style.top=pos.y+tOffsetY + 'px';
+						pointer.map_y=tOffsetY;
+					}
+
+				}
+
 			}
 
 		}
 
-	}
+		//////
+		function get_clicked_block() {
 
-}
+			var pointer = document.getElementById('block_pointer');
 
-//////
-function get_clicked_block() {
+			var grid_width=<?php echo G_WIDTH*BLK_WIDTH;?>;
+			var grid_height=<?php echo G_HEIGHT*BLK_HEIGHT;?>;
 
-	var pointer = document.getElementById('block_pointer');
+			var blk_width = <?php echo BLK_WIDTH; ?>;
+			var blk_height = <?php echo BLK_HEIGHT; ?>;
 
-	var grid_width=<?php echo G_WIDTH*BLK_WIDTH;?>;
-	var grid_height=<?php echo G_HEIGHT*BLK_HEIGHT;?>;
+			var clicked_block = ((pointer.map_x) / blk_width) + ((pointer.map_y/blk_height) * (grid_width/blk_width)) ;
 
-	var blk_width = <?php echo BLK_WIDTH; ?>;
-	var blk_height = <?php echo BLK_HEIGHT; ?>;
+			if (clicked_block===0) {
+				clicked_block="0";// convert to string
 
-	var clicked_block = ((pointer.map_x) / blk_width) + ((pointer.map_y/blk_height) * (grid_width/blk_width)) ;
+			}
+			return clicked_block;
+		}
+		////////////////////
 
-	if (clicked_block===0) {
-		clicked_block="0";// convert to string
+		function do_block_click() {
 
-	}
-	return clicked_block;
-}
-////////////////////
+			if(window.reserving) {
+				return;
+			}
 
-function do_block_click() {
+			if (is_moving) {
+				var cb = get_clicked_block();
+				var pointer = document.getElementById('block_pointer');
+				trip_count=1;
+				check_selection(pointer.map_x, pointer.map_y);
+				low_x = pointer.map_x;
+				low_y = pointer.map_y;
 
-	if(window.reserving) {
-		return;
-	}
+				is_moving = false;
+			} else {
+				is_moving = true;
+			}
+		}
 
-	if (is_moving) {
-		var cb = get_clicked_block();
-		var pointer = document.getElementById('block_pointer');
-		trip_count=1;
-		check_selection(pointer.map_x, pointer.map_y);
-		low_x = pointer.map_x;
-		low_y = pointer.map_y;
+		var low_x=0;
+		var low_y=0;
 
-		is_moving = false;
-	} else {
-		is_moving = true;
-	}
-}
-
-var low_x=0;
-var low_y=0;
-
-<?php
+		<?php
 
 
 
 
-// get the top-most, left-most block
-$low_x = G_WIDTH*BLK_WIDTH;
-$low_y = G_HEIGHT*BLK_HEIGHT;
+		// get the top-most, left-most block
+		$low_x = G_WIDTH*BLK_WIDTH;
+		$low_y = G_HEIGHT*BLK_HEIGHT;
 
-//$sql = "select x,y  from blocks where session_id='".session_id()."' ";
+		//$sql = "select x,y  from blocks where session_id='".session_id()."' ";
 
-$sql = "SELECT block_info FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
+		$sql = "SELECT block_info FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
 
-//echo $sql;
-$result = mysqli_query($GLOBALS['connection'], $sql);
-$row = mysqli_fetch_array($result);
+		//echo $sql;
+		$result = mysqli_query($GLOBALS['connection'], $sql);
+		$row = mysqli_fetch_array($result);
 
 
-$filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt";
-if (file_exists($filename)) {
+		$filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt";
+		if (file_exists($filename)) {
 
-$fh = fopen ($filename, 'rb');
-$block_info = fread($fh, filesize($filename));
-fclose($fh);
+			$fh = fopen ($filename, 'rb');
+			$block_info = fread($fh, filesize($filename));
+			fclose($fh);
 
 //$block_info = unserialize ($row['block_info']);
-$block_info = unserialize ($block_info);
+			$block_info = unserialize ($block_info);
 
-}
+		}
 
-//echo "size of block_info:".sizeof($block_info[0]);
-$init = false;
-if (isset($block_info) && is_array($block_info)) {
+		//echo "size of block_info:".sizeof($block_info[0]);
+		$init = false;
+		if (isset($block_info) && is_array($block_info)) {
 
 //print_r ($block_info);
 
-	foreach ($block_info as $block) {
+			foreach ($block_info as $block) {
 
-		if ($low_x >= $block['map_x']) {
-			$low_x = $block['map_x'];
-			$init = true;
+				if ($low_x >= $block['map_x']) {
+					$low_x = $block['map_x'];
+					$init = true;
+				}
+
+				if ($low_y >= $block['map_y']) {
+					$low_y = $block['map_y'];
+					$init = true;
+				}
+
+			}
+
 		}
 
-		if ($low_y >= $block['map_y']) {
-			$low_y = $block['map_y'];
-			$init = true;
+		if (($low_x == (G_WIDTH*BLK_WIDTH)) && ($low_y == (G_HEIGHT*BLK_HEIGHT))) {
+
 		}
 
-	}
+		if (!$init) {
+			$low_x=0;
+			$low_y=0;
+			$is_moving = " is_moving=true ";
+		} else {
+			$is_moving = " is_moving=false ";
+		}
 
-}
+		echo "low_x = $low_x;";
+		echo "low_y = $low_y; $is_moving";
 
-if (($low_x == (G_WIDTH*BLK_WIDTH)) && ($low_y == (G_HEIGHT*BLK_HEIGHT))) {
+		?>
 
-}
+		function move_image_to_selection() {
 
-if (!$init) {
-	$low_x=0;
-	$low_y=0;
-	$is_moving = " is_moving=true ";
-} else {
-	$is_moving = " is_moving=false ";
-}
 
-echo "low_x = $low_x;";
-echo "low_y = $low_y; $is_moving";
+			var pointer = document.getElementById('block_pointer');
+			var pixelimg = document.getElementById('pixelimg');
+			var pos = getObjCoords (pixelimg)
 
-?>
+			pointer.style.top=pos.y+low_y + 'px';
+			pointer.map_y=low_y;
 
-function move_image_to_selection() {
+			pointer.style.left=pos.x+low_x + 'px';
+			pointer.map_x=low_x;
 
-	
-	var pointer = document.getElementById('block_pointer');
-	var pixelimg = document.getElementById('pixelimg');
-	var pos = getObjCoords (pixelimg)
+			pointer.style.visibility='visible';
+			//show_pointer ();
 
-	pointer.style.top=pos.y+low_y + 'px';
-	pointer.map_y=low_y;
+		}
 
-	pointer.style.left=pos.x+low_x + 'px';
-	pointer.map_x=low_x;
-
-	pointer.style.visibility='visible';
-	//show_pointer ();
-
-}
-
-</script>
+    </script>
 <?php
 
 if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
@@ -661,23 +695,23 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 	if (!in_array($ext, $ALLOWED_EXT)) {
 		$error .=  "<strong><font color='red'>".$label['advertiser_file_type_not_supp']." ($ext)</font></strong><br />";
 		$image_changed_flag = false;
-	
-	} 
+
+	}
 	if (isset($error)) {
 		//echo "<font color='red'>Error, image upload failed</font>";
 		echo $error;
 
 	} else {
 
-	
+
 		// clean up is handled by the delete_temp_order($sid) function...
 
 		delete_temp_order(session_id());
 
-		// delete temp_* files older than 24 hours 
+		// delete temp_* files older than 24 hours
 		$dh = opendir ($uploaddir) ;
 		while (($file = readdir($dh)) !== false) {
-			
+
 			$elapsed_time = 60*60*24; // 24 hours
 
 			// delete old files
@@ -688,9 +722,9 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 				}
 
 			}
-			
+
 		}
-		
+
 		$uploadfile = $uploaddir . "tmp_".md5(session_id()).".$ext";
 
 		if (move_uploaded_file($_FILES['graphic']['tmp_name'], $uploadfile)) {
@@ -710,8 +744,8 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 				$limit = G_MAX_BLOCKS * BLK_WIDTH * BLK_HEIGHT;
 
-				$label['max_pixels_required'] = str_replace('%MAX_PIXELS%', $limit, $label['max_pixels_required']);	
-				$label['max_pixels_required'] = str_replace('%COUNT%', $pixel_count, $label['max_pixels_required']);	
+				$label['max_pixels_required'] = str_replace('%MAX_PIXELS%', $limit, $label['max_pixels_required']);
+				$label['max_pixels_required'] = str_replace('%COUNT%', $pixel_count, $label['max_pixels_required']);
 				echo "<strong><font color='red'>";
 				echo $label['max_pixels_required'];
 				echo "</font></strong>";
@@ -720,8 +754,8 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 			} elseif (($block_size < G_MIN_BLOCKS) && (G_MIN_BLOCKS>0)) {
 
-				$label['min_pixels_required'] = str_replace('%COUNT%', $pixel_count, $label['min_pixels_required']);	
-				$label['min_pixels_required'] = str_replace('%MIN_PIXELS%', G_MIN_BLOCKS*BLK_WIDTH * BLK_HEIGHT , $label['min_pixels_required']);	
+				$label['min_pixels_required'] = str_replace('%COUNT%', $pixel_count, $label['min_pixels_required']);
+				$label['min_pixels_required'] = str_replace('%MIN_PIXELS%', G_MIN_BLOCKS*BLK_WIDTH * BLK_HEIGHT , $label['min_pixels_required']);
 				echo "<strong><font color='red'>";
 				echo $label['min_pixels_required'];
 				echo "</font></strong>";
@@ -729,7 +763,7 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 				unset($tmp_image_file);
 
 			}
-			
+
 		} else {
 			//echo "Possible file upload attack!\n";
 			echo $label['pixel_upload_failed'];
@@ -737,8 +771,8 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 	}
 
-	
-	
+
+
 
 
 
@@ -750,17 +784,17 @@ if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
 ?>
 
-<span id="block_pointer" onmousemove="show_pointer2(event)" onclick="do_block_click(event);" style='cursor: pointer;position:absolute;left:0px; top:0px;background:transparent; visibility:hidden '><img src="get_pointer_graphic.php?BID=<?php echo $BID; ?>" alt="" /></span>
+    <span id="block_pointer" onmousemove="show_pointer(event)" onclick="do_block_click(event);" style='font-size:1px;line-height:1px;height:<?php echo BLK_HEIGHT; ?>px;width:<?php echo BLK_WIDTH; ?>px;cursor: pointer;position:absolute;left:0px; top:0px;background:transparent; visibility:hidden '><img src="get_pointer_graphic.php?BID=<?php echo $BID; ?>" alt="" /></span>
 
 
-<p>
-<?php 
-show_nav_status (1);
-?>
-</p>
+    <p>
+		<?php
+		show_nav_status (1);
+		?>
+    </p>
 
 
-<p id="select_status" ><?php echo (isset($cannot_sel) ? $cannot_sel : ""); ?></p>
+    <p id="select_status" ><?php echo (isset($cannot_sel) ? $cannot_sel : ""); ?></p>
 
 <?php
 
@@ -768,22 +802,22 @@ $sql = "SELECT * FROM banners order by `name` ";
 $res = mysqli_query($GLOBALS['connection'], $sql);
 
 if (mysqli_num_rows($res)>1) {
-?>
-<div class="fancy_heading" style="width:85%;"><?php echo $label['advertiser_sel_pixel_inv_head']; ?></div>
-<p >
-<?php
+	?>
+    <div class="fancy_heading" style="width:85%;"><?php echo $label['advertiser_sel_pixel_inv_head']; ?></div>
+    <p >
+		<?php
 
-$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysqli_num_rows($res), $label['advertiser_sel_select_intro']);
+		$label['advertiser_sel_select_intro'] = str_replace("%IMAGE_COUNT%",mysqli_num_rows($res), $label['advertiser_sel_select_intro']);
 
-//echo $label['advertiser_sel_select_intro'];
+		//echo $label['advertiser_sel_select_intro'];
 
-?>
+		?>
 
-</p>
-<p>
-<?php display_banner_selecton_form($BID, $_SESSION['MDS_order_id'], $res); ?>
-</p>
-<?php
+    </p>
+    <p>
+		<?php display_banner_selecton_form($BID, $_SESSION['MDS_order_id'], $res); ?>
+    </p>
+	<?php
 }
 
 
@@ -807,32 +841,32 @@ if ($has_packages) {
 
 
 ?>
-<div class="fancy_heading" style="width:85%;"><?php echo $label['pixel_uploaded_head']; ?></div>
-<p>
-<?php echo $label['upload_pix_description']; ?>
-</p>
-<p>
-<?php
+    <div class="fancy_heading" style="width:85%;"><?php echo $label['pixel_uploaded_head']; ?></div>
+    <p>
+		<?php echo $label['upload_pix_description']; ?>
+    </p>
+    <p>
+		<?php
 
-if (USE_AJAX=='SIMPLE') {
-	$order_page = 'order_pixels.php';
-} else {
-	$order_page = 'select.php';
-}
+		if (USE_AJAX=='SIMPLE') {
+			$order_page = 'order_pixels.php';
+		} else {
+			$order_page = 'select.php';
+		}
 
-?>
-<form method='post' action="<?php echo htmlentities($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data" >
-<strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;' /><br />
-<input type='hidden' name='BID' value='<?php echo $BID;?>' />
-<input type='submit' value='<?php echo $label['pix_upload_button']; ?>' style=' font-size:18px;' />
+		?>
+    <form method='post' action="<?php echo htmlentities($_SERVER['PHP_SELF']);?>" enctype="multipart/form-data" >
+        <strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;' /><br />
+        <input type='hidden' name='BID' value='<?php echo $BID;?>' />
+        <input type='submit' value='<?php echo $label['pix_upload_button']; ?>' style=' font-size:18px;' />
 
-<?php
+		<?php
 
 
 
-?>
+		?>
 
-</form>
+    </form>
 
 <?php
 
@@ -851,84 +885,84 @@ if (!$tmp_image_file) {
 
 	?>
 
-	<div class="fancy_heading" style="margin-top:20px;width:85%;"><?php echo $label['your_uploaded_pix']; ?></div>
-	<p>
-	<?php
+    <div class="fancy_heading" style="margin-top:20px;width:85%;"><?php echo $label['your_uploaded_pix']; ?></div>
+    <p>
+		<?php
 
-	echo "<img style=\"border:0px;\" src='get_pointer_graphic.php?BID=".$BID."' alt=\"\" /><br />";
+		echo "<img style=\"border:0px;\" src='get_pointer_graphic.php?BID=".$BID."' alt=\"\" /><br />";
 
-	$size = getimagesize($tmp_image_file);
-	
-	?><?php 
-	$label['upload_image_size'] = str_replace("%WIDTH%", $size[0], $label['upload_image_size']);
-	$label['upload_image_size'] = str_replace("%HEIGHT%", $size[1], $label['upload_image_size']);
+		$size = getimagesize($tmp_image_file);
 
-	echo $label['upload_image_size']; 
-	?>
-	<br />
-	<?php
-	
-	$size = get_required_size($size[0], $size[1]);
+		?><?php
+		$label['upload_image_size'] = str_replace("%WIDTH%", $size[0], $label['upload_image_size']);
+		$label['upload_image_size'] = str_replace("%HEIGHT%", $size[1], $label['upload_image_size']);
 
-	$pixel_count = $size[0]*$size[1];
-	$block_size = $pixel_count / (BLK_WIDTH * BLK_HEIGHT);
-	$label['advertiser_require_pur'] = str_replace('%PIXEL_COUNT%',$pixel_count , $label['advertiser_require_pur']);
-	$label['advertiser_require_pur'] = str_replace('%BLOCK_COUNT%',$block_size, $label['advertiser_require_pur']);
-	echo $label['advertiser_require_pur'];
-	?>
-	
-	</p>
+		echo $label['upload_image_size'];
+		?>
+        <br />
+		<?php
+
+		$size = get_required_size($size[0], $size[1]);
+
+		$pixel_count = $size[0]*$size[1];
+		$block_size = $pixel_count / (BLK_WIDTH * BLK_HEIGHT);
+		$label['advertiser_require_pur'] = str_replace('%PIXEL_COUNT%',$pixel_count , $label['advertiser_require_pur']);
+		$label['advertiser_require_pur'] = str_replace('%BLOCK_COUNT%',$block_size, $label['advertiser_require_pur']);
+		echo $label['advertiser_require_pur'];
+		?>
+
+    </p>
 	<?php //echo $label['advertiser_select_instructions']; ?>
-	
-
-	<form method="post" action="order_pixels.php" name='pixel_form'>
-	<input type="hidden" name="jEditOrder" value="true">
-	
-	<p>
-	<input type="button" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
-	
-	</p>
-
-	<input type="hidden" value="1" name="select">
-	<input type="hidden" value="<?php echo $BID;?>" name="BID">
 
 
-	<img style="cursor: pointer;" id="pixelimg" <?php if ((USE_AJAX=='YES') || (USE_AJAX=='SIMPLE')) { ?> onmousemove="show_pointer(event)"  <?php } ?> type="image" name="map" value='Select Pixels.' width="<?php echo G_WIDTH*BLK_WIDTH; ?>"  height="<?php echo G_HEIGHT*BLK_HEIGHT; ?>" src="show_selection.php?BID=<?php echo $BID;?>&amp;gud=<?php echo time();?>" alt="" />
+    <form method="post" action="order_pixels.php" name='pixel_form'>
+        <input type="hidden" name="jEditOrder" value="true">
 
-	<input type="hidden" name="action" value="select">
-	</form>
-	<div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
-	<hr>
+        <p>
+            <input type="button" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
 
-	<form method="post" action="write_ad.php" name="form1">
-	<input type="hidden" name="package" value="">
-	<input type="hidden" name="selected_pixels" value=''>
-	<input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
-	<input type="hidden" value="<?php echo $BID;?>" name="BID">
-	<input type="submit" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
-	<hr />
-	</form>
+        </p>
 
-	<script type="text/javascript">
+        <input type="hidden" value="1" name="select">
+        <input type="hidden" value="<?php echo $BID;?>" name="BID">
 
-	document.form1.selected_pixels.value=block_str;
 
-	</script>
+        <img style="cursor: pointer;" id="pixelimg" <?php if ((USE_AJAX=='YES') || (USE_AJAX=='SIMPLE')) { ?> onmousemove="show_pointer(event)"  <?php } ?> type="image" name="map" value='Select Pixels.' width="<?php echo G_WIDTH*BLK_WIDTH; ?>"  height="<?php echo G_HEIGHT*BLK_HEIGHT; ?>" src="show_selection.php?BID=<?php echo $BID;?>&amp;gud=<?php echo time();?>" alt="" />
 
-	</div>
-<script type="text/javascript">
+        <input type="hidden" name="action" value="select">
+    </form>
+    <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
+        <hr>
 
-var pointer_width = <?php echo $size[0]; ?>;
-var pointer_height =  <?php echo $size[1]; ?>; 
-window.onresize = move_image_to_selection;
-window.onload = move_image_to_selection;
-move_image_to_selection();
+        <form method="post" action="write_ad.php" name="form1">
+            <input type="hidden" name="package" value="">
+            <input type="hidden" name="selected_pixels" value=''>
+            <input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
+            <input type="hidden" value="<?php echo $BID;?>" name="BID">
+            <input type="submit" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
+            <hr />
+        </form>
 
-</script>
+        <script type="text/javascript">
 
-<?php 
+			document.form1.selected_pixels.value=block_str;
 
-	
+        </script>
+
+    </div>
+    <script type="text/javascript">
+
+		var pointer_width = <?php echo $size[0]; ?>;
+		var pointer_height =  <?php echo $size[1]; ?>;
+		window.onresize = move_image_to_selection;
+		window.onload = move_image_to_selection;
+		move_image_to_selection();
+
+    </script>
+
+	<?php
+
+
 
 	//print_r($str);
 }

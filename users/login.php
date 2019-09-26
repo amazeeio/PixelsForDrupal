@@ -32,15 +32,17 @@
 session_start();
 require "../config.php";
 
-
 $target_page = $_REQUEST['target_page'];
 
-if ($target_page=='') $target_page='select.php';
+if ($target_page=='') {
+    $target_page='select.php';
+} else if($target_page != "index.php" && $target_page != "confirm_order.php") {
+    $target_page = "index.php";
+}
 
-?>
+include('login_functions.php');
 
-<?php include('login_functions.php'); ?>
-<html>
+?><html>
 <head>
 <link rel="stylesheet" type="text/css"
 href="style.css" />

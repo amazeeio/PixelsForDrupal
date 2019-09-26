@@ -271,7 +271,15 @@ function validate_signup_form() {
 
 function display_signup_form($FirstName, $LastName, $CompName, $Username, $password, $password2, $Email, $Newsletter, $Notification1, $Notification2, $lang) {
 
-	global $label;
+	global $label, $f2;
+
+	$FirstName = $f2->filter(stripslashes($FirstName));
+	$LastName = $f2->filter(stripslashes($LastName));
+	$CompName = $f2->filter(stripslashes($CompName));
+	$Username = $f2->filter($Username);
+	$password = $f2->filter(stripslashes($password));
+	$password2 = $f2->filter(stripslashes($password2));
+	$Email = $f2->filter($Email);
 
 	?>
 

@@ -683,16 +683,18 @@ require ("header.php");
 
 if (isset($_FILES['graphic']) && $_FILES['graphic']['tmp_name']!='') {
 
+    global $f2;
+
 	$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
 
 	//$parts = split ('\.', $_FILES['graphic']['name']);
 	$parts = $file_parts = pathinfo($_FILES['graphic']['name']);
-	$ext = strtolower($file_parts['extension']);
+	$ext = $f2->filter(strtolower($file_parts['extension']));
 
 	// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED
 	$ALLOWED_EXT= array('jpg', 'jpeg', 'gif', 'png');
 
-	if (!in_array($ext, $ALLOWED_EXT)) {
+	if (!in_array($ext, $ALLOWED_EXT) && file_exists($label['advertiser_file_type_not_supp'] . $ext)) {
 		$error .=  "<strong><font color='red'>".$label['advertiser_file_type_not_supp']." ($ext)</font></strong><br />";
 		$image_changed_flag = false;
 

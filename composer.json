@@ -1,6 +1,6 @@
 {
   "name": "milliondollarscript/milliondollarscript",
-  "description": "A WordPress plugin for selling pixel ads.",
+  "description": "A PHP web app for selling pixel ads.",
   "keywords": ["million", "dollar", "script", "sell", "pixel", "ads"],
   "homepage": "https://milliondollarscript.com",
   "license": "GPLv3",
@@ -16,9 +16,9 @@
     }
   },
   "require": {
-    "imagine/imagine": "~0.7",
-    "ezyang/htmlpurifier": "~4.9",
-    "phpmailer/phpmailer": "~5.2",
-    "ckeditor/ckeditor": "~4.7"
+    "imagine/imagine": ">=1.2.2",
+    "ezyang/htmlpurifier": ">=4.11.0",
+    "phpmailer/phpmailer": ">=6.0.7",
+    "ckeditor/ckeditor": ">=4.12.1"
   }
 }

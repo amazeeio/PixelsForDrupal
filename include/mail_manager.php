@@ -56,7 +56,7 @@ function queue_mail($to_address, $to_name, $from_address, $from_name, $subject, 
 	$now = (gmdate("Y-m-d H:i:s"));
 
 
-	$sql = "INSERT INTO mail_queue (mail_id, mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('', '$now', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $subject)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $message)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $html_message)."', '$attachments', 'queued', '', 0, '".intval($template_id)."', '$now')"; // 2006 copyr1ght jam1t softwar3
+	$sql = "INSERT INTO mail_queue (mail_date, to_address, to_name, from_address, from_name, subject, message, html_message, attachments, status, error_msg, retry_count, template_id, date_stamp) VALUES('$now', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $to_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_address)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $from_name)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $subject)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $message)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $html_message)."', '$attachments', 'queued', '', 0, '".intval($template_id)."', '$now')"; // 2006 copyr1ght jam1t softwar3
 
 	mysqli_query($GLOBALS['connection'], $sql) or q_mail_error (mysqli_error($GLOBALS['connection']).$sql);
 
@@ -221,7 +221,7 @@ function send_smtp_email( $mail_row ) {
 		);
 	}
 
-	$mail = new PHPMailer;
+	$mail = new PHPMailer\PHPMailer\PHPMailer;
 
 	$error = "";
 	try {
@@ -271,7 +271,7 @@ function send_smtp_email( $mail_row ) {
 			}
 		}
 
-	} catch ( phpmailerException $e ) {
+	} catch ( PHPMailer\PHPMailer\Exception $e ) {
 		$error = $e->errorMessage();
 		if ( $debug_level > 0 ) {
 			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
@@ -311,7 +311,7 @@ function send_phpmail( $mail_row ) {
 		$debug_level = 2;
 	}
 
-	$mail = new PHPMailer;
+	$mail = new PHPMailer\PHPMailer\PHPMailer;
 
 	$error = "";
 	try {
@@ -341,7 +341,7 @@ function send_phpmail( $mail_row ) {
 			}
 		}
 
-	} catch ( phpmailerException $e ) {
+	} catch ( PHPMailer\PHPMailer\Exception $e ) {
 		$error = $e->errorMessage();
 		if ( $debug_level > 0 ) {
 			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
@@ -408,29 +408,55 @@ function wp_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 	// Match the previous behaviour of _wp_specialchars() when the $quote_style is not an accepted value
 	if ( empty( $quote_style ) ) {
 		$quote_style = ENT_NOQUOTES;
-	} elseif ( !in_array( $quote_style, array( 0, 2, 3, 'single', 'double' ), true ) ) {
+	} elseif ( ! in_array( $quote_style, array( 0, 2, 3, 'single', 'double' ), true ) ) {
 		$quote_style = ENT_QUOTES;
 	}
 
 	// More complete than get_html_translation_table( HTML_SPECIALCHARS )
-	$single = array( '&#039;'  => '\'', '&#x27;' => '\'' );
-	$single_preg = array( '/&#0*39;/'  => '&#039;', '/&#x0*27;/i' => '&#x27;' );
-	$double = array( '&quot;' => '"', '&#034;'  => '"', '&#x22;' => '"' );
-	$double_preg = array( '/&#0*34;/'  => '&#034;', '/&#x0*22;/i' => '&#x22;' );
-	$others = array( '&lt;'   => '<', '&#060;'  => '<', '&gt;'   => '>', '&#062;'  => '>', '&amp;'  => '&', '&#038;'  => '&', '&#x26;' => '&' );
-	$others_preg = array( '/&#0*60;/'  => '&#060;', '/&#0*62;/'  => '&#062;', '/&#0*38;/'  => '&#038;', '/&#x0*26;/i' => '&#x26;' );
+	$single      = array(
+		'&#039;' => '\'',
+		'&#x27;' => '\'',
+	);
+	$single_preg = array(
+		'/&#0*39;/'   => '&#039;',
+		'/&#x0*27;/i' => '&#x27;',
+	);
+	$double      = array(
+		'&quot;' => '"',
+		'&#034;' => '"',
+		'&#x22;' => '"',
+	);
+	$double_preg = array(
+		'/&#0*34;/'   => '&#034;',
+		'/&#x0*22;/i' => '&#x22;',
+	);
+	$others      = array(
+		'&lt;'   => '<',
+		'&#060;' => '<',
+		'&gt;'   => '>',
+		'&#062;' => '>',
+		'&amp;'  => '&',
+		'&#038;' => '&',
+		'&#x26;' => '&',
+	);
+	$others_preg = array(
+		'/&#0*60;/'   => '&#060;',
+		'/&#0*62;/'   => '&#062;',
+		'/&#0*38;/'   => '&#038;',
+		'/&#x0*26;/i' => '&#x26;',
+	);
 
 	if ( $quote_style === ENT_QUOTES ) {
-		$translation = array_merge( $single, $double, $others );
+		$translation      = array_merge( $single, $double, $others );
 		$translation_preg = array_merge( $single_preg, $double_preg, $others_preg );
 	} elseif ( $quote_style === ENT_COMPAT || $quote_style === 'double' ) {
-		$translation = array_merge( $double, $others );
+		$translation      = array_merge( $double, $others );
 		$translation_preg = array_merge( $double_preg, $others_preg );
 	} elseif ( $quote_style === 'single' ) {
-		$translation = array_merge( $single, $others );
+		$translation      = array_merge( $single, $others );
 		$translation_preg = array_merge( $single_preg, $others_preg );
 	} elseif ( $quote_style === ENT_NOQUOTES ) {
-		$translation = $others;
+		$translation      = $others;
 		$translation_preg = $others_preg;
 	}
 

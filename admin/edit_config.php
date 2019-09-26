@@ -40,19 +40,6 @@ foreach ($_REQUEST as $key=>$val) {
 }
 
 if ($_REQUEST['save'] != '') {
-   if (get_magic_quotes_gpc()==0) { // magic is OFF?
-	   // need to add slashes here..
-	   $_REQUEST['site_name'] = addslashes($_REQUEST['site_name']);
-	   $_REQUEST['site_heading'] = addslashes($_REQUEST['site_heading']);
-	   $_REQUEST['site_description'] = addslashes($_REQUEST['site_description']);
-	   $_REQUEST['site_keywords'] = addslashes($_REQUEST['site_keywords']);
-
-   } else {
-	   // Magic Quotes is on, need to get rid of slashes here
-	   $header = stripslashes($header);
-	   $footer = stripslashes($footer);
-
-   }
 echo "updating config....";
 define('VERSION_INFO', addslashes($_REQUEST['version_info']));
 
@@ -268,15 +255,13 @@ define('ERROR_REPORTING', ".ERROR_REPORTING.");
 	// database connection
 	require_once(dirname(__FILE__).'/include/database.php');
 
-	// load HTMLPurifier
-    require_once dirname(__FILE__).'/vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
-    \$purifier = new HTMLPurifier(); 
+	// Composer autoloader
+    require_once dirname(__FILE__).'/vendor/autoload.php';
 	
 	require_once dirname(__FILE__).'/include/functions2.php';
 	\$f2 = new functions2();
 
 	include dirname(__FILE__).'/lang/lang.php';
-	require_once dirname(__FILE__).'/vendor/phpmailer/phpmailer/PHPMailerAutoload.php';
 	require_once dirname(__FILE__).'/include/mail_manager.php';
 	require_once dirname(__FILE__).'/include/currency_functions.php';
 	require_once dirname(__FILE__).'/include/price_functions.php';

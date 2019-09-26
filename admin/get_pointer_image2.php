@@ -37,7 +37,6 @@ if ( $f2->bid( $_REQUEST['BID'] ) != '' ) {
 	$BID = $f2->bid( $_REQUEST['BID'] );
 } else {
 	$BID = 1;
-
 }
 
 load_banner_constants( $BID );

@@ -48,9 +48,9 @@ load_banner_constants($BID);
 //$b_row = mysqli_fetch_array($result);
 
 ?>
+<span>
 The following screen shows a map of all the orders made on a grid. Move your mouse over the blocks to find who owns the order. Click on the block to manage the order.<br>
 Red blocks are on order (Status can be: 'reserved', 'ordered', 'sold'), Green blocks are currently selected (Status can be: 'new')
-
 </span>
 <?php
 

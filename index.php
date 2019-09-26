@@ -42,6 +42,7 @@ if(!file_exists(MDSROOT . "/config.php")) {
 			$protocol = ( ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] != 'off' ) || $_SERVER['SERVER_PORT'] == 443 ) ? "https://" : "http://";
 			$loc   = $protocol . $host . $uri . "/admin/install.php";
 			header("Location: $loc");
+			header("X-Frame-Options: allow-from " . $protocol . $host . $uri . "/");
 		}
 	}
 	echo "The file config.php was not found and I was unable to automatically rename it. You may have to manually rename config-default.php to config.php and then visit $loc to install the script.";

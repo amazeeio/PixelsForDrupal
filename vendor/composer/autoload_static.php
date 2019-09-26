@@ -10,14 +10,29 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     );
 
-    public static $prefixesPsr0 = array (
+    public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
         'I' => 
         array (
-            'Imagine' => 
-            array (
-                0 => __DIR__ . '/..' . '/imagine/imagine/lib',
-            ),
+            'Imagine\\' => 8,
         ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+        'Imagine\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/imagine/imagine/src',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
         'H' => 
         array (
             'HTMLPurifier' => 
@@ -27,22 +42,12 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
         ),
     );
 
-    public static $classMap = array (
-        'EasyPeasyICS' => __DIR__ . '/..' . '/phpmailer/phpmailer/extras/EasyPeasyICS.php',
-        'PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmailer.php',
-        'PHPMailerOAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmaileroauth.php',
-        'PHPMailerOAuthGoogle' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmaileroauthgoogle.php',
-        'POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.pop3.php',
-        'SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.smtp.php',
-        'ntlm_sasl_client_class' => __DIR__ . '/..' . '/phpmailer/phpmailer/extras/ntlm_sasl_client.php',
-        'phpmailerException' => __DIR__ . '/..' . '/phpmailer/phpmailer/class.phpmailer.php',
-    );
-
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$classMap;
 
         }, null, ClassLoader::class);
     }

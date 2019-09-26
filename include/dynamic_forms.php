@@ -536,7 +536,13 @@ function display_form( $form_id, $mode, $prams, $section ) {
 									$val = escape_html( $val );
 									echo $purifier->purify( $val );
 								} else {
-									echo form_text_field( $row['field_id'], $purifier->purify( $prams[ $row['field_id'] ] ), $row['field_width'] );
+									$textvalue = "";
+								    if(isset($row['field_id']) && isset($prams[ $row['field_id'] ] )) {
+                                        if(!empty($prams[ $row['field_id'] ])) {
+                                            $textvalue = $purifier->purify( $prams[ $row['field_id'] ] );
+                                        }
+									}
+									echo form_text_field( $row['field_id'], $textvalue, $row['field_width'] );
 									if ( $row['field_comment'] != '' ) {
 										echo " " . $purifier->purify( $row['field_comment'] ) . "";
 									}
@@ -1557,7 +1563,12 @@ function form_text_field( $field_name, $field_value, $width ) {
 	//$val = str_replace ("<", "&lt;", $field_value);
 	//$val = str_replace (">", "&gt;", $val);
 
-	return '<input class="dynamic_form_text_style" type="text" AUTOCOMPLETE="OFF" name="' . $field_name . '" value="' . $purifier->purify( $field_value ) . '" size="' . $width . '" >';
+    $value = "";
+    if(!empty($field_value)) {
+	    $value = $purifier->purify( $field_value );
+    }
+
+	return '<input class="dynamic_form_text_style" type="text" AUTOCOMPLETE="OFF" name="' . $field_name . '" value="' . $value . '" size="' . $width . '" >';
 }
 
 #######################################################

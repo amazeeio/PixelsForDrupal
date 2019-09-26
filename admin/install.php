@@ -117,6 +117,7 @@ if (is_writable("../vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCa
   
   //print_r($_SERVER);
 
+  $scheme = $_SERVER['REQUEST_SCHEME'] . '://';
   $host = $_SERVER['SERVER_NAME']; // hostname
   $http_url = $_SERVER['PHP_SELF']; // eg /ojo/admin/edit_config.php
   $http_url = explode ("/", $http_url);
@@ -132,7 +133,7 @@ if (is_writable("../vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCa
  // echo "<b> $file_path </b>";
 
  if (BASE_HTTP_PATH=='') {
-	$BASE_HTTP_PATH = "http://".$host.$http_url."/";
+	$BASE_HTTP_PATH = $scheme.$host.$http_url."/";
 
  } else {
 	$BASE_HTTP_PATH = BASE_HTTP_PATH;
@@ -172,7 +173,7 @@ if (!defined('UPLOAD_HTTP_PATH')) {
 	define ('UPLOAD_HTTP_PATH', "http://".$host.$http_url."/upload_files/");
 }
 if (UPLOAD_HTTP_PATH=='') {
-	$UPLOAD_HTTP_PATH = "http://" . str_replace('\\', '/', $host.$http_url."/upload_files/");
+	$UPLOAD_HTTP_PATH = $scheme . str_replace('\\', '/', $host.$http_url."/upload_files/");
 } else {
 	$UPLOAD_HTTP_PATH = UPLOAD_HTTP_PATH;
 }
@@ -187,7 +188,7 @@ if (UPLOAD_HTTP_PATH=='') {
     <tr>
       <td width="20%" bgcolor="#e6f2ea"><font face="Verdana" size="1">Site's HTTP URL (address)</font></td>
       <td bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="base_http_path" size="49" value="<?php echo htmlentities($BASE_HTTP_PATH); ?>"><br>Recommended: <b>http://<?php echo $BASE_HTTP_PATH; ?></b></font></td>
+      <input type="text" name="base_http_path" size="49" value="<?php echo htmlentities($BASE_HTTP_PATH); ?>"><br>Recommended: <b><?php echo $BASE_HTTP_PATH; ?></b></font></td>
     </tr>
    
 	 <tr>
@@ -275,18 +276,18 @@ function save_db_config() {
 	fclose ($handle);
 	$handle  = fopen($filename, "w");
 
-	$contents = preg_replace ( "/.*define\('MYSQL_HOST',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_HOST', '".$_REQUEST['mysql_host']."');", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_USER',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_USER', '".$_REQUEST['mysql_user']."');", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_PASS',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_PASS', '".$_REQUEST['mysql_pass']."');", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_DB',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_DB', '".    $_REQUEST['mysql_db']."');", $contents) ;
+	$contents = preg_replace ( "/.*define\('MYSQL_HOST',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_HOST', stripslashes('".preg_quote($_REQUEST['mysql_host'])."'));", $contents) ;
+	$contents = preg_replace ( "/.*define\('MYSQL_USER',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_USER', stripslashes('".preg_quote($_REQUEST['mysql_user'])."'));", $contents) ;
+	$contents = preg_replace ( "/.*define\('MYSQL_PASS',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_PASS', stripslashes('".preg_quote($_REQUEST['mysql_pass'])."'));", $contents) ;
+	$contents = preg_replace ( "/.*define\('MYSQL_DB',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_DB', stripslashes('".    preg_quote($_REQUEST['mysql_db'])."'));", $contents) ;
 	
-	$contents = preg_replace ( "/.*define\('SERVER_PATH_TO_ADMIN',[ ]*'[^']*'\);[ ]*/U", "define('SERVER_PATH_TO_ADMIN', '".$_REQUEST['server_path_to_admin']."');", $contents) ;
+	$contents = preg_replace ( "/.*define\('SERVER_PATH_TO_ADMIN',[ ]*'[^']*'\);[ ]*/U", "define('SERVER_PATH_TO_ADMIN', stripslashes('".preg_quote($_REQUEST['server_path_to_admin'])."'));", $contents) ;
 	
-	$contents = preg_replace ( "/.*define\('BASE_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('BASE_HTTP_PATH', '". $_REQUEST['base_http_path']."');", $contents) ;
+	$contents = preg_replace ( "/.*define\('BASE_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('BASE_HTTP_PATH', stripslashes('". preg_quote($_REQUEST['base_http_path'])."'));", $contents) ;
 
-	$contents = preg_replace ( "/.*define\('UPLOAD_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_PATH', '". $_REQUEST['upload_path']."');", $contents) ;
+	$contents = preg_replace ( "/.*define\('UPLOAD_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_PATH', stripslashes('". preg_quote($_REQUEST['upload_path'])."'));", $contents) ;
 
-	$contents = preg_replace ( "/.*define\('UPLOAD_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_HTTP_PATH', '". $_REQUEST['upload_http_path']."');", $contents) ;
+	$contents = preg_replace ( "/.*define\('UPLOAD_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_HTTP_PATH', stripslashes('". preg_quote($_REQUEST['upload_http_path'])."'));", $contents) ;
 
 	fwrite($handle , $contents);
 

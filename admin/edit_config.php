@@ -257,7 +257,9 @@ define('ERROR_REPORTING', ".ERROR_REPORTING.");
 
 	// Composer autoloader
     require_once dirname(__FILE__).'/vendor/autoload.php';
-	
+    
+	\$purifier = new HTMLPurifier(); 
+
 	require_once dirname(__FILE__).'/include/functions2.php';
 	\$f2 = new functions2();
 

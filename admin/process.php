@@ -46,6 +46,7 @@ if ($_REQUEST['process']=='1') {
 		$sql = "select * from banners ";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);	
 		while ($row = mysqli_fetch_array($result)) {
+			$BID = $row['banner_id'];
 			echo process_image($row['banner_id']);
 			publish_image($row['banner_id']);
 			process_map($row['banner_id']);

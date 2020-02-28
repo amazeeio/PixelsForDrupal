@@ -1,8 +1,7 @@
 <?php
 /**
- * @version        $Id: dynamic_forms.php 164 2012-12-14 21:22:24Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -189,14 +188,14 @@ function echo_order_arrows( $row ) {
         <table align="left" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td >
-                    <a href="' . urlencode( '?mode=edit&action=move_up&field_id=' . $row['field_id'] . '&field_sort=' . $row['field_sort'] . '&section=' . $row['section'] ) . '">
+                    <a href="' . '?mode=edit&action=move_up&field_id=' . $row['field_id'] . '&field_sort=' . $row['field_sort'] . '&section=' . $row['section'] . '">
                         <IMG SRC="sortup.gif" WIDTH="9" align="top" HEIGHT="13" BORDER="0" ALT="Move Up">
                     </a>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <a href="' . urlencode( '?mode=edit&action=move_down&field_id=' . $row['field_id'] . '&field_sort=' . $row['field_sort'] . '&section=' . $row['section'] ) . '">
+                    <a href="' . '?mode=edit&action=move_down&field_id=' . $row['field_id'] . '&field_sort=' . $row['field_sort'] . '&section=' . $row['section'] . '">
                         <IMG SRC="sortdown.gif" WIDTH="9" HEIGHT="13" BORDER="0" ALT="Move Down">
                     </a>
                 </td>
@@ -542,6 +541,7 @@ function display_form( $form_id, $mode, $prams, $section ) {
                                             $textvalue = $purifier->purify( $prams[ $row['field_id'] ] );
                                         }
 									}
+
 									echo form_text_field( $row['field_id'], $textvalue, $row['field_width'] );
 									if ( $row['field_comment'] != '' ) {
 										echo " " . $purifier->purify( $row['field_comment'] ) . "";
@@ -1047,7 +1047,7 @@ function validate_form_data( $form_id ) {
 
 		}
 
-		if ( BREAK_LONG_WORDS == 'YES' ) {
+		if ( defined("BREAK_LONG_WORDS") && BREAK_LONG_WORDS == 'YES' ) {
 
 			if ( ( $row['field_type'] == 'TEXT' ) || ( $row['field_type'] == 'TEXTAREA' ) ) {
 				// HTML not allowed
@@ -2767,6 +2767,11 @@ function fix_form_field_translations() {
 
 function check_for_bad_words( $data ) {
 	$found_bad = false;
+
+	if(!defined("BAD_WORD_FILTER") || !defined("BAD_WORDS")) {
+		return false;
+    }
+
 	if ( BAD_WORD_FILTER != 'YES' ) {
 		return false;
 	}

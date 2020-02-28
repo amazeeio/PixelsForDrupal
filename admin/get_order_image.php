@@ -1,11 +1,10 @@
 <?php
 /**
- * @version        $Id: get_order_image.php 137 2011-04-18 19:48:11Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author        Ryan Rhode, ryan@milliondollarscript.com
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
- *        it under the terms of the GNU General Public License as published by
+*        it under the terms of the GNU General Public License as published by
  *        the Free Software Foundation; either version 3 of the License, or
  *        (at your option) any later version.
  *
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 session_start();
@@ -44,7 +43,7 @@ if ( $f2->bid( $_REQUEST['BID'] ) != '' ) {
 
 }
 
-load_banner_constants( $BID );
+$banner_data = load_banner_constants( $BID );
 
 $imagine = new Imagine\Gd\Imagine();
 
@@ -99,7 +98,7 @@ while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 
 	$blocks[ $i ]['block_id'] = $block_row['block_id'];
 	if ( $block_row['image_data'] == '' ) {
-		$blocks[ $i ]['image_data'] = $imagine->load( GRID_BLOCK );
+		$blocks[ $i ]['image_data'] = $imagine->load( $banner_data['GRID_BLOCK'] );
 	} else {
 		$blocks[ $i ]['image_data'] = $imagine->load( base64_decode( $block_row['image_data'] ) );
 
@@ -117,8 +116,8 @@ $high_y = ! isset( $high_y ) ? 0 : $high_y;
 $low_x  = ! isset( $low_x ) ? 0 : $low_x;
 $low_y  = ! isset( $low_y ) ? 0 : $low_y;
 
-$x_size = ( $high_x + BLK_WIDTH ) - $low_x;
-$y_size = ( $high_y + BLK_HEIGHT ) - $low_y;
+$x_size = ( $high_x + $banner_data['BLK_WIDTH'] ) - $low_x;
+$y_size = ( $high_y + $banner_data['BLK_HEIGHT'] ) - $low_y;
 
 $new_blocks = array();
 foreach ( $blocks as $block ) {
@@ -126,7 +125,7 @@ foreach ( $blocks as $block ) {
 	$new_blocks[ $id ] = $block;
 }
 
-$std_image = $imagine->load( GRID_BLOCK );
+$std_image = $imagine->load( $banner_data['GRID_BLOCK'] );
 
 // grid size
 $size = new Imagine\Image\Box( $x_size, $y_size );
@@ -138,8 +137,8 @@ $image   = $imagine->create( $size, $color );
 
 $block_count = 0;
 
-for ( $i = 0; $i < $y_size; $i += BLK_HEIGHT ) {
-	for ( $j = 0; $j < $x_size; $j = $j + BLK_WIDTH ) {
+for ( $i = 0; $i < $y_size; $i += $banner_data['BLK_HEIGHT'] ) {
+	for ( $j = 0; $j < $x_size; $j = $j + $banner_data['BLK_WIDTH'] ) {
 		if ( isset( $new_blocks["$j$i"] ) && $new_blocks["$j$i"]['image_data'] != '' ) {
 			$image->paste( $new_blocks["$j$i"]['image_data'], new Imagine\Image\Point( $j, $i ) );
 		}

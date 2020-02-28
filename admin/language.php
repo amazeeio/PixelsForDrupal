@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: language.php 88 2010-10-12 16:43:19Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,17 +25,14 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
 require_once ('../include/dynamic_forms.php');
 require_once ('../include/code_functions.php');
-
-
 ?>
 <?php echo $f2->get_doc(); ?>
 
@@ -78,6 +74,7 @@ function confirmLink(theLink, theConfirmMsg)
 
 
 function validate_input () {
+    $error = '';
 	if ($_REQUEST['lang_code']=='') {
 		
 		$error .= "- Language Code is blank <br>";
@@ -236,11 +233,11 @@ if ($_REQUEST['submit']!='') {
 				<td><font size="2"><?php echo $row['lang_code'];?></font></td>
 				<td><font size="2"><?php echo $row['lang_filename'];?></font></td>
 				<td><font size="2"><img alt="<?php echo $row['lang_code'];?>" src="lang_image.php?code=<?php echo $row['lang_code'];?>"/></font></td>
-				<td><font size="2">  <?php if ($row[is_active]=='Y') { ?><IMG SRC="active.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } else { ?><IMG SRC="notactive.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } ;?> <?php if ($row[is_active]!='Y') {?> [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=activate&code=<?php echo $row['lang_code'];?>">Activate</a>] <?php } if ($row[is_active]=='Y') {?> [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=deactivate&code=<?php echo $row['lang_code'];?>">Deactivate</a>] <?php }?>[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=edit&code=<?php echo $row['lang_code'];?>">Edit</a>] <?php if ($row['is_default']!='Y') {  ?> [<a onclick=" return confirmLink(this, 'Delete, are you sure?') " href="<?php echo $_SERVER['PHP_SELF'];?>?action=delete&code=<?php echo $row['lang_code'];?>">Delete</a>] <?php } ?> 
-				[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=default&code=<?php echo $row['lang_code'];?>"><?php if ($row[is_default]=='N') { echo "Set Default";  }?></a> <?php if ($row[is_default]=='Y') { echo "Default";} ; ?>]
+				<td><font size="2">  <?php if ($row['is_active']=='Y') { ?><IMG SRC="active.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } else { ?><IMG SRC="notactive.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } ;?> <?php if ($row['is_active']!='Y') {?> [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=activate&code=<?php echo $row['lang_code'];?>">Activate</a>] <?php } if ($row['is_active']=='Y') {?> [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=deactivate&code=<?php echo $row['lang_code'];?>">Deactivate</a>] <?php }?>[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=edit&code=<?php echo $row['lang_code'];?>">Edit</a>] <?php if ($row['is_default']!='Y') {  ?> [<a onclick=" return confirmLink(this, 'Delete, are you sure?') " href="<?php echo $_SERVER['PHP_SELF'];?>?action=delete&code=<?php echo $row['lang_code'];?>">Delete</a>] <?php } ?>
+				[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=default&code=<?php echo $row['lang_code'];?>"><?php if ($row['is_default']=='N') { echo "Set Default";  }?></a> <?php if ($row['is_default']=='Y') { echo "Default";} ; ?>]
 				</font></td>
 				<?php
-				$new_window = "onclick=\"window.open('translation_tool.php?target_lang=".$row[lang_code]."', '', 'toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=yes,resizable=1,width=800,height=500,left = 50,top = 50');return false;\"";	
+				$new_window = "onclick=\"window.open('translation_tool.php?target_lang=".$row['lang_code']."', '', 'toolbar=no,scrollbars=yes,location=no,statusbar=no,menubar=yes,resizable=1,width=800,height=500,left = 50,top = 50');return false;\"";
 				
 				?>
 				<td>

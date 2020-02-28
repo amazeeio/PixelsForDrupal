@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: confirm_order.php 137 2011-04-18 19:48:11Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -186,7 +185,7 @@ show_nav_status (3);
 			$row = mysqli_fetch_array($result);
 			$quantity = $row['quantity'];
 
-			$block_count = $quantity / (BLK_WIDTH*BLK_HEIGHT);
+			$block_count = $quantity / ($b_row['BLK_WIDTH']*$b_row['BLK_HEIGHT']);
 			
 			// Now update the order (overwite the total & days_expire with the package)
 
@@ -259,7 +258,7 @@ show_nav_status (3);
 		if (!can_user_order($b_row, $_SESSION['MDS_ID'], (isset($_REQUEST['pack'])?$_REQUEST['pack']:""))) { // one more check before continue
 
 			if (!$p_max_ord) {
-				$max = G_MAX_ORDERS;
+				$max = $b_row['G_MAX_ORDERS'];
 			} else {	
 				$max = $p_max_ord;
 			}

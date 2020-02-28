@@ -1,11 +1,10 @@
 <?php
 /**
- * @version        $Id: show_map.php 137 2011-04-18 19:48:11Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author        Ryan Rhode, ryan@milliondollarscript.com
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
- *        it under the terms of the GNU General Public License as published by
+*        it under the terms of the GNU General Public License as published by
  *        the Free Software Foundation; either version 3 of the License, or
  *        (at your option) any later version.
  *
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -41,9 +40,20 @@ require_once( "../include/output_grid.php" );
 $BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
 
 output_grid( true, "", $BID, array(
+//	'background',
+//	'orders',
+//	'grid',
+//	'reserved',
+//	'selected',
+
 	'background',
 	'orders',
 	'grid',
+	'nfs',
+	'ordered',
 	'reserved',
 	'selected',
+	'sold',
+	'price_zones',
+	'price_zones_text',
 ));

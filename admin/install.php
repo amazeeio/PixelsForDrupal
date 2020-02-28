@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: install.php 162 2012-12-12 16:48:21Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,9 +25,10 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
+
 if (isset($_REQUEST['action']) && $_REQUEST['action']=='install') {
 	
 	save_db_config();
@@ -48,20 +48,28 @@ require_once("../include/database.php");
 
 }
 $sql = "select * from users";
-if ($result = mysqli_query($conn, $sql)) {
-	echo "<h3>Database successfully Installed.</h3>";
-	echo "<p>";
-	echo "Next Steps:<br>";
-	echo "1. Delete this file (install.php) from the server<br>";
-	echo "2. Note: You must go to Admin-&gt;Main Config now and set up the rest of the script.<br>";
-	echo " <a href='".BASE_HTTP_PATH."admin/'>Go to Admin</a>. <b>(The default admin password is 'ok'. Please don't forget to change the default password.)</b><br>";
-	
+if ( $result = mysqli_query( $GLOBALS['connection'], $sql ) ) {
+	?>
+	<h2>Database successfully Installed.</h2>
+	<h3>Next Steps</h3>
+	<ol>
+		<li>Delete this file (/admin/install.php) from the server.</li>
+		<li><a target="_blank" href="<?php echo htmlspecialchars( BASE_HTTP_PATH, ENT_QUOTES, false ); ?>admin/">Go to Admin</a> &gt; Main Config and configure it to your liking.</li>
+		<li>Install, enable and configure a payment module under Payment Modules.</li>
+		<li>Edit your grid settings under Manage Grids.</li>
+		<li>Run the Process Pixels task from the admin area to generate your initial grid image.</li>
+	</ol>
+	<?php
 	die();
-
 }
 
 ?>
-<h3>Million Dollar Script - Database Installation</h3>
+<h2 style="text-align:center;">Million Dollar Script - Database Installation</h2>
+	<div style="font-family:'Arial', sans-serif;padding:10px;background-color:rgba(214,241,255,0.98);border-radius:10px;text-align:center;font-weight:bold;width:50%;margin:0 auto;line-height:1.5;">
+		Having issues installing and want the developer to do it for you?<br />
+		Want to <a target="_blank" href="https://milliondollarscript.com/article/wordpress-integration/">integrate with WordPress</a> and don't want to wait for MDS 3.0?<br />
+		<a target="_blank" href="https://milliondollarscript.com/product/million-dollar-script-installation-service/">Order the premium install service</a>!
+	</div>
 <p>
 Please fill in the form and click install.<br>
 Please make sure that the MySQL user has all the permissions to use the database (Admin privileges).<br>
@@ -141,11 +149,10 @@ if (is_writable("../vendor/ezyang/htmlpurifier/library/HTMLPurifier/DefinitionCa
 
  if (SERVER_PATH_TO_ADMIN=='') {
 	$SERVER_PATH_TO_ADMIN = str_replace('\\', '/', getcwd())."/";
-
  } else {
 	 $SERVER_PATH_TO_ADMIN = SERVER_PATH_TO_ADMIN;
-
  }
+$SERVER_PATH_TO_ADMIN = str_replace('\\', '/', $SERVER_PATH_TO_ADMIN);
 
  if (!defined('UPLOAD_PATH')) {
 	$dir = dirname(__FILE__);
@@ -160,6 +167,7 @@ if (UPLOAD_PATH=='') {
 } else {
 	$UPLOAD_PATH = UPLOAD_PATH;
 }
+$UPLOAD_PATH = str_replace('\\', '/', $UPLOAD_PATH);
 
 if (!defined('UPLOAD_HTTP_PATH')) {
 
@@ -170,7 +178,7 @@ if (!defined('UPLOAD_HTTP_PATH')) {
 	array_pop($http_url); // get rid of /admin
 	$http_url = implode ("/", $http_url);
 
-	define ('UPLOAD_HTTP_PATH', "http://".$host.$http_url."/upload_files/");
+	define ('UPLOAD_HTTP_PATH', $scheme.$host.$http_url."/upload_files/");
 }
 if (UPLOAD_HTTP_PATH=='') {
 	$UPLOAD_HTTP_PATH = $scheme . str_replace('\\', '/', $host.$http_url."/upload_files/");
@@ -194,7 +202,7 @@ if (UPLOAD_HTTP_PATH=='') {
 	 <tr>
       <td bgcolor="#e6f2ea"><font face="Verdana" size="1">Server Path to Admin</font></td>
       <td bgcolor="#e6f2ea"><font face="Verdana" size="1">
-      <input type="text" name="server_path_to_admin" size="49" value="<?php echo htmlentities($SERVER_PATH_TO_ADMIN); ?>" ><br>Recommended: <b><?php echo $SERVER_PATH_TO_ADMIN;?>/</b></font></td>
+      <input type="text" name="server_path_to_admin" size="49" value="<?php echo htmlentities($SERVER_PATH_TO_ADMIN); ?>" ><br>Recommended: <b><?php echo $SERVER_PATH_TO_ADMIN;?></b></font></td>
     </tr>
 	<tr>
       <td bgcolor="#e6f2ea"><font face="Verdana" size="1">Path to upload directory</font></td>
@@ -206,27 +214,6 @@ if (UPLOAD_HTTP_PATH=='') {
       <td bgcolor="#e6f2ea"><font face="Verdana" size="1">
       <input type="text" name="upload_http_path" size="55" value="<?php echo htmlentities($UPLOAD_HTTP_PATH); ?>" ><br>Recommended: <b><?php echo $UPLOAD_HTTP_PATH;?></b></font></td>
     </tr>
-	<tr>
-	<td colspan="2">
-	<font face="Verdana" size="1">
-NOTES<br>
- - Server Path to Admin is the full path to your admin directory, <font color="red">including a slash at the end</font><br>
- - The Site's HTTP URL must include a<font color="red"> slash at the end</font><br>
- - Use the recommended settings unless you are sure otherwise<br>
- Also, don't forget to set the permissions of the admin/temp/ directory to 777.<br> The script must be able to write  to temp/ dir in the admin<br>
- The script also needs to be able to write to the pixels/ directory (chmod 777) <br>
- -Sometimes your web server configuration may desire different permissions than what is listed here in order for files to execute properly.  i.e. if you are running suExec, etc.<br />
-You should check with your host if you are unsure.
- </font>
-	</td>
-
-	</tr>
-</table>
-
-<p>&nbsp;</p>
-  <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
-
-
     <tr>
       <td colspan="2"  bgcolor="#e6f2ea">
       <font face="Verdana" size="1"><b>Mysql Settings</b></font></td>
@@ -263,35 +250,45 @@ You should check with your host if you are unsure.
 	<input type="submit" value="Install">
 </p>
 </form>
-<?php
 
+<h3>NOTES</h3>
+<ul>
+	<li>It is strongly recommended to use https to install and access your site.</li>
+	<li>Server Path to Admin is the full path to your admin directory, <font color="red">including a slash at the end</font></li>
+	<li>The Site's HTTP URL must include a<font color="red"> slash at the end</font></li>
+	<li>Use the recommended settings unless you are sure otherwise</li>
+	<li>Most modern hosts you do not have to worry about file and folder permissions. However on some hosts you may have to adjust the permissions of some folders to make them writable by the web server.</li>
+	<li>Sometimes your web server configuration may requipre different permissions in order for files to execute properly.  i.e. if you are running suExec, etc.</li>
+	<li>You should check with your host if you are unsure.</li>
+</ul>
+<?php
 
 function save_db_config() {
 	require_once '../include/functions2.php';
 	$f2 = new functions2();
 
 	$filename = "../config.php";
-	$handle  = fopen($filename, "r");
-	$contents = fread($handle , filesize($filename));
-	fclose ($handle);
-	$handle  = fopen($filename, "w");
+	$handle   = fopen( $filename, "r" );
+	$contents = fread( $handle, filesize( $filename ) );
+	fclose( $handle );
+	$handle = fopen( $filename, "w" );
 
-	$contents = preg_replace ( "/.*define\('MYSQL_HOST',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_HOST', stripslashes('".preg_quote($_REQUEST['mysql_host'])."'));", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_USER',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_USER', stripslashes('".preg_quote($_REQUEST['mysql_user'])."'));", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_PASS',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_PASS', stripslashes('".preg_quote($_REQUEST['mysql_pass'])."'));", $contents) ;
-	$contents = preg_replace ( "/.*define\('MYSQL_DB',[ ]*'[^']*'\);[ ]*/U", "define('MYSQL_DB', stripslashes('".    preg_quote($_REQUEST['mysql_db'])."'));", $contents) ;
-	
-	$contents = preg_replace ( "/.*define\('SERVER_PATH_TO_ADMIN',[ ]*'[^']*'\);[ ]*/U", "define('SERVER_PATH_TO_ADMIN', stripslashes('".preg_quote($_REQUEST['server_path_to_admin'])."'));", $contents) ;
-	
-	$contents = preg_replace ( "/.*define\('BASE_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('BASE_HTTP_PATH', stripslashes('". preg_quote($_REQUEST['base_http_path'])."'));", $contents) ;
+	$contents = preg_replace( "/.*define\( 'MYSQL_HOST',[ ]*'[^']*' \);[ ]*/U", "define( 'MYSQL_HOST', '" . $_REQUEST['mysql_host'] . "' );", $contents );
+	$contents = preg_replace( "/.*define\( 'MYSQL_USER',[ ]*'[^']*' \);[ ]*/U", "define( 'MYSQL_USER', '" . $_REQUEST['mysql_user'] . "' );", $contents );
+	$contents = preg_replace( "/.*define\( 'MYSQL_PASS',[ ]*'[^']*' \);[ ]*/U", "define( 'MYSQL_PASS', '" . $_REQUEST['mysql_pass'] . "' );", $contents );
+	$contents = preg_replace( "/.*define\( 'MYSQL_DB',[ ]*'[^']*' \);[ ]*/U", "define( 'MYSQL_DB', '" . $_REQUEST['mysql_db'] . "' );", $contents );
 
-	$contents = preg_replace ( "/.*define\('UPLOAD_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_PATH', stripslashes('". preg_quote($_REQUEST['upload_path'])."'));", $contents) ;
+	$contents = preg_replace( "/.*define\( 'SERVER_PATH_TO_ADMIN',[ ]*'[^']*' \);[ ]*/U", "define( 'SERVER_PATH_TO_ADMIN', '" . $_REQUEST['server_path_to_admin'] . "' );", $contents );
 
-	$contents = preg_replace ( "/.*define\('UPLOAD_HTTP_PATH',[ ]*'[^']*'\);[ ]*/U", "define('UPLOAD_HTTP_PATH', stripslashes('". preg_quote($_REQUEST['upload_http_path'])."'));", $contents) ;
+	$contents = preg_replace( "/.*define\( 'BASE_HTTP_PATH',[ ]*'[^']*' \);[ ]*/U", "define( 'BASE_HTTP_PATH', '" . $_REQUEST['base_http_path'] . "' );", $contents );
 
-	fwrite($handle , $contents);
+	$contents = preg_replace( "/.*define\( 'UPLOAD_PATH',[ ]*'[^']*' \);[ ]*/U", "define( 'UPLOAD_PATH', '" . $_REQUEST['upload_path'] . "' );", $contents );
 
-	fclose ($handle);
+	$contents = preg_replace( "/.*define\( 'UPLOAD_HTTP_PATH',[ ]*'[^']*' \);[ ]*/U", "define( 'UPLOAD_HTTP_PATH', '" . $_REQUEST['upload_http_path'] . "' );", $contents );
+
+	fwrite( $handle, $contents );
+
+	fclose( $handle );
 	//echo " done.";
 }
 ###################################
@@ -381,7 +378,7 @@ function install_db() {
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
     
     
-        INSERT INTO `banners` VALUES (1, 100, 100, 1, 100, 'Million Pixels. (1000x1000)', 'USD', NULL, 1, 10, 10, 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4AQMAAAADqqSRAAAABlBMVEXW19b///9ZVCXjAAAAJklEQVR4nGNgQAP197///Y8gBpw/6r5R9426b9R9o+4bdd8wdB8AiRh20BqKw9IAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFElEQVR4nGP83+DAgBsw4ZEbwdIAJ/sB02xWjpQAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGP8/58BD2DCJzlypQF0BwISHGyJPgAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGNk+M+ABzDhkxy50gBALQETmXEDiQAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAEklEQVR4nGP8z4APMOGVHbHSAEEsAROxCnMTAAAAAElFTkSuQmCC', 500, 0, '2007-02-17 10:48:32', '#FFffFF', 'Y', 'Y', 1171775611);;;
+        INSERT INTO `banners` VALUES (1, 100, 100, 0, 100, 'Million Pixels. (1000x1000)', 'USD', NULL, 1, 10, 10, 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4AQMAAAADqqSRAAAABlBMVEXW19b///9ZVCXjAAAAJklEQVR4nGNgQAP197///Y8gBpw/6r5R9426b9R9o+4bdd8wdB8AiRh20BqKw9IAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAHklEQVR4nGO8cuUKA27AwsDAoK2tjUuaCY/W4SwNAJbvAxP1WmxKAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVR4nGP8//8/A27AhEduBEsDAKXjAxF9kqZqAAAAAElFTkSuQmCC', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFElEQVR4nGP83+DAgBsw4ZEbwdIAJ/sB02xWjpQAAAAASUVORK5CYII=', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGP8/58BD2DCJzlypQF0BwISHGyJPgAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAE0lEQVR4nGNk+M+ABzDhkxy50gBALQETmXEDiQAAAABJRU5ErkJggg==', 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAEklEQVR4nGP8z4APMOGVHbHSAEEsAROxCnMTAAAAAElFTkSuQmCC', 500, 0, '2007-02-17 10:48:32', '#FFffFF', 'Y', 'Y', 1171775611);;;
         
         CREATE TABLE `categories` (
           `category_id` int(11) NOT NULL default '0',
@@ -539,11 +536,11 @@ function install_db() {
           PRIMARY KEY  (`code`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
     
-        INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.0075, 'N', '$', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 0.99489, 'N', '$', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.77476, 'N', '€', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.64337, 'N', '£', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 83.149, 'N', '¥', 0, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.5193, 'N', '$', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 1.3378, 'N', '$', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.9095, 'N', '€', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.7756, 'N', '£', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 109.6790, 'N', '¥', 0, '.', ',');;;
         INSERT INTO `currencies` VALUES ('USD', 'U.S. Dollar', 1.0000, 'Y', '$', 2, '.', ',');;;
     
         CREATE TABLE `lang` (
@@ -899,11 +896,11 @@ function install_db() {
           PRIMARY KEY  (`code`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
     
-        INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.0075, 'N', '$', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 0.99489, 'N', '$', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.77476, 'N', '€', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.64337, 'N', '£', 2, '.', ',');;;
-        INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 83.149, 'N', '¥', 0, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('AUD', 'Australian Dollar', 1.52003, 'N', '$', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('CAD', 'Canadian Dollar', 1.33634, 'N', '$', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('EUR', 'Euro', 0.911083, 'N', '€', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('GBP', 'British Pound', 0.776339, 'N', '£', 2, '.', ',');;;
+        INSERT INTO `currencies` VALUES ('JPY', 'Japanese Yen', 109.951, 'N', '¥', 0, '.', ',');;;
         INSERT INTO `currencies` VALUES ('USD', 'U.S. Dollar', 1.0000, 'Y', '$', 2, '.', ',');;;
     
         CREATE TABLE `lang` (
@@ -1070,9 +1067,7 @@ function install_db() {
 
 	//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	//$rows = mysqli_affected_rows ($result);;;
-	echo count($queries)." Operations Completed.<br>";
-
-
+	echo count($queries)." Operations Completed.";
 }
 
 

@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: mail_manager.php 64 2010-09-12 01:18:42Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -246,13 +245,13 @@ function send_smtp_email( $mail_row ) {
 			$mail->Password = EMAIL_SMTP_PASS;
 		}
 
-		$mail->setFrom( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
-		$mail->addReplyTo( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
-		$mail->addAddress( $mail_row['to_address'], wp_specialchars_decode( $mail_row['to_name'] ) );
-		$mail->Subject = wp_specialchars_decode( $mail_row['subject'] );
+		$mail->setFrom( $mail_row['from_address'], mds_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addReplyTo( $mail_row['from_address'], mds_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addAddress( $mail_row['to_address'], mds_specialchars_decode( $mail_row['to_name'] ) );
+		$mail->Subject = mds_specialchars_decode( $mail_row['subject'] );
 
-		$html = wp_specialchars_decode( $mail_row['html_message'] );
-		$text = wp_specialchars_decode( $mail_row['message'] );
+		$html = mds_specialchars_decode( $mail_row['html_message'] );
+		$text = mds_specialchars_decode( $mail_row['message'] );
 		if(!empty($html)) {
 			$mail->msgHTML($html);
 		} else {
@@ -263,23 +262,23 @@ function send_smtp_email( $mail_row ) {
 		if ( ! $mail->send() ) {
 			$error = $mail->ErrorInfo;
 			if ( $debug_level > 0 ) {
-				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error . "\n", FILE_APPEND );
 			}
 		} else {
 			if ( $debug_level > 0 ) {
-				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!" . "\n", FILE_APPEND );
 			}
 		}
 
 	} catch ( PHPMailer\PHPMailer\Exception $e ) {
 		$error = $e->errorMessage();
 		if ( $debug_level > 0 ) {
-			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage() . "\n", FILE_APPEND );
 		}
 	} catch ( Exception $e ) {
 		$error = $e->getMessage();
 		if ( $debug_level > 0 ) {
-			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage() . "\n", FILE_APPEND );
 		}
 	}
 
@@ -316,13 +315,13 @@ function send_phpmail( $mail_row ) {
 	$error = "";
 	try {
 		$mail->CharSet = "UTF-8";
-		$mail->setFrom( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
-		$mail->addReplyTo( $mail_row['from_address'], wp_specialchars_decode( $mail_row['from_name'] ) );
-		$mail->addAddress( $mail_row['to_address'], wp_specialchars_decode( $mail_row['to_name'] ) );
-		$mail->Subject = wp_specialchars_decode( $mail_row['subject'] );
+		$mail->setFrom( $mail_row['from_address'], mds_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addReplyTo( $mail_row['from_address'], mds_specialchars_decode( $mail_row['from_name'] ) );
+		$mail->addAddress( $mail_row['to_address'], mds_specialchars_decode( $mail_row['to_name'] ) );
+		$mail->Subject = mds_specialchars_decode( $mail_row['subject'] );
 
-		$html = wp_specialchars_decode( $mail_row['html_message'] );
-		$text = wp_specialchars_decode( $mail_row['message'] );
+		$html = mds_specialchars_decode( $mail_row['html_message'] );
+		$text = mds_specialchars_decode( $mail_row['message'] );
 		if(!empty($html)) {
 			$mail->msgHTML($html);
 		} else {
@@ -333,23 +332,23 @@ function send_phpmail( $mail_row ) {
 		if ( ! $mail->send() ) {
 			$error = $mail->ErrorInfo;
 			if ( $debug_level > 0 ) {
-				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error, FILE_APPEND );
+				file_put_contents( __DIR__ . '/.maildebug.log', "Mailer Error: " . $error . "\n", FILE_APPEND );
 			}
 		} else {
 			if ( $debug_level > 0 ) {
-				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!", FILE_APPEND );
+				file_put_contents( __DIR__ . '/.maildebug.log', "Message sent!" . "\n", FILE_APPEND );
 			}
 		}
 
 	} catch ( PHPMailer\PHPMailer\Exception $e ) {
 		$error = $e->errorMessage();
 		if ( $debug_level > 0 ) {
-			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage(), FILE_APPEND );
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->errorMessage() . "\n", FILE_APPEND );
 		}
 	} catch ( Exception $e ) {
 		$error = $e->getMessage();
 		if ( $debug_level > 0 ) {
-			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage(), FILE_APPEND );
+			file_put_contents( __DIR__ . '/.maildebug.log', $e->getMessage() . "\n", FILE_APPEND );
 		}
 	}
 
@@ -393,7 +392,7 @@ function send_phpmail( $mail_row ) {
  *                                Default is ENT_NOQUOTES.
  * @return string The decoded text without HTML entities.
  */
-function wp_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
+function mds_specialchars_decode( $string, $quote_style = ENT_NOQUOTES ) {
 	$string = (string) $string;
 
 	if ( 0 === strlen( $string ) ) {

@@ -1,8 +1,7 @@
 <?php 
 /**
- * @version		$Id: 2checkout.php 69 2010-09-12 01:31:15Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -38,7 +37,7 @@ require_once "../config.php";
 
 require_once("Twocheckout/Twocheckout.php");
 
-define (LOGGING, 'Y');
+define ('LOGGING', 'Y');
 $_PAYMENT_OBJECTS['_2CO'] =  new _2CO;
 
 function _2co_mail_error($msg) {
@@ -50,7 +49,7 @@ function _2co_mail_error($msg) {
 	$headers .= "Return-Path: ".SITE_CONTACT_EMAIL ."\r\n";
 	$headers .= "X-Mailer: PHP" ."\r\n";
 	$headers .= "Date: $date" ."\r\n"; 
-	$headers .= "X-Sender-IP: $REMOTE_ADDR" ."\r\n";
+	$headers .= "X-Sender-IP: " . $_SERVER['REMOTE_ADDR'] ."\r\n";
 
 	$entry_line =  "(payal error detected) $msg\r\n "; 
 	$log_fp = @fopen("logs.txt", "a"); 
@@ -464,8 +463,8 @@ U.S. Dollar (USD)
 					?>
 					<center>
 
-					<img src="<?php echo SITE_LOGO_URL; ?>" />
-					<h3>Thank you. Your order was successfully completed. You may <a href="<?php echo BASE_HTTP_PATH; ?>users/publish.php">manage your pixels</a> now.</h3>
+					<img src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>" />
+					<h3>Thank you. Your order was successfully completed. You may <a href="<?php echo htmlentities(BASE_HTTP_PATH); ?>users/publish.php">manage your pixels</a> now.</h3>
 
 					</center>
 					<?php
@@ -475,8 +474,8 @@ U.S. Dollar (USD)
 					pend_order ($order_row['user_id'], $order_id);
 					?>
 					<center>
-					<img src="<?php echo SITE_LOGO_URL; ?>" />
-					<h3>Thank you. Your order is pending while the funds are cleared by 2Checkout. Go to the <a href="<?php echo BASE_HTTP_PATH; ?>users/index.php">Main Menu.</a></h3>
+					<img src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>" />
+					<h3>Thank you. Your order is pending while the funds are cleared by 2Checkout. Go to the <a href="<?php echo htmlentities(BASE_HTTP_PATH); ?>users/index.php">Main Menu.</a></h3>
 					</center>
 					<?php
 

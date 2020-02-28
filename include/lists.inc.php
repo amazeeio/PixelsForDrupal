@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: lists.inc.php 137 2011-04-18 19:48:11Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -202,7 +201,7 @@ function echo_ad_list_data($admin) {
 					$ALT_TEXT = get_template_value ('ALT_TEXT', 1, $admin);
 					//$AD_ID = get_template_value ('AD_ID', 1, $admin);
 
-					$js_str = " onmousemove=\"sB(event,'".htmlspecialchars(str_replace("'","\'",($ALT_TEXT)))."',this, ".$AD_ID.")\" onmouseout=\"hI()\" ";
+					$js_str = " onmousemove=\"sB(event,'".htmlspecialchars($ALT_TEXT)."',this, ".$AD_ID.")\" onmouseout=\"hI()\" ";
 
 					$val = $val. $js_str;
 

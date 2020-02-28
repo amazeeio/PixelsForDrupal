@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: adslist.php 126 2011-02-10 03:29:31Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -67,7 +66,7 @@ $mode = $_REQUEST['mode'];
 
 </head>
 
-<BODY style=" font-family: 'Arial', sans-serif; font-size:10pt; background: #fff  url( <?php echo BASE_HTTP_PATH;?>images/grgrad.gif) repeat-x; ">
+<BODY style=" font-family: 'Arial', sans-serif; font-size:10pt; background: #fff; ">
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000; "></div>
 <b>[Ads List]</b><span style="background-color: <?php if (($_REQUEST['mode']!='edit')) { echo "#F2F2F2"; }  ?>; border-style:outset; padding: 5px;"><a href="adform.php?mode=view">View Form</a></span> <span style="background-color:  <?php if (($_REQUEST['mode']=='edit') && ($_REQUEST['NEW_FIELD']=='')) { echo "#FFFFCC"; }  ?>; border-style:outset; padding: 5px;"><a href="adform.php?mode=edit">Edit Fields</a></span> <span style="background-color: <?php if (($_REQUEST['mode']=='edit') && ($_REQUEST['NEW_FIELD']!='')) { echo "#FFFFCC"; }  else { echo "#F2F2F2";}?> ; border-style:outset; padding: 5px;"><a href="adform.php?NEW_FIELD=YES&mode=edit">New Field</a></span> &nbsp; &nbsp; <span style="background-color: <?php  echo "#FFFFCC";?> ; border-style:outset; padding: 5px;"><a href="adslist.php">Ads List</a></span>
 	

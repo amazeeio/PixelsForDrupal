@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: publish.php 147 2011-09-04 18:22:57Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -76,7 +75,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 //$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 //$banner_row = mysqli_fetch_array($result);
 
-load_banner_constants($BID);
+$banner_data = load_banner_constants($BID);
 
 $sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -189,7 +188,7 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 		$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='';
 		$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 		$_REQUEST['order_id'] = $blk_row['order_id'];
-		$_REQUEST['banner_id'] = $BID;
+		$_REQUEST['BID'] = $BID;
 		$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 		$ad_id = insert_ad_data();
 
@@ -212,7 +211,7 @@ if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='';
 			$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 			$_REQUEST['order_id'] = $blk_row['order_id'];
-			$_REQUEST['banner_id'] = $BID;
+			$_REQUEST['BID'] = $BID;
 			$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 			$ad_id = insert_ad_data();
 
@@ -364,12 +363,12 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 					}
 
 					// create a block size Box
-					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
+					$block_size = new Imagine\Image\Box( $banner_data['BLK_WIDTH'], $banner_data['BLK_HEIGHT'] );
 
 					// Paste image into selected blocks (AJAX mode allows individual block selection)
-					for ( $y = 0; $y < $size['y']; $y += BLK_HEIGHT ) {
+					for ( $y = 0; $y < $size['y']; $y += $banner_data['BLK_HEIGHT'] ) {
 
-						for ( $x = 0; $x < $size['x']; $x += BLK_WIDTH ) {
+						for ( $x = 0; $x < $size['x']; $x += $banner_data['BLK_WIDTH'] ) {
 
                             // create new destination image
                             $palette = new Imagine\Image\Palette\RGB();
@@ -389,8 +388,8 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 							// some variables
 							$map_x     = $x + $low_x;
 							$map_y     = $y + $low_y;
-							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
-							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
+							$GRD_WIDTH = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
+							$cb        = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
 
 							// save to db
 							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . intval($cb) . "' AND banner_id='" . intval($BID) . "' ";
@@ -401,11 +400,11 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 
 				unlink( $tmp_image_file );
 
-				if ( AUTO_APPROVE != 'Y' ) { // to be approved by the admin
+				if ( $banner_data['AUTO_APPROVE'] != 'Y' ) { // to be approved by the admin
 					disapprove_modified_order( $order_id, $BID );
 				}
 
-				if ( AUTO_PUBLISH == 'Y' ) {
+				if ( $banner_data['AUTO_PUBLISH'] == 'Y' ) {
 					process_image( $BID );
 					publish_image( $BID );
 					process_map( $BID );
@@ -487,11 +486,11 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 
 			// disapprove the pixels because the ad was modified..
 
-			if (AUTO_APPROVE!='Y') { // to be approved by the admin
+			if ($banner_data['AUTO_APPROVE']!='Y') { // to be approved by the admin
 				disapprove_modified_order($prams['order_id'], $BID);
 			}
 			
-			if (AUTO_PUBLISH=='Y') {
+			if ($banner_data['AUTO_PUBLISH']=='Y') {
 				process_image($BID);
 				publish_image($BID);
 				process_map($BID);
@@ -608,7 +607,7 @@ if ($count > 0) {
 		//if (strlen($row['image_data'])>0) {
 	?>
 
-	<area shape="RECT" coords="<?php echo $row['x'];?>,<?php echo $row['y'];?>,<?php echo $row['x']+BLK_WIDTH;?>,<?php echo $row['y']+BLK_HEIGHT;?>" href="publish.php?BID=<?php echo $BID;?>&block_id=<?php echo ($row['block_id']);?>" title="<?php echo ($row['alt_text']);?>" alt="<?php echo ($row['alt_text']);?>"  />
+	<area shape="RECT" coords="<?php echo $row['x'];?>,<?php echo $row['y'];?>,<?php echo $row['x']+$banner_data['BLK_WIDTH'];?>,<?php echo $row['y']+$banner_data['BLK_HEIGHT'];?>" href="publish.php?BID=<?php echo $BID;?>&block_id=<?php echo ($row['block_id']);?>" title="<?php echo ($row['alt_text']);?>" alt="<?php echo ($row['alt_text']);?>"  />
 
 	<?php
 	//	}
@@ -616,7 +615,7 @@ if ($count > 0) {
 	}
 	?>
 
-	<img src="show_map.php?BID=<?php echo $BID;?>&time=<?php echo (time()); ?>" width="<?php echo (G_WIDTH*BLK_WIDTH); ?>" height="<?php echo (G_HEIGHT*BLK_HEIGHT); ?>" border="0" usemap="#main" />
+	<img src="show_map.php?BID=<?php echo $BID;?>&time=<?php echo (time()); ?>" width="<?php echo ($banner_data['G_WIDTH']*$banner_data['BLK_WIDTH']); ?>" height="<?php echo ($banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT']); ?>" border="0" usemap="#main" />
 	</center>
 	<div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
 

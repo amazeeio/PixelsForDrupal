@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: packs.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,14 +25,12 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
-
 ?>
 <html>
 <?php
@@ -93,13 +90,13 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 <?php
 
 if ($BID!='') {
-	load_banner_constants($BID);
+	$banner_data = load_banner_constants($BID);
 	?>
 	<hr>
 	
 	<b>Grid ID:</b> <?php echo $BID; ?><br>
-	<b>Grid Name</b>: <?php echo G_NAME;?><br>
-	<b>Default Price per 100:</b> <?php echo G_PRICE;?><br>
+	<b>Grid Name</b>: <?php echo $banner_data['G_NAME'];?><br>
+	<b>Default Price per 100:</b> <?php echo $banner_data['G_PRICE'];?><br>
 
 	<input type="button" style="background-color:#66FF33" value="New Package..." onclick="window.location='packs.php?new=1&BID=<?php echo $BID; ?>'"><br>
 	
@@ -217,8 +214,8 @@ if ($BID!='') {
 
 			// calculate block id..
 
-			$_REQUEST['block_id_from'] = ($_REQUEST['row_from']-1) * G_WIDTH;
-			$_REQUEST['block_id_to'] = ((($_REQUEST['row_to']) * G_HEIGHT)-1);
+			$_REQUEST['block_id_from'] = ($_REQUEST['row_from']-1) * $banner_data['G_WIDTH'];
+			$_REQUEST['block_id_to'] = ((($_REQUEST['row_to']) * $banner_data['G_HEIGHT'])-1);
 
 
 			$sql = "REPLACE INTO packages(package_id, banner_id, price, currency, days_expire,  max_orders, description, is_default) VALUES ('".intval($_REQUEST['package_id'])."', '".intval($BID)."', '".floatval($_REQUEST['price'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".intval($_REQUEST['days_expire'])."',  '".intval($_REQUEST['max_orders'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['description'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['is_default'])."')";
@@ -311,7 +308,7 @@ if ($BID!='') {
 		$row = mysqli_fetch_array($result);
 
 		if ($error=='') {
-			$_REQUEST['banner_id'] = $row['banner_id'];
+			$_REQUEST['BID'] = $row['banner_id'];
 			$_REQUEST['package_id'] = $row['package_id'];
 			$_REQUEST['days_expire'] = $row['days_expire'];
 			$_REQUEST['price'] = $row['price'];

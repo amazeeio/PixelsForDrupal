@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: update_order.php 137 2011-04-18 19:48:11Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -46,7 +45,7 @@ if($_SESSION['MDS_ID']=='') {
 	die();
 }
 
-load_banner_constants($BID);
+$banner_data = load_banner_constants($BID);
 
 if (!is_numeric($BID)) {
 	die();
@@ -78,13 +77,13 @@ if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
 
 
 // check the max pixels
-if (G_MAX_BLOCKS>0) {
+if ($banner_data['G_MAX_BLOCKS']>0) {
 	$sql = "SELECT * from blocks where user_id='$user_id' and status='reserved' and banner_id='$BID' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 	
 	$count = mysqli_num_rows($result);
 	
-	if (($count) >= G_MAX_BLOCKS) {
+	if (($count) >= $banner_data['G_MAX_BLOCKS']) {
 		//echo 'max_selected';
 		//die();
 		$max_selected = true;

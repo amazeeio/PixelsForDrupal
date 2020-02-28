@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: list.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,16 +25,12 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
-
-
-
 
 if ($f2->bid($_REQUEST['BID'])!='') {
 		$BID = $f2->bid($_REQUEST['BID']);
@@ -68,7 +63,7 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 			$sel ='';
 
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 	}
 	?>
 </select>
@@ -98,7 +93,7 @@ ob_end_flush();
 
 <hr>
 
-<script src="<?php echo BASE_HTTP_PATH.'top_ads_js.php?BID='.$BID; ?>"  ></script>
+<?php include( BASE_PATH . "/top_ads_js.php" ); ?>
 
 <?php
 

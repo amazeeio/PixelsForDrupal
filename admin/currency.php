@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: currency.php 150 2012-09-10 22:00:19Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -93,6 +92,8 @@ function is_reserved_currency ($code) {
 }
 function validate_input() {
 
+    $error = "";
+
 	if (trim($_REQUEST['code'])=='') {
 		$error .= "- Currency code is blank<br>";
 
@@ -119,8 +120,6 @@ function validate_input() {
 	}
 
 	return $error;
-
-
 }
 
 if ($_REQUEST['action'] == 'delete') {
@@ -132,10 +131,7 @@ if ($_REQUEST['action'] == 'delete') {
 		} else {
 
 			echo "<p><b>Cannot delete currency: reserved by the system</b></p>";
-
-
 		}
-
 }
 
 if ($_REQUEST['action'] == 'set_default') {
@@ -144,7 +140,6 @@ if ($_REQUEST['action'] == 'set_default') {
 
 	$sql = "UPDATE currencies SET is_default = 'Y' WHERE code = '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-
 }
 
 if ($_REQUEST['submit']!='') {
@@ -166,16 +161,13 @@ if ($_REQUEST['submit']!='') {
 
 		$_REQUEST['new'] ='';
 		$_REQUEST['action'] = '';
-		//print_r ($_REQUEST);
-
-
 	}
-
 }
 
 ?>
 <b>All currency rates are relative to the USD. (USD rate is always 1)</b><br>
 All prices will be displayed in the default currency.<br>
+Note: Rates do not update automatically!<br>
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
 			<tr bgColor="#eaeaea">
 				<td><span style="font-size: x-small; "><b>Currency</b></span></td>
@@ -208,10 +200,7 @@ All prices will be displayed in the default currency.<br>
 				<td><span style="font-size: x-small; "><?php if ( $row['is_default'] != 'Y') { ?><a href='<?php echo $_SERVER['PHP_SELF'];?>?action=set_default&code=<?php echo $row['code'];?>'>Set to Default</a> /<?php } ?> <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=edit&code=<?php echo $row['code'];?>'>Edit</a> / <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&code=<?php echo $row['code'];?>'>Delete</a></span></td>
 				
 				</tr>
-
-
 				<?php
-
 			}
 ?>
 </table>
@@ -247,10 +236,10 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 <input type="hidden" value="<?php echo $_REQUEST['is_default']?>" name="is_default" >
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9">
 <tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Name:</span></td><td><input size="30" type="text" name="name" value="<?php echo $_REQUEST['name']; ?>"/> eg. Korean Won</td></tr>
-<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Code:</span></td><td><input <?php echo $disabled; ?> size="2" type="text" name="code" value="<?php echo $_REQUEST['code']; ?>"/> eg. KRW</td></tr>
-<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Rate:</span></td><td><input <?php echo $disabled; ?> size="5" type="text" name="rate" value="<?php echo $_REQUEST['rate']; ?>"/>($1 USD = x in this currency)</td></tr>
-<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Sign:</span></td><td><input <?php echo $disabled; ?> size="1" type="text" name="sign" value="<?php echo $_REQUEST['sign']; ?>"/>(eg. &#165;)</td></tr>
-<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Decimals:</span></td><td><input <?php echo $disabled; ?> size="1" type="text" name="decimal_places" value="<?php echo $_REQUEST['decimal_places']; ?>"/>(eg. 2)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Code:</span></td><td><input size="2" type="text" name="code" value="<?php echo $_REQUEST['code']; ?>"/> eg. KRW</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Rate:</span></td><td><input size="5" type="text" name="rate" value="<?php echo $_REQUEST['rate']; ?>"/>($1 USD = x in this currency)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Sign:</span></td><td><input size="1" type="text" name="sign" value="<?php echo $_REQUEST['sign']; ?>"/>(eg. &#165;)</td></tr>
+<tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Currency Decimals:</span></td><td><input size="1" type="text" name="decimal_places" value="<?php echo $_REQUEST['decimal_places']; ?>"/>(eg. 2)</td></tr>
 <tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Decimal Point:</span></td><td><input size="1" type="text" name="decimal_point" value="<?php echo $_REQUEST['decimal_point']; ?>"/>(eg. .)</td></tr>
 <tr bgcolor="#ffffff" ><td><span style="font-size: x-small; ">Thousands Seperator:</span></td><td><input size="1" type="text" name="thousands_sep" value="<?php echo $_REQUEST['thousands_sep']; ?>"/>(eg. ,)</td></tr>
 </table>

@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: config_form.php 154 2012-09-10 22:10:51Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,9 +25,10 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
+
 ?>
 <form method="POST" name="form1">
   <p><input type="submit" value="Save Configuration" name="save"></p>
@@ -41,27 +41,27 @@
     <tr>
       <td width="20%" bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Site Name</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="site_name" size="49" value="<?php echo stripslashes(htmlentities(SITE_NAME)); ?>"/></span></td>
+      <input type="text" name="site_name" size="49" value="<?php echo htmlentities(SITE_NAME); ?>"/></span></td>
     </tr>
     <tr>
       <td width="20%" bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Site Slogan</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="site_slogan" size="49" value="<?php echo stripslashes(htmlentities(SITE_SLOGAN)); ?>"/></span></td>
+      <input type="text" name="site_slogan" size="49" value="<?php echo htmlentities(SITE_SLOGAN); ?>"/></span></td>
     </tr>
     <tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Site Logo URL</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="site_logo_url" size="49" value="<?php echo stripslashes(htmlentities(SITE_LOGO_URL)); ?>"/><br>(http://www.example.com/images/logo.gif)</span></td>
+      <input type="text" name="site_logo_url" size="49" value="<?php echo htmlentities(SITE_LOGO_URL); ?>"/><br>(http://www.example.com/images/logo.gif)</span></td>
     </tr>
     <tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Site Contact Email</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="site_contact_email" size="49" value="<?php echo stripslashes(htmlentities(SITE_CONTACT_EMAIL)); ?>"> (Please ensure that this email address has a POP account for extra email delivery reliability.)</span></td>
+      <input type="text" name="site_contact_email" size="49" value="<?php echo htmlentities(SITE_CONTACT_EMAIL); ?>"> (Please ensure that this email address has a POP account for extra email delivery reliability.)</span></td>
     </tr>
 	<tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Admin Password</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="password" name="admin_password" size="49" value="<?php echo stripslashes(htmlentities(ADMIN_PASSWORD)); ?>"></span></td>
+      <input type="password" name="admin_password" size="49" value="<?php echo htmlentities(ADMIN_PASSWORD); ?>"></span></td>
     </tr>
   </table>
   <?php 
@@ -96,7 +96,7 @@
     <tr>
       <td width="20%" bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Site's HTTP URL (address)</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="base_http_path" size="55" value="<?php echo htmlentities(BASE_HTTP_PATH); ?>"><br>Recommended: <b>http://<?php echo $host.$http_url."/"; ?></b></span></td>
+      <input type="text" name="base_http_path" size="55" value="<?php echo htmlentities(BASE_HTTP_PATH); ?>"><br>Recommended: <b>https://<?php echo htmlentities($host.$http_url)."/"; ?></b></span></td>
     </tr>
 
       <tr>
@@ -104,14 +104,14 @@
               <span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Server Path to MDS Root Directory</span>
           </td>
           <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="base_path" size="55" value="<?php echo htmlentities( BASE_PATH ); ?>"><br>Recommended: <b><?php echo $file_path; ?></b></span>
+      <input type="text" name="base_path" size="55" value="<?php echo htmlentities( BASE_PATH ); ?>"><br>Recommended: <b><?php echo htmlentities($file_path); ?></b></span>
           </td>
       </tr>
 
       <tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Server Path to Admin</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="server_path_to_admin" size="55" value="<?php echo htmlentities(SERVER_PATH_TO_ADMIN); ?>" ><br>Recommended: <b><?php echo str_replace('\\', '/', getcwd());?>/</b></span></td>
+      <input type="text" name="server_path_to_admin" size="55" value="<?php echo htmlentities(SERVER_PATH_TO_ADMIN); ?>" ><br>Recommended: <b><?php echo htmlentities(str_replace('\\', '/', getcwd()));?>/</b></span></td>
     </tr>
 	<?php
 	
@@ -120,7 +120,7 @@
 
 	}
 	if (!defined('UPLOAD_HTTP_PATH')) {
-		define ('UPLOAD_HTTP_PATH', "http://".$host.$http_url."/upload_files/");
+		define ('UPLOAD_HTTP_PATH', "https://".$host.$http_url."/upload_files/");
 
 	}
 
@@ -130,12 +130,12 @@
 	<tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Path to upload directory</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="upload_path" size="55" value="<?php echo htmlentities(UPLOAD_PATH); ?>" ><br>Recommended: <b><?php echo str_replace('\\', '/', $file_path."/upload_files/");?></b></span></td>
+      <input type="text" name="upload_path" size="55" value="<?php echo htmlentities(UPLOAD_PATH); ?>" ><br>Recommended: <b><?php echo htmlentities(str_replace('\\', '/', $file_path."/upload_files/"));?></b></span></td>
     </tr>
 	<tr>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">HTTP URL to upload directory</span></td>
       <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-      <input type="text" name="upload_http_path" size="55" value="<?php echo htmlentities(UPLOAD_HTTP_PATH); ?>" ><br>Recommended: <b>http://<?php echo str_replace('\\', '/', $host.$http_url."/upload_files/");?></b></span></td>
+      <input type="text" name="upload_http_path" size="55" value="<?php echo htmlentities(UPLOAD_HTTP_PATH); ?>" ><br>Recommended: <b>https://<?php echo htmlentities(str_replace('\\', '/', $host.$http_url."/upload_files/"));?></b></span></td>
     </tr>
 	<tr>
 	<td colspan="2">
@@ -196,8 +196,6 @@ NOTES<br>
   <p>&nbsp;</p>
   <?php
 
-	
-
 	if (!defined('DATE_INPUT_SEQ')) {
 		define ('DATE_INPUT_SEQ', 'YMD');
 	}
@@ -209,8 +207,7 @@ NOTES<br>
 	if (!defined('GMT_DIF')) {
 		define ('GMT_DIF', '10.00');
 	}
-	
-	
+
 	?>
   <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
     <tr>
@@ -271,10 +268,6 @@ NOTES<br>
 	  </select> from GMT
 	  <br></span></td>
     </tr>
-	
-	
-	
-	
 	</table>
 
    <p>&nbsp;</p>
@@ -309,8 +302,8 @@ NOTES<br>
 	   </span></td>
     </tr>
 	<tr>
-      <td  bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Pixel Selection Method</span></td>
-      <td  bgcolor="#e6f2ea"><span style="font-size: xx-small; font-family: Verdana,sans-serif; ">
+      <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Pixel Selection Method</span></td>
+      <td bgcolor="#e6f2ea"><span style="font-size: xx-small; font-family: Verdana,sans-serif; ">
 	  <input type="radio" name="use_ajax" value="SIMPLE"  <?php if (USE_AJAX=='SIMPLE') { echo " checked "; } ?> >Simple (Upload whole image at a time, users can start ordering without logging in. Uses AJAX. Recommended.) <br>
       <input type="radio" name="use_ajax" value="YES"  <?php if (USE_AJAX=='YES') { echo " checked "; } ?> >Advanced (Select individual blocks. Uses AJAX) <br>
 	  <input type="radio" name="use_ajax" value="NO"  <?php if (USE_AJAX=='NO') { echo " checked "; } ?> >Advanced, no AJAX<br>
@@ -686,7 +679,6 @@ NOTES<br>
 	  <tr>
       <td  bgcolor="#e6f2ea" width="20%" ><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">Show a box when the positioning mouse over a block?</span></td>
       <td  bgcolor="#e6f2ea"><span style="font-size: xx-small; font-family: Verdana,sans-serif; ">
-      <input type="radio" name="enable_mouseover" value="YES"  <?php if (ENABLE_MOUSEOVER=='YES') { echo " checked "; } ?> >Yes - Animation Speed: <input type='radio' name='animation_speed' value='100' <?php if (ANIMATION_SPEED=='100') { echo ' checked '; } ?> >Slow | <input type='radio' name='animation_speed' value='50' <?php if (ANIMATION_SPEED=='50') { echo ' checked '; } ?>> Normal | <input type='radio' name='animation_speed' value='10' <?php if (ANIMATION_SPEED=='10') { echo ' checked '; } ?>> Fast | <input type='radio' name='animation_speed' value="1" <?php if (ANIMATION_SPEED=='1') { echo ' checked '; } ?> > Very Fast <br>
 	  <input type="radio" name="enable_mouseover" value="POPUP"  <?php if (ENABLE_MOUSEOVER=='POPUP') { echo " checked "; } ?> >Yes - Simple popup box, with no animation<br>
 	  <input type="radio" name="enable_mouseover" value="NO"  <?php if (ENABLE_MOUSEOVER=='NO') { echo " checked "; } ?> >No, turn off<br>
 	  </span></td>

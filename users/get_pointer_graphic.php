@@ -1,8 +1,7 @@
 <?php
 /**
- * @version        $Id: get_pointer_graphic.php 137 2011-04-18 19:48:11Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -45,7 +44,7 @@ try {
 		$BID = 1;
 	}
 
-	load_banner_constants( $BID );
+	$banner_data = load_banner_constants( $BID );
 
 	$imagine = new Imagine\Gd\Imagine();
 
@@ -68,16 +67,19 @@ try {
 
 	// make it smaller
 	if ( MDS_RESIZE == 'YES' ) {
-		$new_size = get_required_size( $box->getWidth(), $box->getHeight() );
-		$resize   = new Imagine\Image\Box( $new_size[0], $new_size[1] );
-		//$out->resize( $resize );
-		$image->resize( $resize );
+		$new_size = get_required_size( $box->getWidth(), $box->getHeight(), $banner_data );
+
+		// only resize if the dimensions are different
+		if ( $new_size[0] != $box->getWidth() && $new_size[1] != $box->getHeight() ) {
+			$resize = new Imagine\Image\Box( $new_size[0], $new_size[1] );
+			$image->resize( $resize );
+		}
 	}
 
 	// show
 	$image->show( "png", array( 'png_compression_level' => 9 ) );
 } catch(Exception $e) {
 
-	file_put_contents(__DIR__ . "/error_log", $e->getMessage(), FILE_APPEND);
-	file_put_contents(__DIR__ . "/error_log", $e->getTraceAsString(), FILE_APPEND);
+	error_log($e->getMessage());
+	error_log($e->getTraceAsString());
 }

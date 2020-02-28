@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: lang_image.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,23 +25,17 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
-
 
 $sql = "SELECT * FROM lang where lang_code='".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['code'])."' ";
 $result  = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-
 header ("Content-type: ".$row['mime_type']);
 
 echo base64_decode( $row['image_data']);
-
-
-?>

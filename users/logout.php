@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: logout.php 88 2010-10-12 16:43:19Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -53,7 +52,7 @@ session_destroy();
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-<center><img alt="" src="<?php echo SITE_LOGO_URL; ?>"/> <br/>
+<center><img alt="" src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>"/> <br/>
       <h3><?php echo $label['advertiser_logout_ok']; ?></h3> <a href="../"><?php 
 	  $label["advertiser_logout_home"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_logout_home"]);
 	  echo $label['advertiser_logout_home']; ?></a></center> 

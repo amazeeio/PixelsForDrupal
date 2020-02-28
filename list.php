@@ -1,8 +1,7 @@
 <?php
 /**
- * @version        $Id: index.php 158 2012-10-04 15:23:39Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -42,26 +41,16 @@ include_once( MDSROOT . "/html/header.php" );
 global $label;
 ?>
 
-    <script src="<?php echo BASE_HTTP_PATH; ?>top_ads_js.php?BID=1"></script>
-
+<?php include( MDSROOT . "/top_ads_js.php" ); ?>
 <?php include( 'mouseover_box.htm' ); ?>
 
-    <table style="width:100%;" border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9">
-        <tr>
-            <td>
-                <span style="font-family: Arial,sans-serif; font-size: small; "><b><?php echo $label['list_date_of_purchase']; ?></b></span>
-            </td>
-            <td>
-                <span style="font-family: arial,sans-serif; font-size: small; "><b><?php echo $label['list_name']; ?></b></span>
-            </td>
-            <td>
-                <span style="font-family: arial,sans-serif; font-size: small; "><b><?php echo $label['list_ads']; ?></b></span>
-            </td>
-            <td>
-                <span style="font-family: arial,sans-serif; font-size: small; "><b><?php echo $label['list_pixels']; ?></b></span>
-            </td>
-        </tr>
-
+    <div class="list">
+        <div class="table-row header">
+            <div class="list-heading"><?php echo $label['list_date_of_purchase']; ?></div>
+            <div class="list-heading"><?php echo $label['list_name']; ?></div>
+            <div class="list-heading"><?php echo $label['list_ads']; ?></div>
+            <div class="list-heading"><?php echo $label['list_pixels']; ?></div>
+        </div>
 		<?php
 		require_once( "include/ads.inc.php" );
 
@@ -72,15 +61,15 @@ global $label;
 			$q = mysqli_query( $GLOBALS['connection'], $q ) or die( mysqli_error( $GLOBALS['connection'] ) );
 			$user = mysqli_fetch_row( $q );
 			?>
-            <tr bgcolor="#ffffff">
-                <td>
-                    <span style="font-family: arial,sans-serif; font-size: small; "><?php echo get_formatted_date( get_local_time( $row['max_date'] ) ); ?></span>
-                </td>
-                <td>
-                    <span style="font-family: arial,sans-serif; font-size: small; "><?php echo $user['0'] . " " . $user['1']; ?></span>
-                </td>
-                <td>
-	                <span style="font-family: arial,sans-serif; font-size: small; "><?php
+            <div class="table-row">
+                <div class="list-cell">
+					<?php echo get_formatted_date( get_local_time( $row['max_date'] ) ); ?>
+                </div>
+                <div class="list-cell">
+					<?php echo $user['0'] . " " . $user['1']; ?>
+                </div>
+                <div class="list-cell">
+					<?php
 
 		                $br = "";
 		                $sql = "Select * FROM  `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='".intval($BID)."' and t1.order_id='" . intval($row['order_id']) . "' AND t1.user_id='" . intval($row['user_id']) . "' AND status='completed' AND approved='Y' ORDER BY `ad_date`";
@@ -95,20 +84,18 @@ global $label;
 			                $br = '<br>';
 		                }
 
-		                ?></span>
-                </td>
-                <td>
-                    <span style="font-family: arial,sans-serif; font-size: small; "><?php echo $row['pixels']; ?></span>
-                </td>
-            </tr>
+					?>
+                </div>
+                <div class="list-cell">
+					<?php echo $row['pixels']; ?>
+                </div>
+            </div>
 			<?php
 
 		}
 
 		?>
-
-    </table>
-
+    </div>
 <?php
 include_once( MDSROOT . "/html/footer.php" );
 ?>

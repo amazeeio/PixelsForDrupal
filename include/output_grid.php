@@ -26,7 +26,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -66,10 +66,10 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	$imagine = new Imagine\Gd\Imagine();
 
-	load_banner_constants( $BID );
+	$banner_data = load_banner_constants( $BID );
 
 	// load blocks
-	$block_size  = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
+	$block_size  = new Imagine\Image\Box( $banner_data['BLK_WIDTH'], $banner_data['BLK_HEIGHT'] );
 	$palette     = new Imagine\Image\Palette\RGB();
 	$color       = $palette->color( '#000', 0 );
 	$zero_point  = new Imagine\Image\Point( 0, 0 );
@@ -77,7 +77,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	// default grid block
 	$default_block = $blank_block->copy();
-	$tmp_block     = $imagine->load( USR_GRID_BLOCK );
+	$tmp_block     = $imagine->load( $banner_data['USR_GRID_BLOCK'] );
 	$tmp_block->resize( $block_size );
 	$default_block->paste( $tmp_block, $zero_point );
 
@@ -99,37 +99,37 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 				break;
 			case 'nfs':
 				$default_nfs_block = $blank_block->copy();
-				$tmp_block         = $imagine->load( USR_NFS_BLOCK );
+				$tmp_block         = $imagine->load( $banner_data['USR_NFS_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_nfs_block->paste( $tmp_block, $zero_point );
 				break;
 			case 'nfs_front':
 				$default_nfs_front_block = $blank_block->copy();
-				$tmp_block               = $imagine->load( USR_NFS_BLOCK );
+				$tmp_block               = $imagine->load( $banner_data['USR_NFS_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_nfs_front_block->paste( $tmp_block, $zero_point );
 				break;
 			case 'ordered':
 				$default_ordered_block = $blank_block->copy();
-				$tmp_block             = $imagine->load( USR_ORD_BLOCK );
+				$tmp_block             = $imagine->load( $banner_data['USR_ORD_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_ordered_block->paste( $tmp_block, $zero_point );
 				break;
 			case 'reserved':
 				$default_reserved_block = $blank_block->copy();
-				$tmp_block              = $imagine->load( USR_RES_BLOCK );
+				$tmp_block              = $imagine->load( $banner_data['USR_RES_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_reserved_block->paste( $tmp_block, $zero_point );
 				break;
 			case 'selected':
 				$default_selected_block = $blank_block->copy();
-				$tmp_block              = $imagine->load( USR_SEL_BLOCK );
+				$tmp_block              = $imagine->load( $banner_data['USR_SEL_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_selected_block->paste( $tmp_block, $zero_point );
 				break;
 			case 'sold':
 				$default_sold_block = $blank_block->copy();
-				$tmp_block          = $imagine->load( USR_SOL_BLOCK );
+				$tmp_block          = $imagine->load( $banner_data['USR_SOL_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_sold_block->paste( $tmp_block, $zero_point );
 				break;
@@ -246,7 +246,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	// Show user's blocks
 	if ( isset( $user ) ) {
-		$sql = "SELECT block_id,image_data FROM blocks WHERE `user_id`='" . intval( $user ) . "' AND image_data <> '' AND banner_id='" . intval( $BID ) . "' ";
+		$sql = "SELECT block_id,image_data FROM blocks WHERE `user_id`='" . intval( $user ) . "' AND image_data <> '' AND banner_id='" . intval( $BID ) . "' AND `status` <> 'deleted' ";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -267,7 +267,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	}
 
 	// grid size
-	$size = new Imagine\Image\Box( G_WIDTH * BLK_WIDTH, G_HEIGHT * BLK_HEIGHT );
+	$size = new Imagine\Image\Box( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'], $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] );
 
 	// create empty grid
 	$map = $imagine->create( $size );
@@ -276,8 +276,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	if ( isset( $show_price_zones ) ) {
 		$price_zone_blocks = array();
 		$cell              = 0;
-		for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-			for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+		for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+			for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 				$price_zone_color = get_zone_color( $BID, $y, $x );
 				switch ( $price_zone_color ) {
@@ -309,8 +309,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	// preload full grid
 	$grid_back = $grid_front = $grid_price_zone = array();
 	$cell      = 0;
-	for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-		for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 			if ( isset( $blocks[ $cell ] ) && $blocks[ $cell ] != '' ) {
 
@@ -351,8 +351,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	// grid and nfs blocks go behind the background
 	if ( isset( $show_grid ) || isset( $default_nfs_block ) ) {
-		for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-			for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+		for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+			for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 				if ( isset( $grid_back[ $x ] ) && isset( $grid_back[ $x ][ $y ] ) ) {
 					$map->paste( $grid_back[ $x ][ $y ], new Imagine\Image\Point( $x, $y ) );
 				} else {
@@ -395,8 +395,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	}
 
 	// paste the blocks
-	for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-		for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 			if ( isset( $grid_front[ $x ] ) && isset( $grid_front[ $x ][ $y ] ) ) {
 				$map->paste( $grid_front[ $x ][ $y ], new Imagine\Image\Point( $x, $y ) );
 			}
@@ -404,8 +404,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	}
 
 	// paste price zone layer
-	for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-		for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 			if ( isset( $grid_price_zone[ $x ] ) && isset( $grid_price_zone[ $x ][ $y ] ) ) {
 				$map->paste( $grid_price_zone[ $x ][ $y ], new Imagine\Image\Point( $x, $y ) );
 			}
@@ -420,8 +420,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 		$textcolor   = imagecolorallocate( $map->getGdResource(), 0, 0, 0 );
 		$textcolor_w = imagecolorallocate( $map->getGdResource(), 255, 255, 255 );
 
-		for ( $y = 0; $y < ( G_HEIGHT * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-			for ( $x = 0; $x < ( G_WIDTH * BLK_WIDTH ); $x += BLK_WIDTH ) {
+		for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+			for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 				if ( $y == 0 ) {
 					$spaces = str_repeat( ' ', 3 - strlen( $col_c ) );

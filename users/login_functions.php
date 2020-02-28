@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: login_functions.php 166 2013-01-10 20:11:06Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -46,10 +45,10 @@ function process_login() {
    	
 	require ("header.php");
 ?>
-   <table width="80%" cellpadding=5 border=1 style="border-collapse: collapse; border-style:solid; border-color:#E8E8E8">
+   <table cellpadding=5 border=1 style="width: 100%;border-collapse: collapse; border-style:solid; border-color:#E8E8E8">
 
 	<tr>
-	<td width="50%" valign="top" ><center><h3><?php echo $label["advertiser_section_heading"];?></h3></center>
+	<td valign="top" ><center><h3><?php echo $label["advertiser_section_heading"];?></h3></center>
 		<?php
 		  login_form();
         ?>
@@ -279,7 +278,7 @@ function display_signup_form($FirstName, $LastName, $CompName, $Username, $passw
 	$Username = $f2->filter($Username);
 	$password = $f2->filter(stripslashes($password));
 	$password2 = $f2->filter(stripslashes($password2));
-	$Email = $f2->filter($Email);
+	$Email = $f2->filter($Email, FILTER_SANITIZE_EMAIL);
 
 	?>
 

@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: functions.php 155 2012-09-10 22:27:46Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -37,6 +36,8 @@ require_once('package_functions.php');
 require_once('banner_functions.php');
 require_once('image_functions.php');
 require_once(__DIR__ . '/../vendor/autoload.php');
+
+$banner_data = load_banner_constants($BID);
 
 if (!defined('UPLOAD_PATH')) {
 	$dir = dirname(__FILE__);
@@ -282,11 +283,6 @@ function delete_temp_order($sid, $delete_ad=true) {
 
 	$f = get_tmp_img_name($sid);
 	if (file_exists($f)) unlink($f);
-	$filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".md5(session_id()).".txt";
-	//$filename = SERVER_PATH_TO_ADMIN.'temp/'."info_".$sid.".txt";
-	if (file_exists($filename)) unlink($filename);
-
-
 }
 
 #################################################
@@ -425,7 +421,7 @@ function complete_order ($user_id, $order_id) {
 		if (EMAIL_USER_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 1);
+				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
@@ -438,7 +434,7 @@ function complete_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 1);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
@@ -528,7 +524,7 @@ function confirm_order ($user_id, $order_id) {
 		if (EMAIL_USER_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
+				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
@@ -541,7 +537,7 @@ function confirm_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 2);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
@@ -607,7 +603,7 @@ function pend_order ($user_id, $order_id) {
 		
 		if (EMAIL_USER_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
+				queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
 			} else {
 				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
 			}
@@ -617,7 +613,7 @@ function pend_order ($user_id, $order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 3);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
@@ -705,7 +701,7 @@ function expire_order ($order_id) {
 		
 		if (EMAIL_USER_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
+				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
@@ -716,7 +712,7 @@ function expire_order ($order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 4);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
@@ -998,7 +994,7 @@ function complete_renew_order ($order_id) {
 		if (EMAIL_USER_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes($to), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
+				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 8);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
@@ -1011,7 +1007,7 @@ function complete_renew_order ($order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes($user_row['FirstName']." ".$user_row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 8);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 8);
 				process_mail_queue(2, $mail_id);
 			} else {
 				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
@@ -1072,7 +1068,7 @@ function send_confirmation_email($email) {
 	$label["confirmation_email_templaltev2"] = $label_reset;
 		
 	if (USE_SMTP=='YES') {
-		$mail_id = queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), addslashes($html_msg), 5);
+		$mail_id = queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
 		process_mail_queue(2, $mail_id);
 	} else {
 		send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
@@ -1081,7 +1077,7 @@ function send_confirmation_email($email) {
 	if (EMAIL_ADMIN_ACTIVATION=='YES') {
 
 		if (USE_SMTP=='YES') {
-			$mail_id = queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), addslashes($html_msg), 5);
+			$mail_id = queue_mail(SITE_CONTACT_EMAIL, SITE_NAME, SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
 			process_mail_queue(2, $mail_id);
 		} else {
 			send_email( SITE_CONTACT_EMAIL, SITE_NAME, SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
@@ -1137,7 +1133,7 @@ function send_published_pixels_notification($user_id, $BID) {
 	$html_msg = str_replace ("%VIEW_URL%", $view_url, $html_msg);
 
 	if (USE_SMTP=='YES') {
-		$mail_id = queue_mail(addslashes(SITE_CONTACT_EMAIL), addslashes('Admin'), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($msg), addslashes($html_msg), 7);
+		$mail_id = queue_mail(SITE_CONTACT_EMAIL, 'Admin', SITE_CONTACT_EMAIL, SITE_NAME, $subject, $msg, $html_msg, 7);
 		process_mail_queue(2, $mail_id);
 	} else {
 		send_email( SITE_CONTACT_EMAIL, 'Admin', SITE_CONTACT_EMAIL, SITE_NAME, $subject, $msg, $html_msg, 7);
@@ -1376,20 +1372,25 @@ function move_uploaded_image ($img_key) {
 
 	$t = time();
 	
-//echo "$img_name tmpimg: ".$img_tmp;
 	$new_name = SERVER_PATH_TO_ADMIN."temp/".$t."$img_name";
 
 	move_uploaded_file ($img_tmp, $new_name);
 	chmod($new_name, 0666);
 
 	return $new_name;
-
-
 }
 
 function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
 
 	global $label, $list_mode;
+
+	$nav = array(
+		'prev'         => '',
+		'cur_page'     => 1,
+		'pages_after'  => array(),
+		'pages_before' => array(),
+		'next'         => '',
+	);
 
 	if ( $list_mode == 'PREMIUM' ) {
 		$page = 'hot.php';
@@ -1418,7 +1419,7 @@ function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
 	// estimate number of pages.
 	$pages = ceil( $count / $REC_PER_PAGE );
 	if ( $pages == 1 ) {
-		return "";
+		return $nav;
 	}
 
 	$off  = 0;
@@ -1430,7 +1431,6 @@ function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
 		$prev = '';
 	}
 
-	$nav = array();
 	if ( $prev > - 1 ) {
 		$nav['prev'] = "<a href='" . htmlspecialchars( $page . "?offset=" . $prev . $q_string . $show_emp . $cat . $order_by ) . "'>" . $label["navigation_prev"] . "</a> ";
 	}
@@ -1497,7 +1497,7 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 		$NLINKS = $LINKS - $nav_pages_struct['cur_page']; 
 	}
 	echo $nav_pages_struct['prev'];
-	$b_count = count($nav_pages_struct['pages_before']);
+	$b_count = isset($nav_pages_struct['pages_before']) ? count($nav_pages_struct['pages_before']) : 0;
 	$pipe = "";
 	for ($i = $b_count-$LINKS; $i <= $b_count; $i++) {
 		if ($i>0) {
@@ -1507,7 +1507,8 @@ function render_nav_pages (&$nav_pages_struct, $LINKS, $q_string='') {
 		}
 	}
 	echo " $pipe <b>".$nav_pages_struct['cur_page']." </b>  ";
-	if (count($nav_pages_struct['pages_after'])>0) { 
+	$a_count = isset($nav_pages_struct['pages_after']) ? count($nav_pages_struct['pages_after']) : 0;
+	if ($a_count>0) {
 		$i=0;
 		foreach ($nav_pages_struct['pages_after'] as $key => $pa ) {
 			$i++;
@@ -1540,7 +1541,7 @@ function do_log_entry ($entry_line) {
 
 function select_block ($map_x, $map_y) {
 
-	global $f2, $BID, $b_row, $label, $order_id;
+	global $f2, $BID, $b_row, $label, $order_id, $banner_data;
 
 	// calculate clicked block from co-ords.
 
@@ -1550,11 +1551,11 @@ function select_block ($map_x, $map_y) {
 
 	} else {
 
-		$map_x = floor ($map_x / BLK_WIDTH)*BLK_WIDTH; // got to floor it to get the top-right corner of the block
-		$map_y = floor ($map_y / BLK_HEIGHT)*BLK_HEIGHT;
+		$map_x = floor ($map_x / $banner_data['BLK_WIDTH'])*$banner_data['BLK_WIDTH']; // got to floor it to get the top-right corner of the block
+		$map_y = floor ($map_y / $banner_data['BLK_HEIGHT'])*$banner_data['BLK_HEIGHT'];
 		//$clicked_block = (($map_y*$b_row['grid_width'])+$map_x)/10 ;
-		$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
-		$clicked_block = (($map_x) / BLK_WIDTH) + (($map_y/BLK_HEIGHT) * ($GRD_WIDTH / BLK_WIDTH)) ;
+		$GRD_WIDTH = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
+		$clicked_block = (($map_x) / $banner_data['BLK_WIDTH']) + (($map_y/$banner_data['BLK_HEIGHT']) * ($GRD_WIDTH / $banner_data['BLK_WIDTH'])) ;
 	}
 
 	if ($clicked_block==0) {
@@ -1659,10 +1660,10 @@ function select_block ($map_x, $map_y) {
 
 		// check max blocks
 		if (USE_AJAX=='NO') {
-			if (G_MAX_BLOCKS>0) {
-				if (sizeof($new_blocks)>G_MAX_BLOCKS) {
+			if ($banner_data['G_MAX_BLOCKS']>0) {
+				if (sizeof($new_blocks)>$banner_data['G_MAX_BLOCKS']) {
 					$max_selected = true;
-					$cannot_sel = "<font color=red><b>".str_replace('%MAX_BLOCKS%', G_MAX_BLOCKS, $label['max_blocks_selected'])."</b></font>";	
+					$cannot_sel = "<font color=red><b>".str_replace('%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected'])."</b></font>";
 				}
 			}
 		}
@@ -1672,12 +1673,12 @@ function select_block ($map_x, $map_y) {
 
 		    $price = $total = 0;
 			$blocks = $new_blocks;
-			$quantity = sizeof($blocks)*(BLK_WIDTH*BLK_HEIGHT);
+			$quantity = sizeof($blocks)*($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']);
 			//$row['blocks']=implode(",",$blocks);
 			$blocks = implode (",", $blocks); // change to string
 			$now = (gmdate("Y-m-d H:i:s"));
 
-			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('" . intval( $_SESSION['MDS_ID'] ) . "', '" . intval( $row['order_id'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $blocks ) . "', 'new', NOW(), '" . floatval( $price ) . "', '" . intval( $quantity ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', " . intval( $b_row['days_expire'] ) . ", '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], AUTO_APPROVE ) . "') ";
+			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('" . intval( $_SESSION['MDS_ID'] ) . "', '" . intval( $row['order_id'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $blocks ) . "', 'new', NOW(), '" . floatval( $price ) . "', '" . intval( $quantity ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', " . intval( $b_row['days_expire'] ) . ", '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ) . "') ";
 		
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$_SESSION['MDS_order_id'] = mysqli_insert_id($GLOBALS['connection']);
@@ -1689,14 +1690,14 @@ function select_block ($map_x, $map_y) {
 
 			$cell="0";
 
-			for ( $y = 0; $y < ( $b_row['grid_height'] * BLK_HEIGHT ); $y += BLK_HEIGHT ) {
-				for ( $x = 0; $x < ( $b_row['grid_width'] * BLK_WIDTH ); $x += BLK_WIDTH ) {
+			for ( $y = 0; $y < ( $b_row['grid_height'] * $banner_data['BLK_HEIGHT ']); $y += $banner_data['BLK_HEIGHT'] ) {
+				for ( $x = 0; $x < ( $b_row['grid_width'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 					if ( in_array( $cell, $new_blocks ) ) {
 
 						$price = get_zone_price( $BID, $y, $x );
 
-						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('".intval($cell)."',  '" . intval($_SESSION['MDS_ID']) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], AUTO_APPROVE ). "', '" . intval($BID ). "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "', '" . floatval($price ). "', '" . intval($_SESSION['MDS_order_id']) . "')";
+						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('".intval($cell)."',  '" . intval($_SESSION['MDS_ID']) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ). "', '" . intval($BID ). "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "', '" . floatval($price ). "', '" . intval($_SESSION['MDS_order_id']) . "')";
 
 						$total += $price;
 
@@ -1722,7 +1723,7 @@ function select_block ($map_x, $map_y) {
 			if (!$row['ad_id']) {
 
 				$_REQUEST['order_id'] = $order_id;
-				$_REQUEST['banner_id'] = $BID;
+				$_REQUEST['BID'] = $BID;
 				$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
 
 				$ad_id = insert_ad_data();
@@ -1842,21 +1843,16 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	}
 	####################################################
 
-	try {
-		$filename   = SERVER_PATH_TO_ADMIN . 'temp/' . "info_" . md5( session_id() ) . ".txt";
-		$fh         = fopen( $filename, 'rb' );
-		$block_info = fread( $fh, filesize( $filename ) );
-		fclose( $fh );
-	} catch(Exception $e) {
-		// Session may have expired if they waited too long so tell them to start over, even though we might still have the file it doesn't match the current session id anymore.
-		// TODO: Implement our own cookies instead of PHP sessions to allow longer sessions. Maybe can recover the old session file automatically somehow or another.
-		return false;
-	}
+	// Session may have expired if they waited too long so tell them to start over, even though we might still have the file it doesn't match the current session id anymore.
+	// TODO: Implement our own cookies instead of PHP sessions to allow longer sessions. Maybe can recover the old session file automatically somehow or another.
+    $block_info = array();
+	$sql = "SELECT block_info FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."' ";
+	$result = mysqli_query($GLOBALS['connection'], $sql);
+	$row = mysqli_fetch_array($result);
 
-	//$block_info = unserialize($temp_order_row['block_info']);
-	$block_info = unserialize($block_info);
-	//echo "block info:";
-	//print_r($block_info);
+	if (mysqli_num_rows($result)>0) {
+		$block_info = unserialize ($row['block_info']);
+	}
 
 	$in_str = $temp_order_row['blocks'];
 
@@ -1895,13 +1891,10 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	$prams = load_ad_values ($temp_order_row['ad_id']);
 	$url = get_template_value('URL', 1);
 	$alt_text = get_template_value('ALT_TEXT', 1);
-//print_R($block_info);
-//echo "<P>url: $url, alt_text: $alt_text </p>";
-	
+
 	foreach ($block_info as $key=>$block) {
 		$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `ad_id`, `click_count`) VALUES ('".intval($key)."',  '".intval($_SESSION['MDS_ID'])."' , 'reserved' , '".intval($block['map_x'])."' , '".intval($block['map_y'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $block['image_data'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $url)."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $alt_text)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $approved)."', '".intval($temp_order_row['banner_id'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."', '".floatval($block['price'])."', '".intval($order_id)."', '".intval($temp_order_row['ad_id'])."', 0)";
-//echo $sql."<br>";
-		
+
 		global $f2;
 		$f2->debug("Updated block - ".$sql);
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -1939,17 +1932,19 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 
 ################
 
-function get_block_position($block_id) {
+function get_block_position($block_id, $banner_id) {
 
 	$cell="0";
 	$ret['x']=0;
 	$ret['y']=0;
 
-	for ($i=0; $i < G_HEIGHT; $i++) {
-		for ($j=0; $j < G_WIDTH; $j++) {
+	$banner_data = load_banner_constants($banner_id);
+
+	for ($i=0; $i < $banner_data['G_HEIGHT']; $i++) {
+		for ($j=0; $j < $banner_data['G_WIDTH']; $j++) {
 			if ($block_id == $cell) {
-				$ret['x']=$j*BLK_WIDTH;
-				$ret['y']=$i*BLK_HEIGHT;
+				$ret['x']=$j*$banner_data['BLK_WIDTH'];
+				$ret['y']=$i*$banner_data['BLK_HEIGHT'];
 				return $ret;
 
 			}
@@ -1958,7 +1953,7 @@ function get_block_position($block_id) {
 
 	}
 
-
+    return $ret;
 }
 
 ########################
@@ -2004,19 +1999,21 @@ function move_block($block_from, $block_to, $banner_id) {
 
 	// get the position and check range, do not move if out of range
 
-	$pos = get_block_position($block_to);
+	$pos = get_block_position($block_to, $banner_id);
 	//echo "pos is ($block_to): ";print_r($pos); echo "<br>";
 	
 	$x = $pos['x'];
 	$y = $pos['y'];
 
-	if (($x==='') || ($x > (G_WIDTH*BLK_WIDTH)) || $x < 0) {
+	$banner_data = load_banner_constants($banner_id);
+
+	if (($x==='') || ($x > ($banner_data['G_WIDTH']*$banner_data['BLK_WIDTH'])) || $x < 0) {
 		echo "<b>x is $x</b><br>";
 		return false;
 
 	}
 
-	if (($y==='') || ($y > (G_HEIGHT*BLK_HEIGHT)) || $y < 0) {
+	if (($y==='') || ($y > ($banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT'])) || $y < 0) {
 		echo "<b>y is $y</b><br>";
 		return false;
 	}
@@ -2082,7 +2079,7 @@ function move_order($block_from, $block_to, $banner_id) {
 	//move_block($block_from, $block_to, $banner_id);
 
 	// get the block_to x,y
-	$pos = get_block_position($block_to);
+	$pos = get_block_position($block_to, $banner_id);
 	$to_x = $pos['x'];
 	$to_y = $pos['y'];
 
@@ -2110,14 +2107,16 @@ function move_order($block_from, $block_to, $banner_id) {
 	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
-	$grid_width = G_WIDTH*BLK_WIDTH;
+	$banner_data = load_banner_constants($banner_id);
+
+	$grid_width = $banner_data['G_WIDTH']*$banner_data['BLK_WIDTH'];
 
 	while ($block_row=mysqli_fetch_array($result)) { // check each block to make sure we can move it.
 
 		//echo 'from: '.$block_row['x'].",".$block_row['y']." to ".($block_row['x']+$dx).",".($block_row['y']+$dy)." (to pos: $to_x, $to_y diff: $dx & $dy)<Br>";
 		//$block_to = ((($block_row['y']+$dy)*$grid_width)+($block_row['x']+$dx))/10 ;
 
-		$block_to = (($block_row['x']+$dx) / BLK_WIDTH) + ((($block_row['y']+$dy)/BLK_HEIGHT) * ($grid_width/BLK_WIDTH));
+		$block_to = (($block_row['x']+$dx) / $banner_data['BLK_WIDTH']) + ((($block_row['y']+$dy)/$banner_data['BLK_HEIGHT']) * ($grid_width/$banner_data['BLK_WIDTH']));
 		
 		if (!is_block_free($block_to, $banner_id)) {
 			echo "<font color='red'>Cannot move the order - the space chosen is not empty!</font><br>";
@@ -2130,8 +2129,8 @@ function move_order($block_from, $block_to, $banner_id) {
 
 	while ($block_row=mysqli_fetch_array($result)) {
 
-		$block_from = (($block_row['x']) / BLK_WIDTH) + (($block_row['y']/BLK_HEIGHT) * ($grid_width/BLK_WIDTH)) ;
-		$block_to = (($block_row['x']+$dx) / BLK_WIDTH) + ((($block_row['y']+$dy)/BLK_HEIGHT) * ($grid_width/BLK_WIDTH));
+		$block_from = (($block_row['x']) / $banner_data['BLK_WIDTH']) + (($block_row['y']/$banner_data['BLK_HEIGHT']) * ($grid_width/$banner_data['BLK_WIDTH'])) ;
+		$block_to = (($block_row['x']+$dx) / $banner_data['BLK_WIDTH']) + ((($block_row['y']+$dy)/$banner_data['BLK_HEIGHT']) * ($grid_width/$banner_data['BLK_WIDTH']));
 
 		move_block($block_from, $block_to, $banner_id);
 	}
@@ -2147,9 +2146,10 @@ function move_order($block_from, $block_to, $banner_id) {
 function get_required_size($x, $y) - assuming the grid constants were initialized
 $x and $y are the current size
 */
-function get_required_size($x, $y) {
-	$block_width = BLK_WIDTH;
-	$block_height = BLK_HEIGHT;
+function get_required_size($x, $y, $banner_data) {
+
+	$block_width = $banner_data['BLK_WIDTH'];
+	$block_height = $banner_data['BLK_HEIGHT'];
 
 	$size[0] = $x;
 	$size[1] = $y;
@@ -2381,7 +2381,7 @@ function saveImage($field_id) {
 
 	$imagine = new Imagine\Gd\Imagine();
 
-	if (IMG_MAX_WIDTH=='IMG_MAX_WIDTH' ) {
+	if (!defined('IMG_MAX_WIDTH') || IMG_MAX_WIDTH=='IMG_MAX_WIDTH' ) {
 
 		$max_width = '150';
 	} else {
@@ -2580,7 +2580,7 @@ function is_imagetype_allowed ($file_name) {
 	$a = explode(".",$file_name);
 	$ext = strtolower(array_pop($a));
 
-	if (ALLOWED_IMG=='ALLOWED_IMG') { 
+	if (!defined("ALLOWED_IMG") || ALLOWED_IMG=='ALLOWED_IMG') {
 		$ALLOWED_IMG= 'jpg, jpeg, gif, png, doc, pdf, wps, hwp, txt, bmp, rtf, wri';
 	} else { 
 		$ALLOWED_IMG=trim(strtolower(ALLOWED_IMG));
@@ -2898,8 +2898,10 @@ function get_pixel_image_size($order_id) {
 	$low_x  = ! isset( $low_x ) ? 0 : $low_x;
 	$low_y  = ! isset( $low_y ) ? 0 : $low_y;
 
-	$size['x'] = ($high_x + BLK_WIDTH) - $low_x;
-	$size['y'] = ($high_y + BLK_HEIGHT) - $low_y;
+	$banner_data = load_banner_constants($block_row['banner_id']);
+
+	$size['x'] = ($high_x + $banner_data['BLK_WIDTH']) - $low_x;
+	$size['y'] = ($high_y + $banner_data['BLK_HEIGHT']) - $low_y;
 
 	return $size;
 
@@ -2964,7 +2966,7 @@ function js_out_prep($str) {
 function echo_copyright() {
 
 	?>
-	<div style="font-size:xx-small; text-align:center">Powered By <a target="_blank" style="font-size:7pt;color:black" href="http://www.milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date("Y"); ?></div>
+	<div style="font-size:xx-small; text-align:center">Powered By <a target="_blank" style="font-size:7pt;color:black" href="https://milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date("Y"); ?></div>
 	<?php
 
 }
@@ -2973,14 +2975,14 @@ function echo_copyright() {
 function shutdown(){
     $isError = false;
     if ($error = error_get_last()){
-	switch($error['type']){
-	    case E_ERROR:
-	    case E_CORE_ERROR:
-	    case E_COMPILE_ERROR:
-	    case E_USER_ERROR:
-		$isError = true;
-		break;
-	}
+        switch($error['type']){
+            case E_ERROR:
+            case E_CORE_ERROR:
+            case E_COMPILE_ERROR:
+            case E_USER_ERROR:
+            $isError = true;
+            break;
+        }
     }
 
     if ($isError){
@@ -2990,7 +2992,6 @@ function shutdown(){
 	if (substr_count($error['message'], 'Allowed memory size')) {
 		echo "<br />Try increasing your PHP memory limit and restarting the web server.";
 	}
-
 
     } else {
 	echo "Script completed";

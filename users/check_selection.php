@@ -1,8 +1,7 @@
 <?php
 /**
- * @version        $Id: check_selection.php 137 2011-04-18 19:48:11Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -39,12 +38,12 @@ header( "Cache-Control: no-cache, must-revalidate" ); // HTTP/1.1
 header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" ); // Date in the past
 
 $BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
-load_banner_constants( $BID );
+$banner_data = load_banner_constants( $BID );
 
 // normalize...
 
-$_REQUEST['map_x']    = floor( $_REQUEST['map_x'] / BLK_WIDTH ) * BLK_WIDTH;
-$_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / BLK_HEIGHT ) * BLK_HEIGHT;
+$_REQUEST['map_x']    = floor( $_REQUEST['map_x'] / $banner_data['BLK_WIDTH'] ) * $banner_data['BLK_WIDTH'];
+$_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / $banner_data['BLK_HEIGHT'] ) * $banner_data['BLK_HEIGHT'];
 $_REQUEST['block_id'] = floor( $_REQUEST['block_id'] );
 
 /**
@@ -92,7 +91,7 @@ check_selection_main();
 
 function check_selection_main() {
 
-	global $f2;
+	global $f2, $banner_data;
 
 	# check the status of the block.
 
@@ -144,14 +143,14 @@ function check_selection_main() {
 	$size  = $image->getSize();
 
 	$cb_array = array();
-	for ( $y = 0; $y < ( $size->getHeight() ); $y += BLK_HEIGHT ) {
-		for ( $x = 0; $x < ( $size->getWidth() ); $x += BLK_WIDTH ) {
+	for ( $y = 0; $y < ( $size->getHeight() ); $y += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x = 0; $x < ( $size->getWidth() ); $x += $banner_data['BLK_WIDTH'] ) {
 
 			$map_x = $x + intval($_REQUEST['map_x']);
 			$map_y = $y + intval($_REQUEST['map_y']);
 
-			$GRD_WIDTH  = BLK_WIDTH * G_WIDTH;
-			$cb         = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
+			$GRD_WIDTH  = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
+			$cb         = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
 			$cb_array[] = $cb;
 		}
 	}

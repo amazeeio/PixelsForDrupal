@@ -14,7 +14,8 @@ otherwise output the HTML to the browser.
 if (MDS_AGRESSIVE_CACHE=='YES') {
 
 	// cache all requests, browsers must respect this php script
-	header('Cache-Control: public, must-revalidate'); 
+	header('content-type: text/html; charset=utf-8');
+	header('Cache-Control: public, must-revalidate');
 	$if_modified_since = preg_replace('/;.*$/', '', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
 	$gmdate_mod = gmdate('D, d M Y H:i:s', $b_row['time_stamp']) . ' GMT';
 	if ($if_modified_since == $gmdate_mod) {
@@ -33,7 +34,7 @@ $BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_
 	<title><?php echo SITE_NAME; ?></title>
 	<meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<link rel=StyleSheet type="text/css" href="main.css" >
+    <link rel=StyleSheet type="text/css" href="main.css?ver=<?php filemtime(__DIR__ . "/../main.css"); ?>" >
 </head>
 <body class="main">
 
@@ -48,7 +49,7 @@ $BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_
 				<!-- logo image -->
 				<div class="logo">
 					<a href="index.php">
-						<img src="<?php echo $logourl; ?>" style="border:0px;" alt="" />
+						<img src="<?php echo htmlentities($logourl); ?>" style="border:0px;" alt="" />
 					</a>
 				</div>
 				<?php } ?>
@@ -58,13 +59,13 @@ $BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_
 				if(!empty($slogan)) { ?>
 				<!-- slogan -->
 				<div class="slogan">
-					<?php echo $slogan; ?>
+					<?php echo htmlentities($slogan); ?>
 				</div>
 				<?php } ?>
 				
 				<!-- stats iframe -->
 				<div class="status_outer">
-					<iframe width="150" height="50" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src="display_stats.php?BID=1" allowtransparency="true"></iframe>
+					<?php echo get_stats_html_code( $BID ); ?>
 				</div>
 				
 				<div class="clear"></div>

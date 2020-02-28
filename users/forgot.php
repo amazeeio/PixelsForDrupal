@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: forgot.php 88 2010-10-12 16:43:19Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 session_start();
@@ -136,7 +135,7 @@ if ($row['Email'] != '') {
 		$message = $EmailMessage;
 
 		if (USE_SMTP=='YES') {
-			$mail_id=queue_mail(addslashes($to), addslashes($row['FirstName']." ".$row['LastName']), addslashes(SITE_CONTACT_EMAIL), addslashes(SITE_NAME), addslashes($subject), addslashes($message), '', 6);
+			$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);
 			process_mail_queue(2, $mail_id);
 		} else {
 			send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);

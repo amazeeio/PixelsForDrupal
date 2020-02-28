@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: authorizeNetSIM.php 69 2010-09-12 01:31:15Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 require_once "../config.php";
@@ -34,7 +33,7 @@ require_once "../config.php";
 
 $_PAYMENT_OBJECTS['authorizeNet'] = new authorizeNet;
 
-define (IPN_LOGGING, 'Y');
+define ('IPN_LOGGING', 'Y');
 
 
 function authnet_mail_error($msg) {
@@ -102,7 +101,7 @@ function authnet_CalculateFP ($loginid, $x_tran_key, $amount, $sequence, $tstamp
 	return (authnet_hmac ($x_tran_key, $loginid . "^" . $sequence . "^" . $tstamp . "^" . $amount . "^" . $currency));
 }
 
-if (AUTHNET_TEST_MODE=='YES') {
+if ( defined( 'AUTHNET_TEST_MODE' ) && AUTHNET_TEST_MODE == 'YES' ) {
 	echo "Test Mode data:<p>";
 	print_r($_REQUEST);
 	echo "</p>";

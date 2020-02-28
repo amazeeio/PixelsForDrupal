@@ -1,8 +1,7 @@
 <?php
 /**
- * @version        $Id: image_functions.php 153 2012-09-10 22:08:44Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -120,8 +119,9 @@ function process_image( $BID ) {
 ###################################################
 
 function get_html_code( $BID ) {
+	$BID = intval($BID);
 
-	$sql = "SELECT * FROM banners WHERE banner_id='" . intval( $BID ) . "'";
+	$sql = "SELECT * FROM banners WHERE banner_id='" . $BID . "'";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 	$b_row = mysqli_fetch_array( $result );
 
@@ -132,13 +132,17 @@ function get_html_code( $BID ) {
 		$b_row['block_height'] = 10;
 	}
 
-	return "<iframe width=\"" . ( $b_row['grid_width'] * $b_row['block_width'] ) . "\" height=\"" . ( $b_row['grid_height'] * $b_row['block_height'] ) . "\" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src=\"" . BASE_HTTP_PATH . "display_map.php?BID=$BID\"></iframe>";
+	$width = $b_row['grid_width'] * $b_row['block_width'];
+	$height = $b_row['grid_height'] * $b_row['block_height'];
 
+	return '<iframe class="gridframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_map.php?BID=' . $BID . '" style="width:' . $width . ';height:' . $height . ';" width="' . $width . '" height="' . $height . '"></iframe>';
 }
 
 ####################################################
 function get_stats_html_code( $BID ) {
-	return "<iframe width=\"150\" height=\"50\" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src=\"" . BASE_HTTP_PATH . "display_stats.php?BID=$BID\" allowtransparency=\"true\" ></iframe>";
+	$BID = intval($BID);
+
+	return '<iframe class="statsframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_stats.php?BID=' . $BID . '" width="150" height="50"></iframe>';
 }
 
 #########################################################

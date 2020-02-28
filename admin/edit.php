@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: edit.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,17 +25,14 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
 
-
-
-$user_id = $_REQUEST[user_id];
+$user_id = $_REQUEST['user_id'];
 
 ?>
 <h3>Edit User's Account Details</h3>
@@ -46,7 +42,7 @@ Here you can edit a user's name, email, company name and change their password.
 
 <?php
 
-if ($_REQUEST[action]=='changepass') {
+if ($_REQUEST['action']=='changepass') {
 
 	$sql = "select * from users where ID=".intval($user_id);
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));

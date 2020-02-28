@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: inventory.php 165 2013-01-09 02:07:08Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,17 +25,14 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
 
-
-//load_image_defaults();
-
+$BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
 
 ?>
 <?php echo $f2->get_doc(); ?>
@@ -47,7 +43,7 @@ require ('admin_common.php');
 
 	function confirmLink(theLink, theConfirmMsg) {
   
-       if (theConfirmMsg == '' || typeof(window.opera) != 'undefined') {
+       if (theConfirmMsg === '') {
            return true;
        }
 
@@ -62,7 +58,7 @@ require ('admin_common.php');
 
 </head>
 
-<body style=" font-family: 'Arial', sans-serif; font-size:10pt; ">
+<body style=" font-family: 'Arial', sans-serif; font-size:12px; ">
 
 
 <?php
@@ -71,20 +67,16 @@ if (isset($_REQUEST['reset_image']) && $_REQUEST['reset_image']!='') {
 
 	$default = get_default_image($_REQUEST['reset_image']);
 
-	$sql = "UPDATE banners SET `".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['reset_image'])."`='".mysqli_real_escape_string( $GLOBALS['connection'], $default)."' WHERE banner_id='".intval($_REQUEST['banner_id'])."' ";
+	$sql = "UPDATE banners SET `".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['reset_image'])."`='".mysqli_real_escape_string( $GLOBALS['connection'], $default)."' WHERE banner_id='".$BID."' ";
 
 	mysqli_query($GLOBALS['connection'], $sql);
-
-	//echo $sql;
-
-
 }
 
 function display_reset_link($BID, $image_name) {
 
 	if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 		?>
-		<a onclick="return confirmLink(this, 'Reset this image to deafult, are you sure?');" href='inventory.php?action=edit&banner_id=<?php echo $BID; ?>&reset_image=<?php echo $image_name; ?>'><font color='red'>x</font></a>
+		<a onclick="return confirmLink(this, 'Reset this image to deafult, are you sure?');" href='inventory.php?action=edit&BID=<?php echo $BID; ?>&reset_image=<?php echo $image_name; ?>'><font color='red'>x</font></a>
 		<?php
 
 	}
@@ -201,24 +193,17 @@ function validate_input() {
 		}
 	}
 
-
-
-	
-
 	return $error;
-
-
 }
-####################
-function is_default() {
 
-	if (isset($_REQUEST['banner_id']) && $_REQUEST['banner_id']==1) {
+function is_default() {
+	if (isset($_REQUEST['BID']) && $_REQUEST['BID']==1) {
 		return true;
 	}
 	return false;
 
 }
-#####################
+
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 	if (is_default ()) {
 		echo "<b>Cannot delete</b> - This is the default grid!<br>";
@@ -227,22 +212,22 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 
 		// check orders..
 
-		$sql = "SELECT * FROM orders where status <> 'deleted' and banner_id=".intval($_REQUEST['banner_id']);
+		$sql = "SELECT * FROM orders where status <> 'deleted' and banner_id=".$BID;
 		//echo $sql;
 		$res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		if (mysqli_num_rows($res)==0) {
 
-			$sql = "DELETE FROM blocks WHERE banner_id='".intval($_REQUEST['banner_id'])."' ";
+			$sql = "DELETE FROM blocks WHERE banner_id='".$BID."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
-			$sql = "DELETE FROM prices WHERE banner_id='".intval($_REQUEST['banner_id'])."' ";
+			$sql = "DELETE FROM prices WHERE banner_id='".$BID."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
-			$sql = "DELETE FROM banners WHERE banner_id='".intval($_REQUEST['banner_id'])."' ";
+			$sql = "DELETE FROM banners WHERE banner_id='".$BID."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 
 			// DELETE ADS
-			$sql = "select * FROM ads where banner_id='".intval($_REQUEST['banner_id'])."' ";
+			$sql = "select * FROM ads where banner_id='".$BID."' ";
 			$res2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 			while ($row2=mysqli_fetch_array($res2)) {
 
@@ -251,9 +236,9 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 				mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			}
 
-			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$_REQUEST['banner_id'].".jpg");
-			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$_REQUEST['banner_id'].".png");
-			@unlink (SERVER_PATH_TO_ADMIN."temp/background".$_REQUEST['banner_id'].".png");
+			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$BID.".jpg");
+			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$BID.".png");
+			@unlink (SERVER_PATH_TO_ADMIN."temp/background".$BID.".png");
 		} else {
 			echo "<font color='red'><b>Cannot delete</b></font> - this grid contains some orders in the database.<br>";
 
@@ -328,16 +313,23 @@ if (isset($_REQUEST['submit']) && $_REQUEST['submit']!='') {
 
 		//echo $sql;grid_block, nfs_block, tile, usr_grid_block, usr_nfs_block, usr_ord_block, usr_res_block, usr_sel_block, usr_sol_block 
 
-		//$image_sql_fields = get_banner_image_sql_fields($_REQUEST['banner_id']);
+		//$image_sql_fields = get_banner_image_sql_fields($BID);
 		$image_sql_fields = ', grid_block, nfs_block, tile, usr_grid_block, usr_nfs_block, usr_ord_block, usr_res_block, usr_sel_block, usr_sol_block ';
-		$image_sql_values = get_banner_image_sql_values($_REQUEST['banner_id']);
+		$image_sql_values = get_banner_image_sql_values($BID);
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		$sql = "REPLACE INTO `banners` ( `banner_id` , `grid_width` , `grid_height` , `days_expire` , `price_per_block`, `name`, `currency`, `max_orders`, `block_width`, `block_height`, `max_blocks`, `min_blocks`, `date_updated`, `bgcolor`, `auto_publish`, `auto_approve` $image_sql_fields ) VALUES ('".intval($_REQUEST['banner_id'])."', '".intval($_REQUEST['grid_width'])."', '".intval($_REQUEST['grid_height'])."', '".intval($_REQUEST['days_expire'])."', '".floatval($_REQUEST['price_per_block'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".intval($_REQUEST['max_orders'])."', '".intval($_REQUEST['block_width'])."', '".intval($_REQUEST['block_height'])."', '".intval($_REQUEST['max_blocks'])."', '".intval($_REQUEST['min_blocks'])."', '".$now."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bgcolor'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_publish'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_approve'])."' $image_sql_values);";
+		if (isset($_REQUEST['action']) && $_REQUEST['action']=='new') {
+			$sql = "INSERT INTO `banners` ( `banner_id` , `grid_width` , `grid_height` , `days_expire` , `price_per_block`, `name`, `currency`, `max_orders`, `block_width`, `block_height`, `max_blocks`, `min_blocks`, `date_updated`, `bgcolor`, `auto_publish`, `auto_approve` $image_sql_fields ) VALUES (NULL, '".intval($_REQUEST['grid_width'])."', '".intval($_REQUEST['grid_height'])."', '".intval($_REQUEST['days_expire'])."', '".floatval($_REQUEST['price_per_block'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".intval($_REQUEST['max_orders'])."', '".intval($_REQUEST['block_width'])."', '".intval($_REQUEST['block_height'])."', '".intval($_REQUEST['max_blocks'])."', '".intval($_REQUEST['min_blocks'])."', '".$now."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bgcolor'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_publish'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_approve'])."' $image_sql_values);";
+		} else {
+			$sql = "REPLACE INTO `banners` ( `banner_id` , `grid_width` , `grid_height` , `days_expire` , `price_per_block`, `name`, `currency`, `max_orders`, `block_width`, `block_height`, `max_blocks`, `min_blocks`, `date_updated`, `bgcolor`, `auto_publish`, `auto_approve` $image_sql_fields ) VALUES ('".$BID."', '".intval($_REQUEST['grid_width'])."', '".intval($_REQUEST['grid_height'])."', '".intval($_REQUEST['days_expire'])."', '".floatval($_REQUEST['price_per_block'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['currency'])."', '".intval($_REQUEST['max_orders'])."', '".intval($_REQUEST['block_width'])."', '".intval($_REQUEST['block_height'])."', '".intval($_REQUEST['max_blocks'])."', '".intval($_REQUEST['min_blocks'])."', '".$now."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['bgcolor'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_publish'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['auto_approve'])."' $image_sql_values);";
+		}
+
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
+		$BID = mysqli_insert_id($GLOBALS['connection']);
+
 		// TODO: Add individual order expiry dates
-		$sql = "UPDATE `orders` SET days_expire=".intval($_REQUEST['days_expire'])." WHERE banner_id=".intval($_REQUEST['banner_id']);
+		$sql = "UPDATE `orders` SET days_expire=".intval($_REQUEST['days_expire'])." WHERE banner_id=".$BID;
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 		
 		$_REQUEST['new'] ='';
@@ -359,22 +351,21 @@ Here you can manage your grid(s): <ul><li>Set the expiry of the pixels</li>
 
 <?php } ?>
 <?php //if ((isset($_REQUEST['new']) && $_REQUEST['new']=='')) { ?>
-<input type="button" style="background-color:#66FF33" value="New Grid..." onclick="window.location='inventory.php?new=1'"><br>
+<input type="button" style="background-color:#66FF33" value="New Grid..." onclick="window.location='inventory.php?action=new&new=1'"><br>
 <?php //} ?>
 
 <?php
 
 if (isset($_REQUEST['new']) && $_REQUEST['new']=='1') {
 	echo "<h4>New Grid:</h4>";
-	//echo "<p>Note: Make sure that you create a file for your new language in the /lang directory.</p>";
 }
 if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 	echo "<h4>Edit Grid:</h4>";
 
-	$sql = "SELECT * FROM banners WHERE `banner_id`='".intval($_REQUEST['banner_id'])."' ";
+	$sql = "SELECT * FROM banners WHERE `banner_id`='".$BID."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
-	$_REQUEST['banner_id'] = $row['banner_id'];
+	$_REQUEST['BID'] = $row['banner_id'];
 	$_REQUEST['grid_width'] = $row['grid_width'];
 	$_REQUEST['grid_height'] = $row['grid_height'];
 	$_REQUEST['days_expire'] = $row['days_expire'];
@@ -390,8 +381,6 @@ if (isset($_REQUEST['action']) && $_REQUEST['action']=='edit') {
 	$_REQUEST['auto_approve'] = $row['auto_approve'];
 	$_REQUEST['auto_publish'] = $row['auto_publish'];
 }
-
-//echo 'block width is:'.$_REQUEST['block_width']."<br> ($sql)";
 
 if ((isset($_REQUEST['new']) && $_REQUEST['new']!='') || (isset($_REQUEST['action']) && $_REQUEST['action']=='edit')) {
 
@@ -419,15 +408,12 @@ if ((isset($_REQUEST['new']) && $_REQUEST['new']!='') || (isset($_REQUEST['actio
 		$_REQUEST['max_orders'] = '0';
 	}
 
-
-
-
 	?>
 <form enctype="multipart/form-data" action='inventory.php' method="post">
 <input type="hidden" value="<?php echo (isset($_REQUEST['new']) ? $_REQUEST['new'] : ""); ?>" name="new" >
 <input type="hidden" value="<?php echo (isset($_REQUEST['edit']) ? $_REQUEST['edit'] : ""); ?>" name="edit" >
 <input type="hidden" value="<?php echo (isset($_REQUEST['action']) ? $_REQUEST['action'] : ""); ?>" name="action" >
-<input type="hidden" value="<?php echo (isset($_REQUEST['banner_id']) ? $_REQUEST['banner_id'] : ""); ?>" name="banner_id" >
+<input type="hidden" value="<?php echo (isset($_REQUEST['BID']) ? $BID : ""); ?>" name="BID" >
 <input type="hidden" value="<?php echo (isset($_REQUEST['edit_anyway']) ? $_REQUEST['edit_anyway'] : ""); ?>" name="edit_anyway" >
 <table border="0" cellSpacing="0" cellPadding="0"  width="100%" bgcolor="#ffffff">
 
@@ -438,7 +424,7 @@ if ((isset($_REQUEST['new']) && $_REQUEST['new']!='') || (isset($_REQUEST['actio
 <tr bgcolor="#ffffff" ><td bgColor="#eaeaea"><font size="2"><b>Grid Name</b></font></td><td><input size="30" type="text" name="name" value="<?php echo (isset($_REQUEST['name']) ? $_REQUEST['name'] : ""); ?>"/> <font size="2">eg. My Million Pixel Grid</font></td></tr>
 <?php
 				
-				$sql = "SELECT * FROM blocks where banner_id=".intval($row['banner_id'])." AND status <> 'nfs' limit 1 ";
+				$sql = "SELECT * FROM blocks where banner_id=".$BID." AND status <> 'nfs' limit 1 ";
 				$b_res = mysqli_query($GLOBALS['connection'], $sql);
 				
 				if (($row['banner_id']!='') && (mysqli_num_rows($b_res)>0)) {
@@ -465,7 +451,7 @@ if (!$locked) {
 <?php } else {
 
 	echo "<b>".$_REQUEST['grid_width'];
-	echo "<input type='hidden' value='".$row['grid_width']."' name='grid_width'> Blocks.</b> <font size='1'>Note: Cannot change width because the grid is in use by an advertiser. [<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
+	echo "<input type='hidden' value='".$row['grid_width']."' name='grid_width'> Blocks.</b> <font size='1'>Note: Cannot change width because the grid is in use by an advertiser. [<a href='inventory.php?action=edit&BID=".$BID."&edit_anyway=1'>Edit Anyway</a>]</font>";
 
 }
 ?>
@@ -480,7 +466,7 @@ if (!$locked) {
 <?php } else {
 
 	echo "<b>".$_REQUEST['grid_height'];
-	echo "<input type='hidden' value='".$row['grid_height']."' name='grid_height'> Blocks.</b> <font size='1'> Note: Cannot change height because the grid is in use by an advertiser.[<a href='inventory.php?action=edit&banner_id=".$_REQUEST['banner_id']."&edit_anyway=1'>Edit Anyway</a>]</font>";
+	echo "<input type='hidden' value='".$row['grid_height']."' name='grid_height'> Blocks.</b> <font size='1'> Note: Cannot change height because the grid is in use by an advertiser.[<a href='inventory.php?action=edit&BID=".$BID."&edit_anyway=1'>Edit Anyway</a>]</font>";
 
 }
 ?>
@@ -528,9 +514,7 @@ if (!$locked) {
 $size_error_style = "style='font-size:9px; color:#F7DAD5; border-color:#FF6600; border-style: solid'";
 $size_error_msg = "Error: Invalid size! Must be ".$_REQUEST['block_width']."x".$_REQUEST['block_height'];
 
-function validate_block_size($image_name) {
-
-	$BID = $_REQUEST['banner_id'];
+function validate_block_size($image_name, $BID) {
 
 	if (!$BID) {
 
@@ -598,49 +582,49 @@ function validate_block_size($image_name) {
 		Displayed on the public Grid</b></font></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea" ><font face="Arial" size="2"><b>Grid Block<?php display_reset_link($_REQUEST['banner_id'], 'grid_block'); ?></b></font></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('grid_block'); if (!$valid) echo $size_error_style;  ?> ><span ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=grid_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></span></td><td> <input type="file" name="grid_block" size="10"></td>
+		<td bgColor="#eaeaea" ><font face="Arial" size="2"><b>Grid Block<?php display_reset_link($BID, 'grid_block'); ?></b></font></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('grid_block', $BID); if (!$valid) echo $size_error_style;  ?> ><span ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=grid_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></span></td><td> <input type="file" name="grid_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Not For Sale Block<?php display_reset_link($_REQUEST['banner_id'], 'nfs_block'); ?></font></b></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('nfs_block'); if (!$valid) echo $size_error_style;  ?>><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=nfs_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="nfs_block" size="10"></td>
+		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Not For Sale Block<?php display_reset_link($BID, 'nfs_block'); ?></font></b></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('nfs_block', $BID); if (!$valid) echo $size_error_style;  ?>><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=nfs_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="nfs_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Background Tile<?php display_reset_link($_REQUEST['banner_id'], 'tile'); ?></font></b></td>
-		<td bgcolor='#867C6F'><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=tile" border="0"></td><td> <input type="file" name="tile" size="10">(<font size="1" face="Verdana">This tile is used the fill the space behind the grid image. The tile will be seen before the grid image is loaded.) <b>Background color:</b> <input type='text' name='bgcolor' size='7' value='<?php echo $_REQUEST['bgcolor'];?>'> eg. #ffffff</font></td>
+		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Background Tile<?php display_reset_link($BID, 'tile'); ?></font></b></td>
+		<td bgcolor='#867C6F'><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=tile" border="0"></td><td> <input type="file" name="tile" size="10">(<font size="1" face="Verdana">This tile is used the fill the space behind the grid image. The tile will be seen before the grid image is loaded.) <b>Background color:</b> <input type='text' name='bgcolor' size='7' value='<?php echo $_REQUEST['bgcolor'];?>'> eg. #ffffff</font></td>
 	</tr>
 	<tr bgcolor="#ffffff">
 		<td colspan="3" bgColor="#eaeaea"><b><font size="2" face="Arial">Block Graphics - 
 		Displayed on the ordering Grid</font></b></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Grid Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_grid_block'); ?></b></font></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_grid_block'); if (!$valid) echo $size_error_style;  ?>><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_grid_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_grid_block" size="10"></td>
+		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Grid Block<?php display_reset_link($BID, 'usr_grid_block'); ?></b></font></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_grid_block', $BID); if (!$valid) echo $size_error_style;  ?>><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_grid_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_grid_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Not For Sale Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_nfs_block'); ?></font></b></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_nfs_block'); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_nfs_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_nfs_block" size="10"></td>
+		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Not For Sale Block<?php display_reset_link($BID, 'usr_nfs_block'); ?></font></b></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_nfs_block', $BID); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_nfs_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_nfs_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Ordered Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_ord_block'); ?></b></font></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_ord_block'); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_ord_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_ord_block" size="10"></td>
+		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Ordered Block<?php display_reset_link($BID, 'usr_ord_block'); ?></b></font></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_ord_block', $BID); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_ord_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_ord_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Reserved Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_res_block'); ?></b></font></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_res_block'); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_res_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_res_block" size="10"></td>
+		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Reserved Block<?php display_reset_link($BID, 'usr_res_block'); ?></b></font></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_res_block', $BID); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_res_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_res_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Selected Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_sel_block'); ?></font></b></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_sel_block'); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_sel_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_sel_block" size="10"></td>
+		<td bgColor="#eaeaea"><b><font size="2" face="Arial">Selected Block<?php display_reset_link($BID, 'usr_sel_block'); ?></font></b></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_sel_block', $BID); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_sel_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_sel_block" size="10"></td>
 	</tr>
 	<tr bgcolor="#ffffff">
-		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Sold Block<?php display_reset_link($_REQUEST['banner_id'], 'usr_sol_block'); ?></b></font></td>
-		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_sol_block'); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $_REQUEST['banner_id'];?>&image_name=usr_sol_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_sol_block" size="10"></td>
+		<td bgColor="#eaeaea"><font face="Arial" size="2"><b>Sold Block<?php display_reset_link($BID, 'usr_sol_block'); ?></b></font></td>
+		<td bgcolor='#867C6F' <?php $valid = validate_block_size('usr_sol_block', $BID); if (!$valid) echo $size_error_style;  ?> ><img src="get_block_image.php?t=<?php echo time();?>&BID=<?php echo $BID;?>&image_name=usr_sol_block" border="0"><?php if (!$valid) { echo $size_error_msg; $valid=''; } ?></td><td><input type="file" name="usr_sol_block" size="10"></td>
 	</tr>
 	<!--
 	<tr bgcolor="#ffffff">
 	<td colspan="3">
-<a href="inventory.php?action=edit&banner_id=<?php echo $_REQUEST['banner_id']?>&default_all=yes" onclick="return confirmLink(this, 'Reset all blocks to default, are you sure?')"><font color='red' size=1>Reset all blocks to default</font></a></td>
+<a href="inventory.php?action=edit&BID=<?php echo $BID?>&default_all=yes" onclick="return confirmLink(this, 'Reset all blocks to default, are you sure?')"><font color='red' size=1>Reset all blocks to default</font></a></td>
 	<tr>
 	-->
 </table>
@@ -734,7 +718,7 @@ function render_offer ($price, $currency, $max_orders, $days_expire, $package_id
 				
 					}?>
 				</td>
-				<td><font size="2"><a href='<?php echo $_SERVER['PHP_SELF'];?>?action=edit&banner_id=<?php echo $row['banner_id'];?>'>Edit</a> / <a href="packs.php?BID=<?php echo $row['banner_id'];?>"> Packages</a><?php if ($row['banner_id']!='1') {?> / <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&banner_id=<?php echo $row['banner_id'];?>'>Delete</a><?php } ?></font></td>
+				<td><font size="2"><a href='<?php echo $_SERVER['PHP_SELF'];?>?action=edit&BID=<?php echo $row['banner_id'];?>'>Edit</a> / <a href="packs.php?BID=<?php echo $row['banner_id'];?>"> Packages</a><?php if ($row['banner_id']!='1') {?> / <a href='<?php echo $_SERVER['PHP_SELF'];?>?action=delete&BID=<?php echo $row['banner_id'];?>'>Delete</a><?php } ?></font></td>
 				<td><font size="2"><?php echo get_clicks_for_today($row['banner_id']); ?></font></td>
 				<td><font size="2"><?php echo get_clicks_for_banner($row['banner_id']); ?></font></td>
 

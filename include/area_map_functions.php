@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: area_map_functions.php 164 2012-12-14 21:22:24Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -76,7 +75,9 @@ The output is saved into a file.
 function process_map($BID, $map_file='') {
 	
 
-	if (!is_numeric($BID)) die();
+	if ( ! is_numeric( $BID ) ) {
+		die();
+	}
 
 	$sql = "UPDATE orders SET published='N' where `status`='expired' ";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
@@ -199,7 +200,9 @@ The structure of output:
 function show_map($BID = 1) {
 	
 
-	if (!is_numeric($BID)) die();
+if ( ! is_numeric( $BID ) ) {
+	die();
+}
 
 	if (BANNER_DIR=='BANNER_DIR') {	
 		$BANNER_DIR = "banners/";
@@ -240,164 +243,151 @@ function show_map($BID = 1) {
 
 	}
 
-	?>
+?><!DOCTYPE html>
+<html>
 	<head>
-	<script language="JavaScript">
+        <script>
 	var h_padding=10;
 	var v_padding=10;
-	function is_right_available(box,e) {
+
+		var winWidth = 0;
+		var winHeight = 0;
 		
-		if ((box.clientWidth+e.clientX+h_padding)>=winWidth){
-			return false; // not available
+		var pos = 'right';
+
+		var strCache = [];
+
+		var lastStr;
+		var trip_count = 0;
+
+		function initialize() {
+			bubblebox();
+			initFrameSize();
+        }
+
+		function bubblebox() {
+			window.bubblebox = document.getElementById('bubble');
+		}
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", initialize);
+		} else {
+			initialize();
+		}
+
+		function initFrameSize() {
+
+			winWidth =<?php echo $b_row['grid_width'] * $b_row['block_width']; ?>;
+			winHeight =<?php echo $b_row['grid_height'] * $b_row['block_height']; ?>;
+		}
+
+		function is_right_available(e) {
+			if ((window.bubblebox.clientWidth + e.clientX + h_padding) >= winWidth) {
+				// not available
+				return false;
 		}
 		return true;
 	}
 
-	function is_top_available(box,e) {
-		
-		if ((e.clientY-box.clientHeight-v_padding) < 0){
+		function is_top_available(e) {
+			if ((e.clientY - window.bubblebox.clientHeight - v_padding) < 0) {
 			return false;
 		}
 		return true;
 
 	}
 
-	function is_bot_available(box,e) {
-		if ((e.clientY+box.clientHeight+v_padding) > winHeight){
+		function is_bot_available(e) {
+			if ((e.clientY + window.bubblebox.clientHeight + v_padding) > winHeight) {
 			return false;
 		}
 		return true;
 	}
 
-	function is_left_available(box,e) {
-		if ((e.clientX-box.clientWidth-h_padding)<0){
-
+		function is_left_available(e) {
+			if ((e.clientX - window.bubblebox.clientWidth - h_padding) < 0) {
 			return false;
 		}
 		return true;
 
 	}
-	  function boxFinishedMoving(box) {
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
+		function boxFinishedMoving() {
+			var y = window.bubblebox.offsetTop;
+			var x = window.bubblebox.offsetLeft;
 
 		//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
-		if ((y<box.ypos)||(y>box.ypos)||(x<box.xpos)||(x>box.xpos)) {
+			if ((y < window.bubblebox.ypos) || (y > window.bubblebox.ypos) || (x < window.bubblebox.xpos) || (x > window.bubblebox.xpos)) {
 			return false;
 		} else {
 			return true;
 		}
 	}
 	function moveBox() {
+			var y = window.bubblebox.offsetTop;
+			var x = window.bubblebox.offsetLeft;
 
-		var box = document.getElementById('bubble');
+			var diffx = Math.abs(x - window.bubblebox.xpos);
+			var diffy = Math.abs(y - window.bubblebox.ypos);
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
-
-		var diffx;
-		var diffy;
-
-		diffx = Math.abs(x-box.xpos);
-		diffy = Math.abs(y-box.ypos);
-
-
-		if (!boxFinishedMoving(box)) {
-			if (y<box.ypos){
-
+			if (!boxFinishedMoving()) {
+				if (y < window.bubblebox.ypos) {
 				y+=Math.round(diffy*(0.01))+1; // calculate acceleration
-				box.style.top = y;
+					window.bubblebox.style.top = y + "px";
 			}
 
-			if (y>box.ypos)			{
+				if (y > window.bubblebox.ypos) {
 				y-=Math.round(diffy*(0.01))+1;
-				box.style.top = y;
+					window.bubblebox.style.top = y + "px";
 			}
 
-			if (x<box.xpos)	{
-				
+				if (x < window.bubblebox.xpos) {
 				x+=Math.round(diffx*(0.01))+1; 
-				box.style.left = x;
+					window.bubblebox.style.left = x + "px";
 			}
 
-			if (x>box.xpos){
-				x-=Math.round(diffx*(0.01))+1; ;
-				box.style.left = x;
+				if (x > window.bubblebox.xpos) {
+					x -= Math.round(diffx * (0.01)) + 1;
+					window.bubblebox.style.left = x + "px";
 			}
-			window.setTimeout("moveBox()", <?php
-			  if (!is_numeric(ANIMATION_SPEED)) {
-				echo '10';
-			  } else {
-				echo ANIMATION_SPEED;
-			  }
-			?>);
+			}
 		} 
-	}
+
 	///////////////
 
 	// This function is used for the instant pop-up box
 	function moveBox2() {
 
-		var box = document.getElementById('bubble');
+			var y = window.bubblebox.offsetTop;
+			var x = window.bubblebox.offsetLeft;
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
+			var diffx = Math.abs(x - window.bubblebox.xpos);
+			var diffy = Math.abs(y - window.bubblebox.ypos);
 
-		var diffx;
-		var diffy;
-
-		diffx = Math.abs(x-box.xpos);
-		diffy = Math.abs(y-box.ypos);
-
-		if (!boxFinishedMoving(box))
-		{
-			if (y<box.ypos)	{
-
+			if (!boxFinishedMoving()) {
+				if (y < window.bubblebox.ypos) {
 				y=y+diffy;
-				box.style.top = y;
+					window.bubblebox.style.top = y + "px";
 			}
 
-			if (y>box.ypos)	{
+				if (y > window.bubblebox.ypos) {
 				y=y-diffy;
-				box.style.top = y;
+					window.bubblebox.style.top = y + "px";
 			}
 
-			if (x<box.xpos)	{
+				if (x < window.bubblebox.xpos) {
 				x=x+diffx;
-				box.style.left = x;
+					window.bubblebox.style.left = x + "px";
 			}
 
-			if (x>box.xpos)	{
+				if (x > window.bubblebox.xpos) {
 				x=x-diffx;
-				box.style.left = x;
+					window.bubblebox.style.left = x + "px";
 			}
-			window.setTimeout("moveBox2()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else {
-		
-			echo ANIMATION_SPEED; } ?>);
 		} 
 
 		
 	}
-	var winWidth=0;
-	var winHeight=0;
-
-	initFrameSize();
-	function initFrameSize() {
-
-		
-		//
-		winWidth=<?php echo $b_row['grid_width']*$b_row['block_width']; ?>;
-		winHeight=<?php echo $b_row['grid_height']*$b_row['block_height']; ?>;
-
-	}
-
-	var pos = 'right';
-
-	var strCache = new Array();
-
-	var lastStr;
-	var trip_count = 0;
 
 	function isBrowserCompatible() {
 
@@ -512,7 +502,7 @@ function show_map($BID = 1) {
 				
 			}
 			
-		}
+			};
 
 		xmlhttp.send(null)
 
@@ -526,15 +516,13 @@ function show_map($BID = 1) {
 		window.clearTimeout(timeoutId);
 
 		var relTarg;
-		var bubble = document.getElementById('bubble');
-		if (!e) var e = window.event;
+			if (!e) e = window.event;
 		if (e.relatedTarget) relTarg = e.relatedTarget;
 		else if (e.fromElement) relTarg = e.fromElement;
 
-		b = bubble.style
+			var b = window.bubblebox.style;
 
-
-		if ((lastStr!=str)) {
+			if (lastStr !== str) {
 
 			lastStr=str;
 
@@ -547,17 +535,17 @@ function show_map($BID = 1) {
 			//b.filter="progid:DXImageTransform.Microsoft.Blinds(Duration=0.5)";
 
 			document.getElementById('content').innerHTML=str;
-			trip_count++
+				trip_count++;
 			
 			fillAdContent(aid, document.getElementById('content'));
 
 			//alert(document.getElementById('bubble').innerHTML);
 		}
 
-		var mytop =  is_top_available(bubble,e);
-		var mybot = is_bot_available(bubble, e);
-		var myright = is_right_available(bubble,e);
-		var myleft = is_left_available(bubble,e);
+			var mytop = is_top_available(e);
+			var mybot = is_bot_available(e);
+			var myright = is_right_available(e);
+			var myleft = is_left_available(e);
 
 		//window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY+" mytop:"+mytop+" mybot:"+mybot+" myright:"+myright+" myleft:"+myleft+" | clientWidth:"+bubble.clientWidth+" clientHeight:"+bubble.clientHeight+" ww:"+winWidth+" wh:"+winHeight;
 
@@ -565,7 +553,7 @@ function show_map($BID = 1) {
 		{
 			// move to the top
 			//b.top=e.clientY-bubble.clientHeight-v_padding;
-			bubble.ypos=e.clientY-bubble.clientHeight-v_padding;
+				window.bubblebox.ypos = e.clientY - window.bubblebox.clientHeight - v_padding;
 			//alert(bubble.xpos);
 		}
 
@@ -573,14 +561,14 @@ function show_map($BID = 1) {
 		{
 			// move to the right
 			//b.left=e.clientX+h_padding;//+bubble.clientWidth;
-			bubble.xpos=e.clientX+h_padding;
+				window.bubblebox.xpos = e.clientX + h_padding;
 		}
 
 		if (myleft)
 		{
 			// move to the left
 			//b.left=e.clientX-bubble.clientWidth-h_padding ;
-			bubble.xpos=e.clientX-bubble.clientWidth-h_padding ;
+				window.bubblebox.xpos = e.clientX - window.bubblebox.clientWidth - h_padding;
 		}
 
 		
@@ -589,7 +577,7 @@ function show_map($BID = 1) {
 		{
 			// move to the bottom
 			//b.top=e.clientY+v_padding;
-			bubble.ypos=e.clientY+v_padding;
+				window.bubblebox.ypos = e.clientY + v_padding;
 		}
 	
 		b.visibility='visible';
@@ -605,15 +593,14 @@ function show_map($BID = 1) {
 
 			//bubble.style.top=e.clientY;
 			//bubble.style.left=e.clientX;
-			moveBox2()
+			moveBox2();
 			//moveBox(bubble);
 			window.setTimeout("moveBox2()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
 			<?php
 		} else {
 
 		?>
-
-			moveBox()
+			moveBox();
 			//moveBox(bubble);
 			window.setTimeout("moveBox()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
 
@@ -634,10 +621,7 @@ function show_map($BID = 1) {
 	function hideBubble(e) {
 
 		window.clearTimeout(timeoutId);
-
-		var bubble = document.getElementById('bubble');
-		b = bubble.style;
-
+			var b = window.bubblebox.style;
 		b.visibility='hidden';
 
 	}
@@ -646,7 +630,7 @@ function show_map($BID = 1) {
 
 	function hI() {
 		
-		if (timeoutId==0) {
+			if (timeoutId === 0) {
 
 			timeoutId = window.setTimeout('hBTimeout()', '<?php echo HIDE_TIMEOUT; ?>')
 
@@ -656,7 +640,7 @@ function show_map($BID = 1) {
 
 	function cI() {
 
-		if (timeoutId!=0) {
+			if (timeoutId !== 0) {
 			timeoutId=0;
 		}
 
@@ -674,15 +658,25 @@ function show_map($BID = 1) {
 
 	var block_clicked=false; // did the user click a sold block? 
 		</script>
-		</head>
-		<body <?php if (DISPLAY_PIXEL_BACKGROUND =='YES') { ?> bgcolor='<?php echo $b_row['bgcolor'];?>'	background="<?php echo BASE_HTTP_PATH.$BANNER_DIR;?>bg-main<?php echo $BID; ?>.gif" <?php } ?> >
+		<title></title>
+	</head>
+	<body>
 	<?php
 	include ('mouseover_box.htm'); // edit this file to change the style of the mouseover box!
 	?>
-	<script language="JavaScript">
-	//document.getElementById('bubble').style.filer="progid:DXImageTransform.Microsoft.Iris(irisstyle='STAR',duration=4)";
-
-	</script>
+	<style>
+		body {
+			overflow:hidden;
+			padding:0;
+			margin:0;
+			<?php
+			if (DISPLAY_PIXEL_BACKGROUND =='YES') {
+				global $f2;
+				?>
+			background:#<?php echo $f2->filter($b_row['bgcolor']); ?> url('<?php echo BASE_HTTP_PATH.$BANNER_DIR;?>bg-main<?php echo $BID; ?>.gif');
+			<?php } ?>
+		}
+	</style>
 	<?php
 	
 
@@ -718,6 +712,7 @@ function show_map($BID = 1) {
 	}
 	?>
 	</body>
+</html>
 	<?php
 
 }

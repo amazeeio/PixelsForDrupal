@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: login.php 72 2010-09-12 01:31:46Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 session_start();
@@ -52,7 +51,7 @@ href="style.css" />
 <table width="100%"  border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="35" height="26">&nbsp;</td>
-	  <td height="26" valign="bottom"><center><img alt="" src="<?php echo SITE_LOGO_URL; ?>"/> <br/>
+	  <td height="26" valign="bottom"><center><img alt="" src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>"/> <br/>
       <h3 ><?php 
 	  $label["advertiser_logging_in"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_logging_in"]);
 	  echo $label["advertiser_logging_in"]; ?> </h3></center> </td>

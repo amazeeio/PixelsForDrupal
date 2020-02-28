@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.2.3 (2019-12-04)
+* Handle jfif extension in GD driver (#727, @sylvain-msl-talkspirit)
+* Improve detection of unsupported Exit Metadata Reader (#729, @mlocati, @ausi)
+
 ### 1.2.2 (2019-07-09)
 * The GD driver can now load WebP files (#711, #718, @lashus, @ausi)
 * Avoid calling `imageantialias` if it's not available (#713, @ahukkanen)

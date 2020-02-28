@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: orders.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,24 +25,23 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 @set_time_limit ( 180 );
 require("../config.php");
-
 require ('admin_common.php');
 
 if ($_REQUEST['pass']!='') {
 
 	if (stripslashes($_REQUEST['pass'])==ADMIN_PASSWORD) {
-		$_SESSION[ADMIN] = '1';
+		$_SESSION['ADMIN'] = '1';
 
 	}
 
 }
-if ($_SESSION[ADMIN]=='') {
+if ($_SESSION['ADMIN']=='') {
 
 	?>
 Please input admin password:<br>
@@ -260,7 +258,7 @@ if ($q_aday == '') {
 
 <?php
 
-if ($_REQUEST[show]=='WA') {
+if ($_REQUEST['show']=='WA') {
 
 	$where_sql = " AND (status ='confirmed' OR status='pending') ";
 	$date_link=$date_link."&show=WA";
@@ -282,7 +280,7 @@ if ($_REQUEST[show]=='WA') {
 
 }
 
-switch ($_REQUEST[show]) {
+switch ($_REQUEST['show']) {
 	case 'WA':
 		echo '<p>Showing new orders waiting</p>';
 		break;
@@ -407,7 +405,7 @@ $pages = ceil($count / $records_per_page);
 	//	echo "<span > ".$label["navigation_page"]."</span> ";
 		$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 		$LINKS = 40;
-		render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
 	}
 	//print_r($_REQUEST);
@@ -440,7 +438,7 @@ $pages = ceil($count / $records_per_page);
 	<td><font face="Arial" size="2"><?php echo escape_html($row['FirstName']." ".$row['LastName']);?></font></td>
     <td><font face="Arial" size="2"><?php echo $row['Username'];?> (<a href='edit.php?user_id=<?php echo $row['ID']; ?>'>#<?php echo $row['ID'];?></a>)</font></td>
 	<td><font face="Arial" size="2">#<?php echo $row['order_id'];?></font></td>
-	<td><font face="Arial" size="2"><a href='ads.php?ad_id=<?php echo $row['ad_id']; ?>&order_id=<?php echo $row['order_id'];?>&banner_id=<?php echo $row['banner_id'];?>'>#<?php echo $row['ad_id'];?></a></font></td>
+	<td><font face="Arial" size="2"><a href='ads.php?ad_id=<?php echo $row['ad_id']; ?>&order_id=<?php echo $row['order_id'];?>&BID=<?php echo $row['banner_id'];?>'>#<?php echo $row['ad_id'];?></a></font></td>
 	<td><font face="Arial" size="2"><?php 
 
 		$sql = "select * from banners where banner_id=".$row['banner_id'];

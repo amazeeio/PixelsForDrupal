@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: ads.inc.php 162 2012-12-12 16:48:21Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -171,9 +170,6 @@ function assign_ad_template($prams) {
 		
 	}
 	return $str;
-
-
-
 }
 
 #########################################################
@@ -214,16 +210,22 @@ function display_ad_form ($form_id, $mode, $prams) {
 			}
 		}
  	}
+
+	$mode = (isset($mode) && in_array($mode, array("edit", "user"))) ? $mode : "";
+	$ad_id = isset($prams['ad_id']) ? intval($prams['ad_id']) : "";
+	$user_id = isset($prams['user_id']) ? intval($prams['user_id']) : "";
+	$order_id = isset($prams['order_id']) ? intval($prams['order_id']) : "";
+	$banner_id = isset($prams['banner_id']) ? intval($prams['banner_id']) : "";
 	?>
 	<form method="POST"  action="<?php htmlentities($_SERVER['PHP_SELF']); ?>" name="form1" onsubmit=" form1.savebutton.disabled=true;" enctype="multipart/form-data">
 	
 	<input type="hidden" name="mode" size="" value="<?php echo $mode; ?>">
-	<input type="hidden" name="ad_id" size="" value="<?php echo $prams['ad_id']; ?>">
-	<input type="hidden" name="user_id" size="" value="<?php echo $prams['user_id']; ?>">
-	<input type="hidden" name="order_id" size="" value="<?php echo (isset($prams['order_id']) ? $prams['order_id'] : ""); ?>">
-	<input type="hidden" name="banner_id" size="" value="<?php echo $prams['banner_id']; ?>">
+	<input type="hidden" name="ad_id" size="" value="<?php echo $ad_id; ?>">
+	<input type="hidden" name="user_id" size="" value="<?php echo $user_id; ?>">
+	<input type="hidden" name="order_id" size="" value="<?php echo $order_id; ?>">
+	<input type="hidden" name="BID" size="" value="<?php echo $banner_id; ?>">
 
-	<table cellSpacing="1" cellPadding="5" class="ad_data"  id="ad"   >
+	<table cellSpacing="1" cellPadding="5" class="ad_data" id="ad">
 	<?php  if (($error != '' ) && ($mode!='edit')) { ?>
 	<tr>
 		<td bgcolor="#F2F2F2" colspan="2"><?php  echo "<span class='error_msg_label'>".$label['ad_save_error']."</span><br> <b>".$error."</b>";  ?></td>
@@ -256,40 +258,21 @@ function display_ad_form ($form_id, $mode, $prams) {
 
 ###########################################################################
 
-function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='') {
+function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_id='') {
 
 	## Globals
-	global $f2, $label, $tag_to_field_id;
+	global $BID, $f2, $label, $tag_to_field_id, $ad_tag_to_field_id, $action;
 	$tag_to_field_id = ad_tag_to_field_id_init();
 
-	###########################################
-	# Load in the form data, including column names
-	# (dont forget LANGUAGE TOO)
-
-	global $ad_tag_to_field_id;
-
     $records_per_page = 40;
-    global $label; // languages array
 
-   
-   $order_str = $order;
-
-   if ($order == '') {
-     $order = " `order_id` ";           
-   } else {
-      $order = " `$order` ";
-   }
-
-   
-	global $action;
    // process search result
+   $q_string = "";
    $where_sql = "";
 	if ($_REQUEST['action'] == 'search') {
 		$q_string = generate_q_string(1);  	   
 		$where_sql = generate_search_sql(1);
 	}
-	   
-	// DATE_FORMAT(`adate`, '%d-%b-%Y') AS formatted_date
 
 	$order = $_REQUEST['order_by'];
 
@@ -301,24 +284,24 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 		$ord = 'DESC'; // sort descending by default
 	}
 
-	if ($order == '') {
+	if ($order == null || $order == '') {
 		$order = " `ad_date` ";           
 	} else {
 		$order = " `".mysqli_real_escape_string( $GLOBALS['connection'], $order)."` ";
 	}
-	global $BID;
+
 	if ($list_mode == 'USER' ) {
 
 		if (!is_numeric($user_id)) {
 			$user_id = $_SESSION['MDS_ID'];
 		} 
-		//$sql = "Select *  FROM `ads` as t1, `orders` as t2 WHERE t1.ad_id=t2.ad_id AND t1.order_id > 0 AND t1.banner_id='".$BID."' AND t1.user_id='".$user_id."' AND (t2.status = 'completed' OR t2.status = 'expired') $where_sql ORDER BY $order $ord ";
-		$sql = "Select *  FROM `ads`, `orders` WHERE ads.ad_id=orders.ad_id AND ads.order_id > 0 AND ads.banner_id='".intval($BID)."' AND ads.user_id='".intval($user_id)."' AND (orders.status = 'completed' OR orders.status = 'expired') $where_sql ORDER BY $order $ord ";
+
+		$sql = "Select *  FROM `ads`, `orders` WHERE ads.ad_id=orders.ad_id AND ads.order_id > 0 AND ads.banner_id='".intval($BID)."' AND ads.user_id='".intval($user_id)."' AND (orders.status IN ('pending','completed','confirmed','new','expired','renew_wait','renew_paid')) $where_sql ORDER BY $order $ord ";
 
 	} elseif ($list_mode =='TOPLIST') {
 
 	//	$sql = "SELECT *, DATE_FORMAT(MAX(order_date), '%Y-%c-%d') as max_date, sum(quantity) AS pixels FROM orders, ads where ads.order_id=orders.order_id AND status='completed' and orders.banner_id='$BID' GROUP BY orders.user_id, orders.banner_id order by pixels desc ";
-		
+
 	} else {
 		
 		//$sql = "Select *  FROM `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id > 0 $where_sql ORDER BY $order $ord ";
@@ -342,9 +325,7 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 
 	if ($count > 0 )  {
 
-		if ($pages == 1) {
-		   
-	   } elseif ($list_mode!='USER') {
+		if ($list_mode!='USER') {
 
 			$pages = ceil($count / $records_per_page);
 			$cur_page = $_REQUEST['offset'] / $records_per_page;
@@ -357,17 +338,12 @@ function list_ads ($admin=false, $order, $offset, $list_mode='ALL', $user_id='')
 			echo "<span > ".$label["navigation_page"]."</span> ";
 			$nav = nav_pages_struct($q_string, $count, $records_per_page);
 			$LINKS = 10;
-			render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+			render_nav_pages($nav, $LINKS, $q_string);
 			echo "</center>";
 
 
 		}
 
-		include ('../mouseover_box.htm'); // edit this file to change the style of the mouseover box!
-		
-		echo '<script language="JAVASCRIPT">';
-		include ('mouseover_js.inc.php');
-		echo '</script>';
 		?>
 		<table border='0' bgcolor='#d9d9d9' cellspacing="1" cellpadding="5" id="pixels_list" >
 		<tr bgcolor="#EAEAEA">
@@ -556,95 +532,6 @@ function delete_ad ($ad_id) {
 
 
 }
-################################
-
-function search_category_tree_for_ads() {
-	global $f2;
-
-	if (func_num_args() > 0 ) {
-		$cat_id = func_get_arg(0);
-		
-	} else {
-		$cat_id = $_REQUEST['cat'];
-	}
-
-	$sql = "select search_set from categories where category_id='".intval($cat_id)."' ";
-	$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	$row = mysqli_fetch_array($result2);
-	$search_set = $row['search_set'];
-
-	$sql = "SELECT * FROM form_fields WHERE field_type='CATEGORY' AND form_id='1'";
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	$i=0;
-
-	if (mysqli_num_rows($result) >0) {
-		while ($row=mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-
-			if ($i>0) {
-				$where_cat .= " OR ";
-			}
-
-			$where_cat .= " `$row[field_id]` IN ($search_set) ";
-			$i++;
-
-		}
-	}
-
-	if ($where_cat=='') {
-		return " AND 1=2 ";
-	}
-
-	if ($search_set=='') {
-		return "";
-
-	}
-
-	return " AND ($where_cat) ";
-	
-
-}
-
-
-
-####################
-
-function search_category_for_ads() {
-	global $f2;
-
-	if (func_num_args() > 0 ) {
-		$cat_id = func_get_arg(0);
-		
-	} else {
-		$cat_id = $_REQUEST[cat];
-	}
-
-	$sql = "SELECT * FROM form_fields WHERE field_type='CATEGORY' AND form_id='1'";
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-	$i=0;
-
-	if (mysqli_num_rows($result) >0) {
-		while ($row=mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-
-			if ($i>0) {
-				$where_cat .= " OR ";
-			}
-
-			$where_cat .= " `$row[field_id]`='$cat_id' ";
-			$i++;
-		}
-	}
-
-	if ($where_cat=='') {
-		return " AND 1=2 ";
-	}
-
-	return " AND ($where_cat) ";
-	//$sql ="Select * from posts_table where $where_cat ";
-	//echo $sql."<br/>";
-	//$result2 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-
-}
-##################
 
 function generate_ad_id () {
 
@@ -696,16 +583,16 @@ function insert_ad_data() {
 	}*/
 	$order_id = (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) ? $_REQUEST['order_id'] : 0;
 	$ad_date = (gmdate("Y-m-d H:i:s")); 
-	$banner_id = $_REQUEST['banner_id'];
-	
-	if ($_REQUEST['ad_id'] == '') {
+	$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
+
+	if (isset($_REQUEST['ad_id']) && empty($_REQUEST['ad_id'])) {
 
 		$ad_id = generate_ad_id ();
 		$now = (gmdate("Y-m-d H:i:s"));
 
 		//$extra_columns = get_sql_insert_fields(1);
 		$extra_values = get_sql_insert_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
-		$values = $ad_id . ", '" . $user_id . "', '" . mysqli_real_escape_string($GLOBALS['connection'], $now) . "', " . $order_id . ", $banner_id" . $extra_values;
+		$values = $ad_id . ", '" . $user_id . "', '" . mysqli_real_escape_string($GLOBALS['connection'], $now) . "', " . $order_id . ", $BID" . $extra_values;
 
 		/*$sql = "INSERT INTO `ads` (`ad_id`, `user_id`, `ad_date`, `order_id`, `banner_id` " . $extra_columns .") " .
 		"VALUES (" . $values . ") " .

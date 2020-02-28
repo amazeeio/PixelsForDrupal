@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: banner_functions.php 64 2010-09-12 01:18:42Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+* @package		mds
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -68,36 +67,36 @@ function load_banner_constants($BID) {
 
 	// define constants
 
-	define ("G_NAME", $row['name']);
-	define ("G_PRICE", $row['price_per_block']);
-	define ("G_CURRENCY", $row['currency']);
+	$row["G_NAME"] = $row['name'];
+	$row["G_PRICE"] = $row['price_per_block'];
+	$row["G_CURRENCY"] = $row['currency'];
 
-	define ("DAYS_EXPIRE", $row['days_expire']);
+	$row["DAYS_EXPIRE"] = $row['days_expire'];
 
-	define ("BLK_WIDTH", $row['block_width']);
-	define ("BLK_HEIGHT", $row['block_height']);
-	define ("BANNER_ID", $row['banner_id']);
-	define ("G_WIDTH", $row['grid_width']);
-	define ("G_HEIGHT", $row['grid_height']);
+	$row["BLK_WIDTH"] = $row['block_width'];
+	$row["BLK_HEIGHT"] = $row['block_height'];
+	$row["BANNER_ID"] = $row['banner_id'];
+	$row["G_WIDTH"] = $row['grid_width'];
+	$row["G_HEIGHT"] = $row['grid_height'];
 
-	define ("GRID_BLOCK", base64_decode($row['grid_block']));
-	define ("NFS_BLOCK", base64_decode($row['nfs_block']));
+	$row["GRID_BLOCK"] = base64_decode($row['grid_block']);
+	$row["NFS_BLOCK"] = base64_decode($row['nfs_block']);
 
-	define ("USR_GRID_BLOCK", base64_decode($row['usr_grid_block']));
-	define ("USR_NFS_BLOCK", base64_decode($row['usr_nfs_block']));
-	define ("USR_SEL_BLOCK", base64_decode($row['usr_sel_block']));
-	define ("USR_ORD_BLOCK", base64_decode($row['usr_ord_block']));
-	define ("USR_RES_BLOCK", base64_decode($row['usr_res_block']));
-	define ("USR_SOL_BLOCK", base64_decode($row['usr_sol_block']));
+	$row["USR_GRID_BLOCK"] = base64_decode($row['usr_grid_block']);
+	$row["USR_NFS_BLOCK"] = base64_decode($row['usr_nfs_block']);
+	$row["USR_SEL_BLOCK"] = base64_decode($row['usr_sel_block']);
+	$row["USR_ORD_BLOCK"] = base64_decode($row['usr_ord_block']);
+	$row["USR_RES_BLOCK"] = base64_decode($row['usr_res_block']);
+	$row["USR_SOL_BLOCK"] = base64_decode($row['usr_sol_block']);
 
-	define ("G_BGCOLOR", $row['bgcolor']);
-	define ("AUTO_APPROVE", $row['auto_approve']);
-	define ("AUTO_PUBLISH", $row['auto_publish']);
+	$row["G_BGCOLOR"] = $row['bgcolor'];
+	$row["AUTO_APPROVE"] = $row['auto_approve'];
+	$row["AUTO_PUBLISH"] = $row['auto_publish'];
 
-	define ("G_MAX_ORDERS", $row['max_orders']);
-	define ("G_MAX_BLOCKS", $row['max_blocks']);
-	define ("G_MIN_BLOCKS", $row['min_blocks']);
-	//define ("BANNER_ROW", serialize($row));
+	$row["G_MAX_ORDERS"] = $row['max_orders'];
+	$row["G_MAX_BLOCKS"] = $row['max_blocks'];
+	$row["G_MIN_BLOCKS"] = $row['min_blocks'];
+	//$row["BANNER_ROW", serialize($row));
 
 	return $row;
 

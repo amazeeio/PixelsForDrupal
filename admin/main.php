@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: main.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -966,7 +965,7 @@ function does_field_exist($table, $field) {
 			$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]=addslashes($row['url']);
 			$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = addslashes($row['alt_text']);
 			$_REQUEST['order_id'] = $row['order_id'];
-			$_REQUEST['banner_id'] = $row['banner_id'];
+			$_REQUEST['BID'] = $row['banner_id'];
 			//$_REQUEST['user_id'] = $row['user_id'];
 
 			$_SESSION['MDS_ID'] = $row['user_id'];

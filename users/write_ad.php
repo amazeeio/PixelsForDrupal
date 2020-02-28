@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: write_ad.php 157 2012-10-04 15:09:35Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -56,15 +55,9 @@ if (mysqli_num_rows($order_result)==0) {
 require ("header.php");
 $row = mysqli_fetch_array($order_result);
 
-//print_r (unserialize( $row['block_info']));
 update_temp_order_timestamp();
 
 $has_packages = banner_get_packages($BID);
-
-//$sql = "select * from banners where banner_id='$BID'";
-//$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-//$b_row = mysqli_fetch_array($result);
-
 
 ?>
 <p>

@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: approve.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -193,7 +192,7 @@ Select Grid: <select name="BID" onchange="document.bidselect.submit()">
 			$sel ='';
 
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 	}
 	?>
 </select>
@@ -245,11 +244,11 @@ if ($_REQUEST['edit_links']!='') {
 		$i=0;
 		while ($m_row=mysqli_fetch_array($m_result)) {
 			$i++;
-			if ($m_row[url] !='') {
+			if ($m_row['url'] !='') {
 				echo "<tr><td>
-				<input type='hidden' name='urls[]' value='".htmlspecialchars($m_row[url])."'>
-				<input type='text' name='new_urls[]' size='40' value=\"".escape_html($m_row[url])."\"></td>
-						<td><input name='new_alts[]' type='text' size='80' value=\"".escape_html($m_row[alt_text])."\"></td></tr>";
+				<input type='hidden' name='urls[]' value='".htmlspecialchars($m_row['url'])."'>
+				<input type='text' name='new_urls[]' size='40' value=\"".escape_html($m_row['url'])."\"></td>
+						<td><input name='new_alts[]' type='text' size='80' value=\"".escape_html($m_row['alt_text'])."\"></td></tr>";
 			}
 		}
 
@@ -266,7 +265,7 @@ if ($_REQUEST['edit_links']!='') {
 
 
 
-$sql = "SELECT FirstName, LastName, Username, Email,ID, alt_text, url, t1.status as STAT, approved, banner_id FROM blocks as t1, users as t2 where t1.user_id=t2.ID AND status='sold' AND url<>'' $bid_sql  GROUP BY user_id, banner_id order by approved  DESC";
+$sql = "SELECT FirstName, LastName, Username, Email,ID, alt_text, url, t1.status as STAT, approved, banner_id FROM blocks as t1, users as t2 where t1.user_id=t2.ID AND status='sold' $bid_sql  GROUP BY user_id, banner_id order by approved  DESC";
 
 //echo $sql;
 
@@ -303,7 +302,7 @@ if ($count > $records_per_page)  {
 		$q_string = $q_string."&app=".$_REQUEST['app'];
 		$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 		$LINKS = 40;
-		render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
 	}
 ?>
@@ -442,7 +441,7 @@ if ($count > $records_per_page)  {
 	//	echo "<span > ".$label["navigation_page"]."</span> ";
 		$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 		$LINKS = 40;
-		render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+		render_nav_pages($nav, $LINKS, $q_string);
 		echo "</center>";
 	}
 ?>

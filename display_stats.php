@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: display_stats.php 137 2011-04-18 19:48:11Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -38,7 +37,7 @@ require ('config.php');
 
 $BID = $f2->bid($_REQUEST['BID']);
 
-load_banner_constants($BID);
+$banner_data = load_banner_constants($BID);
 
 $sql = "select * from banners where banner_id='$BID'";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -47,14 +46,14 @@ $b_row = mysqli_fetch_array($result);
 $sql = "select count(*) AS COUNT FROM blocks where status='sold' and banner_id='$BID' ";
 $result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
-$sold = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
+$sold = $row['COUNT']*($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']);
 
 $sql = "select count(*) AS COUNT FROM blocks where status='nfs' and banner_id='$BID' ";
 $result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
-$nfs = $row['COUNT']*(BLK_WIDTH*BLK_HEIGHT);
+$nfs = $row['COUNT']*($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']);
 
-$available = (($b_row['grid_width'] * $b_row['grid_height'] * (BLK_WIDTH*BLK_HEIGHT) )-$nfs ) - $sold;
+$available = (($b_row['grid_width'] * $b_row['grid_height'] * ($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']) )-$nfs ) - $sold;
 
 if ($label['sold_stats']=='') {
 	$label['sold_stats']="Sold";
@@ -66,11 +65,13 @@ if ($label['available_stats']=='') {
 
 ?>
 <html>
-<link rel=StyleSheet type="text/css" href="main.css" >
-<body  class="status_body">
-
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+</head>
+<body class="status_body">
 <div class="status">
-<b><?php echo $label['sold_stats']; ?>:</b> <?php echo number_format($sold); ?><br><b><?php echo $label['available_stats']; ?>:</b> <?php echo number_format($available); ?><br>
+<b><?php echo $label['sold_stats']; ?>:</b> <?php echo number_format($sold); ?><br><b><?php echo $label['available_stats']; ?>:</b> <?php echo number_format($available); ?>
 </div>
 </body>
 </html>

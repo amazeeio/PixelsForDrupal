@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: top_ads_js.php 164 2012-12-14 21:22:24Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,167 +25,174 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
-require ('config.php');
+//require( 'config.php' );
 //require ('include/mouseover_js.inc.php');
 
 ?>
-	document.onmousemove = function(e) {cI();}
-
+<script>
 	var h_padding=10;
 	var v_padding=10;
-	function is_right_available(box,e) {
+
+	var winWidth = 0;
+	var winHeight = 0;
 		
-		if ((box.clientWidth+e.clientX+h_padding)>=winWidth){
+	var pos = 'right';
+
+	var strCache = [];
+
+	var lastStr;
+	var trip_count = 0;
+
+	function initialize() {
+		bubblebox();
+		initFrameSize();
+	}
+
+	function bubblebox() {
+		window.bubblebox = document.getElementById('bubble');
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initialize);
+	} else {
+		initialize();
+	}
+
+	function initFrameSize() {
+
+		winWidth =<?php echo $b_row['grid_width'] * $b_row['block_width']; ?>;
+		winHeight =<?php echo $b_row['grid_height'] * $b_row['block_height']; ?>;
+	}
+
+	function is_right_available(e) {
+		if ((window.bubblebox.clientWidth + e.clientX + h_padding) >= winWidth) {
+// not available
 			return false;
 		}
 		return true;
 	}
 
-	function is_top_available(box,e) {
-		
-		if ((e.clientY-box.clientHeight-v_padding) < 0){
+	function is_top_available(e) {
+		if ((e.clientY - window.bubblebox.clientHeight - v_padding) < 0) {
 			return false;
 		}
 		return true;
 
 	}
 
-	function is_bot_available(box,e) {
-		if ((e.clientY+box.clientHeight+v_padding) > winHeight){
+	function is_bot_available(e) {
+		if ((e.clientY + window.bubblebox.clientHeight + v_padding) > winHeight) {
 			return false;
 		}
 		return true;
 	}
 
-	function is_left_available(box,e) {
-		if ((e.clientX-box.clientWidth-h_padding)<0){
-
+	function is_left_available(e) {
+		if ((e.clientX - window.bubblebox.clientWidth - h_padding) < 0) {
 			return false;
 		}
 		return true;
 
 	}
-	function boxFinishedMoving(box) {
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
+	function boxFinishedMoving() {
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
 
-		if ((y<box.ypos)||(y>box.ypos)||(x<box.xpos)||(x>box.xpos)) {
+//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
+		if ((y < window.bubblebox.ypos) || (y > window.bubblebox.ypos) || (x < window.bubblebox.xpos) || (x > window.bubblebox.xpos)) {
 			return false;
 		} else {
 			return true;
 		}
 	}
 	function moveBox() {
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
 
-		var box = document.getElementById('bubble');
+		var diffx = Math.abs(x - window.bubblebox.xpos);
+		var diffy = Math.abs(y - window.bubblebox.ypos);
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
-
-		var diffx;
-		var diffy;
-
-		diffx = Math.abs(x-box.xpos);
-		diffy = Math.abs(y-box.ypos);
-
-		if (!boxFinishedMoving(box)) {
-			if (y<box.ypos){
-				y+=Math.round(diffy*(0.01))+1;
-				box.style.top = y + "px";
+		if (!boxFinishedMoving()) {
+			if (y < window.bubblebox.ypos) {
+				y += Math.round(diffy * (0.01)) + 1; // calculate acceleration
+				window.bubblebox.style.top = y + "px";
 			}
 
-			if (y>box.ypos)			{
+			if (y > window.bubblebox.ypos) {
 				y-=Math.round(diffy*(0.01))+1;
-				box.style.top = y + "px";
+				window.bubblebox.style.top = y + "px";
 			}
 
-			if (x<box.xpos)	{
+			if (x < window.bubblebox.xpos) {
 				x+=Math.round(diffx*(0.01))+1; 
-				box.style.left = x + "px";
+				window.bubblebox.style.left = x + "px";
 			}
 
-			if (x>box.xpos){
-				x-=Math.round(diffx*(0.01))+1; ;
-				box.style.left = x + "px";
+			if (x > window.bubblebox.xpos) {
+				x -= Math.round(diffx * (0.01)) + 1;
+				window.bubblebox.style.left = x + "px";
 			}
-
-			window.setTimeout("moveBox()", <?php
-			  if (!is_numeric(ANIMATION_SPEED)) {
-				echo '10';
-			  } else {
-				echo ANIMATION_SPEED;
 			  }
-			?>);
 		} 
-	}
+
+	///////////////
+
+	// This function is used for the instant pop-up box
 	function moveBox2() {
 
-		var box = document.getElementById('bubble');
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
 
-		var y=box.offsetTop;
-		var x=box.offsetLeft;
+		var diffx = Math.abs(x - window.bubblebox.xpos);
+		var diffy = Math.abs(y - window.bubblebox.ypos);
 
-		var diffx;
-		var diffy;
-
-		diffx = Math.abs(x-box.xpos);
-		diffy = Math.abs(y-box.ypos);
-
-		if (!boxFinishedMoving(box))
-		{
-			if (y<box.ypos)	{
+		if (!boxFinishedMoving()) {
+			if (y < window.bubblebox.ypos) {
 				y=y+diffy;
-				box.style.top = y + "px";
+				window.bubblebox.style.top = y + "px";
 			}
 
-			if (y>box.ypos)	{
+			if (y > window.bubblebox.ypos) {
 				y=y-diffy;
-				box.style.top = y + "px";
+				window.bubblebox.style.top = y + "px";
 			}
 
-			if (x<box.xpos)	{
+			if (x < window.bubblebox.xpos) {
 				x=x+diffx;
-				box.style.left = x + "px";
+				window.bubblebox.style.left = x + "px";
 			}
 
-			if (x>box.xpos)	{
+			if (x > window.bubblebox.xpos) {
 				x=x-diffx;
-				box.style.left = x + "px";
-			}
-			
-			window.setTimeout("moveBox2()", <?php
-			  if (!is_numeric(ANIMATION_SPEED)) {
-				echo '10';
-			  } else {
-				echo ANIMATION_SPEED;
+				window.bubblebox.style.left = x + "px";
 			  }
-			?>);
 		} 
 	}
-	var winWidth=0;
-	var winHeight=0;
-
-	initFrameSize();
-	function initFrameSize() {
-		winWidth=window.innerWidth;
-		winHeight=window.innerHeight;
-	}
-
-	var pos = 'right';
-
-	var strCache = new Array();
-
-	var lastStr;
-	var trip_count = 0;
 
 	function isBrowserCompatible() {
 
+// check if we can XMLHttpRequest
+
 		var xmlhttp=false;
+		/*@cc_on @*/
+		/*@if (@_jscript_version >= 5)
+		// JScript gives us Conditional compilation, we can cope with old IE versions.
+		// and security blocked creation of the objects.
+		try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+		try {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+		xmlhttp = false;
+		}
+		}
+		@end @*/
 		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
 		  xmlhttp = new XMLHttpRequest();
 		}
@@ -197,6 +203,8 @@ require ('config.php');
 		return true;
 
 	}
+
+	////////////////////
 
 	function fillAdContent(aid, bubble) {
 
@@ -210,17 +218,46 @@ require ('config.php');
 			return true;
 		}
 
+//////////////////////////////////////////////////
+// AJAX Magic.
+//////////////////////////////////////////////////
+
 		var xmlhttp=false;
+		/*@cc_on @*/
+		/*@if (@_jscript_version >= 5)
+		// JScript gives us Conditional compilation, we can cope with old IE versions.
+		// and security blocked creation of the objects.
+		try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+		try {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+		xmlhttp = false;
+		}
+		}
+		@end @*/
 		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
 		  xmlhttp = new XMLHttpRequest();
 		}
 
 		xmlhttp.open("GET", "ga.php?AID="+aid+"<?php echo "&t=".time(); ?>", true);
 
-		if (trip_count != 0){}
+//alert("before trup_count:"+trip_count);
+
+		if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
+// waiting state...
+
+		}
+
 
 		xmlhttp.onreadystatechange=function() {
-			if (xmlhttp.readyState==4) {
+			if (xmlhttp.readyState===4) {
+//
+
+
+//alert(xmlhttp.responseText);
+
 
 				if (xmlhttp.responseText.length > 0) {
 					bubble.innerHTML = xmlhttp.responseText;
@@ -230,80 +267,97 @@ require ('config.php');
 					bubble.innerHTML = bubble.innerHTML.replace('<img src="<?php echo BASE_HTTP_PATH;?>periods.gif" border="0">','');
 				}
 				trip_count--;
+
+//document.getElementById('submit_button1').disabled=false;
+//document.getElementById('submit_button2').disabled=false;
+
+//var pointer = document.getElementById('block_pointer');
+//pointer.style.cursor='pointer';
+//var pixelimg = document.getElementById('pixelimg');
+//pixelimg.style.cursor='pointer';
+
 			}
-		}
+
+		};
+
 		xmlhttp.send(null)
 	}
 
-	function  sB(e, str, area, aid)
-	{
+	////////////////
+
+	function sB(e, str, area, aid) {
 		window.clearTimeout(timeoutId);
 
+		if(window.bubblebox === undefined) {
+			window.bubblebox = document.getElementById('bubble');
+		}
+
 		var relTarg;
-		var bubble = document.getElementById('bubble');
-		if (!e) var e = window.event;
+		if (!e) e = window.event;
 		if (e.relatedTarget) relTarg = e.relatedTarget;
 		else if (e.fromElement) relTarg = e.fromElement;
 
-		b = bubble.style
-
-		if ((lastStr!=str)) {
+		if (lastStr !== str) {
 
 			lastStr=str;
 			
 			hideBubble(e);
 
+//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
+//	window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY;
+//str=str+"hello: "+bubble.clientWidth;
+//b.filter="progid:DXImageTransform.Microsoft.Blinds(Duration=0.5)";
+
 			document.getElementById('content').innerHTML=str;
-			trip_count++
+			trip_count++;
 			
 			fillAdContent(aid, document.getElementById('content'));
 
+//alert(document.getElementById('bubble').innerHTML);
 		}
 
-		var mytop =  is_top_available(bubble,e);
-		var mybot = is_bot_available(bubble, e);
-		var myright = is_right_available(bubble,e);
-		var myleft = is_left_available(bubble,e);
+		var mytop = is_top_available(e);
+		var mybot = is_bot_available(e);
+		var myright = is_right_available(e);
+		var myleft = is_left_available(e);
 
-		if (mytop)
-		{
-			bubble.ypos=(e.clientY-bubble.clientHeight-v_padding);
+//window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY+" mytop:"+mytop+" mybot:"+mybot+" myright:"+myright+" myleft:"+myleft+" | clientWidth:"+bubble.clientWidth+" clientHeight:"+bubble.clientHeight+" ww:"+winWidth+" wh:"+winHeight;
+
+		if (mytop) {
+// move to the top
+//b.top=e.clientY-bubble.clientHeight-v_padding;
+			window.bubblebox.ypos = e.clientY - window.bubblebox.clientHeight - v_padding;
+//alert(bubble.xpos);
 		}
 
-		if (myright)
-		{
-			bubble.xpos=(e.clientX+h_padding);
+		if (myright) {
+// move to the right
+//b.left=e.clientX+h_padding;//+bubble.clientWidth;
+			window.bubblebox.xpos = e.clientX + h_padding;
 		}
 
-		if (myleft)
-		{
-			bubble.xpos=(e.clientX-bubble.clientWidth-h_padding);
+		if (myleft) {
+// move to the left
+//b.left=e.clientX-bubble.clientWidth-h_padding ;
+			window.bubblebox.xpos = e.clientX - window.bubblebox.clientWidth - h_padding;
 		}
 
-		if (mybot)
-		{
-			bubble.ypos=(e.clientY+v_padding);
-		}
-	
-		b.visibility='visible';
 
-		<?php
-		if (ENABLE_MOUSEOVER=='POPUP') {
-		?>
-			moveBox2()
-			window.setTimeout("moveBox2()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
-			<?php
-		} else {
-
-		?>
-			moveBox()
-			window.setTimeout("moveBox()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
-
-		<?php
-
+		if (mybot) {
+// move to the bottom
+//b.top=e.clientY+v_padding;
+			window.bubblebox.ypos = e.clientY + v_padding;
 		}
 
-		?>
+		window.bubblebox.style.visibility = 'visible';
+
+//ChangeBgd(bubble);
+
+		<?php if (ENABLE_MOUSEOVER == 'POPUP') { ?>
+			moveBox2();
+		<?php } else { ?>
+			moveBox();
+		<?php } ?>
 	}
 
 	function hBTimeout(e) {
@@ -313,23 +367,22 @@ require ('config.php');
 
 	function hideBubble(e) {
 		window.clearTimeout(timeoutId);
-
-		var bubble = document.getElementById('bubble');
-		b = bubble.style;
-		
-		b.visibility='hidden';
+		window.bubblebox.style.visibility = 'hidden';
 	}
 
 	var timeoutId=0;
 
 	function hI() {
-		if (timeoutId==0) {
+
+		if (timeoutId===0) {
+
 			timeoutId = window.setTimeout('hBTimeout()', '<?php echo HIDE_TIMEOUT; ?>')
 		}
 	}
 
 	function cI() {
-		if (timeoutId!=0) {
+
+		if (timeoutId!==0) {
 			timeoutId=0;
 		}
 	}
@@ -344,4 +397,5 @@ require ('config.php');
 	p = parent.window;
 	<?php } ?>
 
-	var block_clicked=false;
+	var block_clicked = false; // did the user click a sold block?
+</script>

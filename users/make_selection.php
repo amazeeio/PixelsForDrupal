@@ -2,7 +2,7 @@
 /**
  * @version        2.1
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author        Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
  *        it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -39,18 +39,27 @@ header( "Cache-Control: no-cache, must-revalidate" ); // HTTP/1.1
 header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" ); // Date in the past
 
 $BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
-load_banner_constants( $BID );
+$banner_data = load_banner_constants( $BID );
 
 // normalize...
+//$_REQUEST['map_x']    = floor( $_REQUEST['map_x'] / $banner_data['BLK_WIDTH'] ) * $banner_data['BLK_WIDTH'];
+//$_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / $banner_data['BLK_HEIGHT'] ) * $banner_data['BLK_HEIGHT'];
+//$_REQUEST['block_id'] = floor( $_REQUEST['block_id'] );
 
-$_REQUEST['map_x']    = floor( $_REQUEST['map_x'] / BLK_WIDTH ) * BLK_WIDTH;
-$_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / BLK_HEIGHT ) * BLK_HEIGHT;
-$_REQUEST['block_id'] = floor( $_REQUEST['block_id'] );
+$floorx = floor( $_REQUEST['map_x'] / $banner_data['BLK_WIDTH'] );
+$floory = floor( $_REQUEST['map_y'] / $banner_data['BLK_HEIGHT'] );
+$floorid = floor( $_REQUEST['block_id'] );
+$floorx = $floorx ? $floorx : 0;
+$floory = $floory ? $floory : 0;
+$floorid = $floorid ? $floorid : 0;
+$_REQUEST['map_x']    = $floorx * $banner_data['BLK_WIDTH'];
+$_REQUEST['map_y']    = $floory * $banner_data['BLK_HEIGHT'];
+$_REQUEST['block_id'] = $floorid;
 
 # place on temp order -> then
 function place_temp_order( $in_str ) {
 
-	global $f2;
+	global $f2, $BID, $banner_data;
 
 	// cannot place order if there is no session!
 	if ( session_id() == '' ) {
@@ -60,25 +69,19 @@ function place_temp_order( $in_str ) {
 	}
 	$blocks = explode( ',', $in_str );
 
-	$quantity = sizeof( $blocks ) * ( BLK_WIDTH * BLK_HEIGHT );
+	$quantity = sizeof( $blocks ) * ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] );
 
 	$now = ( gmdate( "Y-m-d H:i:s" ) );
 
 	// preserve ad_id & block info...
-	$sql = "SELECT ad_id, block_info  FROM temp_orders WHERE session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "' ";
+	$sql = "SELECT ad_id, block_info FROM temp_orders WHERE session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "' ";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 	$row        = mysqli_fetch_array( $result );
 	$ad_id      = intval( $row['ad_id'] );
 	$block_info = mysqli_real_escape_string( $GLOBALS['connection'], $row['block_info'] );
 
-	if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
-		$BID = $f2->bid( $_REQUEST['BID'] );
-	} else {
-		$BID = 1;
-	}
-
 	// DAYS_EXPIRE comes form load_banner_constants()
-	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "', '" . $in_str . "', '" . $now . "', '0', '" . intval($quantity) . "', '" . intval(DAYS_EXPIRE) . "', '" . $BID . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "',  '$now', '$ad_id', '$block_info' )";
+	$sql = "REPLACE INTO `temp_orders` ( `session_id` , `blocks` , `order_date` , `price` , `quantity` ,  `days_expire`, `banner_id` , `currency` ,  `date_stamp` , `ad_id`, `block_info` )  VALUES ('" . mysqli_real_escape_string( $GLOBALS['connection'], session_id() ) . "', '" . $in_str . "', '" . $now . "', '0', '" . intval($quantity) . "', '" . intval($banner_data['DAYS_EXPIRE']) . "', '" . $BID . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "',  '$now', '$ad_id', '$block_info' )";
 	$f2->write_log( 'Placed Temp order. ' . $sql );
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 
@@ -90,7 +93,7 @@ $price_table = '';
 
 function reserve_temp_order_pixels( $block_info, $in_str ) {
 
-	global $f2, $label;
+	global $f2, $label, $banner_data;
 
 	// cannot reserve pixels if there is no session
 	if ( session_id() == '' ) {
@@ -107,7 +110,7 @@ function reserve_temp_order_pixels( $block_info, $in_str ) {
 	$total = 0;
 	foreach ( $block_info as $key => $block ) {
 
-		$price = get_zone_price( $BID, $block['map_y'] / BLK_HEIGHT, $block['map_x'] / BLK_WIDTH );
+		$price = get_zone_price( $BID, $block['map_y'] / $banner_data['BLK_HEIGHT'], $block['map_x'] / $banner_data['BLK_WIDTH'] );
 
 		$currency = get_default_currency();
 
@@ -119,14 +122,7 @@ function reserve_temp_order_pixels( $block_info, $in_str ) {
 		$total += $price;
 	}
 
-	$sql = "UPDATE temp_orders set price='".floatval($total)."' where session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id()) . "'  ";
-	mysqli_query( $GLOBALS['connection'], $sql );
-
-	// save to file
-	$fh = fopen( SERVER_PATH_TO_ADMIN . 'temp/' . "info_" . md5( session_id() ) . ".txt", 'wb' );
-	fwrite( $fh, serialize( $block_info ) );
-	fclose( $fh );
-
+	$sql = "UPDATE temp_orders set price='".floatval($total)."', block_info='" . serialize( $block_info ) . "' where session_id='" . mysqli_real_escape_string( $GLOBALS['connection'], session_id()) . "'  ";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 	return true;
@@ -141,7 +137,7 @@ check_selection_main();
 
 function check_selection_main() {
 
-	global $f2;
+	global $f2, $banner_data;
 
 	# check the status of the block.
 
@@ -192,27 +188,27 @@ function check_selection_main() {
 	$image = $imagine->open( $upload_image_file );
 	$size  = $image->getSize();
 
-	$new_size = get_required_size( $size->getWidth(), $size->getHeight() );
+	$new_size = get_required_size( $size->getWidth(), $size->getHeight(), $banner_data );
 
 	if ( $size->getWidth() != $new_size[0] || $size->getHeight() != $new_size[1] ) {
 		$resize = new Imagine\Image\Box( $new_size[0], $new_size[1] );
 		$image->resize( $resize );
 	}
 
-	$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
+	$block_size = new Imagine\Image\Box( $banner_data['BLK_WIDTH'], $banner_data['BLK_HEIGHT'] );
 	$palette    = new Imagine\Image\Palette\RGB();
 	$color      = $palette->color( '#000', 0 );
 	//$zero_point = new Imagine\Image\Point( 0, 0 );
 
 	$block_info = $cb_array = array();
-	for ( $y = 0; $y < ( $size->getHeight() ); $y += BLK_HEIGHT ) {
-		for ( $x = 0; $x < ( $size->getWidth() ); $x += BLK_WIDTH ) {
+	for ( $y = 0; $y < ( $size->getHeight() ); $y += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x = 0; $x < ( $size->getWidth() ); $x += $banner_data['BLK_WIDTH'] ) {
 
 			$map_x = $x + $_REQUEST['map_x'];
 			$map_y = $y + $_REQUEST['map_y'];
 
-			$GRD_WIDTH  = BLK_WIDTH * G_WIDTH;
-			$cb         = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
+			$GRD_WIDTH  = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
+			$cb         = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
 			$cb_array[] = $cb;
 
 			$block_info[ $cb ]['map_x'] = $map_x;
@@ -229,7 +225,7 @@ function check_selection_main() {
 			//$dest->paste( $block, $zero_point );
 
 			// much faster
-			imagecopy ( $dest->getGdResource(), $image->getGdResource(), 0, 0, $x, $y, BLK_WIDTH,  BLK_HEIGHT);
+			imagecopy ( $dest->getGdResource(), $image->getGdResource(), 0, 0, $x, $y, $banner_data['BLK_WIDTH'],  $banner_data['BLK_HEIGHT']);
 
 			// save the image as a base64 encoded string
 			$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );

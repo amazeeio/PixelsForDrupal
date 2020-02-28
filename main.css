@@ -1,22 +1,29 @@
 .clear {
-	clear:both;
+	clear: both;
 }
 
 body.main {
-	margin: 0px;
-	font-family:Arial;
+	margin: 0;
+	font-family: "Arial", sans-serif;
 	font-size: 12px;
 }
 
 .outer {
-	margin:0px;
-	padding:0px;
-	border:0px;
-	width:100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
 }
+
 .inner {
-	margin:0px auto;
-	width:auto;
+	margin: 0 auto;
+	width: auto;
+}
+
+.container {
+	width: 1001px;
+	margin: 0 auto;
+	text-align: center;
 }
 
 /*
@@ -24,75 +31,88 @@ Heading bar
 */
 .heading {
 	background: #fff;
+	max-width: 1000px;
+	margin: 0 auto;
 }
 
 .logo {
-	width:410px;
-	float:left;
+	width: 410px;
+	float: left;
 }
+
 .slogan {
-	padding-top:35px;
-	width:350px;
-	float:left;
-	font-weight:bold;
+	padding-top: 35px;
+	width: 350px;
+	float: left;
+	font-weight: bold;
 }
 
 /*
 controls the look and feel of the 'pixels-sold/available' box:
 */
+iframe[class^='statsframe'] {
+	overflow: hidden;
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
 .status_outer {
-	float:right;
-	width:149px;
-	margin:5px 5px 0px 0px;
-	background: #fff url(s_bg.gif) no-repeat 5px 0px;
+	float: right;
+	width: 149px;
+	margin: 5px 5px 0 0;
+	background: #fff url(s_bg.gif) no-repeat 5px 0;
 }
 
 .status_body {
-	margin:0px; 
+	margin: 0;
 	background-color: transparent;
+	overflow:hidden;
 }
 
 .status {
-	float:right;
-	width:144px;
-	height:53px;
-	border:0px;
-	padding: 10px 0px 0px 0px;
+	float: right;
+	width: 144px;
+	height: 53px;
+	border: 0;
+	padding: 10px 0 0 0;
 	font-size: 12px;
-	font-family: Arial;
-	text-align:center;
-	line-height:16px;
+	font-family: Arial, sans-serif;
+	text-align: center;
+	line-height: 16px;
 }
 
 /*
 Menu bar (section at the top where the navigational links are placed)
 */
 .menu_outer {
-	clear:both;
-	background: #fff  url(grgrad.gif) repeat-x;
-	height:53px;
+	clear: both;
+	background: #fff url(grgrad.gif) repeat-x;
+	height: 53px;
 }
-.menu_bar  {
+
+.menu_bar {
 	color: white;
 	font-weight: bold;
 	text-align: center;
 	font-size: 13px;
-	width:auto;
-	margin:0px auto;
-	height:53px;
+	width: auto;
+	margin: 0 auto;
+	height: 53px;
 }
+
 ul.menu {
-	width:1001px;
-	margin:5px auto 0px auto;
+	width: 1001px;
+	margin: 5px auto 0 auto;
 }
+
 ul.menu li {
-	background:url(button.gif) no-repeat;
-	display:block;
-	float:left;
-	height:43px;
-	line-height:43px;
-	width:134px;
-	margin:0px 2px 0px 0px;
+	background: url(button.gif) no-repeat;
+	display: inline-block;
+	height: 43px;
+	line-height: 43px;
+	width: 134px;
+	margin: 0 2px 0 0;
 }
 
 /*
@@ -100,24 +120,89 @@ Links in the menu bar
 */
 .menu_bar a:link, .menu_bar a:visited {
 	color: #000;
-	display:block;
-	float:left;
-	height:43px;
-	line-height:43px;
-	width:134px;
-	text-decoration:none;
+	display: block;
+	float: left;
+	height: 43px;
+	line-height: 43px;
+	width: 134px;
+	text-decoration: none;
 }
+
 .menu_bar a:hover {
 	color: #004042;
 }
 
-.container {
-	width:1001px;
-	margin:0 auto;
-	text-align:center;
+/*
+Grid iframe
+*/
+iframe[class^='gridframe'] {
+	overflow: hidden;
+	border: none;
+	border-bottom: 1px solid #D4D6D4;
+	border-right: 1px solid #D4D6D4;
+	padding: 0;
+	margin: 0 auto;
 }
 
+/*
+Footer
+*/
 .footer {
-	padding:10px;
-	text-align:center;
+	padding: 10px;
+	text-align: center;
+}
+
+/*
+Ads list page
+*/
+
+.list {
+	width: 100%;
+	border: none;
+	font-family: Arial, sans-serif;
+	font-size: small;
+	color: #000;
+}
+
+.list a {
+	color: #0000ff;
+}
+
+.table-row {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	-webkit-flex-direction: row;
+	flex-grow: 0;
+	-webkit-flex-grow: 0;
+	flex-wrap: wrap;
+	-webkit-flex-wrap: wrap;
+	width: 100%;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.list-cell,
+.list-heading {
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding-right: 20px;
+	width: 180px;
+}
+
+.table-row {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+	border-collapse: collapse;
+	padding-top: 5px;
+}
+
+.table-row.header {
+	background-color: #dddddd;
+	color: #000;
+	font-weight: bold;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }

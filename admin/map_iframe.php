@@ -1,11 +1,10 @@
 <?php
 /**
- * @version        $Id: map_iframe.php 137 2011-04-18 19:48:11Z ryan $
  * @package        mds
- * @copyright    (C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author        Ryan Rhode, ryan@milliondollarscript.com
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
  * @license        This program is free software; you can redistribute it and/or modify
- *        it under the terms of the GNU General Public License as published by
+*        it under the terms of the GNU General Public License as published by
  *        the Free Software Foundation; either version 3 of the License, or
  *        (at your option) any later version.
  *
@@ -26,7 +25,7 @@
  *
  *        Visit our website for FAQs, documentation, a list team members,
  *        to post any bugs or feature requests, and a community forum:
- *        http://www.milliondollarscript.com/
+ *        https://milliondollarscript.com/
  *
  */
 
@@ -44,7 +43,7 @@ if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
 
 }
 
-load_banner_constants( $BID );
+$banner_data = load_banner_constants($BID);
 
 ?>
 <span onmouseout="hideBubble()" id="bubble" style="position:absolute;left:0; top:0; visibility:hidden; background-color:#FFFFFF; border: 1px solid #33CCFF;padding:3px; width:250px; font-family:Arial,serif; font-size:11px;"></span>
@@ -195,7 +194,7 @@ load_banner_constants( $BID );
 		if (e.relatedTarget) relTarg = e.relatedTarget;
 		else if (e.fromElement) relTarg = e.fromElement;
 
-		b = bubble.style
+		b = bubble.style;
 
 
 		//str=str+"hello: "+bubble.clientWidth;
@@ -296,7 +295,7 @@ load_banner_constants( $BID );
 	var bm_move_order_state = false;
 	var bm_move_block_state = false;
 
-	var BID = <?php echo $BID; ?>
+	var BID = <?php echo $BID; ?>;
 
 		function bm_state_change(button) {
 
@@ -339,7 +338,6 @@ load_banner_constants( $BID );
 
 
 		}
-
 
 	/////////////////////
 
@@ -429,8 +427,8 @@ load_banner_constants( $BID );
 		// OffsetX = Math.floor (OffsetX / 10)*10;
 		// OffsetY = Math.floor (OffsetY / 10)*10;
 
-		OffsetX = Math.floor(OffsetX / <?php echo BLK_WIDTH; ?>) *<?php echo BLK_WIDTH; ?>;
-		OffsetY = Math.floor(OffsetY / <?php echo BLK_HEIGHT; ?>) *<?php echo BLK_HEIGHT; ?>;
+	OffsetX = Math.floor (OffsetX / <?php echo $banner_data['BLK_WIDTH']; ?>)*<?php echo $banner_data['BLK_WIDTH']; ?>;
+	OffsetY = Math.floor (OffsetY / <?php echo $banner_data['BLK_HEIGHT']; ?>)*<?php echo $banner_data['BLK_HEIGHT']; ?>;
 
 		var pointer = document.getElementById('block_pointer');
 
@@ -494,13 +492,11 @@ load_banner_constants( $BID );
 
 		var pointer = document.getElementById('block_pointer');
 
-		var grid_width =<?php echo G_WIDTH * BLK_WIDTH;?>;
-		var grid_height =<?php echo G_HEIGHT * BLK_HEIGHT;?>;
+	var grid_width=<?php echo $banner_data['G_WIDTH']*$banner_data['BLK_WIDTH'];?>;
+	var grid_height=<?php echo $banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT'];?>;
 
-		var blk_width = <?php echo BLK_WIDTH; ?>;
-		var blk_height = <?php echo BLK_HEIGHT; ?>;
-
-		//var clicked_block = ((pointer.map_y*grid_width)+pointer.map_x)/<?php echo BLK_HEIGHT; ?> ;
+	var blk_width = <?php echo $banner_data['BLK_WIDTH']; ?>;
+	var blk_height = <?php echo $banner_data['BLK_HEIGHT']; ?>;
 
 		var clicked_block = ((pointer.map_x) / blk_width) + ((pointer.map_y / blk_height) * (grid_width / blk_width));
 
@@ -515,9 +511,7 @@ load_banner_constants( $BID );
 
 
 </script>
-<!-- took out: onmouseout="this.style.visibility='hidden' " -->
 <span id='block_pointer' onclick="put_pixels(event);" style='cursor: pointer;position:absolute;left:0; top:0;background-color:#FFFFFF; visibility:hidden; '><img name='pointer_img' src='pointer.png'></span>
-
 
 <form method='post' name="move_form" action='map_iframe.php'>
     <input name='cb_from' type="hidden" value="">
@@ -526,12 +520,7 @@ load_banner_constants( $BID );
     <input name='BID' type="hidden" value="<?php echo $BID; ?>">
 </form>
 
-
 <?php
-
-//print_r($_REQUEST);
-
-//echo "bannerid is --- ".$BID;
 
 if ( isset( $_REQUEST['move_type'] ) && ! empty( $_REQUEST['move_type'] ) ) {
 
@@ -559,42 +548,13 @@ $result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $G
 
 	while ( $row = mysqli_fetch_array( $result ) ) {
 
-	    if($row['order_id'] > 0) {
-	        continue;
-	    }
-
         $sql = "select * from users where ID='" . intval( $row['user_id'] ) . "'";
         $res = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
         $user_row = mysqli_fetch_array( $res );
 
-        if ( mysqli_num_rows( $res ) == 0 ) {
-
-            //$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-            //mysqli_query($GLOBALS['connection'], $sql);
-
-        }
-
         $sql = "select * from orders where order_id='" . intval( $row['order_id'] ) . "'";
         $res = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
         $order_row = mysqli_fetch_array( $res );
-
-        if ( mysqli_num_rows( $res ) == 0 ) {
-
-            //$sql = "DELETE * FROM blocks where block_id=".$row['block_id'];
-            //mysqli_query($GLOBALS['connection'], $sql);
-
-        }
-
-        //if ($row[date_stamp]!='') {
-
-        /*
-                    $time_expired = strtotime($order_row[date_stamp]);
-                    $time_when_cancel = $time_expired + ($b_row['days_expire '] * 24 * 60 * 60);
-                    $days =floor (($time_when_cancel - time()) / 60 / 60 / 24);
-        */
-
-        //$time_expired = strtotime($order_row[date_stamp]);
-        //$time_when_cancel = $time_expired + ($b_row['days_expire '] * 24 * 60 * 60);
 
         if ( $order_row['days_expire'] > 0 ) {
 
@@ -645,38 +605,22 @@ $result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $G
         ?>
 
         <area
-            <?php if ( true ) {
-
-                // blow is another example for opening in a new window..
-
-                //$new_window = "onclick=\"parent.window.open('click.php?block_id=".($row['block_id'])."', '', 'toolbar=yes,scrollbars=yes,location=yes,statusbar=yes,menubar=yes,resizable=1,width=800,height=600,left = 1,top = 1');return false;\"";
-
-                $new_window = "onclick=\" if (bm_move_block_state|bm_move_order_state) {do_block_click(" . $BID . ")} else { parent.window.open('orders.php?user_id=" . ( $row['user_id'] ) . "&BID=" . $BID . "&order_id=" . $row['order_id'] . "', '', '');}return false;\"";
-
-                echo $new_window;
-
-                ?>
+                onclick="if (bm_move_block_state || bm_move_order_state) {do_block_click(<?php echo $BID; ?>)} else { window.open('orders.php?user_id=<?php echo( $row['user_id'] ); ?>&BID=<?php echo $BID; ?>&order_id=<?php echo $row['order_id']; ?>', 'main', '');}return false;"
 
                 href="<?php echo( $row['url'] ); ?>"
-            <?php } else { ?>
-                href="orders.php?user_id=<?php echo( $row['user_id'] ); ?>&BID=<?php echo $BID; ?>&order_id=<?php echo $row['order_id']; ?>";
-            <?php } ?>
 
                 onmousemove="showBubble(event, '<?php echo htmlspecialchars( str_replace( "'", "\'", ( $alt_text ) ) ); ?>', this)"
                 onmouseout="hideIt()"
 
-                shape="RECT" coords="<?php echo $row['x']; ?>,<?php echo $row['y']; ?>,<?php echo $row['x'] + BLK_WIDTH; ?>,<?php echo $row['y'] + BLK_HEIGHT; ?>"
-            <?php if ( ENABLE_MOUSEOVER == 'NO' ) { ?>
+	shape="RECT" coords="<?php echo $row['x'];?>,<?php echo $row['y'];?>,<?php echo $row['x']+$banner_data['BLK_WIDTH'];?>,<?php echo $row['y']+$banner_data['BLK_HEIGHT'];?>"
+
+			<?php /*if ( ENABLE_MOUSEOVER == 'NO' ) { ?>
                 title="<?php echo htmlspecialchars( $alt_text ); ?>"
                 alt="<?php echo htmlspecialchars( $alt_text ); ?>"
-            <?php } ?>
+			<?php }*/ ?>
+
                 target="_blank">
-
-        <?php
-        //}
-	}
-
-	?>
+	<?php } ?>
 
 </map>
 

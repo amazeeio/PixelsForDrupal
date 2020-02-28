@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: price_functions.php 159 2012-10-11 17:31:31Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -46,14 +45,16 @@ function load_price_zones($banner_id) {
 		}
 	}
 
+	$banner_data = load_banner_constants($banner_id);
+
 	$sql = "SELECT * FROM prices where banner_id='".intval($banner_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$key=0;
 	while ($row = mysqli_fetch_array($result)) {
-		$price_table[$key]['row_from']=$row['row_from'] * BLK_WIDTH;
-		$price_table[$key]['row_to']=$row['row_to'] * BLK_WIDTH;
-		$price_table[$key]['col_from']=$row['col_from'] * BLK_HEIGHT;
-		$price_table[$key]['col_to']=$row['col_to'] * BLK_HEIGHT;
+		$price_table[$key]['row_from']=$row['row_from'] * $banner_data['BLK_WIDTH'];
+		$price_table[$key]['row_to']=$row['row_to'] * $banner_data['BLK_WIDTH'];
+		$price_table[$key]['col_from']=$row['col_from'] * $banner_data['BLK_HEIGHT'];
+		$price_table[$key]['col_to']=$row['col_to'] * $banner_data['BLK_HEIGHT'];
 		$price_table[$key]['color']=$row['color'];
 		$price_table[$key]['price']=$row['price'];
 		$price_table[$key]['currency']=$row['currency'];
@@ -73,8 +74,10 @@ function get_zone_color( $banner_id, $row, $col ) {
 		load_price_zones( $banner_id );
 	}
 
-	$row += BLK_HEIGHT;
-	$col += BLK_WIDTH;
+	$banner_data = load_banner_constants($banner_id);
+
+	$row += $banner_data['BLK_HEIGHT'];
+	$col += $banner_data['BLK_WIDTH'];
 
 	foreach ( $price_table as $key => $val ) {
 
@@ -122,8 +125,9 @@ function get_block_price($banner_id, $block_id) {
 	$row = $block_row['x'];
 	$col = $block_row['y'];
 
+	$banner_data = load_banner_constants($banner_id);
 
-	$price = get_zone_price($banner_id, $row / BLK_HEIGHT, $col / BLK_WIDTH);
+	$price = get_zone_price($banner_id, $row / $banner_data['BLK_HEIGHT'], $col / $banner_data['BLK_WIDTH']);
 
 
 	return $price;
@@ -135,8 +139,10 @@ function get_block_price($banner_id, $block_id) {
 function get_zone_price( $banner_id, $row, $col ) {
 	global $price_table;
 
-	$row += BLK_HEIGHT;
-	$col += BLK_WIDTH;
+	$banner_data = load_banner_constants($banner_id);
+
+	$row += $banner_data['BLK_HEIGHT'];
+	$col += $banner_data['BLK_WIDTH'];
 
 	if ( isset( $price_table['loaded'] ) ) {
 		if ( $price_table['loaded'] != 1 ) {
@@ -202,7 +208,7 @@ while ($row=mysqli_fetch_array($result)) {
 
 ?>
 
-<area  shape="RECT" coords="<?php echo $row['col_from']*10;?>,<?php echo $row['row_from']*10;?>,<?php echo ($row['col_to']*10)+10;?>,<?php echo ($row['row_to']*10)+10;?>" href="" title="<?php echo htmlspecialchars($row['price']);?>" alt="<?php echo htmlspecialchars($row[price]);?>" onclick="return false; " target="_blank" />
+<area  shape="RECT" coords="<?php echo $row['col_from']*10;?>,<?php echo $row['row_from']*10;?>,<?php echo ($row['col_to']*10)+10;?>,<?php echo ($row['row_to']*10)+10;?>" href="" title="<?php echo htmlspecialchars($row['price']);?>" alt="<?php echo htmlspecialchars($row['price']);?>" onclick="return false; " target="_blank" />
 
 <?php
 
@@ -263,17 +269,17 @@ function display_price_table ($banner_id) {
 ?>
 <tr bgcolor="#ffffff">
 			<td ><font face="Arial" size="2"><?php if ($row['price']==0) { echo $label['free'];} else { echo convert_to_default_currency_formatted($row['currency'], $row['price'], true) ; } ?></font></td>
-			<td bgcolor="<?php if ($row[color]=='yellow') { echo '#FFFF00';} elseif ($row['color']=='cyan') { echo '#00FFFF';} elseif ($row[color]=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php
+			<td bgcolor="<?php if ($row['color']=='yellow') { echo '#FFFF00';} elseif ($row['color']=='cyan') { echo '#00FFFF';} elseif ($row['color']=='magenta') { echo '#FF00FF';} ?>"><font face="Arial" size="2" ><?php
 
 				echo $row['color'];
 
 				 ?>
 
 				</font></td>
-				<td><font face="Arial" size="2"><?php echo $row[row_from];?></font></td>
-				<td><font face="Arial" size="2"><?php echo $row[row_to];?></font></td>
-				<td><font face="Arial" size="2"><?php echo $row[col_from];?></font></td>
-				<td><font face="Arial" size="2"><?php echo $row[col_to];?></font></td>
+				<td><font face="Arial" size="2"><?php echo $row['row_from'];?></font></td>
+				<td><font face="Arial" size="2"><?php echo $row['row_to'];?></font></td>
+				<td><font face="Arial" size="2"><?php echo $row['col_from'];?></font></td>
+				<td><font face="Arial" size="2"><?php echo $row['col_to'];?></font></td>
 
 
 				</tr>

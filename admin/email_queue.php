@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: email_queue.php 62 2010-09-12 01:17:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,18 +25,14 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require('admin_common.php');
 
-
 ini_set('max_execution_time', 500);
-
-
 
 if ($_REQUEST['action']=='delall') {
 
@@ -306,7 +301,7 @@ if ($count > $records_per_page)  {
 	echo "Page $cur_page of $pages - ";
 	$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 	$LINKS = 10;
-	render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+	render_nav_pages($nav, $LINKS, $q_string);
 	echo "</center>";
 
 }
@@ -381,7 +376,7 @@ if ($count > $records_per_page)  {
 	echo "Page $cur_page of $pages - ";
 	$nav = nav_pages_struct( $q_string, $count, $records_per_page );
 	$LINKS = 10;
-	render_nav_pages($nav, $LINKS, $q_string, $show_emp, $cat);
+	render_nav_pages($nav, $LINKS, $q_string);
 	echo "</center>";
 
 }

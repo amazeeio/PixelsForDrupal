@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Sigismund\\CoinPayments\\' => array($vendorDir . '/sigismund/coinpayments/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Imagine\\' => array($vendorDir . '/imagine/imagine/src'),
 );

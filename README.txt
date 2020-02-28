@@ -2,16 +2,16 @@
 INSTALLATION.
 
 	Make sure your hosting service meets the requirements.
-	http://milliondollarscript.com/hosting/
+	https://milliondollarscript.com/hosting/
 
 	You may find these online installation instructions useful:
-	http://milliondollarscript.com/docs/
+	https://milliondollarscript.com/docs/
 	
 	More help and support is available at the forum.
-	http://milliondollarscript.com/forums/
+	https://milliondollarscript.com/forums/
 	
 	Knowledge Base / FAQ
-	http://milliondollarscript.com/category/faq/
+	https://milliondollarscript.com/category/faq/
 	
 #############################################################
 
@@ -140,7 +140,7 @@ Knowledge Base / FAQ:
 
 - There are over 100 articles in the knowledge base covering many topics.
 
-http://milliondollarscript.com/category/faq/
+https://milliondollarscript.com/category/faq/
 
 -----------------------------
 
@@ -457,9 +457,8 @@ to help you with merging the new files.
 
 
 /**
- * @version		$Id: README.txt 142 2011-08-17 21:54:59Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -483,7 +482,7 @@ to help you with merging the new files.
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 

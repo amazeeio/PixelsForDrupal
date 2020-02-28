@@ -19,6 +19,6 @@
     "imagine/imagine": ">=1.2.2",
     "ezyang/htmlpurifier": ">=4.11.0",
     "phpmailer/phpmailer": ">=6.0.7",
-    "ckeditor/ckeditor": ">=4.12.1"
+    "sigismund/coinpayments": ">=1.0.2"
   }
 }

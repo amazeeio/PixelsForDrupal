@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: translation_tool.php 88 2010-10-12 16:43:19Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -192,7 +191,7 @@ foreach ($source_label as $key => $val) {
 		
 		}
 	
-	?></td><td valign="top" ><textarea style="font-family: Arial; font-size: 10pt;" cols="60" rows="<?php $size = strlen ($val); $rows = round( $size / 40)+2; echo $rows; ?>"  name='<?php echo $key?>'><?php $text =  (stripslashes($dest_label[$key])); if ($_REQUEST[edit_mode] == 'entities') { echo htmlentities($text); } else {echo $text;} ?></textarea></td>
+	?></td><td valign="top" ><textarea style="font-family: Arial; font-size: 10pt;" cols="60" rows="<?php $size = strlen ($val); $rows = round( $size / 40)+2; echo $rows; ?>"  name='<?php echo $key?>'><?php $text =  (stripslashes($dest_label[$key])); if ($_REQUEST['edit_mode'] == 'entities') { echo htmlentities($text); } else {echo $text;} ?></textarea></td>
 	</tr>
 	<?php
 	if ($i > 5) {

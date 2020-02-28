@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: header.php 90 2010-12-14 21:30:27Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,18 +25,15 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
+
+header('content-type: text/html; charset=utf-8');
 
 echo $f2->get_doc(); ?>
 
 <link rel='StyleSheet' type="text/css" href="style.css" >
-
-<style type="text/css">
-
-
-</style>
 
 <title><?php echo SITE_NAME; ?></title>
 
@@ -54,13 +50,13 @@ if (USE_AJAX=='SIMPLE') {
 
 $logourl = SITE_LOGO_URL;
 if(!empty($logourl)) {
-	echo '<img src="' . $logourl . '" />';
+	echo '<img src="' . htmlentities($logourl) . '" />';
 }
 ?>
 <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px;'>
 <div class="menu_bar">
-<a href="index.php" class="menu_bar"><?php echo $label['advertiser_header_nav1']; ?></a> | <a href="<?php echo $order_page; ?>" class="menu_bar"><?php echo $label['advertiser_header_nav2'];?></a>  | <a href="publish.php"  class="menu_bar"><?php echo $label['advertiser_header_nav3'];?></a> | <a href="orders.php"  class="menu_bar"><?php echo $label['advertiser_header_nav4'];?></a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <?php
-if ($_SESSION['MDS_ID']!='') { ?>
-<a href='logout.php'  class="menu_bar" ><?php echo $label['advertiser_header_nav5']; ?></a>
+<a href="index.php" class="menu_bar"><?php echo $label['advertiser_header_nav1']; ?></a> | <a href="<?php echo $order_page; ?>" class="menu_bar"><?php echo $label['advertiser_header_nav2'];?></a>  | <a href="publish.php"  class="menu_bar"><?php echo $label['advertiser_header_nav3'];?></a> | <a href="orders.php"  class="menu_bar"><?php echo $label['advertiser_header_nav4'];?></a>
+<?php if ($_SESSION['MDS_ID']!='') { ?>
+| <a href='logout.php'  class="menu_bar" ><?php echo $label['advertiser_header_nav5']; ?></a>
 <?php } ?>
 </div>

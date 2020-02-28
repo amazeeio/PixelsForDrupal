@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: remote_admin.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,15 +25,12 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 session_start();
 require("../config.php");
-
-
-
 
 if ($_REQUEST['key']!='') {
 
@@ -60,7 +56,7 @@ if ($f2->bid($_REQUEST['BID'])!='') {
 
 }
 
-load_banner_constants($BID);
+$banner_data = load_banner_constants($BID);
 
 $sql = "select * from banners where banner_id=".intval($BID);
 $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -157,6 +153,5 @@ while ($m_row=mysqli_fetch_array($m_result)) {
 </form>
 
 <?php
-
-echo "<iframe width=\"".(G_WIDTH*BLK_WIDTH)."\" height=\"".(G_HEIGHT*BLK_HEIGHT)."\" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src=\""."show_map.php?BID=$BID&user_id=".$_REQUEST['user_id']."\"></iframe>";
+echo "<iframe width=\"".($banner_data['G_WIDTH']*$banner_data['BLK_WIDTH'])."\" height=\"".($banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT'])."\" frameborder=0 marginwidth=0 marginheight=0 VSPACE=0 HSPACE=0 SCROLLING=no  src=\""."show_map.php?BID=$BID&user_id=".$_REQUEST['user_id']."\"></iframe>";
 ?>

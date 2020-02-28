@@ -273,7 +273,9 @@ class CoinPayments {
             <input type="hidden" name="success_url" value="<?php echo COINPAYMENTS_SUCCESS_URL; ?>">
             <input type="hidden" name="cancel_url" value="<?php echo COINPAYMENTS_CANCEL_URL; ?>">
             <input type="hidden" name="ipn_url" value="<?php echo COINPAYMENTS_IPN_URL; ?>">
+            <div style="text-align: center;">
             <input type="image" src="<?php echo $buttons[ COINPAYMENTS_BUTTON ]; ?>" alt="Buy Now with CoinPayments.net">
+            </div>
         </form>
 		<?php
 	}

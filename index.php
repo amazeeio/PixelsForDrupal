@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: index.php 164 2012-12-14 21:22:24Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -52,16 +51,11 @@ if(!file_exists(MDSROOT . "/config.php")) {
 // include the config file
 include_once (MDSROOT . "/config.php");
 
-
 // include the header
 include_once (MDSROOT . "/html/header.php");
 
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
-?>			
+echo get_html_code( $BID );
 
-<iframe style="margin:0 auto;" width="1001" height="1001" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" scrolling="no" allowtransparency="true" src="display_map.php?BID=1"></iframe>
-
-<?php
 // include footer
 include_once (MDSROOT . "/html/footer.php");
-?>

@@ -1,7 +1,6 @@
 /**
- * @version		$Id: UPGRADE.txt 139 2011-04-19 05:06:41Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
@@ -87,14 +86,14 @@ You can backup the database tables by exporting them as SQL in PHPMyAdmin.
 
 NOTE 2: If you have customized any other PHP files, you will need to merge them.
 We recommend this handy tool for the job (free):
-http://www.milliondollarscript.com/installation/tutorials/win-merge-tutorial
+https://milliondollarscript.com/installation/tutorials/win-merge-tutorial
 
 NOTE 3: The html file mouse_overbox.htm was modified in this version and will need
 to be uploaded. (We have added a 'filter: revealtrans();' to the CSS style definition)
 ================================================================================
 
 
-http://www.milliondollarscript.com/
+https://milliondollarscript.com/
 
 
 

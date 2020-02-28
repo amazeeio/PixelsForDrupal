@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: nfs.php 170 2013-08-25 13:32:36Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,12 +25,11 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 
 require("../config.php");
-
 require ('admin_common.php');
 
 ini_set('max_execution_time', 10000);
@@ -45,8 +43,8 @@ if ($_SESSION['ADMIN']=='') {
 	?>
 	Please input admin password:<br>
 	<form method='post'>
-	<input type="password" name='pass'>
-	<input type="submit" value="OK">
+    <input type="password" name='pass'/>
+    <input type="submit" value="OK"/>
 	</form>
 	<?php
 	die();
@@ -54,7 +52,7 @@ if ($_SESSION['ADMIN']=='') {
 
 $BID = $f2->bid($_REQUEST['BID']);
 
-load_banner_constants($BID);
+$banner_data = load_banner_constants( $BID );
 
 if ($_REQUEST['action']=='save') {
 	//$sql = "delete from blocks where status='nfs' AND banner_id=$BID ";
@@ -72,9 +70,9 @@ if ($_REQUEST['action']=='save') {
 	}
 
 	$cell = $x = $y = 0;
-		for ($i = 0; $i < G_HEIGHT; $i++) {
+	for ( $i = 0; $i < $banner_data['G_HEIGHT']; $i ++ ) {
 			$x = 0;
-			for ($j = 0; $j < G_WIDTH; $j++) {
+		for ( $j = 0; $j < $banner_data['G_WIDTH']; $j ++ ) {
 				if (isset($addnfs) && in_array($cell, $addnfs)) {
 					$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
 					mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
@@ -82,15 +80,24 @@ if ($_REQUEST['action']=='save') {
 					$sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id=$BID AND block_id=$cell";
 					mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 				}
-				$x = $x + BLK_WIDTH;
+			$x = $x + $banner_data['BLK_WIDTH'];
 				$cell++;
 			}
-			$y = $y + BLK_HEIGHT;
+		$y = $y + $banner_data['BLK_HEIGHT'];
 		}
 		echo "Success!";
 	exit();
+
+} else if ( $_REQUEST['action'] == 'reset' ) {
+    $sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id=$BID";
+    mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+	echo "Success!";
+	exit();
 }
-?>
+?><!DOCTYPE html>
+<html lang="<?php echo get_lang(); ?>">
+<head>
+    <title><?php echo SITE_NAME; ?></title>
 <script src="js/jquery.min.js"></script>
 <script src="jquery-ui/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css" type="text/css" />
@@ -122,7 +129,7 @@ jQuery(function($){
 	};
 	$('.grid').selectable({
 		delay: 75,
-		distance: <?php echo BLK_WIDTH; ?>,
+				distance: <?php echo $banner_data['BLK_WIDTH']; ?>,
 		stop: function() {
 			$( ".ui-selected", this ).each(function() {
 				processBlock($(this));
@@ -132,39 +139,68 @@ jQuery(function($){
 	$(".block").click(function() {
 		processBlock($(this));
 	});
-	$('.save').click(function(e){
+	$('.save').click(function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).after('<img class="loading" width="16" height="16" src="../images/ajax-loader.gif" alt="Loading..." />');
 		$('.save').prop('disabled', true);
-		var posting = $.post( "nfs.php", {
+		$('.reset').prop('disabled', true);
+		var posting = $.post("nfs.php", {
 			BID: <?php echo $BID; ?>,
 			action: "save",
 			addnfs: addnfs.join('~'),
 			remnfs: remnfs.join('~')
 		});
-		posting.done(function( data ) {
-			$('.loading').hide(function() {
+		posting.done(function (data) {
+			$('.loading').hide(function () {
 				$(this).remove();
-				$('<span class="message">'+data+'</span>').insertAfter('.save').fadeOut(10000, function() {$(this).remove();});
+				$('<span class="message">' + data + '</span>').insertAfter('.save').fadeOut(10000, function () {
+					$(this).remove();
+				});
 			});
 			$('.save').prop('disabled', false);
+			$('.reset').prop('disabled', false);
 		});
+	});
+	$('.reset').click(function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var result = confirm('This will unselect all NFS blocks. Are you sure you want to do this?');
+		if (result) {
+			$('.save').prop('disabled', true);
+			$('.reset').prop('disabled', true);
+			$(this).after('<img class="loading" width="16" height="16" src="../images/ajax-loader.gif" alt="Loading..." />');
+			var posting = $.post("nfs.php", {
+				BID: <?php echo $BID; ?>,
+				action: "reset"
+			});
+			posting.done(function (data) {
+				$('.loading').hide(function () {
+					$(this).remove();
+					$('<span class="message">' + data + '</span>').insertAfter('.reset').fadeOut(10000, function () {
+						$(this).remove();
+					});
+				});
+				$('.save').prop('disabled', false);
+				$('.reset').prop('disabled', false);
+				$(".block.nfs").removeClass("ui-selected").removeClass("nfs").addClass("free");
+			});
+		}
 	});
 });
 </script>
 <style type="text/css">
 	<?php
 	$grid_background = "";
-	if(file_exists(__DIR__ . "/temp/background$BID.png")) {
-		$grid_background = 'background: url("temp/background'.$BID.'.png");';
+		if(file_exists(BASE_PATH . "/" . BANNER_DIR . "/main$BID.png")) {
+			$grid_background = 'background: url("../' . BANNER_DIR . '/main' . $BID . '.png") no-repeat center center;background-size:contain;';
 	}
 	?>
 	.grid {
 		<?php echo $grid_background; ?>
 		z-index:0;
-		width:<?php echo G_WIDTH*BLK_WIDTH; ?>px;
-		height:<?php echo G_HEIGHT*BLK_HEIGHT; ?>px;
+            width: <?php echo $banner_data['G_WIDTH']*$banner_data['BLK_WIDTH']; ?>px;
+            height: <?php echo $banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT']; ?>px;
 	}
 	.block_row {
 		clear:both;
@@ -172,9 +208,11 @@ jQuery(function($){
 	}
 	.block {
 		white-space:nowrap;
-		width:<?php echo BLK_WIDTH; ?>px;
-		height:<?php echo BLK_HEIGHT; ?>px;
+            width: <?php echo $banner_data['BLK_WIDTH']; ?>px;
+            height: <?php echo $banner_data['BLK_HEIGHT']; ?>px;
 		float:left;
+            opacity: 0.5;
+            filter: alpha(opacity=50);
 	}
 	.sold {
 		background:url("../users/sold_block.png") no-repeat;
@@ -214,6 +252,7 @@ jQuery(function($){
 	$res = mysqli_query($GLOBALS['connection'], $sql);
 	?>
 	<form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+        <label>
 		Select grid:
 		<select name="BID" onchange="document.bidselect.submit()">
 			<option> </option>
@@ -224,10 +263,13 @@ jQuery(function($){
 				} else {
 					$sel ='';
 				}
-				echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+                echo '
+                <option
+                ' . $sel . ' value=' . $row['banner_id'] . '>' . $row['name'] . '</option>';
 			}
 			?>
 		</select>
+        </label>
 	</form>
 	<hr>
 	<?php
@@ -251,12 +293,13 @@ jQuery(function($){
 	?>
 	<div class="container">
 		<input class="save" type="submit" value='Save Not for Sale' />
+        <input class="reset" type="submit" value='Reset'/>
 		<div class="grid">
 			<?php
 			$cell="0";
-			for ($i=0; $i < G_HEIGHT; $i++) {
+			for ( $i = 0; $i < $banner_data['G_HEIGHT']; $i ++ ) {
 				echo "<div class='block_row'>";
-				for ($j=0; $j < G_WIDTH; $j++) {
+				for ( $j = 0; $j < $banner_data['G_WIDTH']; $j ++ ) {
 					switch ($blocks[$cell]) {
 						case 'sold':
 							echo '<span class="block sold" data-block="'.$cell.'"></span>';
@@ -287,5 +330,7 @@ jQuery(function($){
 		<input class="save" type="submit" value='Save Not for Sale' />
 	</div>
 </div>
-<?php
-}
+<?php } ?>
+
+</body>
+</html>

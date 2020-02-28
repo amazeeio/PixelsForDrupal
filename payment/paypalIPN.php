@@ -1,8 +1,7 @@
 <?php
 /**
- * @version		$Id: paypalIPN.php 69 2010-09-12 01:31:15Z ryan $
  * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
+ * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
  * @author		Ryan Rhode, ryan@milliondollarscript.com
  * @license		This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
@@ -26,14 +25,14 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
 require_once "../config.php";
 
 $_PAYMENT_OBJECTS['PayPal'] = new PayPal;//"paypal";
 
-define (IPN_LOGGING, 'Y');
+define ('IPN_LOGGING', 'Y');
 
 function pp_mail_error($msg) {
 

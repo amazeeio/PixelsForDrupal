@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: blending.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,9 +25,10 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
+
 ini_set('max_execution_time', 6000);
 
 require("../config.php");
@@ -37,7 +37,7 @@ require ('admin_common.php');
 
 
 
-if ($_REQUEST[BID]!='') {
+if ($_REQUEST['BID']!='') {
 	$BID = $f2->bid($_REQUEST['BID']);
 
 } else {
@@ -95,7 +95,7 @@ if ($_FILES['blend_image']['tmp_name']!='') {
 
 }
 
-if ($_REQUEST[action]=='delete') {
+if ($_REQUEST['action']=='delete') {
 
 	if (file_exists(SERVER_PATH_TO_ADMIN."temp/background$BID.png")) {
 		unlink (SERVER_PATH_TO_ADMIN."temp/background$BID.png");
@@ -127,7 +127,7 @@ Image Blending - Allows you to specify an image to blend in with your grid in th
 (This functionality requires GD 2.0.1 or later)<br>
 - Upload PNG true color image<br>
 - The image must have an alpha channel (Eg. PNG image created with Photoshop with blending options set).<br>
-- See http://www.milliondollarscript.com/admin/temp/background.png as an example of an image with an alpha channel set to 50%.<br>
+- See https://milliondollarscript.com/admin/temp/background.png as an example of an image with an alpha channel set to 50%.<br>
 - <a href="https://milliondollarscript.com/article/alpha-blending-tutorial/" target="_blank">See the tutorial</a> to get an idea how to create background images using Photoshop.
 <hr>
 <?php
@@ -147,7 +147,7 @@ Select grid: <select name="BID" onchange="document.bidselect.submit()">
 			$sel ='';
 
 		}
-		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row[name].'</option>';
+		echo '<option '.$sel.' value='.$row['banner_id'].'>'.$row['name'].'</option>';
 	}
 	?>
 </select>
@@ -160,7 +160,7 @@ Upload <b>True-color PNG Image</b> to blend:
 <input type="submit" value="Upload"> (Maximum upload size possible:<?php echo nice_format(ini_get('upload_max_filesize'));?>)<br>
 <input type="hidden" name="BID" value="<?php echo $BID; ?>">
 </form>
-<input type="button" value="Delete - Disable Blending" onclick="if (!confirmLink(this, 'Delete background image, are you sure')) return false; window.location='<?php echo $_SERVER[PHP_SELF]; ?>?action=delete&BID=<?php echo $BID;?>'" >
+<input type="button" value="Delete - Disable Blending" onclick="if (!confirmLink(this, 'Delete background image, are you sure')) return false; window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=delete&BID=<?php echo $BID;?>'" >
 <p>
 <?php
 

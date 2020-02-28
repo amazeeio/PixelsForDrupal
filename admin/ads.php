@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		$Id: ads.php 137 2011-04-18 19:48:11Z ryan $
- * @package		mds
- * @copyright	(C) Copyright 2010 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
+ * @package        mds
+ * @copyright      (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author         Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
  *		it under the terms of the GNU General Public License as published by
  *		the Free Software Foundation; either version 3 of the License, or
  *		(at your option) any later version.
@@ -26,9 +25,10 @@
  *
  *		Visit our website for FAQs, documentation, a list team members,
  *		to post any bugs or feature requests, and a community forum:
- * 		http://www.milliondollarscript.com/
+ * 		https://milliondollarscript.com/
  *
  */
+
 use Imagine\Filter\Basic\Autorotate;
 
 session_start();
@@ -71,9 +71,11 @@ function disapprove_modified_order($order_id, $BID) {
 
 <?php
 
-if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
+$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
 
-	$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
+$banner_data = load_banner_constants($BID);
+
+if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 
 	$imagine = new Imagine\Gd\Imagine();
 
@@ -95,7 +97,7 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 		die( "Either the user id for this ad doesn't exist or this ad doesn't exist." );
 	}
 	//echo "load const ";
-	load_banner_constants( $prams['banner_id'] );
+	$banner_data = load_banner_constants( $prams['banner_id'] );
 
 	$sql = "SELECT * from ads as t1, orders as t2 where t1.ad_id=t2.ad_id AND t1.user_id=" . intval($prams['user_id']) . " and t1.banner_id='" . intval($prams['banner_id']) . "' and t1.ad_id='" . intval($prams['ad_id']) . "' AND t1.order_id=t2.order_id ";
 	//echo $sql."<br>";
@@ -208,12 +210,12 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 					}
 
 					// create a block size Box
-					$block_size = new Imagine\Image\Box( BLK_WIDTH, BLK_HEIGHT );
+					$block_size = new Imagine\Image\Box( $banner_data['BLK_WIDTH'], $banner_data['BLK_HEIGHT'] );
 
 					// Paste image into selected blocks (AJAX mode allows individual block selection)
-					for ( $y = 0; $y < $size['y']; $y += BLK_HEIGHT ) {
+					for ( $y = 0; $y < $size['y']; $y += $banner_data['BLK_HEIGHT'] ) {
 
-						for ( $x = 0; $x < $size['x']; $x += BLK_WIDTH ) {
+						for ( $x = 0; $x < $size['x']; $x += $banner_data['BLK_WIDTH'] ) {
 
 							// create new destination image
 							$palette = new Imagine\Image\Palette\RGB();
@@ -233,8 +235,8 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 							// some variables
 							$map_x     = $x + $low_x;
 							$map_y     = $y + $low_y;
-							$GRD_WIDTH = BLK_WIDTH * G_WIDTH;
-							$cb        = ( ( $map_x ) / BLK_WIDTH ) + ( ( $map_y / BLK_HEIGHT ) * ( $GRD_WIDTH / BLK_WIDTH ) );
+							$GRD_WIDTH = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
+							$cb        = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
 
 							// save to db
 							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . intval($cb) . "' AND banner_id='" . intval($BID) . "' ";
@@ -245,11 +247,11 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 
 				unlink( $tmp_image_file );
 
-				if ( AUTO_APPROVE != 'Y' ) { // to be approved by the admin
+				if ( $banner_data['AUTO_APPROVE'] != 'Y' ) { // to be approved by the admin
 					disapprove_modified_order( $order_id, $prams['banner_id'] );
 				}
 
-				if ( AUTO_PUBLISH == 'Y' ) {
+				if ( $banner_data['AUTO_PUBLISH'] == 'Y' ) {
 					process_image( $prams['banner_id'] );
 					publish_image( $prams['banner_id'] );
 					process_map( $prams['banner_id'] );
@@ -313,22 +315,19 @@ if ($_REQUEST['ad_id']!='') {
 	
 		$error = validate_ad_data(1);
 		if ($error != '') { // we have an error
-			$mode = "edit";
-			//display_ad_intro();
-			//echo $error;
-			display_ad_form (1, $mode, '');
+			display_ad_form (1, "user", '');
 		} else {
 			insert_ad_data(true); // admin mode
 			$prams = load_ad_values ($_REQUEST['ad_id']);
 			update_blocks_with_ad($_REQUEST['ad_id'], $prams['user_id']);
-			display_ad_form (1, "edit", $prams);
+			display_ad_form (1, "user", $prams);
 			// disapprove the pixels because the ad was modified..
 
-			if (AUTO_APPROVE!='Y') { // to be approved by the admin
+			if ($banner_data['AUTO_APPROVE']!='Y') { // to be approved by the admin
 				disapprove_modified_order($prams['order_id'], $BID);
 			}
 			
-			if (AUTO_PUBLISH=='Y') {
+			if ($banner_data['AUTO_PUBLISH']=='Y') {
 				process_image($BID);
 				publish_image($BID);
 				process_map($BID);
@@ -340,7 +339,7 @@ if ($_REQUEST['ad_id']!='') {
 	} else {
 
 		$prams = load_ad_values ($_REQUEST['ad_id']);
-		display_ad_form (1, 'edit', $prams);
+		display_ad_form (1, "user", $prams);
 
 	}
 	$prams = load_ad_values ($_REQUEST['ad_id']);

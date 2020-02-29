@@ -179,7 +179,7 @@ function display_ad_form ($form_id, $mode, $prams) {
 	global $f2, $label, $error, $BID;
 
 	if ($prams == '' ) {
-
+        $prams = array();
 		$prams['mode'] = (isset($_REQUEST['mode']) ? $_REQUEST['mode'] : "");
 		$prams['ad_id']= (isset($_REQUEST['ad_id']) ? $_REQUEST['ad_id'] : "");
 		$prams['banner_id'] = $BID;

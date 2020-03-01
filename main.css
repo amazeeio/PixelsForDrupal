@@ -169,40 +169,27 @@ Ads list page
 }
 
 .table-row {
-	display: flex;
-	display: -webkit-flex;
-	flex-direction: row;
-	-webkit-flex-direction: row;
-	flex-grow: 0;
-	-webkit-flex-grow: 0;
-	flex-wrap: wrap;
-	-webkit-flex-wrap: wrap;
+	display: table;
 	width: 100%;
-	padding-left: 15px;
-	padding-right: 15px;
 }
 
 .list-cell,
 .list-heading {
-	flex-grow: 1;
-	-webkit-flex-grow: 1;
+	display:table-cell;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	padding-right: 20px;
+	padding: 5px;
 	width: 180px;
 }
 
 .table-row {
 	border-bottom: 2px solid rgba(255, 255, 255, 0.5);
 	border-collapse: collapse;
-	padding-top: 5px;
 }
 
 .table-row.header {
 	background-color: #dddddd;
 	color: #000;
 	font-weight: bold;
-	padding-top: 8px;
-	padding-bottom: 8px;
 }

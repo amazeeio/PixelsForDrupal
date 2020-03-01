@@ -381,7 +381,7 @@ $label['advertiser_home_blkonorder']="You have %PIXEL_ORD_COUNT% pixels on order
 
 $label['advertiser_home_click_count']="Your pixels were clicked %CLICK_COUNT% times.";
 $label['advertiser_home_sub_head']="Here is what you can do:";
-$label['advertiser_home_selectlink']="- <a href='%ORDER_PAGE%'>Order</a>: Choose and order new pixels.";
+$label['advertiser_home_selectlink']="- <a href='select.php'>Order</a>: Choose and order new pixels.";
 $label['advertiser_home_managelink']="- <a href='publish.php'>Manage</a>: Manage pixels owned by you.";
 $label['advertiser_home_ordlink']="- <a href='orders.php'>View Orders</a>: View your order history, and status of each order.";
 $label['advertiser_home_editlink']="- <a href='edit.php'>Edit Account Details</a>: Edit your personal details, change your password.";

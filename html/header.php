@@ -34,7 +34,7 @@ $BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID'])!='') ? $f2->bid($_
 	<title><?php echo SITE_NAME; ?></title>
 	<meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <link rel=StyleSheet type="text/css" href="main.css?ver=<?php filemtime(__DIR__ . "/../main.css"); ?>" >
+	<link rel="stylesheet" type="text/css" href="main.css?ver=<?php echo filemtime(BASE_PATH . "/main.css"); ?>" >
 </head>
 <body class="main">
 

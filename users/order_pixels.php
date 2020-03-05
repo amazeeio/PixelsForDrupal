@@ -306,8 +306,8 @@ require( "header.php" );
 			var submit2 = document.getElementById('submit_button2');
 			submit1.disabled = true;
 			submit2.disabled = true;
-			submit1.value = "<?php echo $label['reserving_pixels']; ?>";
-			submit2.value = "<?php echo $label['reserving_pixels']; ?>";
+			submit1.value = "<?php echo $f2->nl2html( $label['reserving_pixels'] ); ?>";
+			submit2.value = "<?php echo $f2->nl2html( $label['reserving_pixels'] ); ?>";
 			submit1.style.cursor = 'wait';
 			submit2.style.cursor = 'wait';
 
@@ -794,7 +794,7 @@ if ( $has_packages ) {
     <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
         <strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;'/><br/>
         <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
-        <input type='submit' value='<?php echo $label['pix_upload_button']; ?>' style=' font-size:18px;'/>
+        <input type='submit' value='<?php echo $f2->rmnl($label['pix_upload_button']); ?>' style=' font-size:18px;' />
 
 		<?php
 
@@ -849,9 +849,7 @@ if ( ! $tmp_image_file ) {
         <input type="hidden" name="jEditOrder" value="true">
 
         <p>
-            <input type="button" class='big_button' <?php if ( isset( $_REQUEST['order_id'] ) && $_REQUEST['order_id'] != 'temp' ) {
-				echo 'disabled';
-			} ?> name='submit_button1' id='submit_button1' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
+            <input type="button" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button1' id='submit_button1' value='<?php echo $f2->rmnl($label['advertiser_write_ad_button']); ?>' onclick="make_selection(event);">
 
         </p>
 
@@ -871,9 +869,7 @@ if ( ! $tmp_image_file ) {
             <input type="hidden" name="selected_pixels" value=''>
             <input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
             <input type="hidden" value="<?php echo $BID; ?>" name="BID">
-            <input type="submit" class='big_button' <?php if ( isset( $_REQUEST['order_id'] ) && $_REQUEST['order_id'] != 'temp' ) {
-				echo 'disabled';
-			} ?> name='submit_button2' id='submit_button2' value='<?php echo $label['advertiser_write_ad_button']; ?>' onclick="make_selection(event);">
+            <input type="submit" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' value='<?php echo $f2->rmnl($label['advertiser_write_ad_button']); ?>' onclick="make_selection(event);">
             <hr/>
         </form>
 

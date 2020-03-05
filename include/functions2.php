@@ -157,7 +157,21 @@ class functions2 {
 
 	}
 
+	function nl2html( $input ) {
+		return str_replace( array( "\n", "\r" ), array( '<br />', '' ), htmlspecialchars( $input ) );
+	}
 
+	function nl2htmlraw( $input ) {
+		return str_replace( array( "\n", "\r" ), array( '<br />', '' ), $input );
+	}
+
+	function rmnl( $input ) {
+		return str_replace( array( "\n", "\r" ), '', htmlspecialchars( $input ) );
+	}
+
+	function rmnlraw( $input ) {
+		return str_replace( array( "\n", "\r" ), '', $input );
+	}
 
 }
 

@@ -254,8 +254,6 @@ function display_ad_form ($form_id, $mode, $prams) {
 
 }
 
-
-
 ###########################################################################
 
 function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_id='') {
@@ -321,7 +319,6 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 		mysqli_data_seek($result, $offset);
 
 	}
- 
 
 	if ($count > 0 )  {
 
@@ -340,7 +337,6 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 			$LINKS = 10;
 			render_nav_pages($nav, $LINKS, $q_string);
 			echo "</center>";
-
 
 		}
 

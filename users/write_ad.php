@@ -73,7 +73,6 @@ if(session_valid_id(session_id())) {
 	echo "Sorry there was an error with your session.";
 	die;
 }
-//	print_r($_REQUEST);
 
 // TODO: fixing save / edit form
 

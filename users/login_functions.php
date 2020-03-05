@@ -431,6 +431,12 @@ function do_login() {
 	$row = mysqli_fetch_array($result);
 	if (!$row['Username']) {
 		echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
+		return false;
+	}
+
+	if ($row['Validated']=="0") {
+		echo "<center><h1 >".$label["advertiser_login_disabled"]."</h1></center>";
+		return false;
 	} else {
 		if ($Password == $row['Password'] || ($_REQUEST['Password'] == ADMIN_PASSWORD)) {
 			$_SESSION['MDS_ID'] = $row['ID'];
@@ -448,11 +454,6 @@ function do_login() {
 			$now = (gmdate("Y-m-d H:i:s"));
 			$sql = "UPDATE `users` SET `login_date`='$now', `last_request_time`='$now', `logout_date`='1000-01-01 00:00:00', `login_count`=`login_count`+1 WHERE `Username`='" . mysqli_real_escape_string($GLOBALS['connection'], $row['Username']) . "' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-
-			if ($row['Validated']=="0") {
-				echo "<center><h1 >".$label["advertiser_login_disabled"]."</h1></center>";
-				//return true;
-			}
 
 			return true;
 

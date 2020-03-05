@@ -67,7 +67,7 @@ if ($label['available_stats']=='') {
 <html>
 <head>
     <title></title>
-    <link rel="stylesheet" type="text/css" href="main.css" />
+    <link rel="stylesheet" type="text/css" href="main.css?ver=<?php echo filemtime(BASE_PATH . "/main.css"); ?>" >
 </head>
 <body class="status_body">
 <div class="status">

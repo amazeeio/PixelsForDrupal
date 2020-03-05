@@ -139,8 +139,6 @@ function echo_ad_list_data($admin) {
 			$val = truncate_html_str($val, $column_info[$template_tag]['trunc'], $trunc_str_len);
 		}
 
-		
-	
 		// process the value depending on what kind of template tag it was given.
 		if ($template_tag=='DATE') {
 
@@ -166,12 +164,7 @@ function echo_ad_list_data($admin) {
 			} elseif (($days >= 8)) { 
 				$val = $val .'<span class="days_ago2">'.$days." ". $label["ads_list_days_ago"]."</span>";
 			}
-			
-
-
 		}
-
-		
 
 		if ($column_info[$template_tag]['is_bold']=='Y') {
 			$b1="<b>";
@@ -182,46 +175,19 @@ function echo_ad_list_data($admin) {
 		}
 
 		if ($column_info[$template_tag]['clean']=='Y') { // fix up punctuation spacing
-
 			$val = preg_replace('/ *(,|\.|\?|!|\/|\\\) */i', '$1 ', $val);
-			
 		}
 
-		if ($column_info[$template_tag]['link']=='Y')  { // Render as a Link to the record?
-
-			$AD_ID = get_template_value ('AD_ID', 1, $admin);
-
-			$val = '<a href="' .htmlentities($_SERVER['PHP_SELF']).'?ad_id='.$AD_ID.'&offset='.$cur_offset.$order_str.$q_string.'"'; 
-			
-			/// IMAGE PREVIEW MOUSEOVER Code
-			   // Note: to have this feature working, you must have a template tag called 'IMAGE' defined in the resume form
-			   define ('PREVIEW_AD', 'YES');
-			   if (PREVIEW_AD == 'YES') {
-
-					$ALT_TEXT = get_template_value ('ALT_TEXT', 1, $admin);
-					//$AD_ID = get_template_value ('AD_ID', 1, $admin);
-
-					$js_str = " onmousemove=\"sB(event,'".htmlspecialchars($ALT_TEXT)."',this, ".$AD_ID.")\" onmouseout=\"hI()\" ";
-
-					$val = $val. $js_str;
-
-			   }
-			   
-			   $val = $val.'>'.get_template_value ($template_tag, 1, $admin)."</a>";
-
+		if ( $column_info[ $template_tag ]['link'] == 'Y' ) { // Render as a Link to the record?
+			$AD_ID = get_template_value( 'AD_ID', 1, $admin );
+			$val = '<a href="' . htmlentities( $_SERVER['PHP_SELF'] ) . '?ad_id=' . $AD_ID . '&offset=' . $cur_offset . $order_str . '">' . get_template_value( $template_tag, 1, $admin ) . "</a>";
 		}
-
-
 		?>
 		<td class="list_data_cell" <?php if ($column_info[$template_tag]['no_wrap']=='Y') { echo ' nowrap '; } ?>>
 			<?php echo $b1.$val.$b2; ?>
 		</td>
-
 		<?php
-
 	}
-
-
 }
 
 

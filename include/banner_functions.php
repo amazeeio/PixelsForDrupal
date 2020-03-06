@@ -30,7 +30,6 @@
  */
 
 function load_banner_row($BID) {
-	
 
 	if (!is_numeric($BID)) {
 		return false;
@@ -47,7 +46,6 @@ function load_banner_row($BID) {
 
 function load_banner_constants($BID) {
 
-
 	$row = load_banner_row($BID);
 
 	// defaults
@@ -63,7 +61,6 @@ function load_banner_constants($BID) {
 	if (!$row['usr_ord_block']) $row['usr_ord_block'] = get_default_image('usr_ord_block');
 	if (!$row['usr_res_block']) $row['usr_res_block'] = get_default_image('usr_res_block');
 	if (!$row['usr_sol_block']) $row['usr_sol_block'] = get_default_image('usr_sol_block');
-
 
 	// define constants
 

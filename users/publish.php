@@ -31,7 +31,7 @@
 
 use Imagine\Filter\Basic\Autorotate;
 
-@set_time_limit ( 260); // 180 sec
+@set_time_limit ( 260);
 session_start();
 include ("../config.php");
 
@@ -93,7 +93,12 @@ if ($_REQUEST['action']=='complete') {
 		$order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 		if (mysqli_num_rows($order_result)==0) { // no order id found...
-		//require ("header.php");
+
+			if (USE_AJAX=='SIMPLE') {
+				$order_page = 'order_pixels.php';
+			} else {
+				$order_page = 'select.php';
+			}
 			?>
 		<h1><?php echo $label['no_order_in_progress']; ?></h1>
 		<p><?php $label['no_order_in_progress_go_here'] = str_replace ('%ORDER_PAGE%', $order_page ,  $label['no_order_in_progress_go_here']); echo $label['no_order_in_progress_go_here']; ?></p>
@@ -135,7 +140,7 @@ if ($_REQUEST['action']=='complete') {
 	}
 	// publish
 
-	if (AUTO_PUBLISH=='Y') {
+	if ($banner_data['AUTO_PUBLISH']=='Y') {
 		process_image($BID);
 		publish_image($BID);
 		process_map($BID);
@@ -177,19 +182,19 @@ if (mysqli_num_rows($res)>1) {
 
 if (isset($_REQUEST['block_id']) && !empty($_REQUEST['block_id'])) {
 
+    global $ad_tag_to_field_id;
+
 	$sql = "SELECT user_id, ad_id, order_id FROM blocks where banner_id='$BID' AND block_id='".intval($_REQUEST['block_id'])."'";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$blk_row = mysqli_fetch_array($result);
 
-
 	if (!isset($blk_row['ad_id']) || empty($blk_row['ad_id'])) { // no ad exists, create a new ad_id
-
-
 		$_REQUEST[$ad_tag_to_field_id['URL']['field_id']]='';
 		$_REQUEST[$ad_tag_to_field_id['ALT_TEXT']['field_id']] = 'ad text';
 		$_REQUEST['order_id'] = $blk_row['order_id'];
 		$_REQUEST['BID'] = $BID;
 		$_REQUEST['user_id'] = $_SESSION['MDS_ID'];
+		$_REQUEST['ad_id'] = "";
 		$ad_id = insert_ad_data();
 
 		$sql = "UPDATE orders SET ad_id='".intval($ad_id)."' WHERE order_id='".intval($blk_row['order_id'])."' ";

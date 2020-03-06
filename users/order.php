@@ -35,45 +35,38 @@ include ("../config.php");
 include ("login_functions.php");
 
 process_login();
-$BID = $f2->bid($_REQUEST['BID']);
 
+require ("header.php");
+
+$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : $BID = 1;
+
+$banner_data = load_banner_constants($BID);
 $has_packages = banner_get_packages($BID);
-
-$sql = "select * from banners where banner_id='$BID'";
-$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-$b_row = mysqli_fetch_array($result);
-
-
 
 if ($_REQUEST['order_id']) {
 	$_SESSION['MDS_order_id'] = $_REQUEST['order_id'];
 }
 
-
-$cannot_get_package = false; 
+$cannot_get_package = false;
 
 if ($has_packages && $_REQUEST['pack']!='') {
 
 	// check to make sure this advertiser can order this package
-
 	if (can_user_get_package($_SESSION['MDS_ID'], $_REQUEST['pack'])) {
-
 
 		$sql = "SELECT quantity FROM orders WHERE order_id='".intval($_REQUEST['order_id'])."'";
 		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 		$row = mysqli_fetch_array($result);
 		$quantity = $row['quantity'];
 
-		$block_count = $quantity / 100;
+		$block_count = $quantity / ($banner_data['block_width'] * $banner_data['block_height'] );
 		
-		// Now update the order (overwite the total & days_expire with the package)
-
+		// Now update the order (overwrite the total & days_expire with the package)
 		$pack = get_package($_REQUEST['pack']);
 		$total = $pack['price'] * $block_count;
+
 		// convert & round off
-		
 		$total = convert_to_default_currency($pack['currency'], $total);
-		
 
 		$sql = "UPDATE orders SET package_id='".intval($_REQUEST['pack'])."', price='".floatval($total)."',  days_expire='".intval($pack['days_expire'])."', currency='".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 
@@ -83,23 +76,17 @@ if ($has_packages && $_REQUEST['pack']!='') {
 		$selected_pack = $_REQUEST['pack'];
 		$_REQUEST['pack']='';
 		$cannot_get_package=true;
-
 	}
-
-
 }
 
-
 // check to make sure MIN_BLOCKS were selected.
-
 $sql = "SELECT block_id FROM blocks WHERE user_id='".intval($_SESSION['MDS_ID'])."' AND status='reserved' AND banner_id='$BID' ";
 $res = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 $count = mysqli_num_rows($res);
-if ($count < $b_row['min_blocks']) {
+if ($count < $banner_data['G_MIN_BLOCKS']) {
 	$not_enough_blocks = true;
 }
 
-require ("header.php");
 ?>
 <p>
 <?php
@@ -108,7 +95,6 @@ echo $label['advertiser_o_navmap'];
 
 ?>
 </p>
-
 <?php
 
 $sql = "SELECT * from orders where order_id='".intval($_SESSION['MDS_order_id'])."' and banner_id='$BID'";
@@ -116,19 +102,12 @@ $sql = "SELECT * from orders where order_id='".intval($_SESSION['MDS_order_id'])
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 $order_row = mysqli_fetch_array($result);
 
-
-##############################
 function display_edit_order_button ($order_id) {
 	global $BID, $label;
 ?>
 	<input type='button' value="<?php echo $label['advertiser_o_edit_button']; ?>" Onclick="window.location='select.php?&jEditOrder=true&BID=<?php echo $BID; ?>&order_id=<?php echo $order_id;?>'">
-
 <?php
-
-
 }
-
-#######################
 
 if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 	$label['advertiser_o_nopixels'] = str_replace("%BID%", $BID, $label['advertiser_o_nopixels']);
@@ -137,13 +116,12 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 } elseif ($not_enough_blocks) {
 
 	echo "<h3>".$label['order_min_blocks']."</h3>";
-	$label['order_min_blocks_req'] = str_replace('%MIN_BLOCKS%', $b_row['min_blocks'], $label['order_min_blocks_req']);
+	$label['order_min_blocks_req'] = str_replace('%MIN_BLOCKS%', $banner_data['G_MIN_BLOCKS'], $label['order_min_blocks_req']);
 	echo "<p>".$label['order_min_blocks_req']."</p>";
 	display_edit_order_button ($_SESSION['MDS_order_id']);
 	
 } else {
 
-	
 	if (($has_packages) && ($_REQUEST['pack']=='')) {
 
 		echo "<form method='post' action='".$_SERVER['PHP_SELF']."'>";
@@ -166,8 +144,7 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 			$label['pack_cannot_select'] = str_replace ("%MAX_ORDERS%", $row['max_orders'], $label['pack_cannot_select']);
 
 			echo "<p>".$label['pack_cannot_select']."</p>";
-
-		} 
+		}
 
 	} else {
 		display_order($_SESSION['MDS_order_id'], $BID);
@@ -191,15 +168,6 @@ if (($order_row['order_id']=='') || (($order_row['quantity']=='0'))) {
 			<?php  
 		}
 	}
-
-	?>
-
-	
-	<?php
-
-	
-
-} 
+}
 
 require ("footer.php");
-?>

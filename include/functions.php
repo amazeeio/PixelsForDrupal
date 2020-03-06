@@ -1110,13 +1110,11 @@ function send_published_pixels_notification($user_id, $BID) {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$url_list = '';
 	while ($row = mysqli_fetch_array($result)) {
-
 		$url_list .= $row['url']." - ".$row['alt_text']."\n";
-
 	}
-	
+
 	$arr = explode ("/",SERVER_PATH_TO_ADMIN);
-	$admin_folder = array_pop(array_pop($arr));
+	$admin_folder = array_pop($arr);
 
 	$view_url = BASE_HTTP_PATH.$admin_folder."/remote_admin.php?key=".substr(md5(ADMIN_PASSWORD),1,15)."&user_id=$user_id&BID=$BID";
 
@@ -1543,19 +1541,17 @@ function select_block ($map_x, $map_y) {
 
 	global $f2, $BID, $b_row, $label, $order_id, $banner_data;
 
-	// calculate clicked block from co-ords.
+	// calculate clicked block from coords.
 
 	if (func_num_args()>2) {
-
 		$clicked_block = func_get_arg(2);
 
 	} else {
 
-		$map_x = floor ($map_x / $banner_data['BLK_WIDTH'])*$banner_data['BLK_WIDTH']; // got to floor it to get the top-right corner of the block
-		$map_y = floor ($map_y / $banner_data['BLK_HEIGHT'])*$banner_data['BLK_HEIGHT'];
-		//$clicked_block = (($map_y*$b_row['grid_width'])+$map_x)/10 ;
-		$GRD_WIDTH = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
-		$clicked_block = (($map_x) / $banner_data['BLK_WIDTH']) + (($map_y/$banner_data['BLK_HEIGHT']) * ($GRD_WIDTH / $banner_data['BLK_WIDTH'])) ;
+		$block_x = ($banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']) / ($map_x + 0.0001);
+		$block_y = ($banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']) / ($map_y + 0.0001);
+
+		$clicked_block = $block_x * $block_y;
 	}
 
 	if ($clicked_block==0) {
@@ -1618,47 +1614,43 @@ function select_block ($map_x, $map_y) {
 	####################################################
 
 	//$sql = "SELECT status, user_id FROM blocks where `x`=$map_x AND `y`=$map_y and banner_id=$BID ";
-	
+
+	$cannot_sel = "";
 	$sql = "SELECT status, user_id, ad_id FROM blocks where block_id='".intval($clicked_block)."' AND banner_id='".intval($BID)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
-
-	
 	if (($row['status']=='') || (($row['status']=='reserved')&& ($row['user_id']==$_SESSION['MDS_ID']))) {
 
-	
-		// put block on order
-		$sql = "SELECT * FROM orders where user_id='".intval($_SESSION['MDS_ID'])."' and status='new' and banner_id='".intval($BID)."' ";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-		$row = mysqli_fetch_array($result);
-		if ($row['blocks']!='') {
-			$blocks = explode ( ",", $row['blocks']);
-			
+	    // put block on order
+		$sql = "SELECT blocks,status,ad_id,order_id FROM orders where user_id='" . intval( $_SESSION['MDS_ID'] ) . "' and status='new' and banner_id='" . intval( $BID ) . "' ";
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
+		$row = mysqli_fetch_array( $result );
+		if ( $row['blocks'] != '' ) {
+			$blocks = explode( ",", $row['blocks'] );
 		} else {
-			$blocks = array ();
+			$blocks = array();
 		}
-		$new_blocks = array ();
-	 // remove selected block 
-		for ($i=0; $i <sizeof($blocks); $i++) {
-			if (strcmp($blocks[$i], $clicked_block)!=0) {
-				$new_blocks[] = "".$blocks[$i];
+
+		$new_blocks = array();
+		$double_clicked = false;
+
+         // remove selected block
+		for ( $i = 0; $i < sizeof( $blocks ); $i ++ ) {
+			if ( strcmp( $blocks[ $i ], $clicked_block ) != 0 ) {
+				$new_blocks[] = $blocks[ $i ];
 			} else {
 				//clicked for 2nd time;
 				$double_clicked = true;
 			}
-				
 		}
 
 		if (!$double_clicked) { # add newly selected block
-
-			
-			$new_blocks[] = "$clicked_block";
-			//echo "not-double<br>";
-
+			$new_blocks[] = $clicked_block;
 		}
 
 		// check max blocks
+        $max_selected = false;
 		if (USE_AJAX=='NO') {
 			if ($banner_data['G_MAX_BLOCKS']>0) {
 				if (sizeof($new_blocks)>$banner_data['G_MAX_BLOCKS']) {
@@ -1670,13 +1662,11 @@ function select_block ($map_x, $map_y) {
 
 		if (!$max_selected) {
 
-
-		    $price = $total = 0;
-			$blocks = $new_blocks;
-			$quantity = sizeof($blocks)*($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']);
-			//$row['blocks']=implode(",",$blocks);
-			$blocks = implode (",", $blocks); // change to string
-			$now = (gmdate("Y-m-d H:i:s"));
+			$price      = $total = 0;
+			$num_blocks = sizeof( $new_blocks );
+			$quantity   = $num_blocks * ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] );
+			$blocks     = implode( ",", $new_blocks );
+			$now        = ( gmdate( "Y-m-d H:i:s" ) );
 
 			$sql = "REPLACE INTO orders (user_id, order_id, blocks, status, order_date, price, quantity, banner_id, currency, days_expire, date_stamp, approved) VALUES ('" . intval( $_SESSION['MDS_ID'] ) . "', '" . intval( $row['order_id'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $blocks ) . "', 'new', NOW(), '" . floatval( $price ) . "', '" . intval( $quantity ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', " . intval( $b_row['days_expire'] ) . ", '$now', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ) . "') ";
 		
@@ -1686,40 +1676,38 @@ function select_block ($map_x, $map_y) {
 
 			$sql = "delete from blocks where user_id='".intval($_SESSION['MDS_ID'])."' AND status = 'reserved' AND banner_id='".intval($BID)."' ";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-			
 
-			$cell="0";
+			$cell = 0;
 
-			for ( $y = 0; $y < ( $b_row['grid_height'] * $banner_data['BLK_HEIGHT ']); $y += $banner_data['BLK_HEIGHT'] ) {
-				for ( $x = 0; $x < ( $b_row['grid_width'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
+			$blocks_y = $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'];
+			$blocks_x = $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'];
+
+			for ( $y = 0; $y < $blocks_y; $y += $banner_data['BLK_HEIGHT'] ) {
+				for ( $x = 0; $x < $blocks_x; $x += $banner_data['BLK_WIDTH'] ) {
 
 					if ( in_array( $cell, $new_blocks ) ) {
 
 						$price = get_zone_price( $BID, $y, $x );
 
-						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`) VALUES ('".intval($cell)."',  '" . intval($_SESSION['MDS_ID']) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ). "', '" . intval($BID ). "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency()) . "', '" . floatval($price ). "', '" . intval($_SESSION['MDS_order_id']) . "')";
+						// reserve block
+						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `click_count`) VALUES ('" . intval( $cell ) . "',  '" . intval( $_SESSION['MDS_ID'] ) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', '" . floatval( $price ) . "', '" . intval( $_SESSION['MDS_order_id'] ) . "', 0)";
 
 						$total += $price;
 
 						mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-
 					}
 					$cell ++;
 				}
 			}
 
 			// update price
-
-
 			$sql = "UPDATE orders SET price='".intval($total)."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
-			
 			$sql = "UPDATE orders SET original_order_id='".intval($_SESSION['MDS_order_id'])."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			// check that we have ad_id, if not then create an ad for this order.
-
 			if (!$row['ad_id']) {
 
 				$_REQUEST['order_id'] = $order_id;
@@ -1734,12 +1722,8 @@ function select_block ($map_x, $map_y) {
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
 				$_REQUEST['ad_id'] = $ad_id;
-
-
 			}
 
-			###################################################
-			
 			if (USE_LOCK_TABLES == 'Y') {
 				$sql = "UNLOCK TABLES";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
@@ -1755,10 +1739,7 @@ function select_block ($map_x, $map_y) {
 				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
 				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 
-
 			}
-			####################################################
-
 		}
 
 	} else {
@@ -2698,7 +2679,8 @@ function get_formatted_date($date) {
 	}
 
 	$year = substr ($date, 0, 4);
-	
+	$ret = $s = "";
+
 	if (($year > 2038) || ($year < 1970)) {  //  out of range to format!
 		$month =  substr ($date, 5, 2);
 		$day =  substr ($date, 8, 2);
@@ -2727,8 +2709,6 @@ function get_formatted_date($date) {
 	return date(DATE_FORMAT, $time);
 	
 }
-######################################################
-
 
 function get_local_time($gmdate) {
 
@@ -2749,22 +2729,6 @@ function get_local_time($gmdate) {
 	}
 
 }
-
-################################################
-
-function get_html_strlen($str) {
-
-	while ((preg_match ("/(&#?[0-9A-z]+;|.)/", $s, $maches, PREG_OFFSET_CAPTURE, $offset))) {
-		$offset += strlen($maches[0][0]);
-		$len++;
-		
-	}
-	return $len;
-
-}
-
-///////////////////
-
 
 function break_long_words($input, $with_tags) {
 	// new routine, deals with html tags...
@@ -2841,6 +2805,7 @@ function truncate_html_str ($s, $MAX_LENGTH, &$trunc_str_len) {
 	# match a character, or characters encoded as html entity
 	# treat each match as a single character
 	#
+	$str = "";
 	while ((preg_match ('/(&#?[0-9A-z]+;'.$tag_expr.'|.|\n)/', $s, $maches, PREG_OFFSET_CAPTURE, $offset) && ($character_count < $MAX_LENGTH))) {
 		$offset += strlen($maches[0][0]);
 		$character_count++;

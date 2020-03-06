@@ -233,12 +233,7 @@ require( "header.php" );
 			}
 
 			// Note: do not use &amp; for & here
-			xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x=" + OffsetX + "&map_y=" + OffsetY + "&block_id=" + window.clicked_block + "&BID=<?php
-				$sesname = ini_get( 'session.name' );
-				if ( $sesname == '' ) {
-					$sesname = 'PHPSESSID';
-				}
-				echo $BID . "&t=" . time() . "&$sesname=" . session_id(); ?>", true);
+			xmlhttp.open("GET", "check_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x=" + OffsetX + "&map_y=" + OffsetY + "&block_id=" + window.clicked_block + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
 			if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
 				document.getElementById('submit_button1').disabled = true;
@@ -290,12 +285,7 @@ require( "header.php" );
 			}
 
 			// Note: do not use &amp; for & here
-			xmlhttp.open("GET", "make_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x=" + window.map_x + "&map_y=" + window.map_y + "&block_id=" + window.clicked_block + "&BID=<?php
-				$sesname = ini_get( 'session.name' );
-				if ( $sesname == '' ) {
-					$sesname = 'PHPSESSID';
-				}
-				echo $BID . "&t=" . time() . "&$sesname=" . session_id(); ?>", true);
+			xmlhttp.open("GET", "make_selection.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&map_x=" + window.map_x + "&map_y=" + window.map_y + "&block_id=" + window.clicked_block + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
 			var pointer = document.getElementById('block_pointer');
 			pointer.style.cursor = 'wait';

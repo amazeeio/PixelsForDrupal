@@ -539,61 +539,29 @@ function generate_ad_id () {
 
 }
 
-#################
-
-function temp_ad_exists($sid) {
-
-	$query ="SELECT ad_id FROM `ads` where user_id='".intval($sid)."' ";
-	$result = mysqli_query($GLOBALS['connection'], $query) or die(mysqli_error($GLOBALS['connection']));
-	// $row = mysqli_fetch_row($result);
-	return mysqli_num_rows($result);
-
-
-}
-
-################################################################
-
 function insert_ad_data() {
 	global $f2;
 
+    $admin = false;
 	if (func_num_args() > 0) {
 		$admin = func_get_arg(0); // admin mode.
-
 	}
-
-	//print_r($_REQUEST);
 
 	$user_id = $_SESSION['MDS_ID'];
 	if ($user_id=='') {
 		$user_id = addslashes(session_id());
 	}
 
-	/*if (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) {
-		$_SESSION['MDS_order_id'] = intval($_REQUEST['order_id']);
-	} else if(isset($_SESSION['MDS_order_id']) && !empty($_SESSION['MDS_order_id'])) {
-		$_REQUEST['order_id'] = intval($_SESSION['MDS_order_id']);
-	}
-
-	if (!is_numeric($_REQUEST['order_id']) || !is_numeric($_SESSION['MDS_order_id'])) {
-		die();
-	}*/
 	$order_id = (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) ? $_REQUEST['order_id'] : 0;
-	$ad_date = (gmdate("Y-m-d H:i:s")); 
 	$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
 
-	if (isset($_REQUEST['ad_id']) && empty($_REQUEST['ad_id'])) {
+	if (isset($_REQUEST['ad_id']) && $_REQUEST['ad_id'] == '') {
 
 		$ad_id = generate_ad_id ();
 		$now = (gmdate("Y-m-d H:i:s"));
 
-		//$extra_columns = get_sql_insert_fields(1);
 		$extra_values = get_sql_insert_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
 		$values = $ad_id . ", '" . $user_id . "', '" . mysqli_real_escape_string($GLOBALS['connection'], $now) . "', " . $order_id . ", $BID" . $extra_values;
-
-		/*$sql = "INSERT INTO `ads` (`ad_id`, `user_id`, `ad_date`, `order_id`, `banner_id` " . $extra_columns .") " .
-		"VALUES (" . $values . ") " .
-		"ON DUPLICATE KEY UPDATE `ad_id`='" . $ad_id . "', `user_id` = '" . $user_id . "', `ad_date` = '" . mysqli_real_escape_string($GLOBALS['connection'], $ad_date) . "', `order_id` = " . parseNull($order_id) . ", `banner_id` = '" . $banner_id ."'". get_sql_update_values(1, "ads", "ad_id", $_REQUEST['ad_id'], $user_id);
-*/
 
 		$sql = "REPLACE INTO ads VALUES (" . $values . ");";
 
@@ -601,17 +569,23 @@ function insert_ad_data() {
 		
 		$ad_id = intval($_REQUEST['ad_id']);
 
-		if (!$admin) { // make sure that the logged in user is the owner of this ad.
+		if (!$admin) {
+		    // make sure that the logged in user is the owner of this ad.
 
-			if (!is_numeric($_REQUEST['user_id'])) { // temp order (user_id = session_id())
-				if ($_REQUEST['user_id']!=session_id()) {return false;}
-			} else { // user is logged in
+			if (!is_numeric($_REQUEST['user_id'])) {
+				if ($_REQUEST['user_id']!=session_id()) {
+				    return false;
+				}
+
+			} else {
+			    // user is logged in
 				$sql = "SELECT user_id FROM `ads` WHERE ad_id='".intval($_REQUEST['ad_id'])."'";
 				$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 				$row = @mysqli_fetch_array($result);
+
 				if ($_SESSION['MDS_ID']!==$row['user_id']) {
-					
-					return false; // not the owner, hacking attempt!
+					// not the owner, hacking attempt!
+					return false;
 				}
 			}
 		}
@@ -625,13 +599,11 @@ function insert_ad_data() {
 
 	return $ad_id;
 }
-###############################################################
+
 function validate_ad_data($form_id) {
 
 	return validate_form_data(1);
 }
-
-################################################################
 
 function update_blocks_with_ad($ad_id, $user_id) {
 	global $prams, $f2;

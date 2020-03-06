@@ -1701,7 +1701,7 @@ function select_block ($map_x, $map_y) {
 			}
 
 			// update price
-			$sql = "UPDATE orders SET price='".intval($total)."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
+			$sql = "UPDATE orders SET price='".floatval($total)."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			$sql = "UPDATE orders SET original_order_id='".intval($_SESSION['MDS_order_id'])."' WHERE order_id='".intval($_SESSION['MDS_order_id'])."'";

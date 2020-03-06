@@ -43,9 +43,9 @@ if ( $_REQUEST['save'] != '' ) {
 	echo "updating config....";
 	define( 'VERSION_INFO', $_REQUEST['version_info'] );
 	define( 'BASE_HTTP_PATH', $_REQUEST['base_http_path'] );
-	define( 'BASE_PATH', $_REQUEST['base_path'] );
-	define( 'SERVER_PATH_TO_ADMIN', $_REQUEST['server_path_to_admin'] );
-	define( 'UPLOAD_PATH', $_REQUEST['upload_path'] );
+	define( 'BASE_PATH', str_replace( '\\', '/', $_REQUEST['base_path'] ) );
+	define( 'SERVER_PATH_TO_ADMIN', str_replace( '\\', '/', $_REQUEST['server_path_to_admin'] ) );
+	define( 'UPLOAD_PATH', str_replace( '\\', '/', $_REQUEST['upload_path'] ) );
 	define( 'UPLOAD_HTTP_PATH', $_REQUEST['upload_http_path'] );
 	define( 'SITE_CONTACT_EMAIL', $_REQUEST['site_contact_email'] );
 	define( 'SITE_LOGO_URL', $_REQUEST['site_logo_url'] );

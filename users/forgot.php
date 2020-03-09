@@ -1,37 +1,37 @@
 <?php
 /**
- * @package		mds
- * @copyright	(C) Copyright 2020 Ryan Rhode, All rights reserved.
- * @author		Ryan Rhode, ryan@milliondollarscript.com
- * @license		This program is free software; you can redistribute it and/or modify
- *		it under the terms of the GNU General Public License as published by
- *		the Free Software Foundation; either version 3 of the License, or
- *		(at your option) any later version.
+ * @package        mds
+ * @copyright    (C) Copyright 2020 Ryan Rhode, All rights reserved.
+ * @author        Ryan Rhode, ryan@milliondollarscript.com
+ * @license        This program is free software; you can redistribute it and/or modify
+ *        it under the terms of the GNU General Public License as published by
+ *        the Free Software Foundation; either version 3 of the License, or
+ *        (at your option) any later version.
  *
- *		This program is distributed in the hope that it will be useful,
- *		but WITHOUT ANY WARRANTY; without even the implied warranty of
- *		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *		GNU General Public License for more details.
+ *        This program is distributed in the hope that it will be useful,
+ *        but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *        GNU General Public License for more details.
  *
- *		You should have received a copy of the GNU General Public License along
- *		with this program;  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
+ *        You should have received a copy of the GNU General Public License along
+ *        with this program;  If not, see http://www.gnu.org/licenses/gpl-3.0.html.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
- *		Million Dollar Script
- *		A pixel script for selling pixels on your website.
+ *        Million Dollar Script
+ *        A pixel script for selling pixels on your website.
  *
- *		For instructions see README.txt
+ *        For instructions see README.txt
  *
- *		Visit our website for FAQs, documentation, a list team members,
- *		to post any bugs or feature requests, and a community forum:
- * 		https://milliondollarscript.com/
+ *        Visit our website for FAQs, documentation, a list team members,
+ *        to post any bugs or feature requests, and a community forum:
+ *        https://milliondollarscript.com/
  *
  */
 session_start();
 require "../config.php";
 
-include('login_functions.php');
+include( 'login_functions.php' );
 /*
 COPYRIGHT 2008 - see www.milliondollarscript.com for a list of authors
 
@@ -53,115 +53,92 @@ along with the Million Dollar Script.  If not, see <http://www.gnu.org/licenses/
 */
 
 $submit = $_REQUEST['submit'];
-$email = $_REQUEST['email'];
+$email  = $_REQUEST['email'];
 ?>
 <?php echo $f2->get_doc();
 
-require ("header.php");
+require( "header.php" );
 
 ?>
-      <h3><?php echo $label["advertiser_forgot_title"]; ?></h3></center>
- <p align='center'>     
-<center>
-<form method="post">
+    <div style='text-align:center;'>
+        <h3><?php echo $label["advertiser_forgot_title"]; ?></h3>
+        <form method="post">
+            <label><?php echo $label["advertiser_forgot_enter_email"] ?>:
+                <input type="text" name="email" size="30"/>
+            </label>
+            <input class="form_submit_button" type="submit" name="submit" value="<?php echo $label["advertiser_forgot_submit"]; ?>">
 
-<?php echo $label["advertiser_forgot_enter_email"] ?>: <input type="text" name="email" size="30"/>
-<input class="form_submit_button" type="submit" name="submit" value="<?php echo $label["advertiser_forgot_submit"]; ?>">
-
-</form>
-</center>
-</p>
+        </form>
+    </div>
 <?php
 
-function make_password (){
+function make_password() {
+	$pass = "";
+	while ( strlen( $pass ) < 10 ) {
+		$pass .= chr( rand( 97, 122 ) );
+	}
 
-while (strlen($pass) < 5) { 
-   $pass .= chr(rand (97,122)); 
-  }
-  return $pass;
-
-  
+	return $pass;
 }
 
-if ($email != '') {
+if ( $email != '' ) {
 
 
-$sql = "select * from users where `Email`='" . mysqli_real_escape_string( $GLOBALS['connection'], $email) . "'";
-//echo $sql;
-$result=mysqli_query($GLOBALS['connection'], $sql);
-$row = mysqli_fetch_array($result);
+	$sql    = "select * from users where `Email`='" . mysqli_real_escape_string( $GLOBALS['connection'], $email ) . "'";
+	$result = mysqli_query( $GLOBALS['connection'], $sql );
+	$row    = mysqli_fetch_array( $result );
 
-if ($row['Email'] != '') {
+	if ( $row['Email'] != '' ) {
 
-   if ($row['Validated']=='0') {
-	$label["advertiser_forgot_error1"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL , $label["advertiser_forgot_error1"]);
-      echo "<center>".$label["advertiser_forgot_error1"]."</center>";
+		if ( $row['Validated'] == '0' ) {
+			$label["advertiser_forgot_error1"] = str_replace( "%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["advertiser_forgot_error1"] );
+			echo "<div style='text-align:center;'>" . $label["advertiser_forgot_error1"] . "</div>";
 
-   } else {
-
-     
-      $pass = make_password();
-      //echo " $pass";
-      $md5pass = md5 ($pass);
-      $sql = "update `users` SET `Password`='$md5pass' where `ID`='".mysqli_real_escape_string( $GLOBALS['connection'], $row['ID'])."'";
-      mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
-
-
-	 //$result = get_email_template (3, $_SESSION['MDS_LANG']);
-	 //$e_row = mysqli_fetch_array($result);
-	 //$EmailMessage = $e_row[EmailText];
-	 $EmailMessage = $label["forget_pass_email_template"];
-	 $from = SITE_CONTACT_EMAIL;// $e_row[EmailFromAddress];
-	 $form_name = SITE_NAME;//$e_row[EmailFromName];
-	 
-	 //$subject = 'Your password on'.SITE_NAME; //$e_row[EmailSubject];
-
-	 $subject = str_replace("%SITE_NAME%", SITE_NAME, $label["advertiser_forgot_subject"] );
-
-	 
-	 $subject = str_replace ("%MEMBERID%", $Username, $subject);
-
-	 $EmailMessage = str_replace ("%FNAME%", $row['FirstName'], $EmailMessage);
-	 $EmailMessage = str_replace ("%LNAME%", $row['LastName'], $EmailMessage);
-	 $EmailMessage = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $EmailMessage);
-	 $EmailMessage = str_replace ("%SITE_NAME%", SITE_NAME, $EmailMessage);
-	 $EmailMessage = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $EmailMessage);
-	 $EmailMessage = str_replace ("%MEMBERID%", $row['Username'], $EmailMessage);
-	 $EmailMessage = str_replace ("%PASSWORD%", $pass, $EmailMessage);
-	
-                  	
-		$to = $email;
-		
-		$message = $EmailMessage;
-
-		if (USE_SMTP=='YES') {
-			$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);
-			process_mail_queue(2, $mail_id);
 		} else {
-			send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 6);
+			$pass    = make_password();
+			$md5pass = md5( $pass );
+			$sql     = "update `users` SET `Password`='$md5pass' where `ID`='" . mysqli_real_escape_string( $GLOBALS['connection'], $row['ID'] ) . "'";
+			mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+
+			$to        = trim( $row['Email'] );
+			$from      = trim( SITE_CONTACT_EMAIL );
+			$form_name = trim( SITE_NAME );
+
+			$subject = $label['advertiser_forgot_subject'];
+			$subject = str_replace( "%SITE_NAME%", SITE_NAME, $subject );
+			//$subject = str_replace( "%MEMBERID%", trim( $row['Username'] ), $subject );
+
+			$message = "";
+			$message = str_replace( "%FNAME%", $row['FirstName'], $label["forget_pass_email_template"] );
+			$message = str_replace( "%LNAME%", $row['LastName'], $message );
+			$message = str_replace( "%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message );
+			$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
+			$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
+			$message = str_replace( "%MEMBERID%", $row['Username'], $message );
+			$message = str_replace( "%PASSWORD%", $pass, $message );
+
+			$html_msg = $message;
+			$html_msg = str_replace( "\n", "<br />", $html_msg );
+
+			if ( USE_SMTP == 'YES' ) {
+				$mail_id = queue_mail( $to, $row['FirstName'] . " " . $row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 6 );
+				process_mail_queue( 2, $mail_id );
+			} else {
+				send_email( $to, $row['FirstName'] . " " . $row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 6 );
+			}
+
+			$str = str_replace( "%BASE_HTTP_PATH%", BASE_HTTP_PATH, $label["advertiser_forgot_success1"] );
+
+			echo "<p style='text-align:center;'>" . $str . "</p>";
 		}
 
-		$str = str_replace("%BASE_HTTP_PATH%", BASE_HTTP_PATH,$label["advertiser_forgot_success1"] );
-
-		echo "<p align='center'>".$str."</p>";
-
-	
-
-   }
-
-
-} else {
-
-   echo "<center>".$label["advertiser_forgot_email_notfound"]."</center>";
-}
-
+	} else {
+		echo "<div style='text-align:center;'>" . $label["advertiser_forgot_email_notfound"] . "</div>";
+	}
 }
 
 ?>
-
-<center><h3><a href="../"><?php echo $label["advertiser_forgot_go_back"];?></a></h3></center>
-
+    <h3 style='text-align:center;'><a href="../"><?php echo $label["advertiser_forgot_go_back"]; ?></a></h3>
 <?php
 
-require ("footer.php");
-?>
+require( "footer.php" );

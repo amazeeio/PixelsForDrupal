@@ -40,9 +40,9 @@ function process_login() {
    $now = (gmdate("Y-m-d H:i:s"));
    $sql = "UPDATE `users` SET `logout_date`='$now' WHERE UNIX_TIMESTAMP(DATE_SUB('$now', INTERVAL $session_duration SECOND)) > UNIX_TIMESTAMP(last_request_time) AND (`logout_date` ='1000-01-01 00:00:00')";
    mysqli_query($GLOBALS['connection'], $sql) or die ($sql.mysqli_error($GLOBALS['connection']));
-   
+
    if (!is_logged_in() || ($_SESSION['MDS_Domain'] != "ADVERTISER")) {
-   	
+
 	require ("header.php");
 ?>
    <table cellpadding=5 border=1 style="width: 100%;border-collapse: collapse; border-style:solid; border-color:#E8E8E8">
@@ -69,7 +69,7 @@ if (USE_AJAX=='SIMPLE') {
 	}
 ?></h3>
 <a class="big_link" href="<?php echo $order_page; ?>"><?php echo $label["adv_login_new_link"]; ?></a> <br><br><?php echo $label["advertiser_go_buy_now"]; ?>
-      <h3 ></h3></center> 
+      <h3 ></h3></center>
 </td>
 <?php
 }
@@ -84,9 +84,9 @@ die ();
 	  $now = (gmdate("Y-m-d H:i:s"));
        $sql = "UPDATE `users` SET `last_request_time`='$now', logout_date='1000-01-01 00:00:00' WHERE `Username`='".mysqli_real_escape_string($GLOBALS['connection'], $_SESSION['MDS_Username'])."'";
        mysqli_query($GLOBALS['connection'], $sql) or die($sql.mysqli_error($GLOBALS['connection']));
-	   
 
-      
+
+
    }
 
 
@@ -103,56 +103,63 @@ function is_logged_in() {
 
 ///////////////////////////////////////////////////////////
 
-function login_form($show_signup_link=true, $target_page='index.php') {
-   global $label;
+function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
+	global $label;
 
-  
-   ?>
-   	<table align="center">
-   
-   <tr>
-				<td >
-					<form name="form1" method="post" action="login.php?target_page=<?php echo $target_page; ?>">
-					<table width="100%"  border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<td width="50%"  nowrap ><span ><?php echo $label["advertiser_signup_member_id"]; ?>:</span></td>
-							<td><input name="Username" type="text" id="username" size="12"></td>
-						</tr>
-						<tr>
-							<td width="50%"  ><span ><?php echo $label["advertiser_signup_password"]; ?>:</span></td>
-							<td><input name="Password" type="password" id="password" size="12"></td>
-						</tr>
-						<tr>
-							<td width="50%">&nbsp;</td>
-							<td><div align="right"><span >
-								<input type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_login"];?>" </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-							</td>
-						</tr>
-                  <tr><td colspan=2><a href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a></td></tr>
-					</table>
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td height="20" ><div align="center" ></div></td>
-			</tr>
-			 <?php if ($show_signup_link) { ?>
-			<tr>
-				<td ><div align="center" ><a href="signup.php"><h3><?php echo $label["advertiser_join_now"]; ?></h3></a> </div></td>
-			</tr>
-			<?php } ?>
-			<tr>
-				<td height="20" ><div align="center"></div></td>
-			</tr>
-			
-			<tr>
-				<td ><div align="center" ><!-- signed up.--> </div></td>
-			</tr>
-     </table>
-	 
+	?>
+    <table align="center">
+        <tr>
+            <td>
+                <form name="form1" method="post" action="login.php?target_page=<?php echo $target_page; ?>">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td width="50%" nowrap><span><?php echo $label["advertiser_signup_member_id"]; ?>:</span></td>
+                            <td><input name="Username" type="text" id="username" size="12"/></td>
+                        </tr>
+                        <tr>
+                            <td width="50%"><span><?php echo $label["advertiser_signup_password"]; ?>:</span></td>
+                            <td><input name="Password" type="password" id="password" size="12"/></td>
+                        </tr>
+                        <tr>
+                            <td width="50%">&nbsp;</td>
+                            <td>
+                                <div align="right">
+                                    <input type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_login"]; ?>"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2><a href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a></td>
+                        </tr>
+                    </table>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td height="20">
+                <div align="center"></div>
+            </td>
+        </tr>
+		<?php if ( $show_signup_link ) { ?>
+            <tr>
+                <td>
+                    <div align="center"><a href="signup.php"><h3><?php echo $label["advertiser_join_now"]; ?></h3></a></div>
+                </td>
+            </tr>
+		<?php } ?>
+        <tr>
+            <td height="20">
+                <div align="center"></div>
+            </td>
+        </tr>
 
-	 <?php
-
+        <tr>
+            <td>
+                <div align="center"><!-- signed up.--> </div>
+            </td>
+        </tr>
+    </table>
+	<?php
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -167,8 +174,8 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
 
    global $label;
 
-   $Password = md5($pass); 
-  
+   $Password = md5($pass);
+
     $validated = 0;
 
    if ((EM_NEEDS_ACTIVATION == "AUTO"))  {
@@ -183,7 +190,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
     if($res > 0) {
        $success=true; //succesfully added to the database
        echo "<center>".$label['advertiser_new_user_created']."</center>";
-     
+
     } else {
        $success=false;
        $error = $label['advertiser_could_not_signup'];
@@ -197,7 +204,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
 
     //Here the emailmessage itself is defined, this will be send to your members. Don't forget to set the validation link here.
 
-     
+
     return $success;
 
 }
@@ -207,7 +214,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
 
 function validate_signup_form() {
 
-	global $label; 
+	global $label;
 
 	$error = "";
 	if ($_REQUEST['Password']!=$_REQUEST['Password2']) {
@@ -220,7 +227,7 @@ function validate_signup_form() {
 	if ($_REQUEST['LastName']=='') {
 		$error .= $label["advertiser_signup_error_ln"];
 	}
-	
+
 	if ($_REQUEST['Username'] =='') {
 		//$error .= "* Please fill in Your Member I.D.<br/>";
 		$error .= $label["advertiser_signup_error_user"];
@@ -236,7 +243,7 @@ function validate_signup_form() {
 	}
 	//echo "my friends $form";
 	if ($_REQUEST['Password'] =='') {
-		
+
 		$error .= $label["advertiser_signup_error_p"];
 	}
 
@@ -366,7 +373,7 @@ function process_signup_form($target_page='index.php') {
 		$password = ($_REQUEST['password']);
 		$password2 = ($_REQUEST['password2']);
 
-		return false; // error processing signup/ 
+		return false; // error processing signup/
 
 	} else {
 
@@ -385,8 +392,8 @@ function process_signup_form($target_page='index.php') {
 			$label["advertiser_signup_success_1"] = stripslashes( str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["advertiser_signup_success_1"]));
 
 			echo $label["advertiser_signup_success_1"];
-			 
-			 
+
+
 		} else {
 
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%FirstName%", $FirstName, $label["advertiser_signup_success_2"]));
@@ -398,17 +405,17 @@ function process_signup_form($target_page='index.php') {
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["advertiser_signup_success_2"]));
 
 			echo $label["advertiser_signup_success_2"];
-			 
+
 			//echo "<center>".$label["advertiser_signup_goback"]."</center>";
 
 			send_confirmation_email($Email);
-		 
+
 		}
 
 		echo "<center><form method='post' action='login.php?target_page=".$target_page."'><input type='hidden' name='Username' value='".$_REQUEST['Username']."' > <input type='hidden' name='Password' value='".$_REQUEST['Password']."'><input type='submit' value='".$label["advertiser_signup_continue"]."'></form></center>";
 
 		return true;
-					
+
 
 	} // end everything ok..
 
@@ -426,7 +433,7 @@ function do_login() {
 	$Username = ($_REQUEST['Username']);
 	$Password = md5($_REQUEST['Password']);
 
-		   
+
 	$result = mysqli_query($GLOBALS['connection'], "Select * From `users` Where username='" . mysqli_real_escape_string($GLOBALS['connection'], $Username) . "'") or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	if (!$row['Username']) {
@@ -457,7 +464,7 @@ function do_login() {
 
 			return true;
 
-		 
+
 		} else {
 			echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
 			return false;

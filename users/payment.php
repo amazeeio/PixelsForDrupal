@@ -68,7 +68,7 @@ if ($_REQUEST['action']=='confirm') {
 
 	// move temp order to confirmed order
 
-	confirm_order ($_SESSION['MDS_ID'], $_SESSION['MDS_order_id']);
+	confirm_order ($_SESSION['MDS_ID'], $order_id);
 
 }
 ##########################
@@ -86,6 +86,6 @@ echo "<h2>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h2>
 
 include $dir.'/payment/payment_manager.php';
 
-payment_option_list($_SESSION['MDS_order_id']);
+payment_option_list($order_id);
 
 require ("footer.php");

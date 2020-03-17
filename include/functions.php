@@ -400,31 +400,40 @@ function complete_order ($user_id, $order_id) {
 			$order_row['days_expire']=$label['advertiser_ord_never'];
 		}
 
-		$label_reset = $label["order_completed_email_template"];
-		
-		$label["order_completed_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%FNAME%", $user_row['FirstName'], $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%LNAME%", $user_row['LastName'], $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%ORDER_ID%", $order_row['order_id'], $label["order_completed_email_template"]);
-	
-		$label["order_completed_email_template"] = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row['currency'], $order_row['price']), $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_completed_email_template"]);
-		$label["order_completed_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_completed_email_template"]);
+		$price = convert_to_default_currency_formatted($order_row['currency'], $order_row['price']);
+
 		$message = $label["order_completed_email_template"];
+		$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+		$message = str_replace ("%FNAME%", $user_row['FirstName'], $message);
+		$message = str_replace ("%LNAME%", $user_row['LastName'], $message);
+		$message = str_replace ("%ORDER_ID%", $order_row['order_id'], $message);
+		$message = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $message);
+		$message = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $message);
+		$message = str_replace ("%PRICE%", $price, $message);
+		$message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message);
+		$message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $message);
+
+		$html_message = $label["order_completed_email_template_html"];
+		$html_message = str_replace ("%SITE_NAME%", SITE_NAME, $html_message);
+		$html_message = str_replace ("%FNAME%", $user_row['FirstName'], $html_message);
+		$html_message = str_replace ("%LNAME%", $user_row['LastName'], $html_message);
+		$html_message = str_replace ("%ORDER_ID%", $order_row['order_id'], $html_message);
+		$html_message = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $html_message);
+		$html_message = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $html_message);
+		$html_message = str_replace ("%PRICE%", $price, $html_message);
+		$html_message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_message);
+		$html_message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $html_message);
+
 		$to = trim($user_row['Email']);
 		$subject = $label['order_completed_email_subject'];
-		
-		$label["order_completed_email_template"] = $label_reset;
-	
+
 		if (EMAIL_USER_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 			}
 			
 		}
@@ -434,10 +443,10 @@ function complete_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 			}
 			
 		}
@@ -464,10 +473,9 @@ function complete_order ($user_id, $order_id) {
 function confirm_order ($user_id, $order_id) {
 	global $label;
 
-	$sql = "SELECT *, t1.blocks as BLK FROM orders as t1, users as t2 where t1.user_id=t2.ID AND t1.user_id=t2.ID AND order_id='".intval($order_id)."' ";
+	$sql = "SELECT *, t1.blocks as BLK FROM orders as t1, users as t2 where t1.user_id=t2.ID AND order_id='".intval($order_id)."' ";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 	$row = mysqli_fetch_array($result);
-	//echo $sql;
 
 	if ($row['status']!='confirmed') {
 
@@ -484,6 +492,8 @@ function confirm_order ($user_id, $order_id) {
 		$sql = "UPDATE blocks set status='ordered' WHERE order_id='".intval($order_id)."' and banner_id='".intval($row['banner_id'])."'";
 
 		mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
+
+		unset($_SESSION['MDS_order_id']);
 
 		/*
 
@@ -504,30 +514,42 @@ function confirm_order ($user_id, $order_id) {
 			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
-		$label_reset = $label["order_confirmed_email_template"];
+		$price = convert_to_default_currency_formatted($row['currency'], $row['price']);
 
-		$label["order_confirmed_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_confirmed_email_template"]);
-		$label["order_confirmed_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_confirmed_email_template"]);
 		$message = $label["order_confirmed_email_template"];
+		$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+		$message = str_replace ("%FNAME%", $row['FirstName'], $message);
+		$message = str_replace ("%LNAME%", $row['LastName'], $message);
+		$message = str_replace ("%ORDER_ID%", $row['order_id'], $message);
+		$message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $message);
+		$message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $message);
+		$message = str_replace ("%DEADLINE%", intval( DAYS_CONFIRMED ), $message);
+		$message = str_replace ("%PRICE%", $price, $message);
+		$message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message);
+		$message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $message);
+
+		$html_message = $label["order_confirmed_email_template_html"];
+		$html_message = str_replace ("%SITE_NAME%", SITE_NAME, $html_message);
+		$html_message = str_replace ("%FNAME%", $row['FirstName'], $html_message);
+		$html_message = str_replace ("%LNAME%", $row['LastName'], $html_message);
+		$html_message = str_replace ("%ORDER_ID%", $row['order_id'], $html_message);
+		$html_message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $html_message);
+		$html_message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $html_message);
+		$html_message = str_replace ("%DEADLINE%", intval( DAYS_CONFIRMED ), $html_message);
+		$html_message = str_replace ("%PRICE%", $price, $html_message);
+		$html_message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_message);
+		$html_message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $html_message);
+
 		$to = trim($row['Email']);
 		$subject = $label['order_confirmed_email_subject'];
-		
-		$label["order_confirmed_email_template"] = $label_reset;
 
 		if (EMAIL_USER_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 2);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 2);
 			}
 
 			//@mail($to,$subject,$message,$headers);
@@ -537,10 +559,10 @@ function confirm_order ($user_id, $order_id) {
 		if (EMAIL_ADMIN_ORDER_CONFIRMED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 2);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 2);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 2);
 			}
 			//@mail(trim(SITE_CONTACT_EMAIL),$subject,$message,$headers);
 		}
@@ -584,28 +606,38 @@ function pend_order ($user_id, $order_id) {
 			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
-		$label_reset = $label["order_pending_email_template"];
-	
-		$label["order_pending_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_pending_email_template"]);
-		$label["order_pending_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_pending_email_template"]);
+		$price = convert_to_default_currency_formatted($row['currency'], $row['price']);
+
 		$message = $label["order_pending_email_template"];
+		$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+		$message = str_replace ("%FNAME%", $row['FirstName'], $message);
+		$message = str_replace ("%LNAME%", $row['LastName'], $message);
+		$message = str_replace ("%ORDER_ID%", $row['order_id'], $message);
+		$message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $message);
+		$message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $message);
+		$message = str_replace ("%PRICE%", $price, $message);
+		$message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message);
+		$message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $message);
+
+		$html_message = $label["order_pending_email_template_html"];
+		$html_message = str_replace ("%SITE_NAME%", SITE_NAME, $html_message);
+		$html_message = str_replace ("%FNAME%", $row['FirstName'], $html_message);
+		$html_message = str_replace ("%LNAME%", $row['LastName'], $html_message);
+		$html_message = str_replace ("%ORDER_ID%", $row['order_id'], $html_message);
+		$html_message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $html_message);
+		$html_message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $html_message);
+		$html_message = str_replace ("%PRICE%", $price, $html_message);
+		$html_message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_message);
+		$html_message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $html_message);
+
 		$to = trim($row['Email']);
 		$subject = $label['order_pending_email_subject'];
-		
-		$label["order_pending_email_template"] = $label_reset;		
-		
+
 		if (EMAIL_USER_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 3);
 			} else {
-				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 3);
 			}
 			//@mail($to,$subject,$message,$headers);
 		}
@@ -613,10 +645,10 @@ function pend_order ($user_id, $order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_PENDED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 3);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 3);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 3);
 			}
 			//@mail(trim(SITE_CONTACT_EMAIL),$subject,$message,$headers);
 		}
@@ -681,30 +713,39 @@ function expire_order ($order_id) {
 			$row['days_expire']=$label['advertiser_ord_never'];
 		}
 
-		$label_reset = $label["order_expired_email_template"];
+		$price = convert_to_default_currency_formatted($row['currency'], $row['price']);
 
-		$label["order_expired_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%FNAME%", $row['FirstName'], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%LNAME%", $row['LastName'], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%ORDER_ID%", $row['order_id'], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PIXEL_COUNT%", $row['quantity'], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($row['currency'], $row['price']), $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_expired_email_template"]);
-		$label["order_expired_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_expired_email_template"]);
 		$message = $label["order_expired_email_template"];
+		$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+		$message = str_replace ("%FNAME%", $row['FirstName'], $message);
+		$message = str_replace ("%LNAME%", $row['LastName'], $message);
+		$message = str_replace ("%ORDER_ID%", $row['order_id'], $message);
+		$message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $message);
+		$message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $message);
+		$message = str_replace ("%PRICE%", $price, $message);
+		$message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message);
+		$message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $message);
+
+		$html_message = $label["order_expired_email_template_html"];
+		$html_message = str_replace ("%SITE_NAME%", SITE_NAME, $html_message);
+		$html_message = str_replace ("%FNAME%", $row['FirstName'], $html_message);
+		$html_message = str_replace ("%LNAME%", $row['LastName'], $html_message);
+		$html_message = str_replace ("%ORDER_ID%", $row['order_id'], $html_message);
+		$html_message = str_replace ("%PIXEL_COUNT%", $row['quantity'], $html_message);
+		$html_message = str_replace ("%PIXEL_DAYS%", $row['days_expire'], $html_message);
+		$html_message = str_replace ("%PRICE%", $price, $html_message);
+		$html_message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_message);
+		$html_message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $html_message);
+
 		$to = trim($row['Email']);
 		$subject = $label['order_expired_email_subject'];
 
-		$label["order_expired_email_template"] = $label_reset;
-		
-		
 		if (EMAIL_USER_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				$mail_id=queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 4);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				send_email( $to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 4);
 			}
 			//@mail($to,$subject,$message,$headers);
 		}
@@ -712,10 +753,10 @@ function expire_order ($order_id) {
 		// send a copy to admin
 		if (EMAIL_ADMIN_ORDER_EXPIRED=='YES') {
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 4);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 4);
+				send_email( SITE_CONTACT_EMAIL, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 4);
 			}
 			//@mail(trim(EMAIL_ADMIN_ORDER_EXPIRED),$subject,$message,$headers);
 		}
@@ -972,32 +1013,42 @@ function complete_renew_order ($order_id) {
 			$order_row['days_expire']=$label['advertiser_ord_never'];
 		}
 		
-		$label_reset = $label["order_completed_renewal_email_template"];
+		$price = convert_to_default_currency_formatted($order_row['currency'], $order_row['price']);
 
-		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%FNAME%", $user_row['FirstName'], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%LNAME%", $user_row['LastName'], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%ORDER_ID%", $order_row['order_id'], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%ORIGINAL_ORDER_ID%", $order_row['original_order_id'], $label["order_completed_renewal_email_template"]);
-		
-		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%PRICE%", convert_to_default_currency_formatted($order_row['currency'], $order_row['price']), $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["order_completed_renewal_email_template"]);
-		$label["order_completed_renewal_email_template"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $label["order_completed_renewal_email_template"]);
 		$message = $label["order_completed_renewal_email_template"];
+		$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+		$message = str_replace ("%FNAME%", $user_row['FirstName'], $message);
+		$message = str_replace ("%LNAME%", $user_row['LastName'], $message);
+		$message = str_replace ("%ORDER_ID%", $order_row['order_id'], $message);
+		$message = str_replace ("%ORIGINAL_ORDER_ID%", $order_row['original_order_id'], $message);
+		$message = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $message);
+		$message = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $message);
+		$message = str_replace ("%PRICE%", $price, $message);
+		$message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message);
+		$message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $message);
+
+		$html_message = $label["order_completed_renewal_email_template_html"];
+		$html_message = str_replace ("%SITE_NAME%", SITE_NAME, $html_message);
+		$html_message = str_replace ("%FNAME%", $user_row['FirstName'], $html_message);
+		$html_message = str_replace ("%LNAME%", $user_row['LastName'], $html_message);
+		$html_message = str_replace ("%ORDER_ID%", $order_row['order_id'], $html_message);
+		$html_message = str_replace ("%ORIGINAL_ORDER_ID%", $order_row['original_order_id'], $html_message);
+		$html_message = str_replace ("%PIXEL_COUNT%", $order_row['quantity'], $html_message);
+		$html_message = str_replace ("%PIXEL_DAYS%", $order_row['days_expire'], $html_message);
+		$html_message = str_replace ("%PRICE%", $price, $html_message);
+		$html_message = str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_message);
+		$html_message = str_replace ("%SITE_URL%", BASE_HTTP_PATH, $html_message);
+
 		$to = trim($user_row['Email']);
 		$subject = $label['order_completed_email_subject'];
-		
-		$label["order_completed_renewal_email_template"] = $label_reset;
-	
+
 		if (EMAIL_USER_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 8);
+				$mail_id=queue_mail($to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 8);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( $to, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 			}
 			
 		}
@@ -1007,10 +1058,10 @@ function complete_renew_order ($order_id) {
 		if (EMAIL_ADMIN_ORDER_COMPLETED=='YES') {
 
 			if (USE_SMTP=='YES') {
-				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 8);
+				$mail_id=queue_mail(SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 8);
 				process_mail_queue(2, $mail_id);
 			} else {
-				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, '', 1);
+				send_email( SITE_CONTACT_EMAIL, $user_row['FirstName']." ".$user_row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_message, 1);
 			}
 			
 		}
@@ -1041,20 +1092,18 @@ function send_confirmation_email($email) {
 
 	$code = substr(md5($row['Email'].$row['Password']),0, 8);
 
-	$verify_url = BASE_HTTP_PATH."users/validate.php?email=".$row['Email']."&code=$code";
-	
-	$label_reset = $label["confirmation_email_templaltev2"];
-	
-	$label["confirmation_email_templaltev2"] = str_replace ("%FNAME%", $row['FirstName'], $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%LNAME%", $row['LastName'], $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%SITE_URL%", BASE_HTTP_PATH."users/", $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%SITE_NAME%", SITE_NAME, $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%VERIFY_URL%", $verify_url, $label["confirmation_email_templaltev2"]);
-	$label["confirmation_email_templaltev2"] = str_replace ("%VALIDATION_CODE%", $code, $label["confirmation_email_templaltev2"]);
+	$verify_url = BASE_HTTP_PATH."users/validate.php?lang=" . get_lang() . "&email=".$row['Email']."&code=$code";
 
 	$message = $label["confirmation_email_templaltev2"];
+	$message = str_replace ("%FNAME%", $row['FirstName'], $message);
+	$message = str_replace ("%LNAME%", $row['LastName'], $message);
+	$message = str_replace ("%SITE_URL%", "https://thebitcoinpizzaday.com/", $message);
+	$message = str_replace ("%SITE_NAME%", SITE_NAME, $message);
+	$message = str_replace ("%VERIFY_URL%", $verify_url, $message);
+	$message = str_replace ("%VALIDATION_CODE%", $code, $message);
 
-	$html_msg = str_replace ("%FNAME%", $row['FirstName'], $label["confirmation_html_email_templaltev2"]);
+	$html_msg = $label["confirmation_email_templaltev2_html"];
+	$html_msg = str_replace ("%FNAME%", $row['FirstName'], $html_msg);
 	$html_msg = str_replace ("%LNAME%", $row['LastName'], $html_msg);
 	$html_msg = str_replace ("%SITE_URL%", BASE_HTTP_PATH."users/", $html_msg);
 	$html_msg = str_replace ("%SITE_NAME%", SITE_NAME, $html_msg);
@@ -1064,9 +1113,7 @@ function send_confirmation_email($email) {
 	$to = trim($row['Email']);
 
 	$subject = $label['confirmation_email_subject'];
-	
-	$label["confirmation_email_templaltev2"] = $label_reset;
-		
+
 	if (USE_SMTP=='YES') {
 		$mail_id = queue_mail($to, $row['FirstName']." ".$row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 5);
 		process_mail_queue(2, $mail_id);
@@ -1118,13 +1165,15 @@ function send_published_pixels_notification($user_id, $BID) {
 
 	$view_url = BASE_HTTP_PATH.$admin_folder."/remote_admin.php?key=".substr(md5(ADMIN_PASSWORD),1,15)."&user_id=$user_id&BID=$BID";
 
-	$msg = str_replace ("%SITE_NAME%", SITE_NAME, $label['publish_pixels_email_template']);
+	$msg = $label['publish_pixels_email_template'];
+	$msg = str_replace ("%SITE_NAME%", SITE_NAME, $msg);
 	$msg = str_replace ("%GRID_NAME%", $b_row['name'], $msg);
 	$msg = str_replace ("%MEMBERID%", $u_row['Username'], $msg);
 	$msg = str_replace ("%URL_LIST%", $url_list, $msg);
 	$msg = str_replace ("%VIEW_URL%", $view_url, $msg);
 
-	$html_msg = str_replace ("%SITE_NAME%", SITE_NAME, $label['publish_pixels_html_email_template']);
+	$html_msg = $label['publish_pixels_email_template_html'];
+	$html_msg = str_replace ("%SITE_NAME%", SITE_NAME, $html_msg);
 	$html_msg = str_replace ("%GRID_NAME%", $b_row['name'], $html_msg);
 	$html_msg = str_replace ("%MEMBERID%", $u_row['Username'], $html_msg);
 	$html_msg = str_replace ("%URL_LIST%", $url_list, $html_msg);
@@ -1532,11 +1581,6 @@ function do_log_entry ($entry_line) {
 
 }
 
-
-#####################################################
-
-// assuming banner constants were loaded
-
 function select_block ($map_x, $map_y) {
 
 	global $f2, $BID, $b_row, $label, $order_id, $banner_data;
@@ -1548,19 +1592,12 @@ function select_block ($map_x, $map_y) {
 
 	} else {
 
-		$block_x = ($banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']) / ($map_x + 0.0001);
-		$block_y = ($banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']) / ($map_y + 0.0001);
-
-		$clicked_block = $block_x * $block_y;
+		$clicked_block = get_block_id_from_position($map_x, $map_y, $BID);
 	}
 
 	if ($clicked_block==0) {
 		$clicked_block="0";// convert to string
 	}
-
-	$sql = "select Rank from users where ID=".intval($_SESSION['MDS_ID']);
-	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-	$u_row = mysqli_fetch_array($result);
 
 	//Check if max_orders < order count
 	if (!can_user_order($b_row, $_SESSION['MDS_ID'])) {
@@ -1570,50 +1607,6 @@ function select_block ($map_x, $map_y) {
 	if (!function_exists('delete_ads_files')) {
 		require_once ("../include/ads.inc.php");
 	}
-	
-	# check the status of the block.
-
-
-	###################################################
-	if (USE_LOCK_TABLES == 'Y') {
-		$sql = "LOCK TABLES blocks WRITE, orders WRITE, ads WRITE, form_fields READ, currencies READ, prices READ, banners READ, packages READ";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
-	} else {
-		// poor man's lock
-		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-		if (mysqli_affected_rows($GLOBALS['connection'])==0) {
-			// make sure it cannot be locked for more than 30 secs 
-			// This is in case the proccess fails inside the lock
-			// and does not release it.
-
-			$unix_time = time();
-
-			// get the time of last run
-			$sql = "SELECT * FROM `config` where `key` = 'LAST_SELECT_RUN' ";
-			$result = @mysqli_query($GLOBALS['connection'], $sql);
-			$t_row = @mysqli_fetch_array($result);
-
-			if ($unix_time > $t_row['val']+30) {
-				// release the lock
-				
-				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = @mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-
-				// update timestamp
-				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-			}
-			
-			usleep(5000000); // this function is executing in another process. sleep for half a second
-			select_block ($map_x, $map_y, $clicked_block); 
-		}
-
-
-	}
-	####################################################
-
-	//$sql = "SELECT status, user_id FROM blocks where `x`=$map_x AND `y`=$map_y and banner_id=$BID ";
 
 	$cannot_sel = "";
 	$sql = "SELECT status, user_id, ad_id FROM blocks where block_id='".intval($clicked_block)."' AND banner_id='".intval($BID)."' ";
@@ -1623,7 +1616,7 @@ function select_block ($map_x, $map_y) {
 	if (($row['status']=='') || (($row['status']=='reserved')&& ($row['user_id']==$_SESSION['MDS_ID']))) {
 
 	    // put block on order
-		$sql = "SELECT blocks,status,ad_id,order_id FROM orders where user_id='" . intval( $_SESSION['MDS_ID'] ) . "' and status='new' and banner_id='" . intval( $BID ) . "' ";
+		$sql = "SELECT blocks,status,ad_id,order_id FROM orders where user_id='" . intval( $_SESSION['MDS_ID'] ) . "' and order_id='".intval($_SESSION['MDS_order_id'])."' and banner_id='" . intval( $BID ) . "' ";
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 		$row = mysqli_fetch_array( $result );
 		if ( $row['blocks'] != '' ) {
@@ -1645,7 +1638,7 @@ function select_block ($map_x, $map_y) {
 			}
 		}
 
-		if (!$double_clicked) { # add newly selected block
+		if ( ! $double_clicked ) {
 			$new_blocks[] = $clicked_block;
 		}
 
@@ -1655,12 +1648,13 @@ function select_block ($map_x, $map_y) {
 			if ($banner_data['G_MAX_BLOCKS']>0) {
 				if (sizeof($new_blocks)>$banner_data['G_MAX_BLOCKS']) {
 					$max_selected = true;
-					$cannot_sel = "<font color=red><b>".str_replace('%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected'])."</b></font>";
+					$cannot_sel = str_replace('%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected']);
 				}
 			}
 		}
 
-		if (!$max_selected) {
+		if ( !$max_selected || $double_clicked ) {
+			$cannot_sel = "";
 
 			$price      = $total = 0;
 			$num_blocks = sizeof( $new_blocks );
@@ -1691,10 +1685,9 @@ function select_block ($map_x, $map_y) {
 
 						// reserve block
 						$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `approved`, `banner_id`, `currency`, `price`, `order_id`, `click_count`) VALUES ('" . intval( $cell ) . "',  '" . intval( $_SESSION['MDS_ID'] ) . "' , 'reserved' , '" . intval( $x ) . "' , '" . intval( $y ) . "' , '' , '' , '', '" . mysqli_real_escape_string( $GLOBALS['connection'], $banner_data['AUTO_APPROVE'] ) . "', '" . intval( $BID ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency() ) . "', '" . floatval( $price ) . "', '" . intval( $_SESSION['MDS_order_id'] ) . "', 0)";
+						mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 						$total += $price;
-
-						mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 					}
 					$cell ++;
 				}
@@ -1723,34 +1716,16 @@ function select_block ($map_x, $map_y) {
 
 				$_REQUEST['ad_id'] = $ad_id;
 			}
-
-			if (USE_LOCK_TABLES == 'Y') {
-				$sql = "UNLOCK TABLES";
-				$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>");
-			} else {
-
-				// release the poor man's lock
-				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				mysqli_query($GLOBALS['connection'], $sql);
-
-				$unix_time = time();
-
-				// update timestamp
-				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-
-			}
 		}
 
 	} else {
 
 		if ($row['status']=='nfs') {
-
-			$cannot_sel =  "<font color=red><b>".$label['advertiser_sel_nfs_error']."</b></font>";
+			$cannot_sel =  $label['advertiser_sel_nfs_error'];
 
 		} else {
 			$label['advertiser_sel_sold_error'] = str_replace("%BLOCK_ID%", $clicked_block, $label['advertiser_sel_sold_error']); 
-			$cannot_sel =  "<font color=red><b>".$label['advertiser_sel_sold_error']."</b></font><br>";
+			$cannot_sel =  $label['advertiser_sel_sold_error'];
 		}
 	}
 	return $cannot_sel;
@@ -1783,46 +1758,6 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	}
 
 	require_once ('../include/ads.inc.php');
-
-	###################################################
-	if (USE_LOCK_TABLES == 'Y') {
-		$sql = "LOCK TABLES blocks WRITE, orders WRITE, ads WRITE, temp_orders WRITE,  currencies READ, prices READ, banners READ, form_fields READ, form_field_translations READ";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die (" <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>");
-	} else {
-		// poor man's lock
-		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-		if (mysqli_affected_rows($GLOBALS['connection'])==0) {
-			// make sure it cannot be locked for more than 30 secs 
-			// This is in case the proccess fails inside the lock
-			// and does not release it.
-
-			$unix_time = time();
-
-			// get the time of last run
-			$sql = "SELECT * FROM `config` where `key` = 'LAST_SELECT_RUN' ";
-			$result = @mysqli_query($GLOBALS['connection'], $sql);
-			$t_row = @mysqli_fetch_array($result);
-
-			if ($unix_time > $t_row['val']+30) {
-				// release the lock
-				
-				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = @mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-
-				// update timestamp
-				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-			}
-			
-			usleep(5000000); // this function is executing in another process. sleep for half a second
-			reserve_pixels_for_temp_order($temp_order_row); 
-			return;
-		}
-
-
-	}
-	####################################################
 
 	// Session may have expired if they waited too long so tell them to start over, even though we might still have the file it doesn't match the current session id anymore.
 	// TODO: Implement our own cookies instead of PHP sessions to allow longer sessions. Maybe can recover the old session file automatically somehow or another.
@@ -1857,8 +1792,7 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	
 	global $f2;
 	$f2->debug("Changed temp order to a real order - ".$sql);
-//echo "<hr>";echo $sql; echo "<hr>";
-	
+
 	$sql = "UPDATE ads SET user_id='".intval($_SESSION['MDS_ID'])."', order_id='".intval($order_id)."' where ad_id='".intval($temp_order_row['ad_id'])."' ";
 	//echo $sql;
 	mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -1884,27 +1818,6 @@ function reserve_pixels_for_temp_order($temp_order_row) {
 	}
 
 	delete_temp_order(session_id(), false); // false = do not delete the ad...
-
-	###################################################
-			
-	if (USE_LOCK_TABLES == 'Y') {
-		$sql = "UNLOCK TABLES";
-		$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])." <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to 'No' in the Main Config section in the Admin.<b>");
-	} else {
-
-		// release the poor man's lock
-		$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-		mysqli_query($GLOBALS['connection'], $sql);
-
-		$unix_time = time();
-
-		// update timestamp
-		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-		$result = @mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-
-
-	}
-	####################################################
 
 	return $order_id;
 
@@ -1935,6 +1848,24 @@ function get_block_position($block_id, $banner_id) {
 	}
 
     return $ret;
+}
+
+function get_block_id_from_position( $x, $y, $banner_id ) {
+	$id          = 0;
+	$banner_data = load_banner_constants( $banner_id );
+	$max_y       = $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'];
+	$max_x       = $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'];
+
+	for ( $y2 = 0; $y2 < $max_y; $y2 += $banner_data['BLK_HEIGHT'] ) {
+		for ( $x2 = 0; $x2 < $max_x; $x2 += $banner_data['BLK_WIDTH'] ) {
+			if ( $x == $x2 && $y == $y2 ) {
+				return $id;
+			}
+			$id ++;
+		}
+	}
+
+	return $id;
 }
 
 ########################
@@ -2002,36 +1933,27 @@ function move_block($block_from, $block_to, $banner_id) {
 	
 	$sql = "REPLACE INTO `blocks` ( `block_id` , `user_id` , `status` , `x` , `y` , `image_data` , `url` , `alt_text`, `file_name`, `mime_type`,  `approved`, `published`, `banner_id`, `currency`, `price`, `order_id`, `click_count`, `ad_id`) VALUES ('".intval($block_to)."',  '".intval($source_block['user_id'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['status'])."' , '".intval($x)."' , '".intval($y)."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['image_data'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['url'])."' , '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['alt_text'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['file_name'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['mime_type'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['approved'])."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['published'])."', '".intval($banner_id)."', '".mysqli_real_escape_string( $GLOBALS['connection'], $source_block['currency'])."', '".floatval($source_block['price'])."', '".intval($source_block['order_id'])."', '".intval($source_block['click_count'])."', '".intval($source_block['ad_id'])."')";
 
-//echo "<p>$sql</p>";
-
-	
 	global $f2;
 	$f2->debug("Moved Block - ".$sql);
 
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 
 	# delete 'from' block
-
 	$sql = "DELETE from blocks WHERE block_id='".intval($block_from)."' AND banner_id='".intval($banner_id)."' ";
-//echo "<p>$sql</p>";
 	mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	
 	$f2->debug("Deleted block_from - ".$sql);
 
 	// Update the order record
-
 	$sql = "SELECT * from orders WHERE order_id='".intval($source_block['order_id'])."' AND banner_id='".intval($banner_id)."' ";
-	//echo "$sql<br>";
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$order_row = mysqli_fetch_array($result);
 	$blocks = array();
 	$new_blocks = array();
 	$blocks = explode(',',$order_row['blocks']);
-	//print_r($blocks);
 	foreach ($blocks as $item) {
-		//echo "<b>$item - block from: $block_from</b><br>";
 		if ($block_from == $item) {
-			$item = $block_to;//echo '<b>found!</b>';
+			$item = $block_to;
 		}
 		$new_blocks[] = intval($item);
 	}
@@ -2189,7 +2111,7 @@ First check to see if the banner has packages. If it does
 then check how many orders the user had. 
 */
 
-function can_user_order($b_row, $user_id, $package_id=0) {
+function can_user_order($banner_data, $user_id, $package_id=0) {
 	// check rank
 	
 	$sql = "select Rank from users where ID='".intval($user_id)."'";
@@ -2202,9 +2124,7 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 
 	}
 	
-
-	global $f2;
-	$BID = $b_row['banner_id'];
+	$BID = $banner_data['BANNER_ID'];
 	
 	if (banner_get_packages($BID)) { // if user has package, check if the user can order this package
 		if ($package_id==0) { // don't know the package id, assume true.
@@ -2217,13 +2137,13 @@ function can_user_order($b_row, $user_id, $package_id=0) {
 	} else {
 		
 		// check againts the banner. (Banner has no packages)
-		if (($b_row['max_orders'] > 0))  {
+		if (($banner_data['G_MAX_ORDERS'] > 0))  {
 
-			$sql = "SELECT order_id FROM orders where `banner_id`='".intval($b_row['banner_id'])."' and `status` <> 'deleted' and `status` <> 'new' AND user_id='".intval($user_id)."'";
+			$sql = "SELECT order_id FROM orders where `banner_id`='".intval($BID)."' and `status` <> 'deleted' and `status` <> 'new' AND user_id='".intval($user_id)."'";
 			
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']).$sql);
 			$count = mysqli_num_rows($result);
-			if ($count >= $b_row['max_orders']) {
+			if ($count >= $banner_data['G_MAX_ORDERS']) {
 				return false;
 			} else {
 				return true;

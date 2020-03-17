@@ -29,7 +29,9 @@
  *
  */
 
-session_start();
+session_start([
+	'name' => 'MDSADMIN_PHPSESSID',
+]);
 require("../config.php");
 
 if ($_REQUEST['key']!='') {

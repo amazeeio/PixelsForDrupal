@@ -29,11 +29,11 @@
  *
  */
 
+ini_set ("session.use_trans_sid", false);
+
 require("../config.php");
 
 require ('admin_common.php');
-
-ini_set (session.use_trans_sid, false);
 
 ?>
 <?php echo $f2->get_doc(); ?>
@@ -89,6 +89,7 @@ include ("../lang/".$lang_filename);
 $dest_label = $label; // dest labels
 //print_r($dest_label);
 // preload the source code, preg the hash key and use it as a key for the line 
+$source_code = array();
 $handle = fopen("../lang/english_default.php", "r");
 while ($buffer= fgets($handle, 4096)) {
 	if (preg_match ('/ *\$label\[.([A-z0-9]+).\].*/', $buffer, $m)) {
@@ -157,7 +158,7 @@ if (!is_writeable("../lang/".$lang_filename)) {
 
 <?php
 
-
+$bg_color = "";
 foreach ($source_label as $key => $val) {
 	$i++;
 	

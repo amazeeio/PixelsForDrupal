@@ -31,7 +31,9 @@
 
 use Imagine\Filter\Basic\Autorotate;
 
-session_start();
+session_start([
+	'name' => 'MDSADMIN_PHPSESSID',
+]);
 require("../config.php");
 
 require('admin_common.php');
@@ -124,18 +126,38 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 
 		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
 
-		$parts = explode( '.', $_FILES['pixels']['name'] );
-		$ext   = strtolower( array_pop( $parts ) );
+		$parts = $file_parts = pathinfo( $_FILES['graphic']['name'] );
+		$ext   = $f2->filter( strtolower( $file_parts['extension'] ) );
 
 		// CHECK THE EXTENSION TO MAKE SURE IT IS ALLOWED
-		$ALLOWED_EXT = 'jpg, jpeg, gif, png';
-		$ext_list    = preg_split( "/[\s,]+/i", ( $ALLOWED_EXT ) );
-		if ( ! in_array( $ext, $ext_list ) ) {
+		$ALLOWED_EXT = array( 'jpg', 'jpeg', 'gif', 'png' );
 
-			$error              .= "<b>" . $label['advertiser_file_type_not_supp'] . "</b><br>";
+		if ( ! in_array( $ext, $ALLOWED_EXT ) && file_exists( $label['advertiser_file_type_not_supp'] . $ext ) ) {
+			$error              .= "<strong><font color='red'>" . $label['advertiser_file_type_not_supp'] . " ($ext)</font></strong><br />";
 			$image_changed_flag = false;
 
+		}
+		if ( isset( $error ) ) {
+			echo $error;
+
 		} else {
+			// clean up is handled by the delete_temp_order($sid) function...
+			//delete_temp_order( session_id() );
+
+			// delete temp_* files older than 24 hours
+			$dh = opendir( $uploaddir );
+			while ( ( $file = readdir( $dh ) ) !== false ) {
+
+				$elapsed_time = 60 * 60 * 24; // 24 hours
+
+				// delete old files
+				$stat = stat( $uploaddir . $file );
+				if ( $stat[9] < ( time() - $elapsed_time ) ) {
+					if ( strpos( $file, 'tmp_' . md5( session_id() ) ) !== false ) {
+						unlink( $uploaddir . $file );
+					}
+				}
+			}
 
 			$uploadfile = $uploaddir . "tmp_" . md5( session_id() ) . ".$ext";
 
@@ -230,32 +252,36 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 							$dest->paste( $block, new Imagine\Image\Point( 0, 0 ) );
 
 							// save the image as a base64 encoded string
-							$data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
+							$image_data = base64_encode( $dest->get( "png", array( 'png_compression_level' => 9 ) ) );
 
 							// some variables
 							$map_x     = $x + $low_x;
 							$map_y     = $y + $low_y;
 							$GRD_WIDTH = $banner_data['BLK_WIDTH'] * $banner_data['G_WIDTH'];
-							$cb        = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
+							//$cb        = ( ( $map_x ) / $banner_data['BLK_WIDTH'] ) + ( ( $map_y / $banner_data['BLK_HEIGHT'] ) * ( $GRD_WIDTH / $banner_data['BLK_WIDTH'] ) );
+							//$block_id = get_block_id_from_position( $block_row['x'], $block_row['y'], $BID );
 
 							// save to db
-							$sql = "UPDATE blocks SET image_data='$data' where block_id='" . intval($cb) . "' AND banner_id='" . intval($BID) . "' ";
+							$sql = "UPDATE blocks SET image_data='$image_data' where block_id='" . intval( $block_row['block_id'] ) . "' AND banner_id='" . intval( $BID ) . "' ";
 							mysqli_query( $GLOBALS['connection'], $sql );
 						}
 					}
 				}
 
 				unlink( $tmp_image_file );
+				unset( $tmp_image_file );
 
 				if ( $banner_data['AUTO_APPROVE'] != 'Y' ) { // to be approved by the admin
-					disapprove_modified_order( $order_id, $prams['banner_id'] );
+					$sql = "UPDATE orders SET approved='N' WHERE order_id='" . intval( $order_id ) . "' AND banner_id='" . intval( $BID ) . "' ";
+					mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+					$sql = "UPDATE blocks SET approved='N' WHERE order_id='" . intval( $order_id ) . "' AND banner_id='" . intval( $BID ) . "' ";
+					mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 				}
 
 				if ( $banner_data['AUTO_PUBLISH'] == 'Y' ) {
-					process_image( $prams['banner_id'] );
-					publish_image( $prams['banner_id'] );
-					process_map( $prams['banner_id'] );
-
+					process_image( $BID );
+					publish_image( $BID );
+					process_map( $BID );
 				}
 
 			} else {

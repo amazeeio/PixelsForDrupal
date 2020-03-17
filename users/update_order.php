@@ -37,8 +37,9 @@ header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" ); // Date in the past
 
 require_once( "../config.php" );
 
-$block_id = intval( $_REQUEST['block_id'] );
-$BID      = $f2->bid( $_REQUEST['BID'] );
+$block_id      = intval( $_REQUEST['block_id'] );
+$BID           = $f2->bid( $_REQUEST['BID'] );
+$output_result = "";
 
 if ( $_SESSION['MDS_ID'] == '' ) {
 	echo "error";
@@ -61,15 +62,7 @@ if ( $_REQUEST['user_id'] != '' ) {
 	$user_id = intval( $_SESSION['MDS_ID'] );
 }
 
-$sql = "select * from banners where banner_id='$BID'";
-$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-$b_row = mysqli_fetch_array( $result );
-
-$sql = "select Rank from users where ID='$user_id'";
-$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-$u_row = mysqli_fetch_array( $result );
-
-if ( ! can_user_order( $b_row, $_SESSION['MDS_ID'] ) ) {
+if ( ! can_user_order( $banner_data, $_SESSION['MDS_ID'] ) ) {
 	$max_orders = true;
 	echo 'max_orders';
 	die();
@@ -83,50 +76,14 @@ if ( $banner_data['G_MAX_BLOCKS'] > 0 ) {
 	$count = mysqli_num_rows( $result );
 
 	if ( ( $count ) >= $banner_data['G_MAX_BLOCKS'] ) {
-		$max_selected = true;
-	}
-}
-
-$sql = "select status, user_id from blocks where banner_id='$BID' AND block_id='$block_id'";
-
-$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-$row = mysqli_fetch_array( $result );
-
-$order_id     = intval( $_SESSION['MDS_order_id'] );
-$update_order = false;
-
-if ( ( $row['status'] == 'reserved' ) && ( $row['user_id'] == $user_id ) ) {
-	// the block was already selected by the client, this is a double click
-	echo 'new';
-	$update_order = true;
-
-} elseif ( ( $row['status'] == 'reserved' ) ) { // reserved by someone-else
-	echo 'ordered';
-	$update_order = false; // cannot place or remove from order
-
-} elseif ( $row['status'] != '' ) {
-	$update_order = false;
-	echo $row['status'];
-
-} else {
-	$update_order = true;
-	$echo_oid     = true;
-
-	if ( $max_selected ) {
 		echo 'max_selected';
 		die();
 	}
 }
 
-if ( $update_order ) {
+$output_result = select_block( '', '', $block_id );
 
-	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	$b_row = mysqli_fetch_array( $result );
-
-	select_block( '', '', $block_id );
-
-	if ( $echo_oid ) {
-		echo $order_id;
-	}
+if ( empty( $output_result ) ) {
+	$output_result = intval( $_SESSION['MDS_order_id'] );
 }
+echo $output_result;

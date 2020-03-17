@@ -39,6 +39,13 @@ process_login();
 
 require ("header.php");
 
+if ( isset( $_REQUEST['cancel'] ) && $_REQUEST['cancel'] == 'yes' && isset( $_REQUEST['order_id'] ) ) {
+	$sql = "SELECT * FROM orders WHERE user_id='" . intval( $_SESSION['MDS_ID'] ) . "' AND order_id='" . intval( $_REQUEST['order_id'] ) . "'";
+	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
+	if ( mysqli_num_rows( $result ) > 0 ) {
+		delete_order( intval( $_REQUEST['order_id'] ) );
+	}
+}
 
 ?>
 
@@ -47,7 +54,7 @@ require ("header.php");
 function confirmLink(theLink, theConfirmMsg)
    {
       
-       if (theConfirmMsg == '' || typeof(window.opera) != 'undefined') {
+       if (theConfirmMsg == '') {
            return true;
        }
 

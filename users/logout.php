@@ -43,7 +43,12 @@ unset($_SESSION['MDS_ID']);
 $_SESSION['MDS_ID']='';
 $_SESSION['MDS_Domain']='';
 session_destroy();
-//require ('header.php'); 
+
+if ( isset( $_COOKIE['PHPSESSID'] ) ) {
+	unset( $_COOKIE['PHPSESSID'] );
+	setcookie( 'PHPSESSID', null, - 1 );
+}
+//require ('header.php');
 
 ?>
 <?php echo $f2->get_doc(); ?>

@@ -96,7 +96,20 @@ die ();
 
 function is_logged_in() {
    global $_SESSION;
-   if (!isset($_SESSION['MDS_ID'])) {$_SESSION['MDS_ID']='';}
+
+	if ( ! isset( $_SESSION['MDS_ID'] ) ) {
+		$_SESSION['MDS_ID'] = '';
+
+	} else {
+		// Check database for user id. If user was deleted it won't exist anymore so we have to log them out.
+		$sql = "SELECT * FROM `users` WHERE `ID`='" . mysqli_real_escape_string( $GLOBALS['connection'], $_SESSION['MDS_ID'] ) . "' ";
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+		if ( empty( mysqli_num_rows( $result ) ) ) {
+			session_destroy();
+			$_SESSION['MDS_ID'] = '';
+		}
+	}
+
    return $_SESSION['MDS_ID'];
 
 }
@@ -110,7 +123,7 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
     <table align="center">
         <tr>
             <td>
-                <form name="form1" method="post" action="login.php?target_page=<?php echo $target_page; ?>">
+                <form name="form1" method="post" action="login.php?lang=<?php echo get_lang(); ?>&target_page=<?php echo $target_page; ?>">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                             <td width="50%" nowrap><span><?php echo $label["advertiser_signup_member_id"]; ?>:</span></td>

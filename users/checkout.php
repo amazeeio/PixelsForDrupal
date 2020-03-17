@@ -119,6 +119,8 @@ if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
 
 	}
 
+	$_REQUEST['order_id'] = $order_id;
+
 } else {
 	$order_id = $_REQUEST['order_id'];
 }

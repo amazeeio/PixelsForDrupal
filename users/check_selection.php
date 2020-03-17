@@ -70,16 +70,34 @@ function check_pixels( $in_str ) {
 	}
 
 	// check if it is free
+	$available = true;
+
 	$sql = "SELECT block_id FROM blocks WHERE banner_id='" . intval($BID) . "' AND block_id IN(".mysqli_real_escape_string( $GLOBALS['connection'], $in_str) . ")";
 
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( $sql . mysqli_error( $GLOBALS['connection'] ) );
 	if ( mysqli_num_rows( $result ) > 0 ) {
 		echo js_out_prep( $label['check_sel_notavailable'] . " (E432)" );
-
-		return false;
+		$available = false;
 	}
 
-	return true;
+	if ( $available ) {
+
+		// from temp_orders table
+		$sql = "SELECT blocks FROM temp_orders WHERE banner_id='" . intval( $BID ) . "'";
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+
+		$selected = explode( ",", $in_str );
+		while ( $row = mysqli_fetch_array( $result ) ) {
+			$entries  = explode( ",", $row['blocks'] );
+			if ( ! empty( array_intersect( $entries, $selected ) ) ) {
+				echo js_out_prep( $label['check_sel_notavailable'] . " (E432)" );
+				$available = false;
+				break;
+			}
+		}
+	}
+
+	return $available;
 }
 
 #######################################################################
@@ -92,48 +110,6 @@ check_selection_main();
 function check_selection_main() {
 
 	global $f2, $banner_data;
-
-	# check the status of the block.
-
-	###################################################
-	if ( USE_LOCK_TABLES == 'Y' ) {
-		$sql = "LOCK TABLES blocks WRITE, temp_orders WRITE, currencies READ, prices READ, banners READ";
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( " <b>Dear Webmaster: The current MySQL user does not have permission to lock tables. Please give this user permission to lock tables, or turn off locking in the Admin. To turn off locking in the Admin, please go to Main Config and look under the MySQL Settings.<b>" );
-	} else {
-		// poor man's lock
-		$sql = "UPDATE `config` SET `val`='YES' WHERE `key`='SELECT_RUNNING' AND `val`='NO' ";
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-		if ( mysqli_affected_rows( $GLOBALS['connection'] ) == 0 ) {
-			// make sure it cannot be locked for more than 30 secs 
-			// This is in case the proccess fails inside the lock
-			// and does not release it.
-
-			$unix_time = time();
-
-			// get the time of last run
-			$sql = "SELECT * FROM `config` WHERE `key` = 'LAST_SELECT_RUN' ";
-			$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-			$t_row = mysqli_fetch_array( $result );
-
-			if ( $unix_time > $t_row['val'] + 30 ) {
-				// release the lock
-
-				$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-				$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-
-				// update timestamp
-				$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-				$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
-			}
-
-			usleep( 5000000 ); // this function is executing in another process. sleep for half a second
-			check_selection_main();
-
-			return;
-		}
-
-	}
-	####################################################
 
 	$upload_image_file = get_tmp_img_name();
 
@@ -158,25 +134,4 @@ function check_selection_main() {
 	$in_str = implode( ',', $cb_array );
 	$f2->write_log( "in_str is:" . $in_str );
 	check_pixels( $in_str );
-
-	###################################################
-
-	if ( USE_LOCK_TABLES == 'Y' ) {
-		$sql = "UNLOCK TABLES";
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . " <b>Dear Webmaster: The current MySQL user set in config.php does not have permission to lock tables. Please give this user permission to lock tables, or set USE_LOCK_TABLES to N in the config.php file that comes with this script.<b>" );
-	} else {
-
-		// release the poor man's lock
-		$sql = "UPDATE `config` SET `val`='NO' WHERE `key`='SELECT_RUNNING' ";
-		mysqli_query( $GLOBALS['connection'], $sql );
-
-		$unix_time = time();
-
-		// update timestamp
-		$sql = "REPLACE INTO config (`key`, `val`) VALUES ('LAST_SELECT_RUN', '$unix_time')  ";
-		$result = @mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
-
-	}
-	####################################################
-
 }

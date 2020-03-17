@@ -186,12 +186,6 @@ NOTES<br>
       <td  bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
       <input type="text" name="mysql_socket" size="29" value="<?php echo MYSQL_SOCKET; ?>"></span></td>
     </tr>
-	<tr>
-      <td bgcolor="#e6f2ea" width="20%"><span style="font-family: Verdana,sans-serif; font-size: xx-small; "> 
-       Use MySQL 'LOCK TABLES' feature?</span></td>
-      <td bgcolor="#e6f2ea"><span style="font-family: Verdana,sans-serif; font-size: xx-small; ">
-	   <input type="radio" name="use_lock_tables" size="49" value="Y" <?php if (USE_LOCK_TABLES=='Y') { echo " checked "; } ?> >Yes (recommended)<br><input type="radio" name="use_lock_tables" value="N" <?php if (USE_LOCK_TABLES!='Y') { echo " checked "; } ?> >No</span></td>
-    </tr>
   </table>
   <p>&nbsp;</p>
   <?php

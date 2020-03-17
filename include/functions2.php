@@ -142,9 +142,9 @@ class functions2 {
 	function debug($line="null", $label="debug") {
 
 		// Firebug console debug
-		if(DEBUG===true) {
-			echo "<script>console.log('".$label."[".$line."]');</script>";
-		}
+//		if(DEBUG===true) {
+//			echo "<script>console.log('".$label."[".$line."]');</script>";
+//		}
 
 		// log file
 		if (MDS_LOG===true && file_exists(MDS_LOG_FILE)) {

@@ -65,7 +65,6 @@ if ( $_REQUEST['save'] != '' ) {
 	define( 'OUTPUT_JPEG', $_REQUEST['output_jpeg'] );
 	define( 'JPEG_QUALITY', $_REQUEST['jpeg_quality'] );
 	define( 'INTERLACE_SWITCH', $_REQUEST['interlace_switch'] );
-	define( 'USE_LOCK_TABLES', $_REQUEST['use_lock_tables'] );
 	define( 'BANNER_DIR', $_REQUEST['banner_dir'] );
 	define( 'DISPLAY_PIXEL_BACKGROUND', $_REQUEST['display_pixel_background'] );
 	define( 'EMAIL_USER_ORDER_CONFIRMED', $_REQUEST['email_user_order_confirmed'] );
@@ -149,7 +148,6 @@ define( 'DATE_INPUT_SEQ', '" . DATE_INPUT_SEQ . "' );
 define( 'OUTPUT_JPEG', '" . OUTPUT_JPEG . "' );
 define( 'JPEG_QUALITY', '" . JPEG_QUALITY . "' );
 define( 'INTERLACE_SWITCH', '" . INTERLACE_SWITCH . "' );
-define( 'USE_LOCK_TABLES', '" . USE_LOCK_TABLES . "' );
 define( 'BANNER_DIR', '" . BANNER_DIR . "' );
 define( 'DISPLAY_PIXEL_BACKGROUND', '" . DISPLAY_PIXEL_BACKGROUND . "' );
 define( 'EMAIL_USER_ORDER_CONFIRMED', '" . EMAIL_USER_ORDER_CONFIRMED . "' );
@@ -207,9 +205,11 @@ if ( defined( 'MEMORY_LIMIT' ) ) {
 require_once( dirname( __FILE__ ) . '/include/database.php' );
 require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 
+global \$purifier;
 \$purifier = new HTMLPurifier();
 
 require_once dirname( __FILE__ ) . '/include/functions2.php';
+global \$f2;
 \$f2 = new functions2();
 
 include dirname( __FILE__ ) . '/lang/lang.php';

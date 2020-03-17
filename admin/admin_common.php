@@ -29,13 +29,17 @@
  *
  */
 
-session_start();
+session_start([
+	'name' => 'MDSADMIN_PHPSESSID',
+]);
 
 // setup filters
 require_once '../include/functions2.php';
-$f2 = new functions2(); 
+global $f2;
+$f2 = new functions2();
 
 require_once '../vendor/ezyang/htmlpurifier/library/HTMLPurifier.auto.php';
+global $purifier;
 $purifier = new HTMLPurifier();
 
 if ((isset($_REQUEST['pass']) && $_REQUEST['pass'] != '') && (defined("MAIN_PHP") && MAIN_PHP=='1')) {

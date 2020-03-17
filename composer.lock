@@ -4,67 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e71c23dd65e18cd6d3824e52eb6a331",
+    "content-hash": "49f2858f0b91061268b8a3b84481647b",
     "packages": [
-        {
-            "name": "coinpaymentsnet/coinpayments-php",
-            "version": "v1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CoinPaymentsNet/coinpayments-php.git",
-                "reference": "e7e9f8820c2179f49605aa861d7c7bd485b3c88c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CoinPaymentsNet/coinpayments-php/zipball/e7e9f8820c2179f49605aa861d7c7bd485b3c88c",
-                "reference": "e7e9f8820c2179f49605aa861d7c7bd485b3c88c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "/src"
-                ],
-                "exclude-from-classmap": [
-                    "/tests"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Cole",
-                    "email": "cole@coinpayments.net",
-                    "homepage": "https://www.coinpayments.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A PHP wrapper for the CoinPayments.net v1 API.",
-            "homepage": "https://www.coinpayments.net/apidoc-intro",
-            "keywords": [
-                "api",
-                "bitcoin",
-                "btc",
-                "coinpayments",
-                "crypto",
-                "cryptocurrency",
-                "currency",
-                "ethereum",
-                "litecoin",
-                "merchant",
-                "payment gateway",
-                "payment method",
-                "payment processor",
-                "paypal",
-                "php"
-            ],
-            "time": "2018-09-15T00:00:00+00:00"
-        },
         {
             "name": "ezyang/htmlpurifier",
             "version": "v4.12.0",

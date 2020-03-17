@@ -29,9 +29,16 @@
  *
  */
 
-session_start();
+session_start([
+	'name' => 'MDSADMIN_PHPSESSID',
+]);
+unset( $_SESSION );
 session_destroy();
 
+if ( isset( $_COOKIE['MDSADMIN_PHPSESSID'] ) ) {
+	unset( $_COOKIE['MDSADMIN_PHPSESSID'] );
+	setcookie( 'MDSADMIN_PHPSESSID', null, - 1 );
+}
 ?>
 
 <html>

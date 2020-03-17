@@ -28,6 +28,16 @@
  * 		https://milliondollarscript.com/
  *
  */
+
+require_once( 'login_functions.php' );
+
+if ( ! is_logged_in() ) {
+	if ( isset( $_COOKIE['PHPSESSID'] ) ) {
+		unset( $_COOKIE['PHPSESSID'] );
+		setcookie( 'PHPSESSID', null, - 1 );
+	}
+}
+
 session_start();
 require "../config.php";
 
@@ -39,9 +49,8 @@ if ($target_page=='') {
     $target_page = "index.php";
 }
 
-include('login_functions.php');
-
-?><html>
+?>
+<html>
 <head>
 <link rel="stylesheet" type="text/css"
 href="style.css" />

@@ -111,16 +111,16 @@ The transaction log helps you manage the money transfers. Note: Refunds are proc
 $sql = "SELECT SUM(amount) as mysum, type, currency from transactions group by type, currency";
 
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
-
+$debits = $credits = 0;
 while ($row=mysqli_fetch_array($result)) {
 
-	if ($row[type]=='CREDIT') {
-		$credits = $credits + convert_to_default_currency($row[currency],$row[mysum]);
+	if ($row['type']=='CREDIT') {
+		$credits = $credits + convert_to_default_currency($row['currency'],$row['mysum']);
 
 	}
 
-	if ($row[type]=='DEBIT') {
-		$debits = $debits + convert_to_default_currency($row[currency],$row[mysum]);
+	if ($row['type']=='DEBIT') {
+		$debits = $debits + convert_to_default_currency($row['currency'],$row['mysum']);
 
 	}
 
@@ -337,7 +337,7 @@ while ($row=mysqli_fetch_array($result)) {
 	<font face="arial" size="1"><?php if ($row['type']=='DEBIT') { echo '<font color="green">';} else { echo '<font color="red">';} echo $row['type'].'</font>';?></font>
 	</td>
 	<td>
-	<font face="arial" size="1"><?php if ( $row['type']=='DEBIT') {;?><input type="button" value="Refund" onclick="if (!confirmLink(this, 'Refund, are you sure??')) return false;window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=refund&transaction_id=<?php echo $row[transaction_id];?>'; " ><?php }?></font>
+	<font face="arial" size="1"><?php if ( $row['type']=='DEBIT') {;?><input type="button" value="Refund" onclick="if (!confirmLink(this, 'Refund, are you sure??')) return false;window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=refund&transaction_id=<?php echo $row['transaction_id'];?>'; " ><?php }?></font>
 	</td>
 	</tr>
 <?php

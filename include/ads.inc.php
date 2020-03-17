@@ -303,7 +303,7 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 	} else {
 		
 		//$sql = "Select *  FROM `ads` as t1, `orders` AS t2 WHERE t1.ad_id=t2.ad_id AND t1.banner_id='$BID' and t1.order_id > 0 $where_sql ORDER BY $order $ord ";
-		$sql = "Select *  FROM `ads`, `orders` WHERE ads.ad_id=orders.ad_id AND ads.banner_id='".intval($BID)."' and ads.order_id > 0 $where_sql ORDER BY $order $ord ";
+		$sql = "Select *  FROM `ads`, `orders` WHERE ads.ad_id=orders.ad_id AND ads.banner_id='".intval($BID)."' and ads.order_id > 0 AND orders.status != 'deleted' $where_sql ORDER BY $order $ord ";
 
 	}
 
@@ -552,10 +552,10 @@ function insert_ad_data() {
 		$user_id = addslashes(session_id());
 	}
 
-	$order_id = (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) ? $_REQUEST['order_id'] : 0;
+	$order_id = (isset($_REQUEST['order_id']) && !empty($_REQUEST['order_id'])) ? $_REQUEST['order_id'] : (isset($_SESSION['MDS_order_id']) ? $_SESSION['MDS_order_id'] : 0);
 	$BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : 1;
 
-	if (isset($_REQUEST['ad_id']) && $_REQUEST['ad_id'] == '') {
+	if (isset($_REQUEST['ad_id']) && (empty($_REQUEST['ad_id']))) {
 
 		$ad_id = generate_ad_id ();
 		$now = (gmdate("Y-m-d H:i:s"));

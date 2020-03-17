@@ -176,6 +176,14 @@ require( "header.php" );
 		window.onresize = refreshSelectedLayers;
 		window.onload = load_order;
 
+		var grid_width = <?php echo $banner_data['G_WIDTH']?>;
+		var grid_height = <?php echo $banner_data['G_HEIGHT']?>;
+
+		var BLK_WIDTH = <?php echo $banner_data['BLK_WIDTH']?>;
+		var BLK_HEIGHT = <?php echo $banner_data['BLK_HEIGHT']?>;
+		var GRD_WIDTH = BLK_WIDTH * grid_width;
+		var GRD_HEIGHT = BLK_HEIGHT * grid_height;
+
 		function load_order() {
 			<?php
 			// get data for blocks in this order
@@ -202,6 +210,9 @@ require( "header.php" );
 			<?php
 			}
 			?>
+
+			const form1 = document.getElementById('form1');
+			form1.addEventListener('submit', form1Submit);
 		}
 
 		function update_order() {
@@ -281,13 +292,21 @@ require( "header.php" );
 				if (selectedBlocks[i] !== '') //If spot isn't empty
 				{
 					layer = document.getElementById("block" + selectedBlocks[i]); //Get layer element given blockID stored in selectedBlocks array
-					//Update layer relative to new pos of image grid
-					layer.style.left = gridLeft + parseFloat(layer.getAttribute("tempLeft"));
-					layer.style.top = gridTop + parseFloat(layer.getAttribute("tempTop"));
+					if (layer !== null) {
+						//Update layer relative to new pos of image grid
+						layer.style.left = gridLeft + parseFloat(layer.getAttribute("tempLeft"));
+						layer.style.top = gridTop + parseFloat(layer.getAttribute("tempTop"));
+					}
 				} //End of if(selectedBlockIDs[i] != ''....
 			} //End for loop
 		} //End testing()
 		//End -J- Edit: Custom functions for resize bug
+
+		function refresh_grid() {
+			var grid = document.getElementById("pixelimg");
+			var gridsrc = grid.getAttribute("src");
+			grid.setAttribute("src", gridsrc);
+		}
 
 		function add_block(clicked_block, OffsetX, OffsetY) {
 
@@ -305,19 +324,44 @@ require( "header.php" );
 
 		function remove_block(clicked_block, OffsetX, OffsetY) {
 			var myblock = document.getElementById("block" + clicked_block.toString());
-			myblock.remove();
+			if (myblock !== null) {
+				myblock.remove();
+			}
 
 			unreserve_block(clicked_block, OffsetX, OffsetY);
 		}
 
+		function invert_block(clicked_block, OffsetX, OffsetY) {
+			var myblock = document.getElementById("block" + clicked_block.toString());
+			if (myblock !== null) {
+				remove_block(clicked_block, OffsetX, OffsetY);
+			} else {
+				add_block(clicked_block, OffsetX, OffsetY);
+			}
+		}
+
+		function invert_blocks(clicked_block, OffsetX, OffsetY) {
+
+			// invert block
+			invert_block(clicked_block, OffsetX, OffsetY);
+		}
+
 		// Initialize
 		var block_str = "<?php echo $order_row['blocks']; ?>";
-		var trip_count = 0;
+		var selecting = false;
 
 		function select_pixels(e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (selecting) {
+				return false;
+			}
+			selecting = true;
 
 			// cannot select while AJAX is in action
 			if (document.getElementById('submit_button1').disabled) {
+				selecting = false;
 				return false;
 			}
 
@@ -326,38 +370,9 @@ require( "header.php" );
 			var OffsetX = pointer.map_x;
 			var OffsetY = pointer.map_y;
 
-			var BLK_WIDTH = <?php echo $banner_data['BLK_WIDTH']; ?>;
-			var BLK_HEIGHT = <?php echo $banner_data['BLK_HEIGHT']; ?>;
+			change_block_state(OffsetX, OffsetY);
 
-			trip_count = 1; // default
-
-			if (document.getElementById('sel4').checked) {
-				// select 4 at a time
-				trip_count = 4;
-				change_block_state(OffsetX, OffsetY);
-				change_block_state(OffsetX + BLK_WIDTH, OffsetY);
-				change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
-				change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
-
-			} else {
-
-				if (document.getElementById('sel6').checked) {
-
-					trip_count = 6;
-					change_block_state(OffsetX, OffsetY);
-					change_block_state(OffsetX + BLK_WIDTH, OffsetY);
-					change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
-					change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
-					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY);
-					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY + BLK_HEIGHT);
-
-				} else {
-					trip_count = 1;
-					change_block_state(OffsetX, OffsetY);
-				}
-
-			}
-
+			selecting = false;
 			return true;
 		}
 
@@ -376,32 +391,52 @@ require( "header.php" );
 				}
 			}
 			return IsNumber;
+
+		}
+
+		function get_block_position(block_id) {
+
+			var cell = "0";
+			var ret = {};
+			ret.x = 0;
+			ret.y = 0;
+
+			for (var i = 0; i < grid_height; i++) {
+				for (var j = 0; j < grid_width; j++) {
+					if (block_id === cell) {
+						ret.x = j * BLK_WIDTH;
+						ret.y = i * BLK_HEIGHT;
+						return ret;
+
+					}
+					cell++;
+				}
+			}
+
+			return ret;
+		}
+
+		function get_block_id_from_position(x, y) {
+
+			var id = 0;
+			for (var y2 = 0; y2 < GRD_HEIGHT; y2 += BLK_HEIGHT) {
+				for (var x2 = 0; x2 < GRD_WIDTH; x2 += BLK_WIDTH) {
+					if (x === x2 && y === y2) {
+						return id;
+					}
+					id++;
+				}
+			}
+
+			return id;
 		}
 
 		function change_block_state(OffsetX, OffsetY) {
 
-			var grid_width =<?php echo $banner_data['G_WIDTH']?>;
-			var grid_height =<?php echo $banner_data['G_HEIGHT']?>;
+			var clicked_block = ((OffsetX) / BLK_WIDTH) + ((OffsetY / BLK_HEIGHT) * (GRD_WIDTH / BLK_WIDTH));
+			var pointer = document.getElementById('block_pointer');
+			var pixelimg = document.getElementById('pixelimg');
 
-			var BLK_WIDTH =<?php echo $banner_data['BLK_WIDTH']?>;
-			var BLK_HEIGHT =<?php echo $banner_data['BLK_HEIGHT']?>;
-
-			var map_x = OffsetX;
-			var map_y = OffsetY;
-
-			var GRD_WIDTH = BLK_WIDTH * grid_width;
-			var clicked_block = ((map_x) / BLK_WIDTH) + ((map_y / BLK_HEIGHT) * (GRD_WIDTH / BLK_WIDTH));
-
-			var myblock = document.getElementById("block" + clicked_block.toString());
-			if (myblock === null) {
-				// add newly selected block
-				add_block(clicked_block, map_x, map_y);
-			} else {
-				// remove block
-				remove_block(clicked_block, map_x, map_y);
-			}
-
-			// Trip to the database.
 			var xmlhttp = false;
 			if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
 				xmlhttp = new XMLHttpRequest();
@@ -409,32 +444,29 @@ require( "header.php" );
 
 			xmlhttp.open("GET", "update_order.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&block_id=" + clicked_block.toString() + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
-			if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
-				document.getElementById('submit_button1').disabled = true;
-				document.getElementById('submit_button2').disabled = true;
-				var pointer = document.getElementById('block_pointer');
-				pointer.style.cursor = 'wait';
-				var pixelimg = document.getElementById('pixelimg');
-				pixelimg.style.cursor = 'wait';
-			}
+			document.getElementById('submit_button1').disabled = true;
+			document.getElementById('submit_button2').disabled = true;
+			pointer.style.cursor = 'wait';
+			pixelimg.style.cursor = 'wait';
 
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4) {
-					//
-
-					if (xmlhttp.responseText.indexOf('lock') > -1) {
-						alert(xmlhttp.responseText);
-
-					}
+					pointer = document.getElementById('block_pointer');
+					pixelimg = document.getElementById('pixelimg');
 
 					if ((xmlhttp.responseText === 'new')) {
-						//remove_block(clicked_block, map_x, map_y);
+						refresh_grid();
+						invert_blocks(clicked_block, OffsetX, OffsetY);
 
 					} else {
 						if (IsNumeric(xmlhttp.responseText)) {
 
-							// add block
+							// save order id
 							document.form1.order_id.value = xmlhttp.responseText;
+
+							refresh_grid();
+
+							invert_blocks(clicked_block, OffsetX, OffsetY);
 
 						} else {
 
@@ -443,32 +475,25 @@ require( "header.php" );
 								$label['max_blocks_selected'] = str_replace( '%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected'] );
 								?>
 								alert('<?php echo js_out_prep( $label['max_blocks_selected'] ); ?> ');
-							}
-
-							if (xmlhttp.responseText.indexOf('max_orders') > -1) {
+							} else if (xmlhttp.responseText.indexOf('max_orders') > -1) {
 								alert('<?php echo js_out_prep( $label['advertiser_max_order'] )?>');
+							} else if (xmlhttp.responseText.length > 0) {
+								alert(xmlhttp.responseText);
 							}
-
-							remove_block(clicked_block, map_x, map_y);
 						}
 					}
 
 					update_order();
-					trip_count--; // count down, enable button when 0
 
-					if (trip_count <= 0) {
-						document.getElementById('submit_button1').disabled = false;
-						document.getElementById('submit_button2').disabled = false;
-						var pointer = document.getElementById('block_pointer');
-						pointer.style.cursor = 'pointer';
-						var pixelimg = document.getElementById('pixelimg');
-						pixelimg.style.cursor = 'pointer';
-						trip_count = 0;
-					}
+					document.getElementById('submit_button1').disabled = false;
+					document.getElementById('submit_button2').disabled = false;
+					pointer.style.cursor = 'pointer';
+					pixelimg.style.cursor = 'pointer';
 				}
+
 			};
 
-			xmlhttp.send(null)
+			xmlhttp.send(null);
 		}
 
 		function implode(myArray) {
@@ -544,6 +569,20 @@ require( "header.php" );
 			var pointer = document.getElementById('block_pointer');
 			pointer.style.visibility = 'hidden';
 		}
+
+		function form1Submit(event) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			var myblocks = document.getElementById('blocks');
+
+			if (myblocks.innerHTML.trim() === '') {
+				alert("<?php echo $label['no_blocks_selected'] ?>");
+				return false;
+			} else {
+				document.form1.submit();
+			}
+		}
     </script>
 
     <style>
@@ -575,7 +614,7 @@ require( "header.php" );
         }
     </style>
 
-    <span onmouseout="this.style.visibility='hidden' " id='block_pointer' onclick="select_pixels(event);"><img src='pointer.png' width="<?php echo $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['BLK_HEIGHT']; ?>"></span>
+    <span onmouseout="this.style.visibility='hidden' " id='block_pointer' onclick="select_pixels(event);"><img src='pointer.png' width="<?php echo $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['BLK_HEIGHT']; ?>" alt=""></span>
 
     <p>
 		<?php echo $label['advertiser_sel_trail']; ?>
@@ -639,7 +678,7 @@ echo $label['advertiser_select_instructions2']; ?>
         <input type="hidden" value="1" name="select">
         <input type="hidden" value="<?php echo $BID; ?>" name="BID">
 
-        <input style="cursor: pointer;outline:none;border:none;" id="pixelimg" <?php if ( USE_AJAX == 'YES' ) { ?> onmousemove="show_pointer(event)" onclick="if (select_pixels(event)) return false;" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>">
+        <input style="cursor: pointer;outline:none;border:none;" id="pixelimg" <?php if ( USE_AJAX == 'YES' ) { ?> onmousemove="show_pointer(event)" onclick="if (select_pixels(event)) return false;" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>" alt=""/>
 
         <input type="hidden" name="action" value="select">
     </form>

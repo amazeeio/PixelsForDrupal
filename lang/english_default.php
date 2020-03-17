@@ -598,10 +598,37 @@ Thank you!
 Note: This is an automated email.
 ";
 
+$label["order_confirmed_email_template_html"]= "Dear %FNAME% %LNAME%,<br />
+<br />
+You have successfully placed an order at %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Confirmed<br />
+--------------------------<br />
+<br />
+Your order will be Completed as soon as the payment is cleared.<br />
+<br />
+Once your order is Completed, log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br /> 
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
 
-$label["order_completed_email_template"]=
 
-"RE: Order Status Change Notification.
+$label["order_completed_email_template"]= "RE: Order Status Change Notification.
 
 Dear %FNAME% %LNAME%,
 
@@ -629,6 +656,35 @@ Thank you!
 %SITE_URL%
 
 Note: This is an automated email.
+";
+
+$label["order_completed_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order was completed on %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Completed<br />
+--------------------------.<br />
+<br />
+Please Log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br /> 
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
 ";
 
 ########################################
@@ -666,6 +722,36 @@ Thank you!
 %SITE_URL%
 
 Note: This is an automated email.
+";
+
+$label["order_pending_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order status changed to 'Pending' on %SITE_NAME%.<br />
+<br />
+This means that you payment was recived, and the funds<br />
+are clearing. Once the funds are cleared, you will be<br />
+able to manage your pixels.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Pending<br />
+--------------------------.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br /> 
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
 ";
 ###########################################3
 
@@ -712,6 +798,44 @@ Thank you!
 Note: This is an automated email.
 ";
 
+$label["order_expired_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order status changed to 'Expired' on %SITE_NAME%.<br />
+<br />
+This means that your pixels have expired and will<br /> 
+no longer be show when the grid is next updated.<br />
+You may renew your order, Here is how to do it:<br />
+<br />
+1. Log in to your account<br />
+<br />
+2. Go to 'My Order History'<br />
+<br />
+3. Click on 'Renew' on the Order shown as 'expired'.<br />
+<br />
+4. Complete the payment<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Expired<br />
+--------------------------.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br /> 
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
+
 $label["order_completed_renewal_email_template"]=
 
 "RE: Order Status Change Notification.
@@ -743,6 +867,35 @@ Thank you!
 
 Note: This is an automated email.
 ";
+
+$label["order_completed_renewal_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order was renewed on %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID% (Carried over from %ORIGINAL_ORDER_ID%)<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Completed<br />
+--------------------------.<br />
+<br />
+Please Log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br /> 
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
 ###########################################
 
 ############################################
@@ -770,26 +923,25 @@ Webmaster,
 %SITE_NAME%
 %SITE_URL%";
 
-$label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
-<p>
-Thank you for signing-up to %SITE_NAME%! <br>
-</p>
-<p>
-IMPORTANT:
-</p><p>
-To complete the sign up process, you will need to visit the
-following link:<p>
-<p>
-<a href="%VERIFY_URL%">%VERIFY_URL%</a>
-</p><p>
-Your Validation Code is: %VALIDATION_CODE%
-</p>
-<br><p>
+$label['confirmation_email_templaltev2_html']='Dear %FNAME% %LNAME%,<br />
+<br />
+Thank you for signing-up to %SITE_NAME%!<br />
+<br />
+IMPORTANT:<br />
+<br />
+To complete the sign up process, you will need to visit the<br />
+following link:<br />
+<br />
+<a href="%VERIFY_URL%">%VERIFY_URL%</a><br />
+<br />
+Your Validation Code is: %VALIDATION_CODE%<br />
+<br />
 Regards,
-</p><p>
-Webmaster,<br>
-%SITE_NAME%<br>
-%SITE_URL%<br>'; 
+<br />
+Webmaster,<br />
+%SITE_NAME%<br />
+%SITE_URL%<br />
+';
 
 ############################################
 
@@ -810,6 +962,22 @@ Regards,
 Webmaster,
 %SITE_NAME%
 %SITE_URL%
+";
+
+$label["forget_pass_email_template_html"]= "Dear %FNAME% %LNAME%,<br />
+<br />
+Your %SITE_NAME% password has been reset!<br />
+<br />
+Here is your new password:<br />
+<br />
+Member ID: %MEMBERID%<br />
+Password: %PASSWORD%<br />
+<br />
+Regards,<br />
+<br />
+Webmaster,<br />
+%SITE_NAME%<br />
+%SITE_URL%<br />
 ";
 
 $label['publish_pixels_email_subject'] = "New published pixels on %SITE_NAME%";
@@ -833,22 +1001,16 @@ URLS:
 
 ";
 
-$label['publish_pixels_html_email_template'] =
-
-"
-
-<p>New pixels published on %SITE_NAME%!</p>
-
-Grid: %GRID_NAME%<br>
-Member ID: %MEMBERID%<br>
-
-URLS:<br>
-%URL_LIST%<br>
-<p>
-- To view and approve the pixels, please visit here:
-<a href='%VIEW_URL%'>Click Here...</a>
-</p>
-
+$label['publish_pixels_email_template_html'] = "New pixels published on %SITE_NAME%!<br />
+<br />
+Grid: %GRID_NAME%<br />
+Member ID: %MEMBERID%<br />
+<br />
+URLS:<br />
+%URL_LIST%<br />
+<br />
+- To view and approve the pixels, please visit here:<br />
+<a href='%VIEW_URL%'>Click Here...</a><br />
 ";
   
 $label['mouseover_ad_template']=
@@ -865,3 +1027,5 @@ $label['list_ads']='Ads(s)';
 $label['list_pixels']='Pixels';
 
 $label['reserving_pixels']='Please Wait! Reserving Pixels...';
+
+$label['no_blocks_selected'] = "You have no blocks selected.";

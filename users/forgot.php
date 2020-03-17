@@ -108,8 +108,8 @@ if ( $email != '' ) {
 			$subject = str_replace( "%SITE_NAME%", SITE_NAME, $subject );
 			//$subject = str_replace( "%MEMBERID%", trim( $row['Username'] ), $subject );
 
-			$message = "";
-			$message = str_replace( "%FNAME%", $row['FirstName'], $label["forget_pass_email_template"] );
+        $message = $label["forget_pass_email_template"];
+        $message = str_replace( "%FNAME%", $row['FirstName'], $message );
 			$message = str_replace( "%LNAME%", $row['LastName'], $message );
 			$message = str_replace( "%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $message );
 			$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
@@ -117,8 +117,14 @@ if ( $email != '' ) {
 			$message = str_replace( "%MEMBERID%", $row['Username'], $message );
 			$message = str_replace( "%PASSWORD%", $pass, $message );
 
-			$html_msg = $message;
-			$html_msg = str_replace( "\n", "<br />", $html_msg );
+        $html_msg = $label["forget_pass_email_template_html"];
+        $html_msg = str_replace( "%FNAME%", $row['FirstName'], $html_msg );
+        $html_msg = str_replace( "%LNAME%", $row['LastName'], $html_msg );
+        $html_msg = str_replace( "%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $html_msg );
+        $html_msg = str_replace( "%SITE_NAME%", SITE_NAME, $html_msg );
+        $html_msg = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $html_msg );
+        $html_msg = str_replace( "%MEMBERID%", $row['Username'], $html_msg );
+        $html_msg = str_replace( "%PASSWORD%", $pass, $html_msg );
 
 			if ( USE_SMTP == 'YES' ) {
 				$mail_id = queue_mail( $to, $row['FirstName'] . " " . $row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 6 );

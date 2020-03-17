@@ -28,7 +28,9 @@
  *        https://milliondollarscript.com/
  *
  */
-session_start();
+session_start([
+	'name' => 'MDSADMIN_PHPSESSID',
+]);
 define( 'NO_HOUSE_KEEP', 'YES' );
 
 require( '../config.php' );

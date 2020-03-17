@@ -200,6 +200,17 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 		while ( $row = mysqli_fetch_array( $result ) ) {
 			$blocks[ $row['block_id'] ] = 'reserved';
 		}
+
+		// from temp_orders table
+		$sql = "SELECT blocks FROM temp_orders WHERE banner_id='" . intval( $BID ) . "'";
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
+
+		while ( $row = mysqli_fetch_array( $result ) ) {
+			$entries = explode( ",", $row['blocks'] );
+			foreach ( $entries as $entry ) {
+				$blocks[ $entry ] = 'reserved';
+			}
+		}
 	}
 
 	// preload selected blocks

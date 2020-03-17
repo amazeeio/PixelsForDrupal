@@ -316,7 +316,6 @@ if ( ! is_numeric( $BID ) ) {
 			var y = window.bubblebox.offsetTop;
 			var x = window.bubblebox.offsetLeft;
 
-		//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
 			if ((y < window.bubblebox.ypos) || (y > window.bubblebox.ypos) || (x < window.bubblebox.xpos) || (x > window.bubblebox.xpos)) {
 			return false;
 		} else {
@@ -352,8 +351,6 @@ if ( ! is_numeric( $BID ) ) {
 			}
 			}
 		} 
-
-	///////////////
 
 	// This function is used for the instant pop-up box
 	function moveBox2() {
@@ -394,20 +391,6 @@ if ( ! is_numeric( $BID ) ) {
 		// check if we can XMLHttpRequest
 
 		var xmlhttp=false;
-		/*@cc_on @*/
-		/*@if (@_jscript_version >= 5)
-		// JScript gives us Conditional compilation, we can cope with old IE versions.
-		// and security blocked creation of the objects.
-		 try {
-		  xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		 } catch (e) {
-		  try {
-		   xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		  } catch (E) {
-		   xmlhttp = false;
-		  }
-		 }
-		@end @*/
 		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
 		  xmlhttp = new XMLHttpRequest();
 		}
@@ -434,25 +417,7 @@ if ( ! is_numeric( $BID ) ) {
 			return true;
 		}
 
-		//////////////////////////////////////////////////
-		// AJAX Magic.
-		//////////////////////////////////////////////////
-
 		var xmlhttp=false;
-		/*@cc_on @*/
-		/*@if (@_jscript_version >= 5)
-		// JScript gives us Conditional compilation, we can cope with old IE versions.
-		// and security blocked creation of the objects.
-		 try {
-		  xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-		 } catch (e) {
-		  try {
-		   xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-		  } catch (E) {
-		   xmlhttp = false;
-		  }
-		 }
-		@end @*/
 		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
 		  xmlhttp = new XMLHttpRequest();
 		}
@@ -461,23 +426,8 @@ if ( ! is_numeric( $BID ) ) {
 		
 		echo "&t=".time(); ?>", true);
 
-		//alert("before trup_count:"+trip_count);
-
-		if (trip_count != 0){ // trip_count: global variable counts how many times it goes to the server
-			// waiting state...
-			
-		}
-
-
 		xmlhttp.onreadystatechange=function() {
 			if (xmlhttp.readyState==4) {
-				//
-
-				
-				//alert(xmlhttp.responseText);
-
-				
-
 				if (xmlhttp.responseText.length > 0) {
 					bubble.innerHTML = xmlhttp.responseText;
 					strCache[''+aid] = xmlhttp.responseText
@@ -491,15 +441,6 @@ if ( ! is_numeric( $BID ) ) {
 				
 
 				trip_count--;
-
-				//document.getElementById('submit_button1').disabled=false;
-				//document.getElementById('submit_button2').disabled=false;
-
-				//var pointer = document.getElementById('block_pointer');
-				//pointer.style.cursor='pointer';
-				//var pixelimg = document.getElementById('pixelimg');
-				//pixelimg.style.cursor='pointer';
-				
 			}
 			
 			};
@@ -509,10 +450,7 @@ if ( ! is_numeric( $BID ) ) {
 
 	}
 
-////////////////
-
-	function  sB(e, str, area, aid)
-	{
+	function sB(e, str, area, aid) {
 		window.clearTimeout(timeoutId);
 
 		var relTarg;
@@ -528,71 +466,47 @@ if ( ! is_numeric( $BID ) ) {
 
 			
 			hideBubble(e);
-	
-		//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
-	//	window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY;
-		//str=str+"hello: "+bubble.clientWidth;
-			//b.filter="progid:DXImageTransform.Microsoft.Blinds(Duration=0.5)";
 
 			document.getElementById('content').innerHTML=str;
-				trip_count++;
+			trip_count++;
 			
 			fillAdContent(aid, document.getElementById('content'));
-
-			//alert(document.getElementById('bubble').innerHTML);
 		}
 
-			var mytop = is_top_available(e);
-			var mybot = is_bot_available(e);
-			var myright = is_right_available(e);
-			var myleft = is_left_available(e);
-
-		//window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY+" mytop:"+mytop+" mybot:"+mybot+" myright:"+myright+" myleft:"+myleft+" | clientWidth:"+bubble.clientWidth+" clientHeight:"+bubble.clientHeight+" ww:"+winWidth+" wh:"+winHeight;
+        var mytop = is_top_available(e);
+        var mybot = is_bot_available(e);
+        var myright = is_right_available(e);
+        var myleft = is_left_available(e);
 
 		if (mytop)
 		{
 			// move to the top
-			//b.top=e.clientY-bubble.clientHeight-v_padding;
-				window.bubblebox.ypos = e.clientY - window.bubblebox.clientHeight - v_padding;
-			//alert(bubble.xpos);
+			window.bubblebox.ypos = e.clientY - window.bubblebox.clientHeight - v_padding;
 		}
 
 		if (myright)
 		{
 			// move to the right
-			//b.left=e.clientX+h_padding;//+bubble.clientWidth;
-				window.bubblebox.xpos = e.clientX + h_padding;
+			window.bubblebox.xpos = e.clientX + h_padding;
 		}
 
 		if (myleft)
 		{
 			// move to the left
-			//b.left=e.clientX-bubble.clientWidth-h_padding ;
-				window.bubblebox.xpos = e.clientX - window.bubblebox.clientWidth - h_padding;
+			window.bubblebox.xpos = e.clientX - window.bubblebox.clientWidth - h_padding;
 		}
 
 		
-
-		if (mybot)
-		{
-			// move to the bottom
-			//b.top=e.clientY+v_padding;
-				window.bubblebox.ypos = e.clientY + v_padding;
+        if (mybot) {
+            window.bubblebox.ypos = e.clientY + v_padding;
 		}
 	
 		b.visibility='visible';
-		
-
-		
-		
-		//ChangeBgd(bubble);
 
 		<?php
 		if (ENABLE_MOUSEOVER=='POPUP') {
 		?>
 
-			//bubble.style.top=e.clientY;
-			//bubble.style.left=e.clientX;
 			moveBox2();
 			//moveBox(bubble);
 			window.setTimeout("moveBox2()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
@@ -601,7 +515,6 @@ if ( ! is_numeric( $BID ) ) {
 
 		?>
 			moveBox();
-			//moveBox(bubble);
 			window.setTimeout("moveBox()", <?php if (!is_numeric(ANIMATION_SPEED)) { echo '10'; } else { echo ANIMATION_SPEED; } ?>);
 
 		<?php

@@ -4,7 +4,6 @@ require_once "../config.php";
 
 // https://www.coinpayments.net/merchant-tools
 // https://github.com/sigismund/coinpayments
-//error_log( print_r( $_POST, true ) );
 
 $_PAYMENT_OBJECTS['CoinPayments'] = new CoinPayments;
 
@@ -141,8 +140,6 @@ if ( isset( $_POST['txn_id'] ) && $_POST['txn_id'] != '' ) {
 			$transaction['invoice']           = filter_var( $_POST['invoice'], FILTER_VALIDATE_INT );
 			$transaction['received_amount']   = filter_var( $_POST['received_amount'], FILTER_VALIDATE_FLOAT );
 			$transaction['received_confirms'] = filter_var( $_POST['received_confirms'], FILTER_VALIDATE_INT );
-
-			// error_log( print_r( $transaction, true ) );
 
 			$sql = "SELECT * FROM orders WHERE order_id='" . intval($transaction['invoice']) . "'";
 			$result = mysqli_query( $GLOBALS['connection'], $sql ) or coinpayments_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );

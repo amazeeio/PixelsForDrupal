@@ -772,15 +772,6 @@ if ( $has_packages ) {
 		<?php echo $label['upload_pix_description']; ?>
     </p>
     <p>
-		<?php
-
-		if ( USE_AJAX == 'SIMPLE' ) {
-			$order_page = 'order_pixels.php';
-		} else {
-			$order_page = 'select.php';
-		}
-
-		?>
     <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
         <strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;'/><br/>
         <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>

@@ -19,6 +19,11 @@
     "imagine/imagine": ">=1.2.2",
     "ezyang/htmlpurifier": ">=4.11.0",
     "phpmailer/phpmailer": ">=6.0.7",
-    "sigismund/coinpayments": ">=1.0.2"
+    "coinpaymentsnet/coinpayments-php": ">=1.4",
+    "ext-mysqli": "*",
+    "ext-gd": "*",
+    "ext-json": "*",
+    "ext-iconv": "*",
+    "ext-mbstring": "*"
   }
 }

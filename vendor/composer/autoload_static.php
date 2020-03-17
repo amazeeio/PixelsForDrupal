@@ -11,10 +11,6 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Sigismund\\CoinPayments\\' => 23,
-        ),
         'P' => 
         array (
             'PHPMailer\\PHPMailer\\' => 20,
@@ -26,10 +22,6 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
     );
 
     public static $prefixDirsPsr4 = array (
-        'Sigismund\\CoinPayments\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sigismund/coinpayments/src',
-        ),
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
@@ -50,12 +42,19 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
         ),
     );
 
+    public static $classMap = array (
+        'CoinpaymentsAPI' => __DIR__ . '/..' . '/coinpaymentsnet/coinpayments-php/src/CoinpaymentsAPI.php',
+        'CoinpaymentsCurlRequest' => __DIR__ . '/..' . '/coinpaymentsnet/coinpayments-php/src/CoinpaymentsCurlRequest.php',
+        'CoinpaymentsValidator' => __DIR__ . '/..' . '/coinpaymentsnet/coinpayments-php/src/CoinpaymentsValidator.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea::$classMap;
 
         }, null, ClassLoader::class);
     }

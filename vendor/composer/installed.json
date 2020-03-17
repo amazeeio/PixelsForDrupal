@@ -1,5 +1,66 @@
 [
     {
+        "name": "coinpaymentsnet/coinpayments-php",
+        "version": "v1.4",
+        "version_normalized": "1.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/CoinPaymentsNet/coinpayments-php.git",
+            "reference": "e7e9f8820c2179f49605aa861d7c7bd485b3c88c"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/CoinPaymentsNet/coinpayments-php/zipball/e7e9f8820c2179f49605aa861d7c7bd485b3c88c",
+            "reference": "e7e9f8820c2179f49605aa861d7c7bd485b3c88c",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.5.0"
+        },
+        "time": "2018-09-15T00:00:00+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "/src"
+            ],
+            "exclude-from-classmap": [
+                "/tests"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Cole",
+                "email": "cole@coinpayments.net",
+                "homepage": "https://www.coinpayments.net",
+                "role": "Developer"
+            }
+        ],
+        "description": "A PHP wrapper for the CoinPayments.net v1 API.",
+        "homepage": "https://www.coinpayments.net/apidoc-intro",
+        "keywords": [
+            "api",
+            "bitcoin",
+            "btc",
+            "coinpayments",
+            "crypto",
+            "cryptocurrency",
+            "currency",
+            "ethereum",
+            "litecoin",
+            "merchant",
+            "payment gateway",
+            "payment method",
+            "payment processor",
+            "paypal",
+            "php"
+        ]
+    },
+    {
         "name": "ezyang/htmlpurifier",
         "version": "v4.12.0",
         "version_normalized": "4.12.0.0",
@@ -110,17 +171,17 @@
     },
     {
         "name": "phpmailer/phpmailer",
-        "version": "v6.1.4",
-        "version_normalized": "6.1.4.0",
+        "version": "v6.1.5",
+        "version_normalized": "6.1.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/PHPMailer/PHPMailer.git",
-            "reference": "c5e61d0729507049cec9673aa1a679f9adefd683"
+            "reference": "a8bf068f64a580302026e484ee29511f661b2ad3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/c5e61d0729507049cec9673aa1a679f9adefd683",
-            "reference": "c5e61d0729507049cec9673aa1a679f9adefd683",
+            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/a8bf068f64a580302026e484ee29511f661b2ad3",
+            "reference": "a8bf068f64a580302026e484ee29511f661b2ad3",
             "shasum": ""
         },
         "require": {
@@ -141,7 +202,7 @@
             "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
             "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
         },
-        "time": "2019-12-10T11:17:38+00:00",
+        "time": "2020-03-14T14:23:48+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -171,52 +232,5 @@
             }
         ],
         "description": "PHPMailer is a full-featured email creation and transfer class for PHP"
-    },
-    {
-        "name": "sigismund/coinpayments",
-        "version": "v1.0.2",
-        "version_normalized": "1.0.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sigismund/coinpayments.git",
-            "reference": "f67ee7363c9687041b00e0191c1281841bb7bd98"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sigismund/coinpayments/zipball/f67ee7363c9687041b00e0191c1281841bb7bd98",
-            "reference": "f67ee7363c9687041b00e0191c1281841bb7bd98",
-            "shasum": ""
-        },
-        "require-dev": {
-            "phpunit/phpunit": "^7.2@dev",
-            "squizlabs/php_codesniffer": "^3.0@dev"
-        },
-        "time": "2018-11-05T07:32:43+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Sigismund\\CoinPayments\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Žiga Drnovšček",
-                "email": "web@sigismund.si"
-            }
-        ],
-        "description": "CoinPayments API client",
-        "keywords": [
-            "coinp ayments",
-            "coinpayments",
-            "crypto",
-            "crypto payment",
-            "cryptocurrency",
-            "payment processor"
-        ]
     }
 ]

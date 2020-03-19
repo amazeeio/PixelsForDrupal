@@ -44,6 +44,11 @@ if ( isset( $_REQUEST['cancel'] ) && $_REQUEST['cancel'] == 'yes' && isset( $_RE
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 	if ( mysqli_num_rows( $result ) > 0 ) {
 		delete_order( intval( $_REQUEST['order_id'] ) );
+
+		// if deleted order is the current order unset current order id
+		if($_REQUEST['order_id'] == $_SESSION['MDS_order_id']) {
+			unset($_SESSION['MDS_order_id']);
+		}
 	}
 }
 

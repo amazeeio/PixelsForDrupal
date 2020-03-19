@@ -23,6 +23,7 @@
     "ext-gd": "*",
     "ext-json": "*",
     "ext-iconv": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-curl": "*"
   }
 }

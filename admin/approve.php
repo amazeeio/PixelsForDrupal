@@ -43,68 +43,58 @@ echo '</script>';
 $BID = ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) ? $f2->bid( $_REQUEST['BID'] ) : $BID = 1;
 
 $bid_sql = " AND banner_id=$BID ";
-
 if ( ( $BID == 'all' ) || ( $BID == '' ) ) {
 	$BID     = '';
 	$bid_sql = "  ";
 }
 
 if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'approve' ) {
-
-	$sql = "UPDATE blocks set approved='Y', published='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' $bid_sql";
+	$sql = "UPDATE blocks set approved='Y', published='N' WHERE order_id=" . intval( $_REQUEST['order_id'] ) . " {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	$sql = "UPDATE orders set approved='Y', published='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' $bid_sql";
+	$sql = "UPDATE orders set approved='Y', published='N' WHERE order_id=" . intval( $_REQUEST['order_id'] ) . " {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	echo "Advertiser Approved.<br>";
+	echo "Order Approved.<br>";
 }
 
 if ( isset( $_REQUEST['mass_approve'] ) && $_REQUEST['mass_approve'] != '' ) {
+	if ( isset( $_REQUEST['orders'] ) && sizeof( $_REQUEST['orders'] ) > 0 ) {
 
-	if ( isset( $_REQUEST['users'] ) && sizeof( $_REQUEST['users'] ) > 0 ) {
-
-		foreach ( $_REQUEST['users'] as $user_id ) {
-
-			$sql = "UPDATE blocks set approved='Y', published='N' WHERE user_id='" . intval( $user_id ) . "' $bid_sql";
+		foreach ( $_REQUEST['orders'] as $order_id ) {
+			$sql = "UPDATE blocks set approved='Y', published='N' WHERE order_id='" . intval( $order_id ) . "' {$bid_sql}";
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-			$sql = "UPDATE orders set approved='Y', published='N' WHERE user_id='" . intval( $user_id ) . "' $bid_sql";
+			$sql = "UPDATE orders set approved='Y', published='N' WHERE order_id='" . intval( $order_id ) . "' {$bid_sql}";
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
-		echo "Advertiser(s) Approved.<br>";
-	}
 
+		echo "Orders Approved.<br>";
+	}
 }
 
 if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'disapprove' ) {
-
-	$sql = "UPDATE blocks set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' $bid_sql";
+	$sql = "UPDATE blocks set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	$sql = "UPDATE orders set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' $bid_sql";
+	$sql = "UPDATE orders set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	echo "Advertiser Disapproved.<br>";
+	echo "Order Disapproved.<br>";
 }
 
 if ( isset( $_REQUEST['mass_disapprove'] ) && $_REQUEST['mass_disapprove'] != '' ) {
+	if ( isset( $_REQUEST['orders'] ) && sizeof( $_REQUEST['orders'] ) > 0 ) {
 
-	if ( isset( $_REQUEST['users'] ) && sizeof( $_REQUEST['users'] ) > 0 ) {
-
-		foreach ( $_REQUEST['users'] as $user_id ) {
-
-			$sql = "UPDATE blocks set approved='N' WHERE user_id=" . intval( $user_id ) . " $bid_sql";
+		foreach ( $_REQUEST['orders'] as $order_id ) {
+			$sql = "UPDATE blocks set approved='N' WHERE order_id=" . intval( $order_id ) . " {$bid_sql}";
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-			$sql = "UPDATE orders set approved='N' WHERE user_id=" . intval( $user_id ) . " $bid_sql";
+			$sql = "UPDATE orders set approved='N' WHERE order_id=" . intval( $order_id ) . " {$bid_sql}";
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-
 		}
-		echo "Advertiser(s) Disapproved.<br>";
 
+		echo "Orders Disapproved.<br>";
 	}
-
 }
 
 if ( isset( $_REQUEST['do_it_now'] ) && $_REQUEST['do_it_now'] == 'true' ) {
 
 	// process all grids
-
 	$sql = "select * from banners ";
 	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 	while ( $row = mysqli_fetch_array( $result ) ) {
@@ -143,16 +133,19 @@ if ( isset( $_REQUEST['do_it_now'] ) && $_REQUEST['do_it_now'] == 'true' ) {
 </script>
 
 </head>
+
 <h3>Remember to process your Grid Image(s) <a href="process.php">here</a></h3>
 
 <form name="bidselect" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <input type="hidden" name="old_order_id" value="<?php //echo $order_id; ?>">
     <input type="hidden" value="<?php echo $_REQUEST['app']; ?>" name="app">
     <label>
-        Select Grid: <select name="BID" onchange="document.bidselect.submit()">
-            <option value='all' <?php if ( $f2->bid( $_REQUEST['BID'] ) == 'all' ) {
-				echo 'selected';
-			} ?>>Show All
+        Select Grid:
+        <select name="BID" onchange="document.bidselect.submit()">
+            <option value='all'
+				<?php if ( $f2->bid( $_REQUEST['BID'] ) == 'all' ) {
+					echo 'selected';
+				} ?>>Show All
             </option>
 			<?php
 
@@ -167,13 +160,16 @@ if ( isset( $_REQUEST['do_it_now'] ) && $_REQUEST['do_it_now'] == 'true' ) {
 					$sel = '';
 
 				}
-				echo '<option ' . $sel . ' value=' . $row['banner_id'] . '>' . $row['name'] . '</option>';
+
+				echo '
+                    <option
+                    ' . $sel . ' value=' . $row['banner_id'] . '>' . $row['name'] . '</option>';
+
 			}
 			?>
         </select>
     </label>
 </form>
-
 
 <?php
 
@@ -187,9 +183,7 @@ if ( $_REQUEST['save_links'] != '' ) {
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 			$i ++;
 		}
-
 	}
-
 }
 
 if ( $_REQUEST['edit_links'] != '' ) {
@@ -209,10 +203,10 @@ if ( $_REQUEST['edit_links'] != '' ) {
 
 			<?php
 
-			$sql = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=" . intval( $_REQUEST['user_id'] ) . "  $bid_sql group by url ";
-
+			$sql      = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id FROM blocks WHERE user_id=" . intval( $_REQUEST['user_id'] ) . "  $bid_sql group by url ";
 			$m_result = mysqli_query( $GLOBALS['connection'], $sql );
-			$i        = 0;
+
+			$i = 0;
 			while ( $m_row = mysqli_fetch_array( $m_result ) ) {
 				$i ++;
 				if ( $m_row['url'] != '' ) {
@@ -234,15 +228,30 @@ if ( $_REQUEST['edit_links'] != '' ) {
 
 }
 
-$sql = "SELECT FirstName, LastName, Username, Email,ID, alt_text, url, t1.status as STAT, approved, banner_id FROM blocks as t1, users as t2 where t1.user_id=t2.ID AND status='sold' $bid_sql order by approved  DESC";
+$bid_sql2 = " AND blocks.banner_id=$BID ";
+if ( ( $BID == 'all' ) || ( $BID == '' ) ) {
+	$BID      = '';
+	$bid_sql2 = "";
+}
+$sql = "
+SELECT orders.order_date, orders.order_id, blocks.approved, blocks.status, blocks.user_id, blocks.banner_id, blocks.ad_id, ads.1, ads.2, users.FirstName, users.LastName, users.Username, users.Email 
+    FROM ads, blocks, orders, users
+    WHERE blocks.status='ordered' 
+    AND orders.status='confirmed'
+    AND orders.user_id=users.ID
+    AND orders.order_id=blocks.order_id
+    AND blocks.order_id=ads.order_id
+    {$bid_sql2}
+    ORDER BY orders.order_date;
+";
 $result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 $count = mysqli_num_rows( $result );
 
+$offset = intval( $_REQUEST['offset'] );
+
 $records_per_page = 20;
 if ( $count > $records_per_page ) {
-
-	mysqli_data_seek( $result, $_REQUEST['offset'] );
-
+	mysqli_data_seek( $result, $offset );
 }
 
 $pages    = ceil( $count / $records_per_page );
@@ -269,110 +278,77 @@ if ( $count > $records_per_page ) {
     <input type="hidden" name="app" value="<?php echo $_REQUEST['app']; ?>">
     <input type="hidden" name="all_go" value="">
     <table width="100%" cellSpacing="1" cellPadding="3" align="center" bgColor="#d9d9d9" border="0">
-
         <tr>
             <td colspan="12">
-
                 With selected: <input type="submit" value='Approve' style="font-size: 9px; background-color: #33FF66 " onclick="if (!confirmLink(this, 'Approve for all selected, are you sure?')) return false" name='mass_approve'>
                 <input type="submit" value='Disapprove' style="font-size: 9px; background-color: #FF6600" onclick="if (!confirmLink(this, 'Disapprove all selected, are you sure?')) return false" name='mass_disapprove'>
                 <input type="checkbox" name="do_it_now" <?php if ( ( $_REQUEST['do_it_now'] == 'true' ) ) {
 					echo ' checked ';
 				} ?> value="true"> Process Grid Images immediately after approval / disapproval <br>
-
-
             </td>
         </tr>
         <tr>
-
         <tr>
-            <td><b><font face="Arial" size="2"><input type="checkbox" onClick="checkBoxes(this, 'users[]');"></td>
-
-            <td><b><font face="Arial" size="2">Customer Name</font></b></td>
-            <td><b><font face="Arial" size="2">Username & ID</font></b></td>
-            <td><b><font face="Arial" size="2">Email</font></b></td>
-            <td><b><font face="Arial" size="2">Grid</font></b></td>
-            <td><b><font face="Arial" size="2">Link Text(s) & Link URL(s)</font></b></td>
-
-            <td><b><font face="Arial" size="2">Action</font></b></td>
+            <td><b><input type="checkbox" onClick="checkBoxes(this, 'orders[]');"></td>
+            <td><b>Order ID</b></td>
+            <td><b>Order Date</b></td>
+            <td><b>Customer Name</b></td>
+            <td><b>Username & ID</b></td>
+            <td><b>Email</b></td>
+            <td><b>Grid</b></td>
+            <td><b>Image</b></td>
+            <td><b>Link Text(s) & Link URL(s)</b></td>
+            <td><b>Action</b></td>
         </tr>
-
 		<?php
+
+		// TODO: use form editor field keys
 
 		$i = 0;
 		while ( ( $row = mysqli_fetch_array( $result, MYSQLI_ASSOC ) ) && ( $i < $records_per_page ) ) {
-
-			// is it approved?
-
-			$sql      = "SELECT alt_text, url, approved  FROM blocks WHERE user_id=" . intval( $row['ID'] ) . " and approved='N' $bid_sql and banner_id=" . intval( $row['banner_id'] );
-			$a_result = mysqli_query( $GLOBALS['connection'], $sql );
-			$a_row    = mysqli_fetch_array( $a_result );
-
-			if ( $_REQUEST['app'] == 'Y' ) {
-				// let through approved pixels only
-				if ( $a_row['approved'] == 'N' ) {
-					continue; // skip
-				}
-
-			} else {
-				// let through disapproved pixels only
-				if ( $a_row['approved'] != 'N' ) {
-
-					continue; // skip
-				}
-
-			}
-
 			$i ++;
-
 			?>
             <tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
-                <td><input type="checkbox" name="users[]" value="<?php echo $row['ID']; ?>"></td>
+                <td><input type="checkbox" name="orders[]" value="<?php echo $row['ID']; ?>"></td>
+                <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['order_id']; ?></span></td>
+                <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['order_date']; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['FirstName'] . " " . $row['LastName']; ?></span></td>
-                <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['Username']; ?> (#<?php echo $row['ID']; ?>)</span></td>
+                <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['Username']; ?> (#<?php echo $row['user_id']; ?>)</span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['Email']; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php
 						$sql      = "SELECT name from banners where banner_id=" . intval( $row['banner_id'] );
 						$t_result = mysqli_query( $GLOBALS['connection'], $sql );
 						$t_row    = mysqli_fetch_array( $t_result );
 						echo $t_row['name']; ?></span></td>
+                <td><span style="font-family: Arial,serif; font-size: x-small; "><img src="get_order_image.php?BID=<?php echo $row['banner_id']; ?>&aid=<?php echo $row['ad_id']; ?>" alt=""/></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php
 
-						$sql      = "SELECT alt_text, url, count(alt_text) AS COUNT, banner_id, ad_id FROM blocks WHERE user_id=" . intval( $row['ID'] ) . " and banner_id=" . intval( $row['banner_id'] ) . " $bid_sql group by url ";
-						$m_result = mysqli_query( $GLOBALS['connection'], $sql );
-						while ( $m_row = mysqli_fetch_array( $m_result ) ) {
-							if ( $m_row['url'] != '' ) {
-								$js_str = " onmousemove=\"sB(event,'" . htmlspecialchars( str_replace( "'", "\'", ( $m_row['alt_text'] ) ) ) . "',this, " . $m_row['ad_id'] . ")\" onmouseout=\"hI()\" ";
+						if ( $row['2'] != '' ) {
+							$js_str = " onmousemove=\"sB(event,'" . htmlspecialchars( str_replace( "'", "\'", ( $row['1'] ) ) ) . "',this, " . $row['ad_id'] . ")\" onmouseout=\"hI()\" ";
 
-								echo "<span style=\"font-size: xx-small; \">" . $m_row['url'] . " - <a $js_str href='" . $m_row['url'] . "' target='_blank' >" . $m_row['alt_text'] . "</a> (" . $m_row['COUNT'] . ")</span><br>";
-							}
+							echo "<span style=\"font-size: xx-small; \">" . $row['2'] . " - <a $js_str href='" . $row['2'] . "' target='_blank' >" . $row['1'] . "</a></span><br>";
 						}
 
-						echo "<a target='_blank' href='show_map.php?user_id=" . $row['ID'] . "&BID=" . $row['banner_id'] . "'>[View Pixels...]</a>";
-
+						echo "<a target='_blank' href='show_map.php?user_id=" . $row['user_id'] . "&BID=" . $row['banner_id'] . "'>[View Pixels...]</a>";
 						?></span>
                 </td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php
-						if ( $a_row['approved'] == 'N' ) {
+						if ( $row['approved'] == 'N' ) {
 							?>
-                            <input type="button" style="font-size: 9px; background-color: #33FF66" value="Approve" onclick=" window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=approve&BID=<?php echo $row['banner_id']; ?>&user_id=<?php echo $row['ID'] . $date_link; ?>&offset=<?php $_REQUEST['offset']; ?>&app=<?php echo $_REQUEST['app']; ?>&do_it_now='+document.form1.do_it_now.checked "><?php
+                            <input type="button" style="font-size: 9px; background-color: #33FF66" value="Approve" onclick=" window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=approve&BID=<?php echo $row['banner_id']; ?>&user_id=<?php echo $row['user_id']; ?>&order_id=<?php echo $row['order_id']; ?>&offset=<?php $_REQUEST['offset']; ?>&app=<?php echo $_REQUEST['app']; ?>&do_it_now='+document.form1.do_it_now.checked "><?php
 						}
 
-						if ( $a_row['approved'] != 'N' ) {
+						if ( $row['approved'] != 'N' ) {
 							?>
-                            <input type="button" style="font-size: 9px;" value="Disapprove" onclick=" window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=disapprove&BID=<?php echo $row['banner_id']; ?>&user_id=<?php echo $row['ID'] . $date_link; ?>&offset=<?php $_REQUEST['offset']; ?>&app=<?php echo $_REQUEST['app']; ?>&do_it_now='+document.form1.do_it_now.checked "><?php
+                            <input type="button" style="font-size: 9px;" value="Disapprove" onclick=" window.location='<?php echo $_SERVER['PHP_SELF']; ?>?action=disapprove&BID=<?php echo $row['banner_id']; ?>&user_id=<?php echo $row['user_id']; ?>&order_id=<?php echo $row['order_id']; ?>&offset=<?php $_REQUEST['offset']; ?>&app=<?php echo $_REQUEST['app']; ?>&do_it_now='+document.form1.do_it_now.checked "><?php
 						}
 
 						?>
 	 </span></td>
             </tr>
-
-
 			<?php
-
 		}
-
 		?>
-
     </table>
 </form>
 <?php

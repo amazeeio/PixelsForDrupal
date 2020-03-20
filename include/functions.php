@@ -1445,16 +1445,18 @@ function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
 		$page = $_SERVER['PHP_SELF'];
 	}
 
-	$offset   = $_REQUEST["offset"];
+	$offset   = intval($_REQUEST["offset"]);
 	$show_emp = $_REQUEST["show_emp"];
 
 	if ( $show_emp != '' ) {
 		$show_emp = "&show_emp=" . urlencode( $show_emp );
 	}
+
 	$cat = $_REQUEST["cat"];
 	if ( $cat != '' ) {
 		$cat = ( "&cat=$cat" );
 	}
+
 	$order_by = $_REQUEST["order_by"];
 	if ( $order_by != '' ) {
 		$order_by = "&order_by=" . urlencode( $order_by );
@@ -1499,7 +1501,8 @@ function nav_pages_struct( $q_string, $count, $REC_PER_PAGE ) {
 		}
 
 		$p ++;
-		$off = $off + $REC_PER_PAGE;
+
+		$off = intval($off) + $REC_PER_PAGE;
 	}
 
 	if ( $next < $count ) {

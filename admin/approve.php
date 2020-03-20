@@ -109,7 +109,7 @@ if ( isset( $_REQUEST['do_it_now'] ) && $_REQUEST['do_it_now'] == 'true' ) {
 
 <script>
 	function confirmLink(theLink, theConfirmMsg) {
-		if (theConfirmMsg === '' || typeof (window.opera) != 'undefined') {
+		if (theConfirmMsg === '') {
 			return true;
 		}
 
@@ -309,7 +309,7 @@ if ( $count > $records_per_page ) {
 			$i ++;
 			?>
             <tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
-                <td><input type="checkbox" name="orders[]" value="<?php echo $row['ID']; ?>"></td>
+                <td><input type="checkbox" name="orders[]" value="<?php echo $row['order_id']; ?>"></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['order_id']; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['order_date']; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['FirstName'] . " " . $row['LastName']; ?></span></td>

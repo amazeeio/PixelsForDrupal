@@ -235,14 +235,14 @@ if ( ( $BID == 'all' ) || ( $BID == '' ) ) {
 }
 $sql = "
 SELECT orders.order_date, orders.order_id, blocks.approved, blocks.status, blocks.user_id, blocks.banner_id, blocks.ad_id, ads.1, ads.2, users.FirstName, users.LastName, users.Username, users.Email 
-    FROM ads, blocks, orders, users
-    WHERE blocks.status='ordered' 
-    AND orders.status='confirmed'
-    AND orders.user_id=users.ID
-    AND orders.order_id=blocks.order_id
-    AND blocks.order_id=ads.order_id
-    {$bid_sql2}
-    ORDER BY orders.order_date;
+    FROM ads, blocks, orders, users 
+    WHERE orders.approved='N' 
+      AND orders.user_id=users.ID 
+      AND orders.order_id=blocks.order_id 
+      AND blocks.order_id=ads.order_id 
+      {$bid_sql2}
+    GROUP BY orders.order_id 
+    ORDER BY orders.order_date
 ";
 $result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 $count = mysqli_num_rows( $result );

@@ -233,10 +233,19 @@ if ( ( $BID == 'all' ) || ( $BID == '' ) ) {
 	$BID      = '';
 	$bid_sql2 = "";
 }
+
+// whitelist $_REQUEST['app'] value
+$Y_or_N = 'Y';
+if(isset($_REQUEST['app'])) {
+	if ($_REQUEST['app'] == 'N') {
+		$Y_or_N = 'N';
+	}
+}
+
 $sql = "
 SELECT orders.order_date, orders.order_id, blocks.approved, blocks.status, blocks.user_id, blocks.banner_id, blocks.ad_id, ads.1, ads.2, users.FirstName, users.LastName, users.Username, users.Email 
     FROM ads, blocks, orders, users 
-    WHERE orders.approved='N' 
+    WHERE orders.approved='" . $Y_or_N . "' 
       AND orders.user_id=users.ID 
       AND orders.order_id=blocks.order_id 
       AND blocks.order_id=ads.order_id 

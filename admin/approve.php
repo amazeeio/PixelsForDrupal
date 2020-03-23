@@ -235,10 +235,10 @@ if ( ( $BID == 'all' ) || ( $BID == '' ) ) {
 }
 
 // whitelist $_REQUEST['app'] value
-$Y_or_N = 'Y';
+$Y_or_N = 'N';
 if(isset($_REQUEST['app'])) {
-	if ($_REQUEST['app'] == 'N') {
-		$Y_or_N = 'N';
+	if ($_REQUEST['app'] == 'Y') {
+		$Y_or_N = 'Y';
 	}
 }
 

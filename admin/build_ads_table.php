@@ -131,15 +131,6 @@ if ($change == 'Y') {
 	mysqli_query($GLOBALS['connection'], $sql) or die ("SQL: ".$sql."  ERROR: ".mysqli_error($GLOBALS['connection']));
 
 	echo "Database Structure Updated.";
-	if ((CACHE_ENABLED=='YES')) {
-		$CACHE_ENABLED = 'NO';
-		if (!function_exists('generate_form_cache')) {
-			include ('../include/codegen_functions.php');
-		}
-		generate_form_cache(1);
-	
-		$CACHE_ENABLED='YES';
-	}
 
 } else {
 	//echo "No Changes need to be made.";

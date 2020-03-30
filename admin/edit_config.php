@@ -212,15 +212,13 @@ require_once dirname( __FILE__ ) . '/include/functions2.php';
 global \$f2;
 \$f2 = new functions2();
 
-include dirname( __FILE__ ) . '/lang/lang.php';
+global \$label;
+require_once dirname( __FILE__ ) . '/lang/lang.php';
 require_once dirname( __FILE__ ) . '/include/mail_manager.php';
 require_once dirname( __FILE__ ) . '/include/currency_functions.php';
 require_once dirname( __FILE__ ) . '/include/price_functions.php';
 require_once dirname( __FILE__ ) . '/include/functions.php';
 require_once dirname( __FILE__ ) . '/include/image_functions.php';
-if ( ! get_magic_quotes_gpc() ) {
-	unfck_gpc();
-}
 ";
 	/// write out the config..
 

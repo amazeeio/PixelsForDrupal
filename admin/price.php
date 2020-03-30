@@ -262,7 +262,7 @@ if ( $BID != '' ) {
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) );
 		$row = mysqli_fetch_array( $result );
 
-		if ( $error == '' ) {
+		if (isset($error) && $error=='') {
 			$_REQUEST['color']    = $row['color'];
 			$_REQUEST['price_id'] = $row['price_id'];
 			$_REQUEST['row_from'] = $row['row_from'];

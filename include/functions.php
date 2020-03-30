@@ -2506,14 +2506,13 @@ function get_tmp_img_name ($session_id='') {
 	$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
 	$dh = opendir($uploaddir);
 	while (($file = readdir($dh)) !== false) {
-		$stat =stat($uploaddir.$file);
 		if (strpos($file, "tmp_".md5($session_id)) !== false) {
-			//unlink($uploaddir.$file);
 			
 			return $uploaddir.$file;
 		}
 	}
 
+	return "";
 }
 
 ////////////////////////////

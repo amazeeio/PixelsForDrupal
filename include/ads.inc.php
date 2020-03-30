@@ -32,31 +32,14 @@
 require_once ('lists.inc.php');
 require_once ('dynamic_forms.php');
 global $ad_tag_to_field_id;
-global $ad_tag_to_search; 
-global $CACHE_ENABLED;
-if ($CACHE_ENABLED=='YES') {
-	$dir = dirname(__FILE__);
-	$dir = preg_split ('%[/\\\]%', $dir);
-	$blank = array_pop($dir);
-	$dir = implode('/', $dir);
-	include ("$dir/cache/form1_cache.inc.php");
-	$ad_tag_to_search = $tag_to_search;
-	$ad_tag_to_field_id = $tag_to_field_id;
-} else {
+global $ad_tag_to_search;
 	$ad_tag_to_search = tag_to_search_init(1);
 	$ad_tag_to_field_id = ad_tag_to_field_id_init();
-}
+
 
 #####################################
 
 function ad_tag_to_field_id_init () {
-	global $CACHE_ENABLED;
-	if ($CACHE_ENABLED=='YES') {
-
-		global $ad_tag_to_field_id;
-		return $ad_tag_to_field_id;
-
-	}
 	global $label;
 
 	//$sql = "SELECT *, t2.field_label AS NAME FROM `form_fields` as t1, form_field_translations as t2 where t1.field_id = t2.field_id AND t2.lang='".$_SESSION['MDS_LANG']."' AND form_id=1 ORDER BY list_sort_order ";

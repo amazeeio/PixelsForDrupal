@@ -555,9 +555,10 @@ require( "header.php" );
 			var pointer = document.getElementById('block_pointer');
 
 			pointer.style.visibility = 'visible';
+			pointer.style.display = 'block';
 
-			pointer.style.top = pos.y + OffsetY;
-			pointer.style.left = pos.x + OffsetX;
+			pointer.style.top = (pos.y + OffsetY) + "px";
+			pointer.style.left = (pos.x + OffsetX) + "px";
 
 			pointer.map_x = OffsetX;
 			pointer.map_y = OffsetY;

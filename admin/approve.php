@@ -71,9 +71,10 @@ if ( isset( $_REQUEST['mass_approve'] ) && $_REQUEST['mass_approve'] != '' ) {
 }
 
 if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'disapprove' ) {
-	$sql = "UPDATE blocks set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' {$bid_sql}";
+
+	$sql = "UPDATE blocks set approved='N' WHERE order_id='" . intval( $_REQUEST['order_id'] ) . "' {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	$sql = "UPDATE orders set approved='N' WHERE user_id='" . intval( $_REQUEST['user_id'] ) . "' {$bid_sql}";
+	$sql = "UPDATE orders set approved='N' WHERE order_id='" . intval( $_REQUEST['order_id'] ) . "' {$bid_sql}";
 	mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 	echo "Order Disapproved.<br>";
 }
@@ -243,7 +244,7 @@ if(isset($_REQUEST['app'])) {
 }
 
 $sql = "
-SELECT orders.order_date, orders.order_id, blocks.approved, blocks.status, blocks.user_id, blocks.banner_id, blocks.ad_id, ads.1, ads.2, users.FirstName, users.LastName, users.Username, users.Email 
+SELECT orders.blocks, orders.order_date, orders.order_id, blocks.approved, blocks.status, blocks.user_id, blocks.banner_id, blocks.ad_id, ads.1, ads.2, users.FirstName, users.LastName, users.Username, users.Email 
     FROM ads, blocks, orders, users 
     WHERE orders.approved='" . $Y_or_N . "' 
       AND orders.user_id=users.ID 
@@ -304,6 +305,7 @@ if ( $count > $records_per_page ) {
             <td><b>Customer Name</b></td>
             <td><b>Username & ID</b></td>
             <td><b>Email</b></td>
+            <td><b>X,Y</b></td>
             <td><b>Grid</b></td>
             <td><b>Image</b></td>
             <td><b>Link Text(s) & Link URL(s)</b></td>
@@ -315,6 +317,16 @@ if ( $count > $records_per_page ) {
 
 		$i = 0;
 		while ( ( $row = mysqli_fetch_array( $result, MYSQLI_ASSOC ) ) && ( $i < $records_per_page ) ) {
+
+		    $banner_data = load_banner_constants($row['banner_id']);
+
+		    $blocks = explode(',', $row['blocks']);
+		    $coords = "";
+		    foreach($blocks as $block) {
+		        $pos = get_block_position($block, $row['banner_id']);
+		        $coords .= ($pos['x'] / $banner_data['block_width']) . ',' . ($pos['y'] / $banner_data['block_height'] ) . "<br />\n";
+            }
+
 			$i ++;
 			?>
             <tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
@@ -324,6 +336,7 @@ if ( $count > $records_per_page ) {
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['FirstName'] . " " . $row['LastName']; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['Username']; ?> (#<?php echo $row['user_id']; ?>)</span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $row['Email']; ?></span></td>
+                <td><span style="font-family: Arial,serif; font-size: x-small; "><?php echo $coords; ?></span></td>
                 <td><span style="font-family: Arial,serif; font-size: x-small; "><?php
 						$sql      = "SELECT name from banners where banner_id=" . intval( $row['banner_id'] );
 						$t_result = mysqli_query( $GLOBALS['connection'], $sql );

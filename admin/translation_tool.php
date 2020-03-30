@@ -82,34 +82,37 @@ $row = mysqli_fetch_array($result);
 $lang_filename = $row['lang_filename'];
 $lang_name = $row['name'];
 echo "lang filename: $lang_filename ";
-include ("../lang/english_default.php");
-$source_label = $label; // default english labels
-include ("../lang/".$lang_filename);
 
+require( "../lang/english_default.php" );
+$source_label = $label; // default english labels
+
+require( "../lang/" . $lang_filename );
 $dest_label = $label; // dest labels
 //print_r($dest_label);
 // preload the source code, preg the hash key and use it as a key for the line 
-$source_code = array();
-$handle = fopen("../lang/english_default.php", "r");
-while ($buffer= fgets($handle, 4096)) {
-	if (preg_match ('/ *\$label\[.([A-z0-9]+).\].*/', $buffer, $m)) {
-		$source_code[$m[1]] = $buffer;
-	}
-}
-
+//$source_code = array();
+//$handle = fopen("../lang/english_default.php", "r");
+//while ($buffer= fgets($handle, 4096)) {
+//	if (preg_match ('/ *\$label\[.([A-z0-9]+).\].*/', $buffer, $m)) {
+//		$source_code[$m[1]] = $buffer;
+//	}
+//}
 
 if ($_REQUEST['save']!='') {
 	$out = "<?php\n";
+	$out .= 'global $label;' . "\n";
 	foreach ($source_label as $key=>$val) {
 		$_REQUEST[$key] = str_replace ('\\"','"', $_REQUEST[$key] );
-		$out .= "\$label['$key']='". $_REQUEST[$key]."'; \n";
+		$value              = addslashes( $_REQUEST[ $key ] );
+		$out                .= "\$label['$key']='" . $value . "'; \n";
+		$dest_label[ $key ] = $value;
 	}
 	$out .= "?>\n";
 	$handler = fopen ("../lang/".$lang_filename, "w");
 	fputs ($handler, $out);
 	// load the new labels
-	include ("../lang/".$lang_filename);
-	$dest_label = $label; // dest labels
+	//require( "../lang/" . $lang_filename );
+	//$dest_label = $label; // dest labels
 }
 
 
@@ -142,11 +145,13 @@ if (!is_writeable("../lang/".$lang_filename)) {
 ?>
 <form method="POST" name="form1" action="translation_tool.php">
 <table ><tr><td>
-<!--
+				<?php /*
 <input type="radio" onclick="document.form1.submit()" <?php if ($_REQUEST['edit_mode']!='entities') { echo " checked ";  }  ?> name="edit_mode" value="no" > <font size="2">Edit as text (Helps you see what is edited)</font>
 
-<input type="radio" onclick="document.form1.submit()" <?php if ($_REQUEST['edit_mode']=='entities') { echo " checked ";  }  ?> name="edit_mode" value="entities" ><font size="2">Edit with encoded HTML Entities (Recommended for final save)</font>
--->
+<input type="radio" onclick="document.form1.submit()" <?php if ( $_REQUEST['edit_mode'] == 'entities' ) {
+					echo " checked ";
+				} ?> name="edit_mode" value="entities" ><font size="2">Edit with encoded HTML Entities (Recommended for final save)</font>
+*/ ?>
 </td></tr></table>
 <input type="hidden" name="target_lang" value="<?php echo $_REQUEST['target_lang'] ?>" >
 
@@ -162,7 +167,7 @@ $bg_color = "";
 foreach ($source_label as $key => $val) {
 	$i++;
 	
-
+			$val = stripslashes( $val );
 	if ($bg_color == "#ffffff") {
 		$bg_color = "#FFFFff";
 	} else {
@@ -173,26 +178,29 @@ foreach ($source_label as $key => $val) {
 	?>
 	<tr bgcolor="#E8E8E8">
 	<td colspan="2"><small><b><?php echo $key; ?></b></small><br>
-	<span style="font-size: 10px; white-space: normal;">
-	<?php $str = highlight_string("<?php ". ($source_code[$key])." ?>", true);// echo str_replace("\n", "<br>", $str);?>
-	<span>
+                    <span style="font-size: 10px; white-space: normal;"><?php $str = highlight_string( "<?php " . ( $val ) . " ?>", true ); ?><span>
 	</td>
 
 	</tr>
 	<tr bgcolor="<?php echo $bg_color;?>">
-		<td width="50%" valign="top"><?php 
-		
+                <td valign="top"><?php
 		if (strpos ($key, 'email_temp')) {
-
-			echo "<br><font size='2'><pre>".htmlentities($val)."</pre></font><br>";
-
+						echo "<font size='2'><pre>" . htmlentities( $val ) . "</pre></font><br>";
 		} else {
-
-			echo "<br><font size='2'>".htmlentities($val)."</font><br>";
-		
+						echo "<font size='2'>" . htmlentities( $val ) . "</font><br>";
 		}
-	
-	?></td><td valign="top" ><textarea style="font-family: Arial; font-size: 10pt;" cols="60" rows="<?php $size = strlen ($val); $rows = round( $size / 40)+2; echo $rows; ?>"  name='<?php echo $key?>'><?php $text =  (stripslashes($dest_label[$key])); if ($_REQUEST['edit_mode'] == 'entities') { echo htmlentities($text); } else {echo $text;} ?></textarea></td>
+					?></td>
+                <td valign="top">
+	                <textarea
+                            style="font-family: Arial,sans-serif; font-size: 12px;"
+                            cols="90"
+                            rows="15"
+                            name='<?php echo $key ?>'
+                    ><?php
+		                $text = ( stripslashes( $dest_label[ $key ] ) );
+		                echo $text;
+		                ?></textarea>
+                </td>
 	</tr>
 	<?php
 	if ($i > 5) {

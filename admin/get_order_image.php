@@ -51,19 +51,19 @@ $imagine = new Imagine\Gd\Imagine();
 
 // get the order id
 if ( isset( $_REQUEST['block_id'] ) && $_REQUEST['block_id'] != '' ) {
-	$sql = "SELECT * FROM blocks WHERE block_id='" . intval($_REQUEST['block_id']) . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
+	$sql = "SELECT order_id FROM blocks WHERE block_id='" . intval($_REQUEST['block_id']) . "' AND banner_id='" . $f2->bid( $_REQUEST['BID'] ) . "' ";
 
 } elseif ( isset( $_REQUEST['aid'] ) && $_REQUEST['aid'] != '' ) {
-	$sql = "SELECT * FROM ads WHERE ad_id='" . intval($_REQUEST['aid']) . "' ";
+	$sql = "SELECT order_id FROM ads WHERE ad_id='" . intval($_REQUEST['aid']) . "' ";
 
 }
 
 $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 $row = mysqli_fetch_array( $result );
-// load all the blocks wot
+
+// load all the blocks for the order
 $sql = "SELECT * FROM blocks WHERE order_id='" . intval($row['order_id']) . "' ";
 $result3 = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
-//echo $sql;
 
 $blocks = array();
 
@@ -77,10 +77,10 @@ while ( $block_row = mysqli_fetch_array( $result3 ) ) {
 		$low_y  = $block_row['y'];
 	}
 
-	$high_x = ! isset( $high_x ) ? 0 : $high_x;
-	$high_y = ! isset( $high_y ) ? 0 : $high_y;
-	$low_x  = ! isset( $low_x ) ? 0 : $low_x;
-	$low_y  = ! isset( $low_y ) ? 0 : $low_y;
+	$high_x = ! isset( $high_x ) ? $block_row['x'] : $high_x;
+	$high_y = ! isset( $high_y ) ? $block_row['y'] : $high_y;
+	$low_x  = ! isset( $low_x ) ? $block_row['x'] : $low_x;
+	$low_y  = ! isset( $low_y ) ? $block_row['y'] : $low_y;
 
 	if ( $block_row['x'] > $high_x ) {
 		$high_x = $block_row['x'];

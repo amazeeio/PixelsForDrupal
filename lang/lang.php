@@ -168,3 +168,9 @@ if ( isset( $dbhost ) && isset( $dbusername ) && isset( $database_name ) ) {
 		include dirname( __FILE__ ) . "/english.php";
 	}
 }
+
+function mds_stripslashes(&$val, $key) {
+	$val = stripslashes($val);
+}
+
+array_walk($label, 'mds_stripslashes');

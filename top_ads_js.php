@@ -30,8 +30,9 @@
  */
 
 //require( 'config.php' );
-//require ('include/mouseover_js.inc.php');
-
+//require_once('include/mouseover_js.inc.php');
+$BID = $f2->bid($_REQUEST['BID']);
+$banner_data = load_banner_constants($BID);
 ?>
 <script>
 	var h_padding=10;
@@ -64,8 +65,8 @@
 
 	function initFrameSize() {
 
-		winWidth =<?php echo $b_row['grid_width'] * $b_row['block_width']; ?>;
-		winHeight =<?php echo $b_row['grid_height'] * $b_row['block_height']; ?>;
+		winWidth =<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>;
+		winHeight =<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;
 	}
 
 	function is_right_available(e) {

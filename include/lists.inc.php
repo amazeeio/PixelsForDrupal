@@ -35,17 +35,7 @@ $column_info = array();
 /*
 Display table heading, initalize column_struct.
 */
-function echo_list_head_data($form_id, $admin) { 
-	global $CACHE_ENABLED;
-	if ($CACHE_ENABLED=='YES') {
-		$colspan=0;
-		if (!is_numeric($form_id)) return false;
-		if (sizeof($admin)>1) return false;
-		eval ('$colspan = cache_echo_list'.$form_id.'_head($admin);');
-		
-		return $colspan;
-
-	}
+function echo_list_head_data($form_id, $admin) {
 
 	global $q_string, $column_list, $column_info;
 

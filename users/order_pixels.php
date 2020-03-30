@@ -58,7 +58,7 @@ if ( isset( $_REQUEST['order_id'] ) && $_REQUEST['order_id'] != '' ) {
 ################################
 /*
 
-Delete temporary order when the banner was chnaged.
+Delete temporary order when the banner was changed.
 
 */
 

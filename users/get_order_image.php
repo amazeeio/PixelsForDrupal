@@ -34,9 +34,9 @@ define( 'NO_HOUSE_KEEP', 'YES' );
 
 require( '../config.php' );
 
-include( "login_functions.php" );
+//include( "login_functions.php" );
 
-process_login();
+//process_login();
 
 if ( isset( $_REQUEST['BID'] ) && $f2->bid( $_REQUEST['BID'] ) != '' ) {
 	$BID = $f2->bid( $_REQUEST['BID'] );

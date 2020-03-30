@@ -46,9 +46,9 @@ $banner_data = load_banner_constants( $BID );
 //$_REQUEST['map_y']    = floor( $_REQUEST['map_y'] / $banner_data['BLK_HEIGHT'] ) * $banner_data['BLK_HEIGHT'];
 //$_REQUEST['block_id'] = floor( $_REQUEST['block_id'] );
 
-$floorx = floor( $_REQUEST['map_x'] / $banner_data['BLK_WIDTH'] );
-$floory = floor( $_REQUEST['map_y'] / $banner_data['BLK_HEIGHT'] );
-$floorid = floor( $_REQUEST['block_id'] );
+$floorx = floor( intval($_REQUEST['map_x']) / intval($banner_data['BLK_WIDTH']) );
+$floory = floor( intval($_REQUEST['map_y']) / intval($banner_data['BLK_HEIGHT']) );
+$floorid = floor( intval($_REQUEST['block_id']) );
 $floorx = $floorx ? $floorx : 0;
 $floory = $floory ? $floory : 0;
 $floorid = $floorid ? $floorid : 0;

@@ -426,8 +426,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	// output price zone text
 	if ( isset( $show_price_zones_text ) ) {
 
-		$row_c       = 1;
-		$col_c       = 1;
+		$row_c       = 0;
+		$col_c       = 0;
 		$textcolor   = imagecolorallocate( $map->getGdResource(), 0, 0, 0 );
 		$textcolor_w = imagecolorallocate( $map->getGdResource(), 255, 255, 255 );
 

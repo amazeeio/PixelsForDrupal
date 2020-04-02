@@ -103,7 +103,7 @@ while ($row=mysqli_fetch_array($result)) {
 	<td>
 	<font face="arial" size="2"><?php
 
-	echo "<a href='".$row[url]."' target='_blank' >".$row[alt_text]."</a>";
+	echo "<a href='".$row['url']."' target='_blank' >".$row['alt_text']."</a>";
 
 	/*
 	
@@ -128,11 +128,11 @@ $sql = "SELECT alt_text, url, count(alt_text) AS COUNT FROM blocks WHERE user_id
 	?></font>
 	</td>
 	<td>
-	<font face="arial" size="2"><?php echo $row[b]; ?></font>
+	<font face="arial" size="2"><?php echo $row['b']; ?></font>
 	</td>
 	
 	<td>
-	<font face="arial" size="2"><?php echo $row[clicksum];?></font>
+	<font face="arial" size="2"><?php echo $row['clicksum'];?></font>
 	</td>
 	</tr>
 <?php

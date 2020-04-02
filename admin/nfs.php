@@ -69,15 +69,30 @@ if ($_REQUEST['action']=='save') {
 		unset($remnfs);
 	}
 
+	$imagine = new Imagine\Gd\Imagine();
+
+	// load blocks
+	$block_size  = new Imagine\Image\Box( $banner_data['BLK_WIDTH'], $banner_data['BLK_HEIGHT'] );
+	$palette     = new Imagine\Image\Palette\RGB();
+	$color       = $palette->color( '#000', 0 );
+	$zero_point  = new Imagine\Image\Point( 0, 0 );
+	$blank_block = $imagine->create( $block_size, $color );
+
+	$default_nfs_block = $blank_block->copy();
+	$tmp_block         = $imagine->load( $banner_data['USR_NFS_BLOCK'] );
+	$tmp_block->resize( $block_size );
+	$default_nfs_block->paste( $tmp_block, $zero_point );
+	$data = base64_encode( $default_nfs_block->get( "png", array( 'png_compression_level' => 9 ) ) );
+
 	$cell = $x = $y = 0;
 	for ( $i = 0; $i < $banner_data['G_HEIGHT']; $i ++ ) {
 			$x = 0;
 		for ( $j = 0; $j < $banner_data['G_WIDTH']; $j ++ ) {
 				if (isset($addnfs) && in_array($cell, $addnfs)) {
-					$sql = "REPLACE INTO blocks (block_id, status, x, y, banner_id) VALUES ($cell, 'nfs', $x, $y, $BID)";
+					$sql = "REPLACE INTO blocks (block_id, status, x, y, image_data, banner_id, click_count) VALUES ({$cell}, 'nfs', {$x}, {$y}, '{$data}', {$BID}, 0)";
 					mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 				} else if (isset($remnfs) && in_array($cell, $remnfs)) {
-					$sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id=$BID AND block_id=$cell";
+					$sql = "DELETE FROM blocks WHERE status='nfs' AND banner_id={$BID} AND block_id={$cell}";
 					mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']) . $sql);
 				}
 			$x = $x + $banner_data['BLK_WIDTH'];

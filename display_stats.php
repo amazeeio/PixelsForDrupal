@@ -39,10 +39,6 @@ $BID = $f2->bid($_REQUEST['BID']);
 
 $banner_data = load_banner_constants($BID);
 
-$sql = "select * from banners where banner_id='$BID'";
-$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
-$b_row = mysqli_fetch_array($result);
-
 $sql = "select count(*) AS COUNT FROM blocks where status='sold' and banner_id='$BID' ";
 $result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
@@ -53,7 +49,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql);
 $row = mysqli_fetch_array($result);
 $nfs = $row['COUNT']*($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']);
 
-$available = (($b_row['grid_width'] * $b_row['grid_height'] * ($banner_data['BLK_WIDTH']*$banner_data['BLK_HEIGHT']) )-$nfs ) - $sold;
+$available = ( ( $banner_data['G_WIDTH'] * $banner_data['G_HEIGHT'] * ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] ) ) - $nfs ) - $sold;
 
 if ($label['sold_stats']=='') {
 	$label['sold_stats']="Sold";

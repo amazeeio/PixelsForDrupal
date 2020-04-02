@@ -659,3 +659,5 @@ $label['list_name']='Name';
 $label['list_ads']='Ads(s)';
 $label['list_pixels']='Pixels';
 $label['reserving_pixels']='Please Wait! Reserving Pixels...';
+
+$label['no_blocks_selected'] = "You have no blocks selected.";

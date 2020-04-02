@@ -678,7 +678,7 @@ echo $label['advertiser_select_instructions2']; ?>
 			} ?> > <label for="sel6"><?php echo $label['select6']; ?></label>
         </p>
         <p>
-            <input type="button" name='submit_button1' id='submit_button1' value='<?php echo htmlspecialchars( $label['advertiser_buy_button'] ); ?>' onclick='document.form1.submit()'>
+            <input type="button" name='submit_button1' id='submit_button1' value='<?php echo htmlspecialchars( $label['advertiser_buy_button'] ); ?>' onclick='form1Submit(event)'>
         </p>
 
         <input type="hidden" value="1" name="select">
@@ -691,7 +691,7 @@ echo $label['advertiser_select_instructions2']; ?>
     <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
         <hr>
 
-        <form method="post" action="order.php" name="form1">
+        <form method="post" action="order.php" id="form1" name="form1">
             <input type="hidden" name="package" value="">
             <input type="hidden" name="selected_pixels" value=''>
             <input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">

@@ -77,7 +77,21 @@ try {
 	}
 
 	// show
-	$image->show( "png", array( 'png_compression_level' => 9 ) );
+	$ext     = "png";
+	$mime    = "png";
+	$options = array( 'png_compression_level' => 9 );
+	if ( OUTPUT_JPEG == 'Y' ) {
+		$ext     = "jpg";
+		$mime    = "jpeg";
+		$options = array( 'jpeg_quality' => JPEG_QUALITY );
+	} else if ( OUTPUT_JPEG == 'N' ) {
+		// defaults to png, set above
+	} else if ( OUTPUT_JPEG == 'GIF' ) {
+		$ext     = "gif";
+		$mime    = "gif";
+		$options = array('flatten' => false);
+	}
+	$image->show( $ext, $options );
 } catch(Exception $e) {
 
 	error_log($e->getMessage());

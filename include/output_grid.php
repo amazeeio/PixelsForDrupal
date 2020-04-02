@@ -462,7 +462,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	} else if ( OUTPUT_JPEG == 'GIF' ) {
 		$ext     = "gif";
 		$mime    = "gif";
-		$options = array();
+		$options = array('flatten' => false);
 	}
 
 	// output

@@ -349,6 +349,7 @@ require( "header.php" );
 		// Initialize
 		var block_str = "<?php echo $order_row['blocks']; ?>";
 		var selecting = false;
+		var trip_count = 0;
 
 		function select_pixels(e) {
 			e.preventDefault();
@@ -370,7 +371,34 @@ require( "header.php" );
 			var OffsetX = pointer.map_x;
 			var OffsetY = pointer.map_y;
 
-			change_block_state(OffsetX, OffsetY);
+			trip_count=1; // default
+
+			if (document.getElementById('sel4').checked){
+				// select 4 at a time
+				trip_count=4;
+				change_block_state(OffsetX, OffsetY);
+				change_block_state(OffsetX+BLK_WIDTH, OffsetY);
+				change_block_state(OffsetX, OffsetY+BLK_HEIGHT);
+				change_block_state(OffsetX+BLK_WIDTH, OffsetY+BLK_HEIGHT);
+
+			} else {
+
+				if  (document.getElementById('sel6').checked) {
+
+					trip_count=6;
+					change_block_state(OffsetX, OffsetY);
+					change_block_state(OffsetX+BLK_WIDTH, OffsetY);
+					change_block_state(OffsetX, OffsetY+BLK_HEIGHT);
+					change_block_state(OffsetX+BLK_WIDTH, OffsetY+BLK_HEIGHT);
+					change_block_state(OffsetX+(BLK_WIDTH*2), OffsetY);
+					change_block_state(OffsetX+(BLK_WIDTH*2), OffsetY+BLK_HEIGHT);
+
+				} else {
+					trip_count=1;
+					change_block_state(OffsetX, OffsetY);
+				}
+
+			}
 
 			selecting = false;
 			return true;
@@ -444,10 +472,12 @@ require( "header.php" );
 
 			xmlhttp.open("GET", "update_order.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&block_id=" + clicked_block.toString() + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
-			document.getElementById('submit_button1').disabled = true;
-			document.getElementById('submit_button2').disabled = true;
-			pointer.style.cursor = 'wait';
-			pixelimg.style.cursor = 'wait';
+			if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
+				document.getElementById('submit_button1').disabled = true;
+				document.getElementById('submit_button2').disabled = true;
+				pointer.style.cursor = 'wait';
+				pixelimg.style.cursor = 'wait';
+			}
 
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4) {
@@ -484,11 +514,15 @@ require( "header.php" );
 					}
 
 					update_order();
+					trip_count--; // count down, enable button when 0
 
-					document.getElementById('submit_button1').disabled = false;
-					document.getElementById('submit_button2').disabled = false;
-					pointer.style.cursor = 'pointer';
-					pixelimg.style.cursor = 'pointer';
+					if (trip_count <= 0) {
+						document.getElementById('submit_button1').disabled = false;
+						document.getElementById('submit_button2').disabled = false;
+						pointer.style.cursor = 'pointer';
+						pixelimg.style.cursor = 'pointer';
+						trip_count = 0;
+					}
 				}
 
 			};

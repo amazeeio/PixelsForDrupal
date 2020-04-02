@@ -49,7 +49,8 @@
  *                          'sold',
  *                          'price_zones',
  *                          'price_zones_text',
- *                          'user'
+ *                          'user',
+ *                          'not_my_reserved'
  *                       )
  *
  * @param int $user_id
@@ -81,7 +82,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	$tmp_block->resize( $block_size );
 	$default_block->paste( $tmp_block, $zero_point );
 
-	$and_user = "";
+	$and_user = $and_not_user = "";
 
 	foreach ( $types as $type ) {
 		switch ( $type ) {
@@ -152,8 +153,11 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 				$show_price_zones_text = true;
 				break;
 			case 'user':
-				$user = $user_id;
-				$and_user = " AND `user_id`=" . intval($user);
+				$user     = $user_id;
+				$and_user = " AND `user_id`=" . intval( $user );
+				break;
+			case 'not_my_reserved':
+				$and_not_user = " AND `user_id`!=" . intval( $_SESSION['MDS_ID'] );
 				break;
 			default:
 				break;
@@ -194,7 +198,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 
 	// preload reserved blocks
 	if ( isset( $default_reserved_block ) ) {
-		$sql = "SELECT block_id FROM blocks WHERE `status`='reserved' AND banner_id='" . intval( $BID ) . "' " . $and_user;
+		$sql = "SELECT block_id FROM blocks WHERE `status`='reserved' AND banner_id='" . intval( $BID ) . "' " . $and_not_user;
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) );
 
 		while ( $row = mysqli_fetch_array( $result ) ) {
@@ -462,7 +466,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	} else if ( OUTPUT_JPEG == 'GIF' ) {
 		$ext     = "gif";
 		$mime    = "gif";
-		$options = array('flatten' => false);
+		$options = array( 'flatten' => false );
 	}
 
 	// output

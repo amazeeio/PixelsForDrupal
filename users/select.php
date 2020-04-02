@@ -53,64 +53,32 @@ if ( ! is_numeric( $BID ) ) {
 
 $banner_data = load_banner_constants( $BID );
 
-//Begin -J- Edit: Force New Order on load of page unless user clicked "Edit" button on confirm/complete page (indicated by $_GET['jEditOrder'])
-//Important: This chunk was moved from below the "load order from php" section
-
-if ( isset( $_REQUEST['banner_change'] ) && ! empty( $_REQUEST['banner_change'] ) ) {
-
-	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='" . intval( $_SESSION['MDS_ID'] ) . "'";
-
-	$res = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-
-	while ( $row = mysqli_fetch_array( $res, MYSQLI_ASSOC ) ) {
-
-		$sql = "delete from orders where order_id=" . intval( $row['order_id'] );
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-		$sql = "delete from blocks where order_id=" . intval( $row['order_id'] );
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	}
-}
-
-# load order from php
-# only allowed 1 new order per banner
-
-$sql = "SELECT * from orders where user_id='" . intval( $_SESSION['MDS_ID'] ) . "' and status='new' and banner_id='$BID' ";
-
+$sql          = "SELECT * from orders where user_id='" . intval( $_SESSION['MDS_ID'] ) . "' and status='new' and banner_id='$BID' ";
 $order_result = mysqli_query( $GLOBALS['connection'], $sql );
 $order_row    = mysqli_fetch_array( $order_result );
 
-if ( ( $order_row['user_id'] != '' ) && $order_row['user_id'] != $_SESSION['MDS_ID'] ) { // do a test, just in case.
-	die( 'you do not own this order!' );
-}
+if ( $order_row != null ) {
 
-if ( ( $_SESSION['MDS_order_id'] == '' ) || ( USE_AJAX == 'YES' ) ) { // guess the order id
-	$_SESSION['MDS_order_id'] = $order_row['order_id'];
-}
-
-/*
-old_order_id comes the form which allows users to change banners.
-
-When the users change the grid, the order that was in-progress is deleted
-from the system. The user can start making a new order for the new banner.
-
-(Only one order-in-progress is allowed)
-
-*/
-
-if ( isset( $_REQUEST['banner_change'] ) && ! empty( $_REQUEST['banner_change'] ) ) {
-
-	$_SESSION['MDS_order_id'] = ''; // clear the current order
-
-	$sql = "SELECT * FROM orders where status='new' and banner_id='$BID' and user_id='" . intval( $_SESSION['MDS_ID'] ) . "'";
-	$res = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-
-	while ( $row = mysqli_fetch_array( $res, MYSQLI_ASSOC ) ) {
-		$sql = "delete from orders where order_id=" . intval( $row['order_id'] );
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-		$sql = "delete from blocks where order_id=" . intval( $row['order_id'] );
-		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
+	// do a test, just in case.
+	if ( ( $order_row['user_id'] != '' ) && $order_row['user_id'] != $_SESSION['MDS_ID'] ) {
+		die( 'you do not own this order!' );
 	}
 
+	// only 1 new order allowed per user per grid
+	if ( isset( $_REQUEST['banner_change'] ) && ! empty( $_REQUEST['banner_change'] ) ) {
+		// clear the current order
+		$_SESSION['MDS_order_id'] = '';
+
+		// delete the old order and associated blocks
+		$sql = "delete from orders where order_id=" . intval( $order_row['order_id'] );
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
+		$sql = "delete from blocks where order_id=" . intval( $order_row['order_id'] );
+		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
+
+	} else if ( ( $_SESSION['MDS_order_id'] == '' ) || ( USE_AJAX == 'YES' ) ) {
+		// save the order id to session
+		$_SESSION['MDS_order_id'] = $order_row['order_id'];
+	}
 }
 
 if ( isset( $_REQUEST['select'] ) && ! empty( $_REQUEST['select'] ) ) {
@@ -170,19 +138,48 @@ require( "header.php" );
     <div id="blocks"></div>
 
     <script>
-		var selectedBlocks = [];
-		var selBlocksIndex = 0;
 
-		window.onresize = refreshSelectedLayers;
-		window.onload = load_order;
+		// Initialize
+		let block_str = "<?php echo $order_row['blocks']; ?>";
+		let selecting = false;
+		let trip_count = 0;
 
-		var grid_width = <?php echo $banner_data['G_WIDTH']?>;
-		var grid_height = <?php echo $banner_data['G_HEIGHT']?>;
+		let selectedBlocks = [];
+		let selBlocksIndex = 0;
 
-		var BLK_WIDTH = <?php echo $banner_data['BLK_WIDTH']?>;
-		var BLK_HEIGHT = <?php echo $banner_data['BLK_HEIGHT']?>;
-		var GRD_WIDTH = BLK_WIDTH * grid_width;
-		var GRD_HEIGHT = BLK_HEIGHT * grid_height;
+		// noinspection JSAnnotator
+		const grid_width = <?php echo $banner_data['G_WIDTH']?>;
+		// noinspection JSAnnotator
+		const grid_height = <?php echo $banner_data['G_HEIGHT']?>;
+
+		// noinspection JSAnnotator
+		const BLK_WIDTH = <?php echo $banner_data['BLK_WIDTH']?>;
+		// noinspection JSAnnotator
+		const BLK_HEIGHT = <?php echo $banner_data['BLK_HEIGHT']?>;
+
+		const GRD_WIDTH = BLK_WIDTH * grid_width;
+		const GRD_HEIGHT = BLK_HEIGHT * grid_height;
+
+		// noinspection JSAnnotator
+		const G_PRICE = <?php echo $banner_data['G_PRICE']; ?>;
+
+		let myblocks;
+		let total_cost;
+		let grid;
+		let submit_button1;
+		let submit_button2;
+		let pointer;
+
+		window.onload = function () {
+			grid = document.getElementById("pixelimg");
+			myblocks = document.getElementById('blocks');
+			total_cost = document.getElementById('total_cost');
+			submit_button1 = document.getElementById('submit_button1');
+			submit_button2 = document.getElementById('submit_button2');
+			pointer = document.getElementById('block_pointer');
+			load_order();
+			window.onresize = refreshSelectedLayers;
+		};
 
 		function load_order() {
 			<?php
@@ -219,7 +216,7 @@ require( "header.php" );
 			document.form1.selected_pixels.value = block_str;
 		}
 
-		function reserve_block(clicked_block, OffsetX, OffsetY) {
+		function reserve_block(clicked_block) {
 			var blocks;
 			if (block_str !== '') {
 				blocks = block_str.split(",");
@@ -234,7 +231,7 @@ require( "header.php" );
 			block_str = implode(blocks);
 		}
 
-		function unreserve_block(clicked_block, OffsetX, OffsetY) {
+		function unreserve_block(clicked_block) {
 
 			var blocks;
 			if (block_str !== '') {
@@ -283,7 +280,6 @@ require( "header.php" );
 		}
 
 		function refreshSelectedLayers() {
-			var grid = document.getElementById("pixelimg"); //Get image grid element
 			var gridLeft = findPosX(grid); //Get image grid's new X position
 			var gridTop = findPosY(grid); //Get image grid's new Y position
 			var layer; //Used to hold layer elements below
@@ -302,39 +298,31 @@ require( "header.php" );
 		} //End testing()
 		//End -J- Edit: Custom functions for resize bug
 
-		function refresh_grid() {
-			var grid = document.getElementById("pixelimg");
-			var gridsrc = grid.getAttribute("src");
-			grid.setAttribute("src", gridsrc);
-		}
-
 		function add_block(clicked_block, OffsetX, OffsetY) {
 
-			var myblock = document.getElementById('blocks');
-			var pixelimg = document.getElementById('pixelimg');
 			//-J- Edit: Added tempTop and tempLeft values to span tag for resize bug
-			myblock.innerHTML = myblock.innerHTML + "<span id='block" + clicked_block.toString() + "' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='top: " + (OffsetY + pixelimg.offsetTop) + "px; left: " + (OffsetX + pixelimg.offsetLeft) + "px;' onclick='change_block_state(" + OffsetX + ", " + OffsetY + ");' onmousemove='show_pointer2(this, event)' ><img src='selected_block.png' width='<?php echo $banner_data['BLK_WIDTH']; ?>' height='<?php echo $banner_data['BLK_HEIGHT']; ?>'></span>";
+			myblocks.innerHTML = myblocks.innerHTML + "<span id='block" + clicked_block.toString() + "' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='top: " + (OffsetY + grid.offsetTop) + "px; left: " + (OffsetX + grid.offsetLeft) + "px;' onclick='select_pixels(event, " + OffsetX + ", " + OffsetY + ");' onmousemove='show_pointer2(this, event)' ><img src='selected_block.png' width='<?php echo $banner_data['BLK_WIDTH']; ?>' height='<?php echo $banner_data['BLK_HEIGHT']; ?>'></span>";
 			//Begin -J- Edit: For resize bug
 			selectedBlocks[selBlocksIndex] = clicked_block;
 			selBlocksIndex = selBlocksIndex + 1;
 			//End -J- Edit
 
-			reserve_block(clicked_block, OffsetX, OffsetY);
+			reserve_block(clicked_block);
 		}
 
-		function remove_block(clicked_block, OffsetX, OffsetY) {
+		function remove_block(clicked_block) {
 			var myblock = document.getElementById("block" + clicked_block.toString());
 			if (myblock !== null) {
 				myblock.remove();
 			}
 
-			unreserve_block(clicked_block, OffsetX, OffsetY);
+			unreserve_block(clicked_block);
 		}
 
 		function invert_block(clicked_block, OffsetX, OffsetY) {
 			var myblock = document.getElementById("block" + clicked_block.toString());
 			if (myblock !== null) {
-				remove_block(clicked_block, OffsetX, OffsetY);
+				remove_block(clicked_block);
 			} else {
 				add_block(clicked_block, OffsetX, OffsetY);
 			}
@@ -346,12 +334,7 @@ require( "header.php" );
 			invert_block(clicked_block, OffsetX, OffsetY);
 		}
 
-		// Initialize
-		var block_str = "<?php echo $order_row['blocks']; ?>";
-		var selecting = false;
-		var trip_count = 0;
-
-		function select_pixels(e) {
+		function select_pixels(e, x = -1, y = -1) {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -361,46 +344,43 @@ require( "header.php" );
 			selecting = true;
 
 			// cannot select while AJAX is in action
-			if (document.getElementById('submit_button1').disabled) {
-				selecting = false;
+			if (submit_button1.disabled) {
 				return false;
 			}
 
-			var pointer = document.getElementById('block_pointer');
 			pointer.style.visibility = 'hidden';
-			var OffsetX = pointer.map_x;
-			var OffsetY = pointer.map_y;
+			var OffsetX = (x > -1) ? x : pointer.map_x;
+			var OffsetY = (y > -1) ? y : pointer.map_y;
 
-			trip_count=1; // default
+			trip_count = 1; // default
 
-			if (document.getElementById('sel4').checked){
+			if (document.getElementById('sel4').checked) {
 				// select 4 at a time
-				trip_count=4;
+				trip_count = 4;
 				change_block_state(OffsetX, OffsetY);
-				change_block_state(OffsetX+BLK_WIDTH, OffsetY);
-				change_block_state(OffsetX, OffsetY+BLK_HEIGHT);
-				change_block_state(OffsetX+BLK_WIDTH, OffsetY+BLK_HEIGHT);
+				change_block_state(OffsetX + BLK_WIDTH, OffsetY);
+				change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
+				change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
 
 			} else {
 
-				if  (document.getElementById('sel6').checked) {
+				if (document.getElementById('sel6').checked) {
 
-					trip_count=6;
+					trip_count = 6;
 					change_block_state(OffsetX, OffsetY);
-					change_block_state(OffsetX+BLK_WIDTH, OffsetY);
-					change_block_state(OffsetX, OffsetY+BLK_HEIGHT);
-					change_block_state(OffsetX+BLK_WIDTH, OffsetY+BLK_HEIGHT);
-					change_block_state(OffsetX+(BLK_WIDTH*2), OffsetY);
-					change_block_state(OffsetX+(BLK_WIDTH*2), OffsetY+BLK_HEIGHT);
+					change_block_state(OffsetX + BLK_WIDTH, OffsetY);
+					change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
+					change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
+					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY);
+					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY + BLK_HEIGHT);
 
 				} else {
-					trip_count=1;
+					trip_count = 1;
 					change_block_state(OffsetX, OffsetY);
 				}
 
 			}
 
-			selecting = false;
 			return true;
 		}
 
@@ -462,8 +442,6 @@ require( "header.php" );
 		function change_block_state(OffsetX, OffsetY) {
 
 			var clicked_block = ((OffsetX) / BLK_WIDTH) + ((OffsetY / BLK_HEIGHT) * (GRD_WIDTH / BLK_WIDTH));
-			var pointer = document.getElementById('block_pointer');
-			var pixelimg = document.getElementById('pixelimg');
 
 			var xmlhttp = false;
 			if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
@@ -473,19 +451,16 @@ require( "header.php" );
 			xmlhttp.open("GET", "update_order.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&block_id=" + clicked_block.toString() + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
 			if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
-				document.getElementById('submit_button1').disabled = true;
-				document.getElementById('submit_button2').disabled = true;
+				submit_button1.disabled = true;
+				submit_button2.disabled = true;
 				pointer.style.cursor = 'wait';
-				pixelimg.style.cursor = 'wait';
+				grid.style.cursor = 'wait';
 			}
 
 			xmlhttp.onreadystatechange = function () {
 				if (xmlhttp.readyState === 4) {
-					pointer = document.getElementById('block_pointer');
-					pixelimg = document.getElementById('pixelimg');
 
 					if ((xmlhttp.responseText === 'new')) {
-						refresh_grid();
 						invert_blocks(clicked_block, OffsetX, OffsetY);
 
 					} else {
@@ -493,9 +468,6 @@ require( "header.php" );
 
 							// save order id
 							document.form1.order_id.value = xmlhttp.responseText;
-
-							refresh_grid();
-
 							invert_blocks(clicked_block, OffsetX, OffsetY);
 
 						} else {
@@ -517,10 +489,11 @@ require( "header.php" );
 					trip_count--; // count down, enable button when 0
 
 					if (trip_count <= 0) {
-						document.getElementById('submit_button1').disabled = false;
-						document.getElementById('submit_button2').disabled = false;
+						submit_button1.disabled = false;
+						submit_button2.disabled = false;
 						pointer.style.cursor = 'pointer';
-						pixelimg.style.cursor = 'pointer';
+						grid.style.cursor = 'pointer';
+						selecting = false;
 						trip_count = 0;
 					}
 				}
@@ -565,10 +538,13 @@ require( "header.php" );
 		}
 
 		function show_pointer(e) {
-			var pixelimg = document.getElementById('pixelimg');
+			if (grid == null) {
+				// grid may not be loaded yet
+				return;
+			}
 
 			if (!pos) {
-				var pos = getObjCoords(pixelimg);
+				var pos = getObjCoords(grid);
 			}
 
 			var OffsetX;
@@ -586,8 +562,6 @@ require( "header.php" );
 			OffsetX = Math.floor(OffsetX / <?php echo $banner_data['BLK_WIDTH']; ?>) *<?php echo $banner_data['BLK_WIDTH']; ?>;
 			OffsetY = Math.floor(OffsetY / <?php echo $banner_data['BLK_HEIGHT']; ?>) *<?php echo $banner_data['BLK_HEIGHT']; ?>;
 
-			var pointer = document.getElementById('block_pointer');
-
 			pointer.style.visibility = 'visible';
 			pointer.style.display = 'block';
 
@@ -601,15 +575,12 @@ require( "header.php" );
 		}
 
 		function show_pointer2(block, e) {
-			var pointer = document.getElementById('block_pointer');
 			pointer.style.visibility = 'hidden';
 		}
 
 		function form1Submit(event) {
 			event.preventDefault();
 			event.stopPropagation();
-
-			var myblocks = document.getElementById('blocks');
 
 			if (myblocks.innerHTML.trim() === '') {
 				alert("<?php echo $label['no_blocks_selected'] ?>");
@@ -713,7 +684,7 @@ echo $label['advertiser_select_instructions2']; ?>
         <input type="hidden" value="1" name="select">
         <input type="hidden" value="<?php echo $BID; ?>" name="BID">
 
-        <input style="cursor: pointer;outline:none;border:none;" id="pixelimg" <?php if ( USE_AJAX == 'YES' ) { ?> onmousemove="show_pointer(event)" onclick="if (select_pixels(event)) return false;" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>" alt=""/>
+        <input style="cursor: pointer;outline:none;border:none;" id="pixelimg" <?php if ( USE_AJAX == 'YES' ) { ?> onmousemove="show_pointer(event)" onclick="select_pixels(event)" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>" alt=""/>
 
         <input type="hidden" name="action" value="select">
     </form>

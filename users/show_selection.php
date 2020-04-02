@@ -47,5 +47,6 @@ output_grid( true, "", $BID, array(
 	'reserved',
 	'selected',
 	'sold',
-	'price_zones'
+	'price_zones',
+	'not_my_reserved'
 ) );

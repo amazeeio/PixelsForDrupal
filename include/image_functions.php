@@ -112,6 +112,7 @@ function process_image( $BID ) {
 	return output_grid(false, SERVER_PATH_TO_ADMIN . "temp/temp$BID", $BID, array(
 		'background',
 		'orders',
+		'nfs_front',
 		'grid',
 	));
 }

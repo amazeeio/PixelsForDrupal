@@ -105,7 +105,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 				break;
 			case 'nfs_front':
 				$default_nfs_front_block = $blank_block->copy();
-				$tmp_block               = $imagine->load( $banner_data['USR_NFS_BLOCK'] );
+				$tmp_block               = $imagine->load( $banner_data['NFS_BLOCK'] );
 				$tmp_block->resize( $block_size );
 				$default_nfs_front_block->paste( $tmp_block, $zero_point );
 				break;

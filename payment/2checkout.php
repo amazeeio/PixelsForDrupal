@@ -94,7 +94,7 @@ class _2CO {
 	var $description;
 	var $className="_2CO";
 
-	function _2co() {
+	function __construct() {
 
 		global $label;
 		$this->name=$label['payment_2co_name'];

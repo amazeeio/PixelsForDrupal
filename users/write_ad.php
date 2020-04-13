@@ -42,6 +42,11 @@ $order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($
 
 if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
+	if (USE_AJAX=='SIMPLE') {
+		$order_page = 'order_pixels.php';
+	} else {
+		$order_page = 'select.php';
+	}
 	?>
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
 <p><?php echo $label['no_order_in_progress_go_here'] = str_replace ('%ORDER_PAGE%', $order_page ,  $label['no_order_in_progress_go_here']); //echo $label['no_order_in_progress_go_here']; ?></p>

@@ -30,9 +30,9 @@
  */
 
 session_start();
-include( "../config.php" );
+require_once( __DIR__ . "/../config.php" );
 
-include( "login_functions.php" );
+require_once( __DIR__ . "/login_functions.php" );
 
 process_login();
 
@@ -134,18 +134,19 @@ if ( isset( $_REQUEST['select'] ) && ! empty( $_REQUEST['select'] ) ) {
 
 require( "header.php" );
 
+$block_str = ( $order_row['blocks'] == "" ) ? "-1" : $order_row['blocks'];
+
 ?>
     <div id="blocks"></div>
 
     <script>
 
 		// Initialize
-		let block_str = "<?php echo $order_row['blocks']; ?>";
-		let selecting = false;
-		let trip_count = 0;
-
-		let selectedBlocks = [];
+		let block_str = "<?php echo $block_str; ?>";
+		let selectedBlocks = block_str.split(',').map(Number);
 		let selBlocksIndex = 0;
+		let selecting = false;
+		let ajaxing = false;
 
 		// noinspection JSAnnotator
 		const grid_width = <?php echo $banner_data['G_WIDTH']?>;
@@ -178,12 +179,31 @@ require( "header.php" );
 			submit_button2 = document.getElementById('submit_button2');
 			pointer = document.getElementById('block_pointer');
 			load_order();
+			update_total_cost();
 			window.onresize = refreshSelectedLayers;
+
+			// support touch screens
+			grid.addEventListener('touchend', function onTouchEnd(event) {
+				let touches = event.changedTouches;
+				show_pointer(touches[0]);
+				select_pixels(touches[0]);
+			}, false);
+			grid.addEventListener('touchmove', function onTouchMove(event) {
+				let touches = event.changedTouches;
+				show_pointer(touches[0]);
+				select_pixels(touches[0]);
+			}, false);
 		};
+
+		function update_total_cost() {
+			if (typeof (total_cost) != 'undefined' && total_cost != null) {
+				total_cost.innerText = "₿" + (myblocks.childElementCount * G_PRICE);
+			}
+		}
 
 		function load_order() {
 			<?php
-			// get data for blocks in this order
+			// load any existing blocks for this order
 			$order_blocks = array();
 
 			if(isset( $order_row['blocks'] ) && $order_row['blocks'] != "") {
@@ -197,12 +217,12 @@ require( "header.php" );
 					'y'        => $pos['y'],
 				);
 			}
-
-			// load any existing blocks for this order
 			?>
-			var blocks = JSON.parse('<?php echo json_encode( $order_blocks ); ?>');
+
+			let blocks = JSON.parse('<?php echo json_encode( $order_blocks ); ?>');
+
 			for (var i = 0; i < blocks.length; i++) {
-				add_block(blocks[i].block_id, blocks[i].x, blocks[i].y);
+				add_block(parseInt(blocks[i].block_id), parseInt(blocks[i].x), parseInt(blocks[i].y));
 			}
 			<?php
 			}
@@ -213,49 +233,54 @@ require( "header.php" );
 		}
 
 		function update_order() {
-			document.form1.selected_pixels.value = block_str;
+			if (selectedBlocks !== -1) {
+				document.form1.selected_pixels.value = selectedBlocks.join(',');
+			}
 		}
 
 		function reserve_block(clicked_block) {
-			var blocks;
-			if (block_str !== '') {
-				blocks = block_str.split(",");
+			if (selectedBlocks.indexOf(clicked_block) === -1) {
+				selectedBlocks.push(parseInt(clicked_block));
 
-			} else {
-				blocks = [];
+				// remove default value of -1 from array
+				let index = selectedBlocks.indexOf(-1);
+				if (index > -1) {
+					selectedBlocks.splice(index, 1);
+				}
+
+				update_order();
 			}
-
-			var len = blocks.length;
-			len++;
-			blocks[len] = clicked_block;
-			block_str = implode(blocks);
 		}
 
 		function unreserve_block(clicked_block) {
-
-			var blocks;
-			if (block_str !== '') {
-				blocks = block_str.split(",");
-
-			} else {
-				blocks = [];
-
+			let index = selectedBlocks.indexOf(clicked_block);
+			if (index > -1) {
+				selectedBlocks.splice(index, 1);
+				update_order();
 			}
-			var new_blocks = [];
+		}
 
-			for (var i = 0; i < blocks.length; i++) {
-				if (blocks[i] !== clicked_block) {
-					new_blocks[i] = blocks[i];
-				}
+		function add_block(clicked_block, OffsetX, OffsetY) {
+
+			//-J- Edit: Added tempTop and tempLeft values to span tag for resize bug
+			myblocks.innerHTML = myblocks.innerHTML + "<span id='block" + clicked_block.toString() + "' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='top: " + (OffsetY + grid.offsetTop) + "px; left: " + (OffsetX + grid.offsetLeft) + "px;' onclick='select_pixels(event, " + OffsetX + ", " + OffsetY + ");' onmousemove='show_pointer(event)' ><img src='selected_block.png' width='<?php echo $banner_data['BLK_WIDTH']; ?>' height='<?php echo $banner_data['BLK_HEIGHT']; ?>'></span>";
+
+			reserve_block(clicked_block);
+		}
+
+		function remove_block(clicked_block) {
+			let myblock = document.getElementById("block" + clicked_block.toString());
+			if (myblock !== null) {
+				myblock.remove();
 			}
 
-			block_str = implode(new_blocks);
+			unreserve_block(clicked_block);
 		}
 
 		//Begin -J- Edit: Custom functions for resize bug
 		//Taken from http://www.quirksmode.org/js/findpos.html; but modified
 		function findPosX(obj) {
-			var curleft = 0;
+			let curleft = 0;
 			if (obj.offsetParent) {
 				while (obj.offsetParent) {
 					curleft += obj.offsetLeft;
@@ -268,7 +293,7 @@ require( "header.php" );
 
 		//Taken from http://www.quirksmode.org/js/findpos.html; but modified
 		function findPosY(obj) {
-			var curtop = 0;
+			let curtop = 0;
 			if (obj.offsetParent) {
 				while (obj.offsetParent) {
 					curtop += obj.offsetTop;
@@ -280,58 +305,128 @@ require( "header.php" );
 		}
 
 		function refreshSelectedLayers() {
-			var gridLeft = findPosX(grid); //Get image grid's new X position
-			var gridTop = findPosY(grid); //Get image grid's new Y position
-			var layer; //Used to hold layer elements below
-			for (var i = 0; i < selectedBlocks.length; i++) //Loop through selectedBlocks array
+			let gridLeft = findPosX(grid); //Get image grid's new X position
+			let gridTop = findPosY(grid); //Get image grid's new Y position
+			let layer; //Used to hold layer elements below
+			for (let i = 0; i < selectedBlocks.length; i++) //Loop through selectedBlocks array
 			{
 				if (selectedBlocks[i] !== '') //If spot isn't empty
 				{
 					layer = document.getElementById("block" + selectedBlocks[i]); //Get layer element given blockID stored in selectedBlocks array
 					if (layer !== null) {
 						//Update layer relative to new pos of image grid
-						layer.style.left = gridLeft + parseFloat(layer.getAttribute("tempLeft"));
-						layer.style.top = gridTop + parseFloat(layer.getAttribute("tempTop"));
+						layer.style.left = gridLeft + parseFloat(layer.getAttribute("tempLeft")) + "px";
+						layer.style.top = gridTop + parseFloat(layer.getAttribute("tempTop")) + "px";
 					}
 				} //End of if(selectedBlockIDs[i] != ''....
 			} //End for loop
 		} //End testing()
 		//End -J- Edit: Custom functions for resize bug
 
-		function add_block(clicked_block, OffsetX, OffsetY) {
-
-			//-J- Edit: Added tempTop and tempLeft values to span tag for resize bug
-			myblocks.innerHTML = myblocks.innerHTML + "<span id='block" + clicked_block.toString() + "' tempTop=" + OffsetY + " tempLeft=" + OffsetX + " style='top: " + (OffsetY + grid.offsetTop) + "px; left: " + (OffsetX + grid.offsetLeft) + "px;' onclick='select_pixels(event, " + OffsetX + ", " + OffsetY + ");' onmousemove='show_pointer2(this, event)' ><img src='selected_block.png' width='<?php echo $banner_data['BLK_WIDTH']; ?>' height='<?php echo $banner_data['BLK_HEIGHT']; ?>'></span>";
-			//Begin -J- Edit: For resize bug
-			selectedBlocks[selBlocksIndex] = clicked_block;
-			selBlocksIndex = selBlocksIndex + 1;
-			//End -J- Edit
-
-			reserve_block(clicked_block);
-		}
-
-		function remove_block(clicked_block) {
-			var myblock = document.getElementById("block" + clicked_block.toString());
+		function invert_block(clicked_block) {
+			let myblock = document.getElementById("block" + clicked_block.id.toString());
 			if (myblock !== null) {
-				myblock.remove();
-			}
-
-			unreserve_block(clicked_block);
-		}
-
-		function invert_block(clicked_block, OffsetX, OffsetY) {
-			var myblock = document.getElementById("block" + clicked_block.toString());
-			if (myblock !== null) {
-				remove_block(clicked_block);
+				remove_block(clicked_block.id);
 			} else {
-				add_block(clicked_block, OffsetX, OffsetY);
+				add_block(clicked_block.id, clicked_block.x, clicked_block.y);
 			}
+			update_total_cost();
 		}
 
-		function invert_blocks(clicked_block, OffsetX, OffsetY) {
+		function invert_blocks(block, OffsetX, OffsetY) {
+			let clicked_blocks = [];
+			let x;
+			let y;
 
-			// invert block
-			invert_block(clicked_block, OffsetX, OffsetY);
+			// actual clicked block
+			x = OffsetX;
+			y = OffsetY;
+			clicked_blocks.push({
+				id: block,
+				x: x,
+				y: y
+			});
+
+			// additional blocks if multiple selection radio buttons are selected
+			if (document.getElementById('sel4').checked) {
+				// select 4 - 4x4
+
+				x = OffsetX + BLK_WIDTH;
+				y = OffsetY;
+				clicked_blocks.push({
+					id: get_block_id_from_position(x, y),
+					x: x,
+					y: y
+				});
+
+				x = OffsetX;
+				y = OffsetY + BLK_HEIGHT;
+				clicked_blocks.push({
+					id: get_block_id_from_position(x, y),
+					x: x,
+					y: y
+				});
+
+				x = OffsetX + BLK_WIDTH;
+				y = OffsetY + BLK_HEIGHT;
+				clicked_blocks.push({
+					id: get_block_id_from_position(x, y),
+					x: x,
+					y: y
+				});
+
+			} else {
+				// select 6 - 3x2
+
+				if (document.getElementById('sel6').checked) {
+
+					x = OffsetX + BLK_WIDTH;
+					y = OffsetY;
+					clicked_blocks.push({
+						id: get_block_id_from_position(x, y),
+						x: x,
+						y: y
+					});
+
+					x = OffsetX + (BLK_WIDTH * 2);
+					y = OffsetY;
+					clicked_blocks.push({
+						id: get_block_id_from_position(x, y),
+						x: x,
+						y: y
+					});
+
+					x = OffsetX;
+					y = OffsetY + BLK_HEIGHT;
+					clicked_blocks.push({
+						id: get_block_id_from_position(x, y),
+						x: x,
+						y: y
+					});
+
+					x = OffsetX + BLK_WIDTH;
+					y = OffsetY + BLK_HEIGHT;
+					clicked_blocks.push({
+						id: get_block_id_from_position(x, y),
+						x: x,
+						y: y
+					});
+
+					x = OffsetX + (BLK_WIDTH * 2);
+					y = OffsetY + BLK_HEIGHT;
+					clicked_blocks.push({
+						id: get_block_id_from_position(x, y),
+						x: x,
+						y: y
+					});
+				}
+			}
+
+			for (const clicked of clicked_blocks) {
+
+				// invert block
+				invert_block(clicked);
+			}
 		}
 
 		function select_pixels(e, x = -1, y = -1) {
@@ -349,37 +444,10 @@ require( "header.php" );
 			}
 
 			pointer.style.visibility = 'hidden';
-			var OffsetX = (x > -1) ? x : pointer.map_x;
-			var OffsetY = (y > -1) ? y : pointer.map_y;
+			let OffsetX = (x > -1) ? x : pointer.map_x;
+			let OffsetY = (y > -1) ? y : pointer.map_y;
 
-			trip_count = 1; // default
-
-			if (document.getElementById('sel4').checked) {
-				// select 4 at a time
-				trip_count = 4;
-				change_block_state(OffsetX, OffsetY);
-				change_block_state(OffsetX + BLK_WIDTH, OffsetY);
-				change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
-				change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
-
-			} else {
-
-				if (document.getElementById('sel6').checked) {
-
-					trip_count = 6;
-					change_block_state(OffsetX, OffsetY);
-					change_block_state(OffsetX + BLK_WIDTH, OffsetY);
-					change_block_state(OffsetX, OffsetY + BLK_HEIGHT);
-					change_block_state(OffsetX + BLK_WIDTH, OffsetY + BLK_HEIGHT);
-					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY);
-					change_block_state(OffsetX + (BLK_WIDTH * 2), OffsetY + BLK_HEIGHT);
-
-				} else {
-					trip_count = 1;
-					change_block_state(OffsetX, OffsetY);
-				}
-
-			}
+			change_block_state(OffsetX, OffsetY);
 
 			return true;
 		}
@@ -388,11 +456,11 @@ require( "header.php" );
 		 * @return {boolean}
 		 */
 		function IsNumeric(str) {
-			var ValidChars = "0123456789";
-			var IsNumber = true;
-			var Char;
+			let ValidChars = "0123456789";
+			let IsNumber = true;
+			let Char;
 
-			for (var i = 0; i < str.length && IsNumber === true; i++) {
+			for (let i = 0; i < str.length && IsNumber === true; i++) {
 				Char = str.charAt(i);
 				if (ValidChars.indexOf(Char) === -1) {
 					IsNumber = false;
@@ -404,13 +472,13 @@ require( "header.php" );
 
 		function get_block_position(block_id) {
 
-			var cell = "0";
-			var ret = {};
+			let cell = "0";
+			let ret = {};
 			ret.x = 0;
 			ret.y = 0;
 
-			for (var i = 0; i < grid_height; i++) {
-				for (var j = 0; j < grid_width; j++) {
+			for (let i = 0; i < grid_height; i++) {
+				for (let j = 0; j < grid_width; j++) {
 					if (block_id === cell) {
 						ret.x = j * BLK_WIDTH;
 						ret.y = i * BLK_HEIGHT;
@@ -426,9 +494,9 @@ require( "header.php" );
 
 		function get_block_id_from_position(x, y) {
 
-			var id = 0;
-			for (var y2 = 0; y2 < GRD_HEIGHT; y2 += BLK_HEIGHT) {
-				for (var x2 = 0; x2 < GRD_WIDTH; x2 += BLK_WIDTH) {
+			let id = 0;
+			for (let y2 = 0; y2 < GRD_HEIGHT; y2 += BLK_HEIGHT) {
+				for (let x2 = 0; x2 < GRD_WIDTH; x2 += BLK_WIDTH) {
 					if (x === x2 && y === y2) {
 						return id;
 					}
@@ -441,87 +509,85 @@ require( "header.php" );
 
 		function change_block_state(OffsetX, OffsetY) {
 
-			var clicked_block = ((OffsetX) / BLK_WIDTH) + ((OffsetY / BLK_HEIGHT) * (GRD_WIDTH / BLK_WIDTH));
+			let clicked_block = ((OffsetX) / BLK_WIDTH) + ((OffsetY / BLK_HEIGHT) * (GRD_WIDTH / BLK_WIDTH));
 
 			var xmlhttp = false;
 			if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
 				xmlhttp = new XMLHttpRequest();
 			}
 
-			xmlhttp.open("GET", "update_order.php?user_id=<?php echo $_SESSION['MDS_ID'];?>&block_id=" + clicked_block.toString() + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
+			submit_button1.disabled = true;
+			submit_button2.disabled = true;
+			pointer.style.cursor = 'wait';
+			grid.style.cursor = 'wait';
 
-			if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
-				submit_button1.disabled = true;
-				submit_button2.disabled = true;
-				pointer.style.cursor = 'wait';
-				grid.style.cursor = 'wait';
-			}
+			if (ajaxing === false) {
+				ajaxing = true;
+				xmlhttp.open("GET", "update_order.php?sel_mode=" + document.getElementsByName('pixel_form')[0].elements.sel_mode.value + "&user_id=<?php echo $_SESSION['MDS_ID'];?>&block_id=" + clicked_block.toString() + "&BID=<?php echo $BID . "&t=" . time(); ?>", true);
 
-			xmlhttp.onreadystatechange = function () {
-				if (xmlhttp.readyState === 4) {
+				xmlhttp.onreadystatechange = function () {
+					if (xmlhttp.readyState === 4) {
 
-					if ((xmlhttp.responseText === 'new')) {
-						invert_blocks(clicked_block, OffsetX, OffsetY);
-
-					} else {
-						if (IsNumeric(xmlhttp.responseText)) {
-
-							// save order id
-							document.form1.order_id.value = xmlhttp.responseText;
+						if ((xmlhttp.responseText === 'new')) {
 							invert_blocks(clicked_block, OffsetX, OffsetY);
 
 						} else {
+							if (IsNumeric(xmlhttp.responseText)) {
 
-							if (xmlhttp.responseText.indexOf('max_selected') > -1) {
-								<?php
-								$label['max_blocks_selected'] = str_replace( '%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected'] );
-								?>
-								alert('<?php echo js_out_prep( $label['max_blocks_selected'] ); ?> ');
-							} else if (xmlhttp.responseText.indexOf('max_orders') > -1) {
-								alert('<?php echo js_out_prep( $label['advertiser_max_order'] )?>');
-							} else if (xmlhttp.responseText.length > 0) {
-								alert(xmlhttp.responseText);
+								// save order id
+								document.form1.order_id.value = xmlhttp.responseText;
+								invert_blocks(clicked_block, OffsetX, OffsetY);
+
+							} else {
+
+								if (xmlhttp.responseText.indexOf('max_selected') > -1) {
+									<?php
+									$label['max_blocks_selected'] = str_replace( '%MAX_BLOCKS%', $banner_data['G_MAX_BLOCKS'], $label['max_blocks_selected'] );
+									?>
+									alert('<?php echo js_out_prep( $label['max_blocks_selected'] ); ?> ');
+								} else if (xmlhttp.responseText.indexOf('max_orders') > -1) {
+									alert('<?php echo js_out_prep( $label['advertiser_max_order'] )?>');
+								} else if (xmlhttp.responseText.length > 0) {
+									alert(xmlhttp.responseText);
+								}
 							}
 						}
-					}
 
-					update_order();
-					trip_count--; // count down, enable button when 0
-
-					if (trip_count <= 0) {
 						submit_button1.disabled = false;
 						submit_button2.disabled = false;
 						pointer.style.cursor = 'pointer';
+						pointer.style.visibility = 'visible';
 						grid.style.cursor = 'pointer';
 						selecting = false;
-						trip_count = 0;
+						ajaxing = false;
 					}
-				}
+				};
 
-			};
-
-			xmlhttp.send(null);
+				xmlhttp.send(null);
+			}
 		}
 
 		function implode(myArray) {
 
-			var str = '';
-			var comma = '';
+			let str = '';
+			let comma = '';
 
-			for (var i in myArray) {
-				str = str + comma + myArray[i];
+			for (let i in myArray) {
+				if (myArray.hasOwnProperty(i)) {
+					str = str + comma + myArray[i];
+				}
 				comma = ',';
 			}
 
 			return str;
 		}
 
-		var pos;
+		let pos;
 
 		function getObjCoords(obj) {
-			var pos = {x: 0, y: 0};
-			var curtop = 0;
-			var curleft = 0;
+			let pos = {x: 0, y: 0};
+			let curtop = 0;
+			let curleft = 0;
 			if (obj.offsetParent) {
 				while (obj.offsetParent) {
 					curtop += obj.offsetTop;
@@ -543,24 +609,26 @@ require( "header.php" );
 				return;
 			}
 
-			if (!pos) {
-				var pos = getObjCoords(grid);
-			}
+			let pos = getObjCoords(grid);
 
-			var OffsetX;
-			var OffsetY;
-			if (e.offsetX) {
-				OffsetX = e.offsetX;
-				OffsetY = e.offsetY;
-			} else {
-				OffsetX = e.pageX - pos.x;
-				OffsetY = e.pageY - pos.y;
-			}
+			let OffsetX;
+			let OffsetY;
+			// if (e.offsetX) {
+			// 	OffsetX = e.offsetX;
+			// 	OffsetY = e.offsetY;
+			// } else {
+			OffsetX = e.pageX - pos.x;
+			OffsetY = e.pageY - pos.y;
+			// }
 
 			// drop 1/10 from the OffsetX and OffsetY, eg 612 becomes 610
 
-			OffsetX = Math.floor(OffsetX / <?php echo $banner_data['BLK_WIDTH']; ?>) *<?php echo $banner_data['BLK_WIDTH']; ?>;
-			OffsetY = Math.floor(OffsetY / <?php echo $banner_data['BLK_HEIGHT']; ?>) *<?php echo $banner_data['BLK_HEIGHT']; ?>;
+			OffsetX = Math.floor(OffsetX / BLK_WIDTH) * BLK_WIDTH;
+			OffsetY = Math.floor(OffsetY / BLK_HEIGHT) * BLK_HEIGHT;
+
+			// keep within range
+			OffsetX = Math.max(Math.min(OffsetX, GRD_WIDTH), 0);
+			OffsetY = Math.max(Math.min(OffsetY, GRD_HEIGHT), 0);
 
 			pointer.style.visibility = 'visible';
 			pointer.style.display = 'block';
@@ -571,11 +639,29 @@ require( "header.php" );
 			pointer.map_x = OffsetX;
 			pointer.map_y = OffsetY;
 
-			return true;
-		}
+			let pointer_img = pointer.querySelector('img');
 
-		function show_pointer2(block, e) {
-			pointer.style.visibility = 'hidden';
+			if (document.getElementById('sel4').checked) {
+				pointer.style.width = BLK_WIDTH * 2 + "px";
+				pointer.style.height = BLK_HEIGHT * 2 + "px";
+				pointer_img.style.width = BLK_WIDTH * 2 + "px";
+				pointer_img.style.height = BLK_HEIGHT * 2 + "px";
+			} else {
+
+				if (document.getElementById('sel6').checked) {
+					pointer.style.width = BLK_WIDTH * 3 + "px";
+					pointer.style.height = BLK_HEIGHT * 2 + "px";
+					pointer_img.style.width = BLK_WIDTH * 3 + "px";
+					pointer_img.style.height = BLK_HEIGHT * 2 + "px";
+				} else {
+					pointer.style.width = BLK_WIDTH + "px";
+					pointer.style.height = BLK_HEIGHT + "px";
+					pointer_img.style.width = BLK_WIDTH + "px";
+					pointer_img.style.height = BLK_HEIGHT + "px";
+				}
+			}
+
+			return true;
 		}
 
 		function form1Submit(event) {
@@ -605,6 +691,9 @@ require( "header.php" );
             width: <?php echo $banner_data['BLK_WIDTH']; ?>px;
             line-height: <?php echo $banner_data['BLK_HEIGHT']; ?>px;
             font-size: <?php echo $banner_data['BLK_HEIGHT']; ?>px;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         span[id^='block'] {
@@ -618,9 +707,20 @@ require( "header.php" );
             line-height: <?php echo $banner_data['BLK_HEIGHT']; ?>px;
             font-size: <?php echo $banner_data['BLK_HEIGHT']; ?>px;
         }
+
+        #pixelimg {
+            cursor: pointer;
+            outline: none;
+            border: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0 auto;
+            float: none;
+            display: block;
+        }
     </style>
 
-    <span onmouseout="this.style.visibility='hidden' " id='block_pointer' onclick="select_pixels(event);"><img src='pointer.png' width="<?php echo $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['BLK_HEIGHT']; ?>" alt=""></span>
+    <span id='block_pointer' oncontextmenu="return false;" ; unselectable="on" draggable="false" onclick="select_pixels(event);" onmousemove="show_pointer(event)"><img src='pointer.png' width="<?php echo $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['BLK_HEIGHT']; ?>" alt=""></span>
 
     <p>
 		<?php echo $label['advertiser_sel_trail']; ?>
@@ -684,11 +784,11 @@ echo $label['advertiser_select_instructions2']; ?>
         <input type="hidden" value="1" name="select">
         <input type="hidden" value="<?php echo $BID; ?>" name="BID">
 
-        <input style="cursor: pointer;outline:none;border:none;" id="pixelimg" <?php if ( USE_AJAX == 'YES' ) { ?> onmousemove="show_pointer(event)" onclick="select_pixels(event)" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>" alt=""/>
+        <input id="pixelimg" draggable="false" unselectable="on" <?php if ( USE_AJAX == 'YES' ) { ?> onmouseout="pointer.style.visibility='hidden'" onmousemove="show_pointer(event)" onclick="select_pixels(event)" <?php } ?> type="image" name="map" value='Select Pixels.' style="width:<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>px;height:<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>;border:none;outline:none;" src="show_selection.php?BID=<?php echo $BID; ?>&gud=<?php echo time(); ?>" alt=""/>
 
         <input type="hidden" name="action" value="select">
     </form>
-    <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
+    <div style='display:none;background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
         <hr>
 
         <form method="post" action="order.php" id="form1" name="form1">
@@ -699,10 +799,6 @@ echo $label['advertiser_select_instructions2']; ?>
             <input type="submit" name='submit_button2' id='submit_button2' value='<?php echo htmlspecialchars( $label['advertiser_buy_button'] ); ?>'>
             <hr>
         </form>
-
-        <script>
-			document.form1.selected_pixels.value = block_str;
-        </script>
 
     </div>
 

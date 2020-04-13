@@ -123,7 +123,7 @@ class authorizeNet {
 	var $className='authorizeNet';
 	
 
-	function authorizeNet() {
+	function __construct() {
 
 		global $label;
 		$this->description = $label['payment_authnet_description'];

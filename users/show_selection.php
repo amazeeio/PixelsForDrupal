@@ -42,7 +42,7 @@ output_grid( true, "", $BID, array(
 	'background',
 	'orders',
 	'grid',
-	'nfs_front',
+	'nfs',
 	'ordered',
 	'reserved',
 	'selected',

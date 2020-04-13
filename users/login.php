@@ -39,7 +39,7 @@ if ( ! is_logged_in() ) {
 }
 
 session_start();
-require "../config.php";
+require __DIR__ . "/../config.php";
 
 $target_page = $_REQUEST['target_page'];
 

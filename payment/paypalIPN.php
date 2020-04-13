@@ -299,7 +299,7 @@ class PayPal {
 	var $description;
 	var $className="PayPal";
 
-	function PayPal() {
+	function __construct() {
 
 		global $label;
 

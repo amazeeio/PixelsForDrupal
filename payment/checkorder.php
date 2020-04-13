@@ -33,7 +33,7 @@ require_once "../config.php";
 
 $_PAYMENT_OBJECTS['check'] =  new check;
 
-define (IPN_LOGGING, 'Y');
+define ('IPN_LOGGING', 'Y');
 
 function ch_mail_error($msg) {
 
@@ -44,7 +44,7 @@ function ch_mail_error($msg) {
 	$headers .= "Return-Path: ".SITE_CONTACT_EMAIL ."\r\n";
 	$headers .= "X-Mailer: PHP" ."\r\n";
 	$headers .= "Date: $date" ."\r\n"; 
-	$headers .= "X-Sender-IP: $REMOTE_ADDR" ."\r\n";
+	$headers .= "X-Sender-IP: " . $_SERVER['REMOTE_ADDR'] ."\r\n";
 
 	@mail(SITE_CONTACT_EMAIL, "Error message from ".SITE_NAME." Jamit check payment mod. ", $msg, $headers);
 
@@ -76,7 +76,7 @@ class check {
 	var $className="check";
 	
 
-	function check() {
+	function __construct() {
 
 		if ($this->is_installed()) {
 

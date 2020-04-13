@@ -83,7 +83,4 @@ if ( $banner_data['G_MAX_BLOCKS'] > 0 ) {
 
 $output_result = select_block( '', '', $block_id );
 
-if ( empty( $output_result ) ) {
-	$output_result = intval( $_SESSION['MDS_order_id'] );
-}
 echo $output_result;

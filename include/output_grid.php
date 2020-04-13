@@ -291,8 +291,9 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	if ( isset( $show_price_zones ) ) {
 		$price_zone_blocks = array();
 		$cell              = 0;
-		for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
-			for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
+	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
+
+		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 				$price_zone_color = get_zone_color( $BID, $y, $x );
 				switch ( $price_zone_color ) {
@@ -319,16 +320,15 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 				$cell ++;
 			}
 		}
-	}
+			}
 
-	// preload full grid
+			// preload full grid
 	$grid_back = $grid_front = $grid_price_zone = array();
 	$cell      = 0;
 	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
 		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 
 			if ( isset( $blocks[ $cell ] ) && $blocks[ $cell ] != '' ) {
-
 				if ( isset( $show_orders ) && $blocks[ $cell ] == "order" ) {
 					$grid_front[ $x ][ $y ] = $orders[ $cell ];
 				} else if ( isset( $user ) && $blocks[ $cell ] == "user" ) {
@@ -378,38 +378,38 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 		}
 	}
 
-	// blend in the background
-	if ( isset( $background ) ) {
+			// blend in the background
+			if ( isset( $background ) ) {
 
-		// Background image size
-		$bgsize = $background->getSize();
+				// Background image size
+				$bgsize = $background->getSize();
 
-		// Rescale image to fit within the size of the grid
-		$new_dimensions = resize_dimensions( $size->getWidth(), $size->getHeight(), $bgsize->getWidth(), $bgsize->getHeight() );
+				// Rescale image to fit within the size of the grid
+				$new_dimensions = resize_dimensions( $size->getWidth(), $size->getHeight(), $bgsize->getWidth(), $bgsize->getHeight() );
 
-		// Resize to max size
-		$background->resize( new Imagine\Image\Box( $new_dimensions['width'], $new_dimensions['height'] ) );
+				// Resize to max size
+				$background->resize( new Imagine\Image\Box( $new_dimensions['width'], $new_dimensions['height'] ) );
 
-		// Get new size
-		$bgsize = $background->getSize();
+				// Get new size
+				$bgsize = $background->getSize();
 
-		// calculate coords to paste at
-		$bgx = ( $size->getWidth() / 2 ) - ( $bgsize->getWidth() / 2 );
-		$bgy = ( $size->getHeight() / 2 ) - ( $bgsize->getHeight() / 2 );
+				// calculate coords to paste at
+				$bgx = ( $size->getWidth() / 2 ) - ( $bgsize->getWidth() / 2 );
+				$bgy = ( $size->getHeight() / 2 ) - ( $bgsize->getHeight() / 2 );
 
-		// make sure coords aren't outside the box
-		if ( $bgx < 0 ) {
-			$bgx = 0;
-		}
-		if ( $bgy < 0 ) {
-			$bgy = 0;
-		}
+				// make sure coords aren't outside the box
+				if ( $bgx < 0 ) {
+					$bgx = 0;
+				}
+				if ( $bgy < 0 ) {
+					$bgy = 0;
+				}
 
-		// paste background image into grid
-		$map->paste( $background, new Imagine\Image\Point( $bgx, $bgy ) );
-	}
+				// paste background image into grid
+				$map->paste( $background, new Imagine\Image\Point( $bgx, $bgy ) );
+			}
 
-	// paste the blocks
+			// paste the blocks
 	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
 		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 			if ( isset( $grid_front[ $x ] ) && isset( $grid_front[ $x ][ $y ] ) ) {
@@ -418,7 +418,7 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 		}
 	}
 
-	// paste price zone layer
+			// paste price zone layer
 	for ( $y = 0; $y < ( $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT'] ); $y += $banner_data['BLK_HEIGHT'] ) {
 		for ( $x = 0; $x < ( $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH'] ); $x += $banner_data['BLK_WIDTH'] ) {
 			if ( isset( $grid_price_zone[ $x ] ) && isset( $grid_price_zone[ $x ][ $y ] ) ) {
@@ -427,8 +427,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 		}
 	}
 
-	// output price zone text
-	if ( isset( $show_price_zones_text ) ) {
+			// output price zone text
+			if ( isset( $show_price_zones_text ) ) {
 
 		$row_c       = 0;
 		$col_c       = 0;
@@ -444,13 +444,13 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 					imagestringup( $map->getGdResource(), 1, $x + 1, 15 + 1, $spaces . "$col_c", $textcolor );
 					$col_c ++;
 				}
+
 			}
 
 			imagestring( $map->getGdResource(), 1, 1, $y, "$row_c", $textcolor_w );
 			imagestring( $map->getGdResource(), 1, 2, $y + 1, "$row_c", $textcolor );
 			$row_c ++;
 		}
-
 	}
 
 	// set output options

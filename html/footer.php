@@ -5,7 +5,7 @@
 </div>
 
 <footer class="text-muted">
-    <div class="container py-4">
+    <div class="container py-4 text-center">
         <p>&copy; Copyright <?php echo date('Y') . " " . SITE_NAME; ?></p>
     </div>
 </footer>

@@ -38,21 +38,18 @@ $logourl = SITE_LOGO_URL;
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!--	<link rel="stylesheet" type="text/css" href="main.css?ver=-->
-    <?php //echo filemtime(BASE_PATH . "/main.css"); ?><!--" >-->
 </head>
 <body>
 
-<!--<a class="navbar-brand" href="index.php">-->
-<!--    --><?php //if (!empty($logourl)) { ?>
-<!--       <img src="--><?php ////echo htmlentities($logourl); ?><!--" class="d-inline-block align-top" alt="">-->
-<!--    --><?php //} ?>
-<!--    $500,000 Drupal Page-->
-<!--</a>-->
 
 <div class="jumbotron mb-0">
     <div class="container text-center">
-        <h1>$500,000 Drupal Homepage</h1>
+        <h1><?php echo SITE_NAME; ?></h1>
+        <?php
+        $slogan = SITE_SLOGAN;
+        if (!empty($slogan)) { ?>
+            <p class="lead"> <?php echo htmlentities($slogan); ?></p>
+        <?php } ?>
     </div>
 </div>
 </div>
@@ -82,14 +79,5 @@ $logourl = SITE_LOGO_URL;
 </nav>
 
 <div class="container text-center">
-
-    <?php
-    $slogan = SITE_SLOGAN;
-    if (!empty($slogan)) { ?>
-        <!-- slogan -->
-        <div class="slogan">
-            <?php // echo htmlentities($slogan); ?>
-        </div>
-    <?php } ?>
 
 			

@@ -984,6 +984,24 @@ function does_field_exist($table, $field) {
 		}
 	}
 
+	if (!does_field_exist("vouchers", "voucher_id")) {
+
+		$sql = "CREATE TABLE `vouchers` (
+			`voucher_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			`code` char(20) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+			`banner_id` int(11) NOT NULL,
+			`price_discount` float DEFAULT NULL,
+			`blocks_discount` int(11) DEFAULT NULL,
+			`order_id` int(11) DEFAULT NULL,
+			`notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+			PRIMARY KEY (`voucher_id`),
+			KEY `voucher_code` (`code`)
+		) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+
+		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the following query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+
+	}
+
 	$sql = "SELECT * FROM `config` WHERE `key`='DELETE_CHECKED' ";
 	$res = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($res) ;

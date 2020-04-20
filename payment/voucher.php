@@ -68,8 +68,7 @@ class voucher {
 		if ( $this->is_installed() ) {
 
 			$sql = "SELECT * FROM config WHERE 
-                           `key`='VOUCHER_ENABLED' OR 
-                           `key`='VOUCHER_AUTO_APPROVE'
+                           `key`='VOUCHER_ENABLED'
                            ";
 			$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
@@ -83,16 +82,10 @@ class voucher {
 	function install() {
 		$sql = "REPLACE INTO config (`key`, val) VALUES ('VOUCHER_ENABLED', '')";
 		mysqli_query( $GLOBALS['connection'], $sql );
-
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('VOUCHER_AUTO_APPROVE', '')";
-		mysqli_query( $GLOBALS['connection'], $sql );
 	}
 
 	function uninstall() {
 		$sql = "DELETE FROM config WHERE `key`='VOUCHER_ENABLED'";
-		mysqli_query( $GLOBALS['connection'], $sql );
-
-		$sql = "DELETE FROM config WHERE `key`='VOUCHER_AUTO_APPROVE'";
 		mysqli_query( $GLOBALS['connection'], $sql );
 	}
 
@@ -120,57 +113,19 @@ class voucher {
 
 		if ( $_REQUEST['action'] == 'save' ) {
 			$voucher_enabled      = $_REQUEST['voucher_enabled'];
-			$voucher_auto_approve = $_REQUEST['voucher_auto_approve'];
-
 		} else {
 			$voucher_enabled      = VOUCHER_ENABLED;
-			$voucher_auto_approve = VOUCHER_AUTO_APPROVE;
 		}
 
 		?>
-        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-            <table border="0" cellpadding="5" cellspacing="2" style="border-style:groove" id="AutoNumber1" width="100%" bgcolor="#FFFFFF">
-
-                <tr>
-                    <td colspan="2" bgcolor="#e6f2ea">
-                        <span style="font-family: Verdana,serif; font-size: xx-small; "><b>Voucher Payment Settings</b></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td bgcolor="#e6f2ea">
-                        <span style="font-family: Verdana,serif; font-size: xx-small; ">Auto-approve?</span></td>
-                    <td bgcolor="#e6f2ea">
-                        <span style="font-family: Verdana,serif; font-size: xx-small; ">
-                            <select name="voucher_auto_approve">
-                                <option value="yes"<?php if ( $voucher_auto_approve == "yes" ) {
-	                                echo 'selected="selected"';
-                                } ?>>Yes</option>
-                                <option value="no"<?php if ( $voucher_auto_approve == "no" ) {
-	                                echo 'selected="selected"';
-                                } ?>>No</option>
-                            </select>
-                        </span>
-                        <div>Setting to Yes will automatically approve orders before payments are verified by an admin.</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td bgcolor="#e6f2ea" colspan=2>
-                        <span style="font-family: Verdana,serif; font-size: xx-small; "><input type="submit" value="Save"></span>
-                    </td>
-                </tr>
-            </table>
-            <input type="hidden" name="pay" value="<?php echo htmlspecialchars( $_REQUEST['pay'], ENT_QUOTES ); ?>">
-            <input type="hidden" name="action" value="save">
-
-        </form>
+        <p>No settings.</p>
 
 		<?php
 
 	}
 
 	function save_config() {
-		$sql = "REPLACE INTO config (`key`, val) VALUES ('VOUCHER_AUTO_APPROVE', '" . mysqli_real_escape_string( $GLOBALS['connection'], $_REQUEST['voucher_auto_approve'] ) . "')";
-		mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
+		
 	}
 
 	// true or false
@@ -231,26 +186,54 @@ class voucher {
 			} else {
 
         $order_id = intval( $_REQUEST['order_id'] );
-        $voucher = $f2->filter($_REQUEST['voucher_code']);
+        $voucher_id = $f2->filter($_REQUEST['voucher_code']);
+
+        $sql = "SELECT * FROM vouchers WHERE code='" . $voucher_id . "'";
+				$result = mysqli_query( $GLOBALS['connection'], $sql ) or voucher_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
+        $voucher = mysqli_fetch_array( $result );
+        
+        if (empty($voucher)) {
+          echo '<p>Invalid voucher code. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+          exit;
+        }
+
+        if (!is_null($voucher['order_id'])) {
+          echo '<p>Voucher already claimed. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+          exit;
+        }
 
 				$sql = "SELECT * FROM orders WHERE order_id='" . $order_id . "'";
 				$result = mysqli_query( $GLOBALS['connection'], $sql ) or voucher_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
-				$row = mysqli_fetch_array( $result );
+        $order = mysqli_fetch_array( $result );
 
-				if ( VOUCHER_AUTO_APPROVE == "yes" ) {
-					complete_order( $row['user_id'], $order_id );
-					debit_transaction( $order_id, $row['price'], $row['currency'], 'Voucher', $voucher, 'Voucher' );
-				}
+        if ($voucher['banner_id'] != $order['banner_id']) {
+          echo '<p>Voucher not valid for this banner. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+          exit;
+        }
 
-				$banner_data = load_banner_constants($row['banner_id']);
-				$quantity = intval($row['quantity']) / intval($banner_data['block_width']) / intval($banner_data['block_height']);
+        if ($voucher['price_discount']) {
+          if ($voucher['price_discount'] < $order['price']) {
+            echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+            exit;  
+          }
+        } else if ($voucher['blocks_discount']) {
+          $blocks = explode(',', $order['blocks']);
+          if ($voucher['blocks_discount'] < count($blocks)) {
+            echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+            exit;  
+          }
+        } else {
+          echo '<p>Order exceeds voucher. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+          exit;
+        }
 
-				$dest = str_replace( '%AMOUNT%', urlencode( $row['price'] ), $url );
-				$dest = str_replace( '%CURRENCY%', urlencode( $row['currency'] ), $dest );
-				$dest = str_replace( '%QUANTITY%', urlencode( $quantity ), $dest );
-				$dest = $dest . '&mdsid=' . $order_id;
+        $sql = "UPDATE vouchers SET order_id=" . mysqli_real_escape_string( $GLOBALS['connection'], $order['order_id']) . " WHERE `voucher_id`=" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['voucher_id']);
+		    $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
-				echo "Voucher: $voucher";
+        complete_order( $order['user_id'], $order_id );
+        debit_transaction( $order_id, $order['price'], $order['currency'], 'Voucher', $voucher['code'], 'Voucher' );
+
+				echo "Your order has been completed!";
 				exit;
 			}
 

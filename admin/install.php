@@ -1050,6 +1050,18 @@ function install_db() {
           `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL default '',
           `lang` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL default '',
           PRIMARY KEY  (`field_id`,`code`,`lang`)
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
+
+        CREATE TABLE `vouchers` (
+          `voucher_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+          `code` char(20) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+          `banner_id` int(11) NOT NULL,
+          `price_discount` float DEFAULT NULL,
+          `blocks_discount` int(11) DEFAULT NULL,
+          `order_id` int(11) DEFAULT NULL,
+          `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+          PRIMARY KEY (`voucher_id`),
+          KEY `voucher_code` (`code`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         ";
     }

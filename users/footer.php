@@ -30,6 +30,10 @@
  */
 ?>
 </div>
-<?php echo_copyright(); ?>
+<footer class="text-muted">
+    <div class="container py-4 text-center">
+        <p><small><?php echo_copyright(); ?></small></p>
+    </div>
+</footer>
 </body>
 </html>

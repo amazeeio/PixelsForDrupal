@@ -45,37 +45,36 @@ function process_login() {
 
 	require ("header.php");
 ?>
-   <table cellpadding=5 border=1 style="width: 100%;border-collapse: collapse; border-style:solid; border-color:#E8E8E8">
-
-	<tr>
-	<td valign="top" ><center><h3><?php echo $label["advertiser_section_heading"];?></h3></center>
+       <div class="container">
+   <div class="row">
+       <div class="col" style="border-right: 1px solid #ced4da">
+           <h3><?php echo $label["advertiser_section_heading"];?></h3>
 		<?php
 		  login_form();
         ?>
-
-</td>
+       </div>
 <?php
 
 if (USE_AJAX=='SIMPLE') {
 
 ?>
-<td valign=top>
-<center>
-<h3><?php echo $label["advertiser_section_newusr"];
+<div class="col">
+<h3 class="mb-4"><?php echo $label["advertiser_section_newusr"];
 if (USE_AJAX=='SIMPLE') {
 		$order_page = 'order_pixels.php';
 	} else {
 		$order_page = 'select.php';
 	}
 ?></h3>
-<a class="big_link" href="<?php echo $order_page; ?>"><?php echo $label["adv_login_new_link"]; ?></a> <br><br><?php echo $label["advertiser_go_buy_now"]; ?>
-      <h3 ></h3></center>
-</td>
+<a class="btn btn-success btn-block mb-2" href="<?php echo $order_page; ?>">
+    <?php echo $label["adv_login_new_link"]; ?>
+</a>
+    <div class="text-center text-muted"><small><?php echo $label["advertiser_go_buy_now"]; ?></small></div>
+</div>
 <?php
 }
 ?>
-</tr>
-</table>
+   </div></div>
 <?php
 require ("footer.php");
 die ();
@@ -120,58 +119,28 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
 	global $label;
 
 	?>
-    <table align="center">
-        <tr>
-            <td>
-                <form name="form1" method="post" action="login.php?lang=<?php echo get_lang(); ?>&target_page=<?php echo $target_page; ?>">
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                            <td width="50%" nowrap><span><?php echo $label["advertiser_signup_member_id"]; ?>:</span></td>
-                            <td><input name="Username" type="text" id="username" size="12"/></td>
-                        </tr>
-                        <tr>
-                            <td width="50%"><span><?php echo $label["advertiser_signup_password"]; ?>:</span></td>
-                            <td><input name="Password" type="password" id="password" size="12"/></td>
-                        </tr>
-                        <tr>
-                            <td width="50%">&nbsp;</td>
-                            <td>
-                                <div align="right">
-                                    <input type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_login"]; ?>"/>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan=2><a href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a></td>
-                        </tr>
-                    </table>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td height="20">
-                <div align="center"></div>
-            </td>
-        </tr>
-		<?php if ( $show_signup_link ) { ?>
-            <tr>
-                <td>
-                    <div align="center"><a href="signup.php"><h3><?php echo $label["advertiser_join_now"]; ?></h3></a></div>
-                </td>
-            </tr>
-		<?php } ?>
-        <tr>
-            <td height="20">
-                <div align="center"></div>
-            </td>
-        </tr>
+    <form class="mt-4" name="form1" method="post" action="login.php?lang=<?php echo get_lang(); ?>&target_page=<?php echo $target_page; ?>">
+        <div class="form-group">
+            <label for="username"><?php echo $label["advertiser_signup_member_id"]; ?></label>
+            <input type="email" class="form-control" id="username" aria-describedby="emailHelp" name="Username" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label for="password"><?php echo $label["advertiser_signup_password"]; ?></label>
+            <input type="password" class="form-control" id="password" name="Password" placeholder="Enter Password">
+        </div>
+        <button class="form_submit_button btn btn-primary" type="submit" name="Submit"><?php echo $label["advertiser_login"]; ?></button>
+    </form>
 
-        <tr>
-            <td>
-                <div align="center"><!-- signed up.--> </div>
-            </td>
-        </tr>
-    </table>
+    <div class="row mt-4">
+        <div class="col">
+    <a class="btn btn-default btn-block" href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a>
+        </div>
+    <?php if ( $show_signup_link ) { ?>
+                <div class="col">
+        <a class="btn btn-default btn-block" href="signup.php"><?php echo $label["advertiser_join_now"]; ?></a>
+                </div>
+    <?php } ?>
+    </div>
 	<?php
 }
 

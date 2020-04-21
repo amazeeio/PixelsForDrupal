@@ -117,6 +117,7 @@ while ( $row = mysqli_fetch_array( $result ) ) {
 require( "header.php" );
 
 ?>
+<div class="container">
 
     <script type="text/javascript">
 
@@ -767,22 +768,27 @@ if ( $has_packages ) {
 }
 
 ?>
-    <div class="fancy_heading" style="width:85%;"><?php echo $label['pixel_uploaded_head']; ?></div>
+    <div>
+    <h3><?php echo $label['pixel_uploaded_head']; ?></h3>
     <p>
 		<?php echo $label['upload_pix_description']; ?>
     </p>
     <p>
     <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
-        <strong><?php $label['upload_your_pix']; ?></strong> <input type='file' name='graphic' style=' font-size:14px;'/><br/>
-        <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
-        <input type='submit' value='<?php echo $f2->rmnl($label['pix_upload_button']); ?>' style=' font-size:18px;' />
+        <h4><?php $label['upload_your_pix']; ?></h4>
+            <div class="form-group">
+                <label for="graphic">Select a graphic</label>
+                <input type='file' name='graphic' class="form-control-file" id="graphic">
+            </div>
+            <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
+            <button type='submit' class="btn btn-primary mt-4"><?php echo $f2->rmnl($label['pix_upload_button']); ?></button>
 
 		<?php
 
 		?>
 
     </form>
-
+    </div>
 <?php
 
 if ( ! $tmp_image_file ) {
@@ -795,63 +801,56 @@ if ( ! $tmp_image_file ) {
 
 
 	?>
-
-    <div class="fancy_heading" style="margin-top:20px;width:85%;"><?php echo $label['your_uploaded_pix']; ?></div>
-    <p>
+    <hr/>
+    <h3><?php echo $label['your_uploaded_pix']; ?></h3>
 		<?php
 
-		echo "<img style=\"border:0px;\" src='get_pointer_graphic.php?BID=" . $BID . "' alt=\"\" /><br />";
+		echo "<img class='img-thumbnail' src='get_pointer_graphic.php?BID=" . $BID . "' alt='Your selected pixes' /><br />";
 
 		$size = getimagesize( $tmp_image_file );
 
 		?><?php
-		$label['upload_image_size'] = str_replace( "%WIDTH%", $size[0], $label['upload_image_size'] );
-		$label['upload_image_size'] = str_replace( "%HEIGHT%", $size[1], $label['upload_image_size'] );
+		$label['upload_image_size'] = str_replace( "%WIDTH%", "<span class='badge badge-primary'>".$size[0]."</span>", $label['upload_image_size'] );
+		$label['upload_image_size'] = str_replace( "%HEIGHT%", "<span class='badge badge-primary'>".$size[1]."</span>", $label['upload_image_size'] );
 
-		echo $label['upload_image_size'];
+		echo "<p>".$label['upload_image_size']."</p>";
 		?>
-        <br/>
 		<?php
 
 		$size = get_required_size( $size[0], $size[1], $banner_data );
 
 		$pixel_count                     = $size[0] * $size[1];
 		$block_size                      = $pixel_count / ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] );
-		$label['advertiser_require_pur'] = str_replace( '%PIXEL_COUNT%', $pixel_count, $label['advertiser_require_pur'] );
-		$label['advertiser_require_pur'] = str_replace( '%BLOCK_COUNT%', $block_size, $label['advertiser_require_pur'] );
-		echo $label['advertiser_require_pur'];
+		$label['advertiser_require_pur'] = str_replace( '%PIXEL_COUNT%', "<span class='badge badge-secondary'>".$pixel_count."</span>", $label['advertiser_require_pur'] );
+		$label['advertiser_require_pur'] = str_replace( '%BLOCK_COUNT%', "<span class='badge badge-secondary'>".$block_size."</span>", $label['advertiser_require_pur'] );
+		echo "<p>".$label['advertiser_require_pur']."</p>";
 		?>
-
-    </p>
 	<?php //echo $label['advertiser_select_instructions']; ?>
 
 
     <form method="post" action="order_pixels.php" name='pixel_form'>
         <input type="hidden" name="jEditOrder" value="true">
 
-        <p>
-            <input type="button" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button1' id='submit_button1' value='<?php echo $f2->rmnl($label['advertiser_write_ad_button']); ?>' onclick="make_selection(event);">
-
-        </p>
-
         <input type="hidden" value="1" name="select">
         <input type="hidden" value="<?php echo $BID; ?>" name="BID">
+        <div class="text-right">
+        <button type="submit" class='btn btn-primary mb-4 d-none' <?php if ($_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> type="button" name='submit_button1' id='submit_button1' onclick='document.form1.submit()'><?php echo $label['advertiser_write_ad_button']; ?></button>
+        </div>
 
-
-        <img style="cursor: pointer;" id="pixelimg" <?php if ( ( USE_AJAX == 'YES' ) || ( USE_AJAX == 'SIMPLE' ) ) { ?> onmousemove="show_pointer(event)"  <?php } ?> type="image" name="map" value='Select Pixels.' width="<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>" src="show_selection.php?BID=<?php echo $BID; ?>&amp;gud=<?php echo time(); ?>" alt=""/>
+        <div class="text-center">
+            <img style="border-bottom: 1px solid #D4D4D4; border-right: 1px solid #D4D4D4;" style="cursor: pointer;" id="pixelimg" <?php if ( ( USE_AJAX == 'YES' ) || ( USE_AJAX == 'SIMPLE' ) ) { ?> onmousemove="show_pointer(event)"  <?php } ?> type="image" name="map" value='Select Pixels.' width="<?php echo $banner_data['G_WIDTH'] * $banner_data['BLK_WIDTH']; ?>" height="<?php echo $banner_data['G_HEIGHT'] * $banner_data['BLK_HEIGHT']; ?>" src="show_selection.php?BID=<?php echo $BID; ?>&amp;gud=<?php echo time(); ?>"/>
+        </div>
 
         <input type="hidden" name="action" value="select">
     </form>
-    <div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
-        <hr>
+    <div class="mt-4 text-right">
 
         <form method="post" action="write_ad.php" name="form1">
             <input type="hidden" name="package" value="">
             <input type="hidden" name="selected_pixels" value=''>
             <input type="hidden" name="order_id" value="<?php echo $_SESSION['MDS_order_id']; ?>">
             <input type="hidden" value="<?php echo $BID; ?>" name="BID">
-            <input type="submit" class='big_button' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' value='<?php echo $f2->rmnl($label['advertiser_write_ad_button']); ?>' onclick="make_selection(event);">
-            <hr/>
+            <button type="submit" class='btn btn-primary' <?php if (isset($_REQUEST['order_id']) && $_REQUEST['order_id']!='temp') { echo 'disabled'; } ?> name='submit_button2' id='submit_button2' onclick="make_selection(event);"><?php echo $f2->rmnl($label['advertiser_write_ad_button']); ?></button>
         </form>
 
         <script type="text/javascript">
@@ -873,6 +872,9 @@ if ( ! $tmp_image_file ) {
 
 	<?php
 }
+?>
+</div>
+<?php
 
 require "footer.php";
 

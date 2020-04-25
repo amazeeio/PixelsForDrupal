@@ -28,8 +28,6 @@ Temporary Items
 #IDE
 .idea
 
-vendor
-vendor/*
 config.php
 
 # pixels folder

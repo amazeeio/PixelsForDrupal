@@ -1065,7 +1065,7 @@ function send_confirmation_email( $email ) {
 	$message = $label["confirmation_email_templaltev2"];
 	$message = str_replace( "%FNAME%", $row['FirstName'], $message );
 	$message = str_replace( "%LNAME%", $row['LastName'], $message );
-	$message = str_replace( "%SITE_URL%", "https://thebitcoinpizzaday.com/", $message );
+	$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
 	$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
 	$message = str_replace( "%VERIFY_URL%", $verify_url, $message );
 	$message = str_replace( "%VALIDATION_CODE%", $code, $message );

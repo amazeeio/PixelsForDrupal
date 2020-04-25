@@ -35,5 +35,9 @@
         <p><small><?php echo_copyright(); ?></small></p>
     </div>
 </footer>
+
+<script src="/assets/js/jquery-3.0.0.slim.min.js"></script>
+<script src="/assets/js/popper.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
 </body>
 </html>

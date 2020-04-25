@@ -38,7 +38,6 @@ require ('admin_common.php');
 a {
 	color:#000000;
 	text-decoration: none;
-		 
 }
 
 a:hover {
@@ -101,6 +100,7 @@ a:hover {
 - <a href="language.php" target="main">Language</a><br/>
 - <a href="currency.php" target="main">Currencies</a><br/>
 - <a href="payment.php" target="main">Payment Modules</a><br/>
+- <a href="voucher-admin.php" target="main">Vouchers</a><br/>
 - <a href="adform.php" target="main">Ad Form</a><br/>
 <hr>
 <b>Logout</b><br/>

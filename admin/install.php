@@ -1059,6 +1059,8 @@ function install_db() {
           `price_discount` float DEFAULT NULL,
           `blocks_discount` int(11) DEFAULT NULL,
           `order_id` int(11) DEFAULT NULL,
+          `do_username` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+          `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
           `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
           PRIMARY KEY (`voucher_id`),
           KEY `voucher_code` (`code`)

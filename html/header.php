@@ -27,7 +27,6 @@ if (MDS_AGRESSIVE_CACHE == 'YES') {
 }
 
 $BID = (isset($_REQUEST['BID']) && $f2->bid($_REQUEST['BID']) != '') ? $f2->bid($_REQUEST['BID']) : $BID = 1;
-
 $logourl = SITE_LOGO_URL;
 ?><!DOCTYPE html>
 <html>

@@ -347,7 +347,7 @@ function display_form( $form_id, $mode, $prams, $section ) {
 
 							$image_field_id = $row['field_id'];
 
-							echo "<input type='hidden' name='del_image" . $row['field_id'] . "' value=''><input class='btn btn-primary' type='button' value='" . $label['delete_image_button'] . "' onclick='document.form1.del_image" . $row['field_id'] . ".value=\"" . $image_field_id . "\"; document.form1.submit()'>";
+							echo "<div class='mt-2'><input type='hidden' name='del_image" . $row['field_id'] . "' value=''><input class='btn btn-danger' type='button' value='" . $label['delete_image_button'] . "' onclick='document.form1.del_image" . $row['field_id'] . ".value=\"" . $image_field_id . "\"; document.form1.submit()'></div>";
 
 						} else {// upload image form
 							echo "<div class='mt-4'>" . "<div class='mb-2'>".$label['upload_image']."</div>". form_image_field( $row['field_id'], $prams[ $row['field_id'] ] ) . "</div>";
@@ -1583,7 +1583,7 @@ function form_file_field( $field_name, $field_value ) {
 
 function form_image_field( $field_name, $field_value ) {
 	//echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.MAX_UPLOAD_BYTES.'">';
-	return '<input class="form-control" type="file" name="' . $field_name . '" >';
+	return '<input class="form-control-file" type="file" name="' . $field_name . '" >';
 
 }
 

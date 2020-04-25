@@ -97,15 +97,15 @@ class voucher {
 		$order_row = mysqli_fetch_array( $result );
 
 		?>
-        <div style="text-align: center;">
-          <form id="voucher" action="<?php echo htmlspecialchars( BASE_HTTP_PATH . "users/thanks.php", ENT_QUOTES ); ?>" method="get">
-            <input type="hidden" name="m" value="<?php echo $this->className; ?>" />
-            <input type="hidden" name="order_id" value="<?php echo $order_row['order_id']; ?>" />
-            <label for="voucher_code">Voucher code:</label>
-            <input type="input" name="voucher_code" id="voucher_code" required />
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
+        <form id="voucher" class="form-inline" action="<?php echo htmlspecialchars( BASE_HTTP_PATH . "users/thanks.php", ENT_QUOTES ); ?>" method="get">
+        <input type="hidden" name="m" value="<?php echo $this->className; ?>" />
+        <input type="hidden" name="order_id" value="<?php echo $order_row['order_id']; ?>" />
+          <div class="form-group mr-2">
+              <label for="voucher_code" class="mr-1">Voucher code:</label>
+              <input type="input" class="form-control" name="voucher_code" id="voucher_code" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
 		<?php
 	}
 

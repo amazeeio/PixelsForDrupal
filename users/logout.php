@@ -48,23 +48,11 @@ if ( isset( $_COOKIE['PHPSESSID'] ) ) {
 	unset( $_COOKIE['PHPSESSID'] );
 	setcookie( 'PHPSESSID', null, - 1 );
 }
-//require ('header.php');
+require ('header.php');
 
 ?>
 <?php echo $f2->get_doc(); ?>
-
-
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
-<center><img alt="" src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>"/> <br/>
-      <h3><?php echo $label['advertiser_logout_ok']; ?></h3> <a href="../"><?php 
-	  $label["advertiser_logout_home"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_logout_home"]);
-	  echo $label['advertiser_logout_home']; ?></a></center> 
-</body>
-
-<?php
-
-//require ('footer.php'); 
-
-?>
+<div class="container text-center">
+      <h3><?php echo $label['advertiser_logout_ok']; ?></h3>
+</div>
+<?php require ('footer.php'); ?>

@@ -33,6 +33,20 @@ class ComposerStaticInit127ec87b6bb4cb14fcce3882b5c4c4ea
     );
 
     public static $prefixesPsr0 = array (
+        's' => 
+        array (
+            'stringEncode' => 
+            array (
+                0 => __DIR__ . '/..' . '/paquettg/string-encode/src',
+            ),
+        ),
+        'P' => 
+        array (
+            'PHPHtmlParser' => 
+            array (
+                0 => __DIR__ . '/..' . '/paquettg/php-html-parser/src',
+            ),
+        ),
         'H' => 
         array (
             'HTMLPurifier' => 

@@ -43,9 +43,8 @@ if ($_REQUEST['order_id']) {
 process_login();
 require ("header.php");
 ?>
-<p>
-<?php echo $label['advertiser_pay_navmap']; ?>
-</p>
+<div class="container">
+<?php show_nav_status (4); ?>
 <h3><?php echo $label['advertiser_pay_sel_method']; ?></h3>
 <?php
 
@@ -87,5 +86,7 @@ echo "<h2>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h2>
 include $dir.'/payment/payment_manager.php';
 
 payment_option_list($order_id);
-
+?>
+</div>
+<?php
 require ("footer.php");

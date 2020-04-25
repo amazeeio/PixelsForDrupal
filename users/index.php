@@ -59,6 +59,7 @@ $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBAL
 $user_row = mysqli_fetch_array($result);
 
 ?>
+<div class="container">
 <h3><?php echo $label['advertiser_home_welcome'];?></h3>
 <p>
 <?php echo $label['advertiser_home_line2']."<br>"; ?>
@@ -97,8 +98,7 @@ echo $label['advertiser_home_selectlink']; ?><br>
 <p>
 <?php echo $label['advertiser_home_quest']; ?> <?php echo SITE_CONTACT_EMAIL; ?>
 </p>
-
+</div>
 <?php
-
 require ("footer.php");
 ?>

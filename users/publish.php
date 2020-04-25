@@ -46,6 +46,7 @@ if (isset($gd_info['JPG Support']) && !empty($gd_info['JPG Support'])) {$jpeg_su
 if (isset($gd_info['PNG Support']) && !empty($gd_info['PNG Support'])) {$png_support="PNG";}
 
 require ("header.php");
+echo "<div class='container'>";
 
 // Work out the banner id...
 
@@ -425,40 +426,48 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 # Ad forms:
 	?>
 	<p>
-<div class="fancy_heading" width="85%"><?php echo $label['adv_pub_editad_head']; ?></div>
+<h2><?php echo $label['adv_pub_editad_head']; ?></h2>
 <p><?php echo $label['adv_pub_editad_desc']; ?> </p>
 <p><b><?php echo $label['adv_pub_yourpix'] ; ?></b></p>
-<table border=0 bgcolor='#d9d9d9' cellspacing="1" cellpadding="5">
-<tr bgcolor="#ffffff">
-<td valign="top"><b><?php echo $label['adv_pub_piximg']; ?></b><br>
-<center>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"><?php echo $label['adv_pub_piximg']; ?></th>
+                <th scope="col"><?php echo $label['adv_pub_pixinfo']; ?></th>
+                <th scope="col"><?php echo $label['adv_pub_pixchng']; ?></th>
+<!--                <th scope="col">--><?php //echo $label['list_pixels']; ?><!--</th>-->
+            </tr>
+        </thead>
+        <tbody>
+<td valign="top">
+    <div class="text-center">
 <?php
-if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) { 
+if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 		//echo "ad is".$_REQUEST['ad_id'];
 		?><img src="get_order_image.php?BID=<?php echo $BID; ?>&aid=<?php echo $_REQUEST['ad_id']; ?>" border=1><?php
 	} else {
 		?><img src="get_order_image.php?BID=<?php echo $BID; ?>&block_id=<?php echo $_REQUEST['block_id']; ?>" border=1><?php
 	} ?>
-</center>
+    </div>
 </td>
-<td valign="top"><b><?php echo $label['adv_pub_pixinfo']; ?></b><br><?php
-			
+<td valign="top"><?php
+
 		$label['adv_pub_pixcount'] = str_replace('%SIZE_X%',$size['x'],$label['adv_pub_pixcount']);
 		$label['adv_pub_pixcount'] = str_replace('%SIZE_Y%', $size['y'],$label['adv_pub_pixcount']);
 		$label['adv_pub_pixcount'] = str_replace('%PIXEL_COUNT%', $pixels,$label['adv_pub_pixcount']);
 		echo $label['adv_pub_pixcount'];
 		?><br></td>
-<td valign="top"><b><?php echo $label['adv_pub_pixchng']; ?></b><br><?php
+<td valign="top"><?php
 			$label['adv_pub_pixtochng'] = str_replace('%SIZE_X%',$size['x'],$label['adv_pub_pixtochng']);
 			$label['adv_pub_pixtochng'] = str_replace('%SIZE_Y%',$size['y'],$label['adv_pub_pixtochng']);
 			echo $label['adv_pub_pixtochng'];
 			?><form name="change" enctype="multipart/form-data" method="post">
-<input type="file" name='pixels'><br>
+<input class="form-control-file mb-0 mt-2" type="file" name='pixels'>
 <input type="hidden" name="ad_id" value="<?php echo $_REQUEST['ad_id']; ?>">
-<input type="submit" name="change_pixels" value="<?php echo $label['adv_pub_pixupload']; ?>"></form><?php if ($error) { echo "<font color='red'>".$error."</font>"; $error='';} ?>
-<font size='1'><?php echo $label['advertiser_publish_supp_formats']; ?> <?php echo "$gif_support $jpeg_support $png_support"; ?></font>
+<input class="btn btn-primary btn-sm mt-2" type="submit" name="change_pixels" value="<?php echo $label['adv_pub_pixupload']; ?>"></form><?php if ($error) { echo "<span class='text-danger'>".$error."</span>"; $error='';} ?>
+<span class='text-muted'><small><?php echo $label['advertiser_publish_supp_formats']; ?> <?php echo "$gif_support $jpeg_support $png_support"; ?></small></span>
 </td>
-</tr>
+        </tbody>
 </table>
 
 <p><b><?php echo $label['adv_pub_edityourad']; ?></b></p>
@@ -481,7 +490,7 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 			//print_r($prams);
 
 			?>
-			<center><div class='ok_msg_label'><?php echo $label['adv_pub_adsaved']; ?></div></center>
+			<div class="text-center"><div class='text-success'><?php echo $label['adv_pub_adsaved']; ?></div></div>
 			<p>&nbsp;</p>
 			<?php
 
@@ -531,10 +540,8 @@ ob_end_clean();
 
 if ($count > 0) {
 ?>
-	<p>
-
-	<div class="fancy_heading" width="85%"><?php echo $label['adv_pub_yourads']; ?></div>
-	</p><p>
+	<h3><?php echo $label['adv_pub_yourads']; ?></h3>
+    <p>
 	<?php
 		echo $contents;
 	?>
@@ -546,11 +553,9 @@ if ($count > 0) {
 //}
 
 ?>
-	<div class="fancy_heading" width="85%"><?php echo $label['advertiser_publish_head']; ?></div>
+	<h3><?php echo $label['advertiser_publish_head']; ?></h3>
 	<p>
 	<?php echo $label['advertiser_publish_instructions2']; ?>
-	
-	
 	<?php
 	
 	// infrom the user about the approval status of the iamges.
@@ -620,13 +625,10 @@ if ($count > 0) {
 	}
 	?>
 
-	<img src="show_map.php?BID=<?php echo $BID;?>&time=<?php echo (time()); ?>" width="<?php echo ($banner_data['G_WIDTH']*$banner_data['BLK_WIDTH']); ?>" height="<?php echo ($banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT']); ?>" border="0" usemap="#main" />
+	<img style="border:0; border-bottom:1px solid; border-right:1px solid; border-color:#D4D4D4;" src="show_map.php?BID=<?php echo $BID;?>&time=<?php echo (time()); ?>" width="<?php echo ($banner_data['G_WIDTH']*$banner_data['BLK_WIDTH']); ?>" height="<?php echo ($banner_data['G_HEIGHT']*$banner_data['BLK_HEIGHT']); ?>" border="0" usemap="#main" />
 	</center>
-	<div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px'>
-
+</div>
 <?php
-
-
 require ("footer.php");
 
 ?>

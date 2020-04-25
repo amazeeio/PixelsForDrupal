@@ -83,6 +83,7 @@ if ( isset( $_REQUEST['cancel'] ) && $_REQUEST['cancel'] == 'yes' && isset( $_RE
 }
 
 ?>
+<div class="container">
 
 <script language="JavaScript" type="text/javascript">
 
@@ -136,17 +137,20 @@ usort( $orders, "date_sort" );
 
 ?>
 
-<table width="100%" cellSpacing="1" cellPadding="3" align="center" bgColor="#d9d9d9" border="0">
-<tr>
-    <td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_prderdate']; ?></font></b></td>
-    <td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_custname']; ?></font></b></td>
-    <td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_usernid'];?></font></b></td>
-	<td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_orderid']; ?></font></b></td>
-	<td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_quantity']; ?></font></b></td>
-	<td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_image']; ?></font></b></td>
-	<td><b><font face="Arial" size="2"><?php echo $label['advertiser_ord_amount']; ?></font></b></td>
-	<td><b><font face="Arial" size="2"><?php echo $label['advertiser_status']; ?></font></b></td>
-	</tr>
+    <table class="table mt-4">
+        <thead>
+        <tr>
+            <th scope="col"><?php echo $label['advertiser_ord_prderdate']; ?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_custname']; ?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_usernid'];?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_orderid']; ?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_quantity']; ?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_image']; ?></th>
+            <th scope="col"><?php echo $label['advertiser_ord_amount'];?></th>
+            <th scope="col"><?php echo $label['advertiser_status']; ?></th>
+        </tr>
+        </thead>
+        <tbody>
 <?php
 
 		if (count($orders) == 0) {
@@ -155,13 +159,13 @@ usort( $orders, "date_sort" );
 
 			foreach($orders as $order) {
 	?>
-<tr onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);" bgColor="#ffffff">
-			<td><font face="Arial" size="2"><?php echo get_local_time($order['order_date']);?></font></td>
-			<td><font face="Arial" size="2"><?php echo isset($order['FirstName']) ? $order['FirstName']." ".$order['LastName'] : "";?></font></td>
-			<td><font face="Arial" size="2"><?php echo isset($order['Username']) ? $order['Username'] : "";?> (#<?php echo $order['ID'];?>)</font></td>
-			<td><font face="Arial" size="2">#<?php echo isset($order['order_id']) ? $order['order_id'] : "";?></font></td>
-			<td><font face="Arial" size="2"><?php echo $order['quantity'];?></font></td>
-	<td><font face="Arial" size="2"><?php 
+<tr>
+			<td><?php echo get_local_time($order['order_date']);?></td>
+			<td><?php echo isset($order['FirstName']) ? $order['FirstName']." ".$order['LastName'] : "";?></td>
+			<td><?php echo isset($order['Username']) ? $order['Username'] : "";?> (#<?php echo $order['ID'];?>)</td>
+			<td>#<?php echo isset($order['order_id']) ? $order['order_id'] : "";?></td>
+			<td><?php echo $order['quantity'];?></td>
+	<td><?php
 
 					$sql = "select * from banners where banner_id=".intval($order['banner_id']);
 			$b_result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
@@ -169,9 +173,9 @@ usort( $orders, "date_sort" );
 		
 			echo $b_row['name'];
 			
-		?></font></td>
-			<td><font face="Arial" size="2"><?php echo convert_to_default_currency_formatted($order['currency'], $order['price']); ?></font></td>
-			<td><font face="Arial" size="2"><?php
+		?></td>
+			<td><?php echo convert_to_default_currency_formatted($order['currency'], $order['price']); ?></td>
+			<td><?php
 			    if(isset($order['status'])) {
 
 					echo $label[$order['status']];?><br><?php
@@ -237,7 +241,7 @@ usort( $orders, "date_sort" );
 			if (mysqli_num_rows($res_c)==0) {
  
 				$label['advertiser_ord_renew'] = str_replace("%DAYS_TO_RENEW%", $days, $label['advertiser_ord_renew']);
-				echo "<a href='payment.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'><font color='red' size='1'>(".$label['advertiser_ord_renew'].")</font></a>";
+				echo "<a href='payment.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'><span class='text-danger'><small>(".$label['advertiser_ord_renew'].")</small></span></a>";
 			}
 			break;
 		case "cancelled":
@@ -269,9 +273,9 @@ usort( $orders, "date_sort" );
 	<?php
 	}
 ?>
-
+        </tbody>
 </table>
-
+</div>
 <?php
 
 require ("footer.php");

@@ -171,7 +171,7 @@ function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Us
 
     if($res > 0) {
        $success=true; //succesfully added to the database
-       echo "<center>".$label['advertiser_new_user_created']."</center>";
+       echo "<div class='text-center mb-4'><h2>".$label['advertiser_new_user_created']."</h2></div>";
 
     } else {
        $success=false;
@@ -272,47 +272,38 @@ function display_signup_form($FirstName, $LastName, $CompName, $Username, $passw
 	?>
 
 	<form name="form1" method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?page=signup&form=filled">
-	<table width="100%"  border="0" cellspacing="3" cellpadding="0">
-		<tr>
-			<td width="25%"  ><span >*<?php echo $label["advertiser_signup_first_name"]; ?>:</span></td>
-			<td width="86%"><input name="FirstName" value="<?php echo stripslashes($FirstName);?>" type="text" id="firstname"></td>
-		</tr>
-		<tr>
-			<td width="25%" >*<?php echo $label["advertiser_signup_last_name"];?>: </td>
-			<td width="86%"><input name="LastName" value="<?php echo stripslashes($LastName);?>" type="text" id="lastname"></td>
-		</tr>
-		<tr>
-			<td width="25%" valign="top" ><?php echo $label["advertiser_signup_business_name"];?>: </td>
-			<td width="86%"><input name="CompName" value="<?php echo stripslashes($CompName);?>" size="30" type="text" id="compname"/><span > (<?php echo $label["advertiser_signup_business_name2"];?>)</span></td>
-		</tr>
-		<tr>
-			<td width="25%" height="20">&nbsp;</td>
-			<td width="86%" height="20">&nbsp;</td>
-		</tr>
-		<tr>
-			<td width="25%" valign="top" >*<?php echo $label["advertiser_signup_member_id"];?>: </td>
-			<td width="86%"><input name="Username" value="<?php echo $Username;?>" type="text" id="username"><span > <?php echo $label["advertiser_signup_member_id2"];?></span></td>
-		</tr>
-		<tr>
-			<td width="25%" nowrap >*<?php echo $label["advertiser_signup_password"]; ?>:</td>
-			<td><input name="Password" type="password" value="<?php echo stripslashes($password);?>" id="password"></td>
-		</tr>
-		<tr>
-			<td width="25%" >*<?php echo $label["advertiser_signup_password_confirm"];?>:</td>
-			<td><input name="Password2" type="password" value="<?php echo stripslashes($password2);?>" id="password2"></td>
-		</tr>
-		<tr><td>&nbsp</td><td></td></tr>
-		<tr>
-			<td width="25%" >*<?php echo $label["advertiser_signup_your_email"];?></td>
-			<td><input name="Email" type="text" id="email" value="<?php echo $Email; ?>" size="30"/></td>
-		</tr>
-
-		</table>
-		<div align="center">
-
-		<p><input type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_signup_submit"]; ?>">
-		<!--<input type="reset" class="form_reset_button" name="Submit2" value="<?php echo $label["advertiser_signup_reset"];?>">-->
-		</p>
+		<div class="form-group">
+            <label for="firstname">*<?php echo $label["advertiser_signup_first_name"]; ?></label>
+			<input class="form-control" name="FirstName" value="<?php echo stripslashes($FirstName);?>" type="text" id="firstname">
+		</div>
+		<div class="form-group">
+            <label for="lastname">*<?php echo $label["advertiser_signup_last_name"];?></label>
+			<input class="form-control" name="LastName" value="<?php echo stripslashes($LastName);?>" type="text" id="lastname">
+		</div>
+		<div class="form-group">
+            <label for="CompName">*<?php echo $label["advertiser_signup_business_name"];?></label>
+			<input class="form-control" name="CompName" value="<?php echo stripslashes($CompName);?>" size="30" type="text" id="compname"/>
+            <span class="text-muted"><small><?php echo $label["advertiser_signup_business_name2"];?></small></span>
+		</div>
+		<div class="form-group">
+            <label for="username">*<?php echo $label["advertiser_signup_member_id"];?></label>
+			<input class="form-control" name="Username" value="<?php echo $Username;?>" type="text" id="username">
+            <span class="text-muted"><small><?php echo $label["advertiser_signup_member_id2"];?></small></span>
+		</div>
+		<div class="form-group">
+            <label for="password">*<?php echo $label["advertiser_signup_password"];?></label>
+			<input class="form-control" name="Password" type="password" value="<?php echo stripslashes($password);?>" id="password">
+		</div>
+		<div class="form-group">
+            <label for="password2">*<?php echo $label["advertiser_signup_password_confirm"];?></label>
+			<input class="form-control" name="Password2" type="password" value="<?php echo stripslashes($password2);?>" id="password2">
+		</div>
+		<div class="form-group">
+            <label for="email">*<?php echo $label["advertiser_signup_your_email"];?></label>
+			<input class="form-control" name="Email" type="text" id="email" value="<?php echo $Email; ?>" size="30"/>
+		</div>
+		<div class="text-left">
+		    <input class="btn btn-success" type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_signup_submit"]; ?>">
 		</div>
 		</form>
   <?php
@@ -363,38 +354,28 @@ function process_signup_form($target_page='index.php') {
 
 		$success = create_new_account ($_SERVER['REMOTE_ADDR'], $FirstName, $LastName, $CompName, $Username, $_REQUEST['Password'], $Email, $Newsletter, $Notification1, $Notification2, $lang);
 
+		echo "<div class='alert alert-info'>";
 		if ((EM_NEEDS_ACTIVATION == "AUTO"))  {
-
 			$label["advertiser_signup_success_1"] = stripslashes( str_replace ("%FirstName%", $FirstName, $label["advertiser_signup_success_1"]));
-
 			$label["advertiser_signup_success_1"] = stripslashes( str_replace ("%LastName%", $LastName, $label["advertiser_signup_success_1"]));
-
 			$label["advertiser_signup_success_1"] = stripslashes( str_replace ("%SITE_NAME%", SITE_NAME, $label["advertiser_signup_success_1"]));
-
 			$label["advertiser_signup_success_1"] = stripslashes( str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["advertiser_signup_success_1"]));
-
 			echo $label["advertiser_signup_success_1"];
 
 
 		} else {
 
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%FirstName%", $FirstName, $label["advertiser_signup_success_2"]));
-
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%LastName%", $LastName, $label["advertiser_signup_success_2"]));
-
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%SITE_NAME%", SITE_NAME, $label["advertiser_signup_success_2"]));
-
 			$label["advertiser_signup_success_2"] = stripslashes( str_replace ("%SITE_CONTACT_EMAIL%", SITE_CONTACT_EMAIL, $label["advertiser_signup_success_2"]));
-
 			echo $label["advertiser_signup_success_2"];
 
-			//echo "<center>".$label["advertiser_signup_goback"]."</center>";
-
 			send_confirmation_email($Email);
-
 		}
+		echo "</div>";
 
-		echo "<center><form method='post' action='login.php?target_page=".$target_page."'><input type='hidden' name='Username' value='".$_REQUEST['Username']."' > <input type='hidden' name='Password' value='".$_REQUEST['Password']."'><input type='submit' value='".$label["advertiser_signup_continue"]."'></form></center>";
+		echo "<div class='text-center'><form method='post' action='login.php?target_page=".$target_page."'><input type='hidden' name='Username' value='".$_REQUEST['Username']."' > <input type='hidden' name='Password' value='".$_REQUEST['Password']."'><input class='btn btn-success mt-4' type='submit' value='".$label["advertiser_signup_continue"]."'></form></div>";
 
 		return true;
 

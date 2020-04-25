@@ -208,29 +208,22 @@ function display_ad_form ($form_id, $mode, $prams) {
 	<input type="hidden" name="order_id" size="" value="<?php echo $order_id; ?>">
 	<input type="hidden" name="BID" size="" value="<?php echo $banner_id; ?>">
 
-	<table cellSpacing="1" cellPadding="5" class="ad_data" id="ad">
 	<?php  if (($error != '' ) && ($mode!='edit')) { ?>
-	<tr>
-		<td bgcolor="#F2F2F2" colspan="2"><?php  echo "<span class='error_msg_label'>".$label['ad_save_error']."</span><br> <b>".$error."</b>";  ?></td>
-	</tr>
+	<?php  echo "<div class='alert alert-danger'><i>".$label['ad_save_error']."</i><br><b>".$error."</b></div>";  ?>
 	<?php } ?>
-  <tr  bgColor="#ffffff">
-    <td  bgColor="#eaeaea">
 	<?php if ($mode == "edit") {
 					echo "[Ad Form]";
 				}
 		 // section 1
 		display_form ($form_id, $mode, $prams, 1);
 	?>
-  
-  </tr>
-	<tr><td colspan="2" bgcolor="#ffffff">
+
 		<input type="hidden" name="save" id="save101" value="">
 		<?php if ($mode=='edit' || $mode == 'user') { ?>
-		<input class="form_submit_button big_button" type="submit" name="savebutton" value="<?php echo $label['ad_save_button'];?>" onClick="save101.value='1';">
+		    <div class="text-right mt-2">
+		        <input class="btn btn-primary" type="submit" name="savebutton" value="<?php echo $label['ad_save_button'];?>" onClick="save101.value='1';">
+		    </div>
 		<?php } ?>
-		</td></tr>
-	</table>
 	</form>
 
 	<?php

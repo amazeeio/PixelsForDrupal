@@ -295,13 +295,12 @@ function display_form( $form_id, $mode, $prams, $section ) {
 		} elseif ( $row['field_type'] == "IMAGE" ) {
 
 			?>
-            <tr>
-                <td class="dynamic_form_2_col_field" nowrap valign="top" colspan="2" <?php echo $bg_selected; ?> >
+                <div class="field-type-image" <?php echo $bg_selected; ?> >
 					<?php if ( $mode == 'edit' ) {
 						echo_order_arrows( $row );
 						echo '<a href="' . htmlentities( $_SERVER['PHP_SELF'] ) . '?field_id=' . $row['field_id'] . '&mode=edit"><IMG SRC="../admin/edit.gif" WIDTH="16" HEIGHT="16" align="middle" BORDER="0" ALT="-">';
 					}
-					echo "<span class='dynamic_form_image_label'>" . $row['field_label'] . "</span><br>";
+					echo "<div class='mb-2'>" . $row['field_label'] . "</div>";
 					if ( $mode == 'edit' ) {
 						echo '</a>';
 					}
@@ -331,14 +330,14 @@ function display_form( $form_id, $mode, $prams, $section ) {
 							if ( file_exists( UPLOAD_PATH . 'images/' . $prams[ $row['field_id'] ] ) ) {
 
 								?>
-                                <img alt="" src="<?php echo UPLOAD_HTTP_PATH . 'images/' . $prams[ $row['field_id'] ]; ?>">
+                                <img alt="" src="<?php echo UPLOAD_HTTP_PATH . 'images/' . $prams[ $row['field_id'] ]; ?>"  class="img-thumbnail">
 							<?php } else {
-								echo '<IMG SRC="' . UPLOAD_HTTP_PATH . 'images/no-image.gif" WIDTH="150" HEIGHT="150" BORDER="0" ALT="">';
+								echo '<img SRC="' . UPLOAD_HTTP_PATH . 'images/no-image.gif" WIDTH="150" HEIGHT="150" BORDER="0" ALT="" class="img-thumbnail" />';
 
 							}
 						}
 					} else {
-						echo '<IMG SRC="' . UPLOAD_HTTP_PATH . 'images/no-image.gif" WIDTH="150" HEIGHT="150" BORDER="0" ALT="">';
+						echo '<img SRC="' . UPLOAD_HTTP_PATH . 'images/no-image.gif" WIDTH="150" HEIGHT="150" BORDER="0" ALT="" class="img-thumbnail" />';
 					}
 
 					if ( ( $mode == 'edit' || $mode == 'user' ) ) {
@@ -348,12 +347,12 @@ function display_form( $form_id, $mode, $prams, $section ) {
 
 							$image_field_id = $row['field_id'];
 
-							echo "<br><input type='hidden' name='del_image" . $row['field_id'] . "' value=''><input type='button' value='" . $label['delete_image_button'] . "' onclick='document.form1.del_image" . $row['field_id'] . ".value=\"" . $image_field_id . "\"; document.form1.submit()'><br>";
+							echo "<input type='hidden' name='del_image" . $row['field_id'] . "' value=''><input class='btn btn-primary' type='button' value='" . $label['delete_image_button'] . "' onclick='document.form1.del_image" . $row['field_id'] . ".value=\"" . $image_field_id . "\"; document.form1.submit()'>";
 
 						} else {// upload image form
-							echo "<br>" . $label['upload_image'] . '<br> ' . form_image_field( $row['field_id'], $prams[ $row['field_id'] ] );
+							echo "<div class='mt-4'>" . "<div class='mb-2'>".$label['upload_image']."</div>". form_image_field( $row['field_id'], $prams[ $row['field_id'] ] ) . "</div>";
 							if ( $row['field_comment'] != '' ) {
-								echo " <br>" . $row['field_comment'] . "";
+								echo " <div class='text-muted mt-2 mb-2'><small>" . $row['field_comment'] . "</small></div>";
 							}
 
 						}
@@ -361,9 +360,7 @@ function display_form( $form_id, $mode, $prams, $section ) {
 					}
 
 					?>
-                </td>
-            </tr>
-
+                </div>
 			<?php
 
 		} elseif ( $row['field_type'] == "FILE" ) {
@@ -497,11 +494,6 @@ function display_form( $form_id, $mode, $prams, $section ) {
 						echo "<FONT SIZE='4' COLOR='#FF0000'><b>*</B></FONT>";
 					}
 
-					// avoid triggering mod_security by not posting http:// in the form fields
-					if ( strtolower( $row['field_label'] ) == "url" ) {
-						echo "<span class=\"httplabel\">http(s)://</span>";
-					}
-
 					if ( ( $mode == 'edit' ) && is_reserved_template_tag( $row['template_tag'] ) ) {
 						$alt = get_reserved_tag_description( $row['template_tag'] );
 						?>
@@ -542,10 +534,18 @@ function display_form( $form_id, $mode, $prams, $section ) {
                                         }
 									}
 
+								    echo "<div class='input-group mb-3'>";
+                                    // avoid triggering mod_security by not posting http:// in the form fields
+                                    if ( strtolower( $row['field_label'] ) == "url" ) {
+                                        echo "<div class='input-group-prepend'>";
+                                        echo "<span class='input-group-text'>http(s)://</span>";
+                                        echo "</div>";
+                                    }
 									echo form_text_field( $row['field_id'], $textvalue, $row['field_width'] );
 									if ( $row['field_comment'] != '' ) {
 										echo " " . $purifier->purify( $row['field_comment'] ) . "";
 									}
+									echo "</div>";
 								}
 								break;
 							case "SEPERATOR":
@@ -1568,14 +1568,14 @@ function form_text_field( $field_name, $field_value, $width ) {
 	    $value = $purifier->purify( $field_value );
     }
 
-	return '<input class="dynamic_form_text_style" type="text" AUTOCOMPLETE="OFF" name="' . $field_name . '" value="' . $value . '" size="' . $width . '" >';
+	return '<input class="form-control" type="text" AUTOCOMPLETE="OFF" name="' . $field_name . '" value="' . $value . '" size="' . $width . '" >';
 }
 
 #######################################################
 
 function form_file_field( $field_name, $field_value ) {
 	// echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.MAX_UPLOAD_BYTES.'">';
-	return '<input class="dynamic_form_text_style" type="file" name="' . $field_name . '"   >';
+	return '<input class="form-control" type="file" name="' . $field_name . '"   >';
 
 }
 
@@ -1583,7 +1583,7 @@ function form_file_field( $field_name, $field_value ) {
 
 function form_image_field( $field_name, $field_value ) {
 	//echo '<input type="hidden" name="MAX_FILE_SIZE" value="'.MAX_UPLOAD_BYTES.'">';
-	return '<input class="dynamic_form_text_style" type="file" name="' . $field_name . '" >';
+	return '<input class="form-control" type="file" name="' . $field_name . '" >';
 
 }
 

@@ -65,6 +65,7 @@ update_temp_order_timestamp();
 $has_packages = banner_get_packages($BID);
 
 ?>
+<div class="container">
 <p>
 <?php 
 show_nav_status (2);
@@ -102,8 +103,9 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 		$prams = load_ad_values ($ad_id);
 
 		?>
-		<center><div class='ok_msg_label'><input type="button"  class='big_button' value="<?php echo $label['write_ad_saved']." ".$label['write_ad_continue_button']; ?>" onclick="window.location='confirm_order.php'"></div></center>
-		<p>&nbsp;</p>
+		<div class='text-center mt-4 mb-2'>
+            <input type="button"  class='btn btn-primary' value="<?php echo $label['write_ad_saved']." ".$label['write_ad_continue_button']; ?>" onclick="window.location='confirm_order.php'">
+        </div>
 		<?php
 		display_ad_form (1, "user", $prams);
 	}
@@ -122,6 +124,8 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 	display_ad_form (1, 'user', $prams);
 
 }
-
+?>
+</div>
+<?php
 require ("footer.php");
 ?>

@@ -43,10 +43,9 @@ if ($_REQUEST['order_id']) {
 process_login();
 require ("header.php");
 ?>
-<p>
-<?php echo $label['advertiser_pay_navmap']; ?>
-</p>
-<h3><?php echo $label['advertiser_pay_sel_method']; ?></h3>
+<div class="container">
+<?php show_nav_status (4); ?>
+<h2><?php echo $label['advertiser_pay_sel_method']; ?></h2>
 <?php
 
 if ($_REQUEST['order_id']!='') {
@@ -82,10 +81,12 @@ $dir = preg_split ('%[/\\\]%', $dir);
 $blank = array_pop($dir);
 $dir = implode('/', $dir);
 
-echo "<h2>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h2>";
+echo "<h3 class='mt-4 mb-3'>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h3>";
 
 include $dir.'/payment/payment_manager.php';
 
 payment_option_list($order_id);
-
+?>
+</div>
+<?php
 require ("footer.php");

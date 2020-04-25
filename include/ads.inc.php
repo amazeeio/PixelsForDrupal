@@ -208,29 +208,22 @@ function display_ad_form ($form_id, $mode, $prams) {
 	<input type="hidden" name="order_id" size="" value="<?php echo $order_id; ?>">
 	<input type="hidden" name="BID" size="" value="<?php echo $banner_id; ?>">
 
-	<table cellSpacing="1" cellPadding="5" class="ad_data" id="ad">
 	<?php  if (($error != '' ) && ($mode!='edit')) { ?>
-	<tr>
-		<td bgcolor="#F2F2F2" colspan="2"><?php  echo "<span class='error_msg_label'>".$label['ad_save_error']."</span><br> <b>".$error."</b>";  ?></td>
-	</tr>
+	<?php  echo "<div class='alert alert-danger'><i>".$label['ad_save_error']."</i><br><b>".$error."</b></div>";  ?>
 	<?php } ?>
-  <tr  bgColor="#ffffff">
-    <td  bgColor="#eaeaea">
 	<?php if ($mode == "edit") {
 					echo "[Ad Form]";
 				}
 		 // section 1
 		display_form ($form_id, $mode, $prams, 1);
 	?>
-  
-  </tr>
-	<tr><td colspan="2" bgcolor="#ffffff">
+
 		<input type="hidden" name="save" id="save101" value="">
 		<?php if ($mode=='edit' || $mode == 'user') { ?>
-		<input class="form_submit_button big_button" type="submit" name="savebutton" value="<?php echo $label['ad_save_button'];?>" onClick="save101.value='1';">
+		    <div class="text-right mt-2">
+		        <input class="btn btn-primary" type="submit" name="savebutton" value="<?php echo $label['ad_save_button'];?>" onClick="save101.value='1';">
+		    </div>
 		<?php } ?>
-		</td></tr>
-	</table>
 	</form>
 
 	<?php
@@ -324,29 +317,30 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 		}
 
 		?>
-		<table border='0' bgcolor='#d9d9d9' cellspacing="1" cellpadding="5" id="pixels_list" >
-		<tr bgcolor="#EAEAEA">
+        <table class="table">
+        <thead>
+		<tr>
 		<?php
 		if ($admin == true ) {
-			 echo '<td class="list_header_cell">&nbsp;</td>';
+			 echo '<th scope="col">&nbsp;</th>';
 		}
 
 		if ($list_mode == 'USER' ) {
-			echo '<td class="list_header_cell">&nbsp;</td>';
+			echo '<th scope="col">&nbsp;</th>';
 		}
 
 		echo_list_head_data(1, $admin);
 
 		if (($list_mode == 'USER' ) || ($admin)) {
-			echo '<td class="list_header_cell">'.$label['ads_inc_pixels_col'].'</td>';
-			echo '<td class="list_header_cell">'.$label['ads_inc_expires_col'].'</td>';
-			echo '<td class="list_header_cell" >'.$label['ad_list_status'].'</td>';
+			echo '<th scope="col">'.$label['ads_inc_pixels_col'].'</th>';
+			echo '<th scope="col">'.$label['ads_inc_expires_col'].'</th>';
+			echo '<th scope="col">'.$label['ad_list_status'].'</th>';
 		}
 
 		?>
-		
-		</tr>
-
+		    </tr>
+        </thead>
+        <tbody>
 		<?php
 		$i=0; global $prams;
 		while (($prams = mysqli_fetch_array($result, MYSQLI_ASSOC)) && ($i < $records_per_page)) {
@@ -355,16 +349,16 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 
 	
 		 ?>
-			  <tr bgcolor="ffffff" onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);">
+			  <tr>
 	
 			  <?php
 		  
 		 if ($admin == true ) {
-			 echo '<td class="list_data_cell" >';
+			 echo '<td>';
 
 			 ?>
 			 <!--<input style="font-size: 8pt" type="button" value="Delete" onClick="if (!confirmLink(this, 'Delete, are you sure?')) {return false;} window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=delete&ad_id=<?php echo $prams['ad_id']; ?>'"><br>!-->
-				<input type="button" style="font-size: 8pt" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=edit&ad_id=<?php echo $prams['ad_id']; ?>'">
+				<input type="button" class="btn btn-info" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=edit&ad_id=<?php echo $prams['ad_id']; ?>'">
 
 				<?php
 			 
@@ -372,11 +366,11 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 		 }
 
 		 if ($list_mode == 'USER' ) {
-			 echo '<td class="list_data_cell">';
+			 echo '<td>';
 
 			 ?>
 			 <!--<input style="font-size: 8pt" type="button" value="Delete" onClick="if (!confirmLink(this, 'Delete, are you sure?')) {return false;} window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?action=delete&ad_id=<?php echo $prams['ad_id']; ?>'"><br>-->
-				<input type="button" style="font-size: 8pt" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?ad_id=<?php echo $prams['ad_id']; ?>'">
+				<input type="button" class="btn btn-info" value="<?php echo $label['ads_inc_edit']; ?>" onClick="window.location='<?php echo htmlentities($_SERVER['PHP_SELF']);?>?ad_id=<?php echo $prams['ad_id']; ?>'">
 
 				<?php
 			 
@@ -388,7 +382,7 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 
 		 if (($list_mode == 'USER' ) || ($admin)) {
 			 /////////////////
-			echo '<td class="list_data_cell"><img src="get_order_image.php?BID='.$BID.'&aid='.$prams['ad_id'].'"></td>';
+			echo '<td><img src="get_order_image.php?BID='.$BID.'&aid='.$prams['ad_id'].'"></td>';
 			//////////////////
 			echo '<td>';
 			if ($prams['days_expire'] > 0) {
@@ -446,7 +440,7 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 				$app = $label['ads_inc_napp_stat'].', ';
 			}
 			//$label['ad_list_st_'.$prams['status']]." 
-			echo '<td class="list_data_cell">'.$app.$pub."</td>";
+			echo '<td>'.$app.$pub."</td>";
 		}
 
 		  ?>
@@ -458,7 +452,7 @@ function list_ads ($admin=false, $order="", $offset=0, $list_mode='ALL', $user_i
 			// $new_name='';
 		}
 
-		echo "</table>";
+		echo "</tbody></table>";
    
    } else {
 

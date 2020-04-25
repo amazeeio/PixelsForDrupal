@@ -67,7 +67,7 @@ function echo_list_head_data($form_id, $admin) {
 			continue; // do not render this column
 		}
 		?>
-		<td class="list_header_cell" <?php if ($row['template_tag']=='POST_SUMMARY') echo ' width="100%" '; ?>>
+		<th <?php if ($row['template_tag']=='POST_SUMMARY') echo ' width="100%" '; ?>>
 		<?php
 
 		if ($row['is_sortable']=='Y') { // show column order by link?
@@ -80,7 +80,7 @@ function echo_list_head_data($form_id, $admin) {
 			?></a><?php
 		}
 		?>
-		</td>
+		</th>
 		<?php
 	}
 	?>

@@ -1065,7 +1065,7 @@ function send_confirmation_email( $email ) {
 	$message = $label["confirmation_email_templaltev2"];
 	$message = str_replace( "%FNAME%", $row['FirstName'], $message );
 	$message = str_replace( "%LNAME%", $row['LastName'], $message );
-	$message = str_replace( "%SITE_URL%", "https://thebitcoinpizzaday.com/", $message );
+	$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
 	$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
 	$message = str_replace( "%VERIFY_URL%", $verify_url, $message );
 	$message = str_replace( "%VALIDATION_CODE%", $code, $message );
@@ -2641,23 +2641,23 @@ function update_temp_order_timestamp() {
 ////////////////
 
 function show_nav_status( $page_id ) {
+
+    ?>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+<?php
 	global $label;
 	for ( $i = 1; $i <= 5; $i ++ ) {
+        $active = "";
 		if ( $i == $page_id ) {
-			$b1 = "<b>";
-			$b2 = "</b>";
-		} else {
-			$b1 = "";
-			$b2 = "";
+			$active = "active";
 		}
-		echo $b1;
-		echo $label[ 'advertiser_nav_status' . $i ];
-		if ( $i < 5 ) {
-			echo ' -&gt; ';
-		}
-		echo $b2;
-
+		echo "<li class='breadcrumb-item $active' aria-current='page'><strong>".$i.". </strong>".$label[ 'advertiser_nav_status' . $i ]."</li>";
 	}
+	?>
+    </ol>
+</nav>
+    <?php
 
 }
 
@@ -2972,7 +2972,7 @@ function js_out_prep( $str ) {
 
 function echo_copyright() {
 	?>
-    <div style="font-size:xx-small; text-align:center">Powered By <a target="_blank" style="font-size:7pt;color:black" href="https://milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date( "Y" ); ?></div>
+    Powered By <a target="_blank" href="https://milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date( "Y" ); ?>
 	<?php
 }
 

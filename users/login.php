@@ -50,24 +50,7 @@ if ($target_page=='') {
 }
 
 ?>
-<html>
-<head>
-<link rel="stylesheet" type="text/css"
-href="style.css" />
-<META HTTP-EQUIV="REFRESH" CONTENT="5; URL=<?php echo $target_page; ?>">
-</head>
-<body>
-<table width="100%"  border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td width="35" height="26">&nbsp;</td>
-	  <td height="26" valign="bottom"><center><img alt="" src="<?php echo htmlentities(stripslashes(SITE_LOGO_URL)); ?>"/> <br/>
-      <h3 ><?php 
-	  $label["advertiser_logging_in"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_logging_in"]);
-	  echo $label["advertiser_logging_in"]; ?> </h3></center> </td>
-	</tr>
-	<tr>
-		<td width="35">&nbsp;</td>
-		<td><span>
+<?php require ("header.php"); ?>
 			<?php
 				if (do_login()) {
 					$ok = str_replace ( "%username%", $_SESSION['MDS_Username'], $label['advertiser_login_success2']);
@@ -78,17 +61,14 @@ href="style.css" />
 
 				} else {
 					//echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
-
 				}
 			?>
-		</span></td>
-		<td width="35">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="35" height="26">&nbsp;</td>
-		<td height="26"></td>
-		<td width="35" height="26">&nbsp;</td>
-	</tr>
-</table>
-</body>
-</html>
+<div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Redirecting...</span>
+    </div>
+</div>
+<script type="text/JavaScript">
+    setTimeout("location.href = '<?php echo $target_page; ?>';",5000);
+</script>
+<?php require("footer.php"); ?>

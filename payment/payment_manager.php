@@ -242,13 +242,14 @@ function payment_option_list($order_id) {
 	global $_PAYMENT_OBJECTS, $label;
 
 	?>
-	<table border="0" cellpadding="3" cellspacing="0" bgcolor="#C0C0C0" width="95%" align="center" >
-	<tr bgcolor="#d9d9d9">
-	<td><b><?php echo $label['payment_mab_btt'];?></b></td>
-	<td><b><?php echo $label['payment_man_pt']; ?></b></td>
-	<td><b><?php echo $label['payment_man_descr']; ?></b></td>
-	
-	</tr>
+    <table class="table">
+        <thead>
+        <tr>
+            <th><?php echo $label['payment_mab_btt'];?></th>
+            <th><?php echo $label['payment_man_pt']; ?></th>
+            <th><?php echo $label['payment_man_descr']; ?></th>
+	    </tr>
+        <tbody>
 	<?php
 
 	foreach ($_PAYMENT_OBJECTS as $obj_key => $obj) {
@@ -260,13 +261,11 @@ function payment_option_list($order_id) {
 
 
 			?>
-			<tr bgcolor="<?php echo $alt_color; ?>" onmouseover="old_bg=this.getAttribute('bgcolor');this.setAttribute('bgcolor', '#FBFDDB', 0);" onmouseout="this.setAttribute('bgcolor', old_bg, 0);">
-			<td style="margin:5px;"><?php echo $obj->payment_button($order_id); ?></td>
-			<td><font size="2"><?php echo $obj->name; ?></font></td>
-			<td><?php echo $obj->description; ?></td>
-			
 			<tr>
-
+			<td><?php echo $obj->payment_button($order_id); ?></td>
+			<td><small><?php echo $obj->name; ?></small></td>
+			<td><?php echo $obj->description; ?></td>
+			<tr>
 			<?php
 
 		}
@@ -274,6 +273,7 @@ function payment_option_list($order_id) {
 	}
 
 	?>
+        </tbody>
 	</table>
 
 

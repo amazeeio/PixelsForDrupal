@@ -33,30 +33,60 @@ header('content-type: text/html; charset=utf-8');
 
 echo $f2->get_doc(); ?>
 
-<link rel='StyleSheet' type="text/css" href="style.css" >
-
 <title><?php echo SITE_NAME; ?></title>
+<meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
 
 </head>
 
 <body>
-<?php
 
+<div class="jumbotron mb-0">
+    <div class="container text-center">
+        <h1><?php echo SITE_NAME; ?></h1>
+    </div>
+</div>
+
+<?php
 if (USE_AJAX=='SIMPLE') {
 	$order_page = 'order_pixels.php';
 } else {
 	$order_page = 'select.php';
 }
-
-$logourl = SITE_LOGO_URL;
-if(!empty($logourl)) {
-	echo '<img src="' . htmlentities($logourl) . '" />';
-}
 ?>
-<div style='background-color: #ffffff; border-color:#C0C0C0; border-style:solid;padding:10px;'>
-<div class="menu_bar">
-<a href="index.php" class="menu_bar"><?php echo $label['advertiser_header_nav1']; ?></a> | <a href="<?php echo $order_page; ?>" class="menu_bar"><?php echo $label['advertiser_header_nav2'];?></a>  | <a href="publish.php"  class="menu_bar"><?php echo $label['advertiser_header_nav3'];?></a> | <a href="orders.php"  class="menu_bar"><?php echo $label['advertiser_header_nav4'];?></a>
-<?php if ($_SESSION['MDS_ID']!='') { ?>
-| <a href='logout.php'  class="menu_bar" ><?php echo $label['advertiser_header_nav5']; ?></a>
-<?php } ?>
-</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-fill w-100 align-items-start">
+                <li class="nav-item">
+                    <a class="nav-link" href='/'>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='index.php'><?php echo $label['advertiser_header_nav1']; ?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='<?php echo $order_page; ?>'><?php echo $label['advertiser_header_nav2'];?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='publish.php'><?php echo $label['advertiser_header_nav3'];?></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='orders.php'><?php echo $label['advertiser_header_nav4'];?></a>
+                </li>
+                <?php if ($_SESSION['MDS_ID']!='') { ?>
+                <li class="nav-item">
+                    <a class="nav-link" href='logout.php'><?php echo $label['advertiser_header_nav5']; ?></a>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+</nav>

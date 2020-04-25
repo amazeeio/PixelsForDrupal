@@ -70,9 +70,10 @@ if (USE_AJAX=='SIMPLE') {
 if (mysqli_num_rows($order_result)==0) {
 	require ("header.php");
 	?>
+    <div class="container">
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
 <p><?php $label['no_order_in_progress_go_here'] = str_replace ('%ORDER_PAGE%', $order_page ,  $label['no_order_in_progress_go_here']); echo $label['no_order_in_progress_go_here']; ?></p>
-
+    </div>
 	<?php
 	require ("footer.php");
 	die();
@@ -98,80 +99,62 @@ Conform order
 */
 require ("login_functions.php");
 
-if ($_SESSION['MDS_ID']=='') {   // not logged in..
-	require ("header.php");
+if ($_SESSION['MDS_ID'] == '') {   // not logged in..
+    require("header.php"); ?>
+    <div class="container">
+        <div class="alert alert-info mb-4">
+            <div class="text-center">
+                <?php echo $label['not_logged_in']; ?>
+            </div>
+        </div>
 
-	?>
-	<h3>
-	<?php echo $label['not_logged_in']; ?>
-	</h3>
+        <div class="row">
+            <div class="col" style="border-right: 1px solid #ced4da">
+                <h2><?php echo $label['confirm_login']; ?></h2>
+                <p class="text-muted"><?php echo $label['confirm_member']; ?></p>
+                <?php echo login_form(false, 'confirm_order.php'); ?>
+            </div>
+            <div class="col">
+                <?php
+                /// signup
+                if ($_REQUEST['form'] == "filled") {
+                    $success = process_signup_form('confirm_order.php');
+                }
 
-<table cellpadding=5 border=1 style="border-collapse: collapse; border-style:solid; border-color:#D2D2D2">
-
-<tr>
-<td width="50%" bgcolor='#EBEBEB'>
-
-<?php 
-	
-/// signup
-
-
-
-	//Signup form is shown below
-
-	if ($_REQUEST['form']=="filled") {
-
-		$success = process_signup_form('confirm_order.php');
-					
-	} // end submit
-
-	if (!$success) {
-
-		?>
-
-		<h2><?php echo $label['conirm_signup']; ?></h2>
-		<h3><?php echo $label['confirm_instructions']; ?></h3>
-
-		<?php
-
-		display_signup_form($_REQUEST['FirstName'], $_REQUEST['LastName'], $_REQUEST['CompName'], $_REQUEST['Username'], $_REQUEST['Password'], $_REQUEST['Password2'], $_REQUEST['Email'], $_REQUEST['Newsletter'], $_REQUEST['Notification1'], $_REQUEST['Notification2'], $_REQUEST['lang']);
-	} else {
-					
-	}
-
-?></td>
-<td valign=top>
-<h2><?php echo $label['confirm_login']; ?></h2>
-<h3><?php echo $label['confirm_member']; ?></h3>
-<?php echo login_form(false, 'confirm_order.php'); ?></td>
-</tr>
-
-</table>
-<p>&nbsp;</p>
-
+                if (!$success) {
+                    ?>
+                    <h2><?php echo $label['conirm_signup']; ?></h2>
+                    <p class="text-muted"><?php echo $label['confirm_instructions']; ?></p>
+                    <?php display_signup_form($_REQUEST['FirstName'], $_REQUEST['LastName'], $_REQUEST['CompName'], $_REQUEST['Username'], $_REQUEST['Password'], $_REQUEST['Password2'], $_REQUEST['Email'], $_REQUEST['Newsletter'], $_REQUEST['Notification1'], $_REQUEST['Notification2'], $_REQUEST['lang']);
+                }
+                ?>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+    </div>
 <?php
 
 } else { // The user is singed in
 
 	$has_packages = banner_get_packages($BID);
-	
+
 	require ("header.php");
 
 	?>
 
 <p>
-<?php 
+<?php
 show_nav_status (3);
 ?>
 
 </p>
-	
+
 
 	<?php
 
-	
 
-	$cannot_get_package = false; 
+
+	$cannot_get_package = false;
 
 	if ($has_packages && $_REQUEST['pack']!='') { // has packages, and a package was selected...
 
@@ -179,25 +162,25 @@ show_nav_status (3);
 
 		if (can_user_get_package($_SESSION['MDS_ID'], $_REQUEST['pack'])) {
 
-			
+
 			$sql = "SELECT quantity FROM temp_orders WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."'";
 			$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			$row = mysqli_fetch_array($result);
 			$quantity = $row['quantity'];
 
 			$block_count = $quantity / ($b_row['BLK_WIDTH']*$b_row['BLK_HEIGHT']);
-			
+
 			// Now update the order (overwite the total & days_expire with the package)
 
 			$pack = get_package($_REQUEST['pack']);
 			$total = $pack['price'] * $block_count;
 			// convert & round off
-		
+
 			$total = convert_to_default_currency($pack['currency'], $total);
-		
+
 
 			$sql = "UPDATE temp_orders SET package_id='".intval($_REQUEST['pack'])."', price='".floatval($total)."',  days_expire='".intval($pack['days_expire'])."', currency='".mysqli_real_escape_string( $GLOBALS['connection'], get_default_currency())."' WHERE session_id='".mysqli_real_escape_string( $GLOBALS['connection'], session_id())."'";
- 
+
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 
 			$order_row['price']=$total;
@@ -259,7 +242,7 @@ show_nav_status (3);
 
 			if (!$p_max_ord) {
 				$max = $b_row['G_MAX_ORDERS'];
-			} else {	
+			} else {
 				$max = $p_max_ord;
 			}
 
@@ -272,17 +255,17 @@ show_nav_status (3);
 			if (($order_row['price']==0) || ($u_row['Rank']==2)) { // go straight to publish...
 				//http://localhost/MillionDollarScript-2.0.13/users/publish.php?action=complete&BID=2&order_id=temp
 				?>
-				
-				<input type='button' class='big_button' value="<?php echo htmlentities( $label['advertiser_o_completebutton']); ?>" Onclick="window.location='publish.php?action=complete&BID=<?php echo $BID; ?>&order_id=temp'"> 
+
+				<input type='button' class='big_button' value="<?php echo htmlentities( $label['advertiser_o_completebutton']); ?>" Onclick="window.location='publish.php?action=complete&BID=<?php echo $BID; ?>&order_id=temp'">
 				<?php
 
 			} else { // go to payment
-		 
+
 				?>
-		
-				<input type='button' class='big_button' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'"> 
-				
-				<?php  
+
+				<input type='button' class='big_button' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'">
+
+				<?php
 			}
 
 		}
@@ -295,11 +278,11 @@ show_nav_status (3);
 
 	?>
 
-	
+
 	<?php
 
-	
 
-} 
+
+}
 
 require ("footer.php");

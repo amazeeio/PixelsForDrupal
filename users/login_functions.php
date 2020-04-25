@@ -122,7 +122,7 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
     <form class="mt-4" name="form1" method="post" action="login.php?lang=<?php echo get_lang(); ?>&target_page=<?php echo $target_page; ?>">
         <div class="form-group">
             <label for="username"><?php echo $label["advertiser_signup_member_id"]; ?></label>
-            <input type="email" class="form-control" id="username" aria-describedby="emailHelp" name="Username" placeholder="Enter email">
+            <input type="text" class="form-control" id="username" aria-describedby="emailHelp" name="Username" placeholder="Member ID">
         </div>
         <div class="form-group">
             <label for="password"><?php echo $label["advertiser_signup_password"]; ?></label>

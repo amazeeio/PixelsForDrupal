@@ -1064,7 +1064,7 @@ function install_db() {
           `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'The name from the drupal.org import',
           `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'Notes field for admins to track who/what/why/etc',
           PRIMARY KEY (`voucher_id`),
-          KEY `voucher_code` (`code`)
+          UNIQUE KEY `voucher_code` (`code`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         ";
     }

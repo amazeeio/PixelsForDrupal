@@ -998,7 +998,7 @@ function does_field_exist($table, $field) {
 			`name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'The name from the drupal.org import',
 			`notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'Notes field for admins to track who/what/why/etc',
 			PRIMARY KEY (`voucher_id`),
-			KEY `voucher_code` (`code`)
+			UNIQUE KEY `voucher_code` (`code`)
 		) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 
 		mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the following query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");

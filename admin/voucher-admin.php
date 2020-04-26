@@ -115,7 +115,7 @@ if ($_POST['submit'] == 'Import new donations') {
       $doUrl = 'https://www.drupal.org' . $link->getAttribute('href');
 
       // d.o username.
-      preg_match('#\(([^\(\)]+)\)#', $nameHtml, $matches);
+      preg_match('#u\/(.*)#', $doUrl, $matches);
       if (count($matches) > 1) {
         $doName = $matches[1];
       }
@@ -171,7 +171,7 @@ if ($_POST['submit'] == 'Import new donations') {
       $blocks_discount = (int) $doner['amount'] / 5;
       $price_discount = (int) $doner['amount'];
       $do_name = mysqli_real_escape_string( $GLOBALS['connection'], $doner['doName']);
-      $name = mysqli_real_escape_string( $GLOBALS['connection'], $doner['name']);
+      $name = mysqli_real_escape_string( $GLOBALS['connection'], $doner['friendlyName']);
       $sql = <<<EOL
         INSERT INTO `vouchers`
         (

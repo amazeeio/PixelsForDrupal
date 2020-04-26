@@ -30,9 +30,17 @@
  */
 ?>
 </div>
-<footer class="text-muted">
-    <div class="container py-4 text-center">
-        <p><small><?php echo_copyright(); ?></small></p>
+
+<footer class="main-footer mt-3">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-sm-6">
+                &copy; Copyright <?php echo date('Y') . " " . SITE_NAME; ?>
+            </div>
+            <div class="col-sm-6">
+                Brought to you by:
+            </div>
+        </div>
     </div>
 </footer>
 

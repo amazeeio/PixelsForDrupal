@@ -37,14 +37,14 @@ echo $f2->get_doc(); ?>
 <meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="/assets/css/style.css">
 
 </head>
 
 <body>
 
-<div class="jumbotron mb-0">
-    <div class="container text-center">
+<div id="main-top-header" class="main-top-header jumbotron mb-0">
+    <div class="main-top-header-content container text-center">
         <h1><?php echo SITE_NAME; ?></h1>
     </div>
 </div>

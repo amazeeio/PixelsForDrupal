@@ -45,9 +45,9 @@ function process_login() {
 
 	require ("header.php");
 ?>
-       <div class="container">
+       <div class="login-methods container">
    <div class="row">
-       <div class="col" style="border-right: 1px solid #ced4da">
+       <div class="col-md-6 col-left">
            <h3><?php echo $label["advertiser_section_heading"];?></h3>
 		<?php
 		  login_form();
@@ -58,7 +58,7 @@ function process_login() {
 if (USE_AJAX=='SIMPLE') {
 
 ?>
-<div class="col">
+<div class="col-md-6 col-right">
 <h3 class="mb-4"><?php echo $label["advertiser_section_newusr"];
 if (USE_AJAX=='SIMPLE') {
 		$order_page = 'order_pixels.php';
@@ -132,11 +132,11 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
     </form>
 
     <div class="row mt-4">
-        <div class="col">
+        <div class="col-md-6">
     <a class="btn btn-default btn-block" href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a>
         </div>
     <?php if ( $show_signup_link ) { ?>
-                <div class="col">
+                <div class="col-md-6">
         <a class="btn btn-default btn-block" href="signup.php"><?php echo $label["advertiser_join_now"]; ?></a>
                 </div>
     <?php } ?>

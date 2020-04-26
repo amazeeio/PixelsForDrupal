@@ -1053,15 +1053,16 @@ function install_db() {
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
 
         CREATE TABLE `vouchers` (
-          `voucher_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-          `code` char(20) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
-          `banner_id` int(11) NOT NULL,
-          `price_discount` float DEFAULT NULL,
-          `blocks_discount` int(11) DEFAULT NULL,
-          `order_id` int(11) DEFAULT NULL,
-          `do_username` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
-          `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
-          `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+          `voucher_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+          `code` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT 'The voucher code given out and entered by users',
+          `banner_id` int(11) NOT NULL COMMENT 'Which banner this voucher code is good for',
+          `price_discount` float DEFAULT NULL COMMENT 'The discount in currency this voucher is good for',
+          `blocks_discount` int(11) DEFAULT NULL COMMENT 'The discount in blocks this voucher is good for',
+          `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'If this voucher can be used to checkout',
+          `single_use` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'If this voucher can be used more than once. Multi-use will tally the discount across many orders.',
+          `do_username` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'The drupal.org username from the import',
+          `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'The name from the drupal.org import',
+          `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'Notes field for admins to track who/what/why/etc',
           PRIMARY KEY (`voucher_id`),
           KEY `voucher_code` (`code`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci

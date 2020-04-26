@@ -55,6 +55,13 @@ function voucher_log_entry( $entry_line ) {
 	fclose( $log_fp );
 }
 
+function sum_transactions($total, $txn) {
+	return [
+		'price' => $total['price'] + $txn['amount'],
+		'blocks' => $total['blocks'] + count(explode(',', $txn['blocks'])),
+	];
+};
+
 ###########################################################################
 # Payment Object
 
@@ -197,7 +204,7 @@ class voucher {
           exit;
         }
 
-        if (!is_null($voucher['order_id'])) {
+        if (!$voucher['active']) {
           echo '<p>Voucher already claimed. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
           exit;
         }
@@ -211,29 +218,72 @@ class voucher {
           exit;
         }
 
-        if ($voucher['price_discount']) {
-          if ($voucher['price_discount'] < $order['price']) {
-            echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-            exit;  
+        // Voucher can only be used once
+        if ($voucher['single_use']) {
+          if ($voucher['price_discount']) {
+            if ($voucher['price_discount'] < $order['price']) {
+              echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+              exit;  
+            }
+          } else if ($voucher['blocks_discount']) {
+            $blocks = explode(',', $order['blocks']);
+            if ($voucher['blocks_discount'] < count($blocks)) {
+              echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+              exit;  
+            }
+          } else {
+            echo '<p>Order exceeds voucher. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+            exit;
           }
-        } else if ($voucher['blocks_discount']) {
-          $blocks = explode(',', $order['blocks']);
-          if ($voucher['blocks_discount'] < count($blocks)) {
-            echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-            exit;  
-          }
+
+          $sql = "UPDATE vouchers SET active=0 WHERE `voucher_id`=" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['voucher_id']);
+          mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+          
+          echo "<p>Voucher has been redeemed.</p>";
         } else {
-          echo '<p>Order exceeds voucher. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-          exit;
+          $sql = "SELECT t.amount, o.blocks FROM transactions t LEFT JOIN orders o on t.order_id = o.order_id where t.reason='" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['code']) . "' and t.`type`='DEBIT' ";
+          $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+          $voucher_debits = mysqli_fetch_all($result, MYSQLI_ASSOC);
+          $total_debits = array_reduce($voucher_debits, "sum_transactions", ['price' => 0, 'blocks' => 0]);
+
+          $sql = "SELECT t.amount, o.blocks FROM transactions t LEFT JOIN orders o on t.order_id = o.order_id where t.reason='" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['code']) . "' and t.`type`='CREDIT' ";
+          $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+          $voucher_credits = mysqli_fetch_all($result, MYSQLI_ASSOC);
+          $total_credits = array_reduce($voucher_credits, "sum_transactions", ['price' => 0, 'blocks' => 0]);
+
+          $total_used = [
+            'price' => $total_debits['price'] - $total_credits['price'],
+            'blocks' => $total_debits['blocks'] - $total_credits['blocks'],
+          ];
+
+          if ($voucher['price_discount']) {
+            $voucher_left_over = $voucher['price_discount'] - $total_used['price'];
+            if ($voucher_left_over < $order['price']) {
+              echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+              exit;  
+            }
+            
+            echo '<p>Voucher has been redeemed for $' . htmlspecialchars($order['price']) . '. You have $' . htmlspecialchars($voucher_left_over - $order['price']) . ' left over.</p>';
+          } else if ($voucher['blocks_discount']) {
+            $blocks = explode(',', $order['blocks']);
+            $voucher_left_over = $voucher['blocks_discount'] - $total_used['blocks'];
+            if ($voucher_left_over < count($blocks)) {
+              echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+              exit;  
+            }
+
+            echo '<p>Voucher has been redeemed for ' . htmlspecialchars($order['blocks']) . ' blocks. You have ' . htmlspecialchars($voucher_left_over - $order['blocks']) . ' blocks left over.</p>';
+          } else {
+            echo '<p>Order exceeds voucher. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
+            exit;
+          }
         }
 
-        $sql = "UPDATE vouchers SET order_id=" . mysqli_real_escape_string( $GLOBALS['connection'], $order['order_id']) . " WHERE `voucher_id`=" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['voucher_id']);
-		    $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
-
         complete_order( $order['user_id'], $order_id );
-        debit_transaction( $order_id, $order['price'], $order['currency'], 'Voucher', $voucher['code'], 'Voucher' );
+        $txn_id = $voucher['voucher_id'] . $order['order_id'];
+        debit_transaction( $order_id, $order['price'], $order['currency'], $txn_id, $voucher['code'], 'voucher' );
 
-				echo "Your order has been completed!";
+				echo "<p>Your order has been completed!</p>";
 				exit;
 			}
 

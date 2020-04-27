@@ -2644,7 +2644,7 @@ function show_nav_status( $page_id ) {
 
     ?>
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ul class="form-pagelist">
 <?php
 	global $label;
 	for ( $i = 1; $i <= 5; $i ++ ) {
@@ -2652,10 +2652,10 @@ function show_nav_status( $page_id ) {
 		if ( $i == $page_id ) {
 			$active = "active";
 		}
-		echo "<li class='breadcrumb-item $active' aria-current='page'><strong>".$i.". </strong>".$label[ 'advertiser_nav_status' . $i ]."</li>";
+		echo "<li class='form-pagelist-item $active' aria-current='page'>".$label[ 'advertiser_nav_status' . $i ]."</li>";
 	}
 	?>
-    </ol>
+    </ul>
 </nav>
     <?php
 

@@ -66,8 +66,12 @@ if ($label['available_stats'] == '') {
     <style>
         html,body {
             background-color: transparent !important;
+            position: relative;
+            margin: 0;
+            padding-bottom: 0;
+            min-height: auto;
         }
-    </style>
+</style>
 </head>
 <body class="status_body">
 <div class="float-right">

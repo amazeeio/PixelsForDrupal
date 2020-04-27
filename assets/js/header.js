@@ -16,7 +16,7 @@
 
     img = new Image();
 
-    useGrid = true;
+    useGrid = false;
 
     imgInfo = {};
 
@@ -143,9 +143,9 @@
 
     rotateAndPaintImage = function (context, image, angle, positionX, positionY, axisX, axisY, widthX, widthY) {
         context.translate(positionX, positionY);
-        context.rotate(angle);
+        // context.rotate(angle);
         context.drawImage(image, -axisX, -axisY, widthX, widthY);
-        context.rotate(-angle);
+        // context.rotate(-angle);
         return context.translate(-positionX, -positionY);
     };
 

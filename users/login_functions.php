@@ -352,7 +352,13 @@ function process_signup_form($target_page='index.php') {
 
 		//$target_page="index.php";
 
-		$success = create_new_account ($_SERVER['REMOTE_ADDR'], $FirstName, $LastName, $CompName, $Username, $_REQUEST['Password'], $Email, $Newsletter, $Notification1, $Notification2, $lang);
+        // Detect if Fastly is being used.
+        $clientIp = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['fastly-client-ip'])) {
+          $clientIp = $_SERVER['fastly-client-ip'];
+        }
+
+		$success = create_new_account ($clientIp, $FirstName, $LastName, $CompName, $Username, $_REQUEST['Password'], $Email, $Newsletter, $Notification1, $Notification2, $lang);
 
 		echo "<div class='alert alert-info'>";
 		if ((EM_NEEDS_ACTIVATION == "AUTO"))  {

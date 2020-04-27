@@ -1,0 +1,14 @@
+.login-methods {
+  .col-left {
+    border-right: 1px solid $gray-200;
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    @include bp(md){
+      border-right: 0;
+      border-bottom: 1px solid $gray-200;
+    }
+  }
+  .col-right{
+    margin-bottom: 4rem;
+  }
+}

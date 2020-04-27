@@ -143,7 +143,7 @@ function get_html_code( $BID ) {
 function get_stats_html_code( $BID ) {
 	$BID = intval($BID);
 
-	return '<iframe style="border:0;" allowtransparency="true" class="statsframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_stats.php?BID=' . $BID . '" width="330" height="50"></iframe>';
+	return '<iframe style="border:0;" allowtransparency="true" class="statsframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_stats.php?BID=' . $BID . '" width="330" height="40"></iframe>';
 }
 
 #########################################################

@@ -35,18 +35,19 @@ $logourl = SITE_LOGO_URL;
     <meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
 
-<div class="jumbotron mb-0">
-    <div class="container text-center">
+<div id="main-top-header" class="main-top-header jumbotron mb-0">
+    <canvas id="animation-canvas" data-image="/assets/images/drupal-icon.svg"></canvas>
+    <div class="main-top-header-content container text-center">
         <h1><?php echo SITE_NAME; ?></h1>
         <?php
         $slogan = SITE_SLOGAN;
         if (!empty($slogan)) { ?>
-            <p class="lead"> <?php echo htmlentities($slogan); ?></p>
+            <p class="lead"> <?php echo $slogan; ?></p>
         <?php } ?>
     </div>
 </div>

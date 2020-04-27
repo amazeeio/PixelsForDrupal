@@ -31,15 +31,4 @@ Temporary Items
 config.php
 
 # Uploads/generated files
-files/*
-!pixels/index.html
-!upload_files/images/index.html
-!upload_files/images/no-image.gif
-
-#admin temp
-admin/temp/*
-!admin/temp/index.html
-!admin/temp/block.png
-!admin/temp/not_for_sale_block.png
-!admin/temp/temp1.gif
-!admin/temp/temp2.gif
+/files

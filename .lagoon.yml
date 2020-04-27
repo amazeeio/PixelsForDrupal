@@ -1,0 +1,8 @@
+docker-compose-yaml: docker-compose.yml
+
+environments:
+  master:
+    routes:
+      - varnish:
+          - "pixelsfordrupal.com"
+          - "www.pixelsfordrupal.com"

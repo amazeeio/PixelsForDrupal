@@ -52,7 +52,7 @@ define( 'SITE_NAME', 'Drupalcares Half Million Dollar Homepage');
 define( 'SITE_SLOGAN', 'The #DrupalCares campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19' );
 define( 'MDS_RESIZE', 'YES' );
 define( 'MYSQL_HOST', getenv('MARIADB_HOST') ?: 'mariadb' );
-define( 'MYSQL_USER', getenv('MARIADB_USER') ?: 'lagoon' );
+define( 'MYSQL_USER', getenv('MARIADB_USERNAME') ?: 'lagoon' );
 define( 'MYSQL_PASS', getenv('MARIADB_PASSWORD') ?: 'lagoon' );
 define( 'MYSQL_DB', getenv('MARIADB_DATABASE') ?: 'lagoon' );
 define( 'MYSQL_PORT', 3306 );

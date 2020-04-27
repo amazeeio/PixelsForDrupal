@@ -37,14 +37,12 @@ include ("login_functions.php");
 process_login();
 
 require ("header.php");
-
-
 ?>
+<div class="container">
 <h3><?php echo $label['advertiser_edit_head']; ?></h3>
-<p>
 <?php echo $label['advertiser_edit_intro'];?>
-<p>
-
+<div class="row">
+        <div class="col-md-6 mt-4">
 <?php
 
 if ($_REQUEST['action']=='changepass') {
@@ -81,28 +79,27 @@ if ($_REQUEST['action']=='changepass') {
 
 ?>
 <form name="form1" method="post">
-	<table border="0">
+	<table class="table">
 		<tr>
 			<td colspan="2"><h3><?php echo $label['advertiser_edit_chpass']; ?></h3></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_curpass']; ?></td><td><input type="password" name="oldpass"></td>
+			<td><?php echo $label['advertiser_edit_curpass']; ?></td><td><input class="form-control" type="password" name="oldpass"></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_newpass']; ?></td><td><input type="password" name="password"></td>
+			<td><?php echo $label['advertiser_edit_newpass']; ?></td><td><input class="form-control" type="password" name="password"></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_retypepass']; ?></td><td><input type="password" name="password2"></td>
+			<td><?php echo $label['advertiser_edit_retypepass']; ?></td><td><input class="form-control" type="password" name="password2"></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_changebutton']; ?>"></td>
+			<td colspan="2"><input class="btn btn-success" type="submit" value="<?php echo $label['advertiser_edit_changebutton']; ?>"></td>
 		</tr>
 	</table>
 	<input type="hidden" name="action" value="changepass">
 </form>
-</p>
-<hr>
-<p>
+</div>
+    <div class="col-md-6 mt-4">
 <?php
 
 if ($_REQUEST['action']=='update') {
@@ -129,30 +126,30 @@ $email = $row['Email'];
 
 ?>
 <form name="form2" method="post">
-	<table border="0">
+	<table class="table">
 		<tr>
 			<td colspan="2"><h3><?php echo $label['advertiser_edit_upd_personald']; ?></h3></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_fname']; ?></td><td><input type="text" name="firstname" value="<?php echo htmlentities($firstname); ?>" ></td>
+			<td><?php echo $label['advertiser_edit_fname']; ?></td><td><input class="form-control" type="text" name="firstname" value="<?php echo htmlentities($firstname); ?>" ></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_lname']; ?></td><td><input type="text" name="lastname" value="<?php echo htmlentities($lastname); ?>"></td>
+			<td><?php echo $label['advertiser_edit_lname']; ?></td><td><input class="form-control" type="text" name="lastname" value="<?php echo htmlentities($lastname); ?>"></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_comp_n']; ?></td><td><input type="text" size="30" name="compname" value="<?php echo htmlentities($compname); ?>"></td>
+			<td><?php echo $label['advertiser_edit_comp_n']; ?></td><td><input class="form-control" type="text" size="30" name="compname" value="<?php echo htmlentities($compname); ?>"></td>
 		</tr>
 		<tr>
-			<td><?php echo $label['advertiser_edit_email']; ?></td><td><input type="text" size="30" name="email" value="<?php echo htmlentities($email); ?>"></td>
+			<td><?php echo $label['advertiser_edit_email']; ?></td><td><input class="form-control" type="text" size="30" name="email" value="<?php echo htmlentities($email); ?>"></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" value="<?php echo $label['advertiser_edit_savebutton']; ?>"></td>
+			<td colspan="2"><input class="btn btn-success" type="submit" value="<?php echo $label['advertiser_edit_savebutton']; ?>"></td>
 		</tr>
 	</table>
 	<input type="hidden" name="action" value="update">
 </form>
-</p>
-
+</div>
+</div>
 <?php
 
 require ("footer.php");

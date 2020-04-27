@@ -37,14 +37,11 @@ include ("../payment/payment_manager.php");
 //process_login();
 
 require ("header.php");
-
 ?>
+<div class="container text-center">
+    <?php show_nav_status (5); ?>
 
-<p></p>
-
-<p>&nbsp;</p>
-<h3>
-    <center>
+    <h3>
         <?php
         if(isset($_REQUEST['nhezk5']) && !empty($_REQUEST['nhezk5'])) {
             echo $label['payment_return_thanks_manual'];
@@ -52,16 +49,12 @@ require ("header.php");
 	        echo $label['payment_return_thanks'];
         }
         ?>
-    </center>
 </h3>
 
-
 <?php
-
 $className = $_REQUEST['m'];
 process_payment_return($className);
-
-?></p>
-<p>&nbsp;</p>
+?>
+</div>
 
 <?php require "footer.php"; ?>

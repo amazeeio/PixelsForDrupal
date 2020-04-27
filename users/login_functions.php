@@ -45,9 +45,9 @@ function process_login() {
 
 	require ("header.php");
 ?>
-       <div class="container">
+       <div class="login-methods container">
    <div class="row">
-       <div class="col" style="border-right: 1px solid #ced4da">
+       <div class="col-md-6 col-left">
            <h3><?php echo $label["advertiser_section_heading"];?></h3>
 		<?php
 		  login_form();
@@ -58,7 +58,7 @@ function process_login() {
 if (USE_AJAX=='SIMPLE') {
 
 ?>
-<div class="col">
+<div class="col-md-6 col-right">
 <h3 class="mb-4"><?php echo $label["advertiser_section_newusr"];
 if (USE_AJAX=='SIMPLE') {
 		$order_page = 'order_pixels.php';
@@ -132,11 +132,11 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
     </form>
 
     <div class="row mt-4">
-        <div class="col">
+        <div class="col-md-6">
     <a class="btn btn-default btn-block" href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a>
         </div>
     <?php if ( $show_signup_link ) { ?>
-                <div class="col">
+                <div class="col-md-6">
         <a class="btn btn-default btn-block" href="signup.php"><?php echo $label["advertiser_join_now"]; ?></a>
                 </div>
     <?php } ?>
@@ -273,33 +273,33 @@ function display_signup_form($FirstName, $LastName, $CompName, $Username, $passw
 
 	<form name="form1" method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>?page=signup&form=filled">
 		<div class="form-group">
-            <label for="firstname">*<?php echo $label["advertiser_signup_first_name"]; ?></label>
+            <label for="firstname"><?php echo $label["advertiser_signup_first_name"]; ?> *</label>
 			<input class="form-control" name="FirstName" value="<?php echo stripslashes($FirstName);?>" type="text" id="firstname">
 		</div>
 		<div class="form-group">
-            <label for="lastname">*<?php echo $label["advertiser_signup_last_name"];?></label>
+            <label for="lastname"><?php echo $label["advertiser_signup_last_name"];?> *</label>
 			<input class="form-control" name="LastName" value="<?php echo stripslashes($LastName);?>" type="text" id="lastname">
 		</div>
 		<div class="form-group">
-            <label for="CompName">*<?php echo $label["advertiser_signup_business_name"];?></label>
+            <label for="CompName"><?php echo $label["advertiser_signup_business_name"];?></label>
 			<input class="form-control" name="CompName" value="<?php echo stripslashes($CompName);?>" size="30" type="text" id="compname"/>
             <span class="text-muted"><small><?php echo $label["advertiser_signup_business_name2"];?></small></span>
 		</div>
 		<div class="form-group">
-            <label for="username">*<?php echo $label["advertiser_signup_member_id"];?></label>
+            <label for="username"><?php echo $label["advertiser_signup_member_id"];?> *</label>
 			<input class="form-control" name="Username" value="<?php echo $Username;?>" type="text" id="username">
             <span class="text-muted"><small><?php echo $label["advertiser_signup_member_id2"];?></small></span>
 		</div>
 		<div class="form-group">
-            <label for="password">*<?php echo $label["advertiser_signup_password"];?></label>
+            <label for="password"><?php echo $label["advertiser_signup_password"];?> *</label>
 			<input class="form-control" name="Password" type="password" value="<?php echo stripslashes($password);?>" id="password">
 		</div>
 		<div class="form-group">
-            <label for="password2">*<?php echo $label["advertiser_signup_password_confirm"];?></label>
+            <label for="password2"><?php echo $label["advertiser_signup_password_confirm"];?> *</label>
 			<input class="form-control" name="Password2" type="password" value="<?php echo stripslashes($password2);?>" id="password2">
 		</div>
 		<div class="form-group">
-            <label for="email">*<?php echo $label["advertiser_signup_your_email"];?></label>
+            <label for="email"><?php echo $label["advertiser_signup_your_email"];?> *</label>
 			<input class="form-control" name="Email" type="text" id="email" value="<?php echo $Email; ?>" size="30"/>
 		</div>
 		<div class="text-left">
@@ -352,7 +352,13 @@ function process_signup_form($target_page='index.php') {
 
 		//$target_page="index.php";
 
-		$success = create_new_account ($_SERVER['REMOTE_ADDR'], $FirstName, $LastName, $CompName, $Username, $_REQUEST['Password'], $Email, $Newsletter, $Notification1, $Notification2, $lang);
+        // Detect if Fastly is being used.
+        $clientIp = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['fastly-client-ip'])) {
+          $clientIp = $_SERVER['fastly-client-ip'];
+        }
+
+		$success = create_new_account ($clientIp, $FirstName, $LastName, $CompName, $Username, $_REQUEST['Password'], $Email, $Newsletter, $Notification1, $Notification2, $lang);
 
 		echo "<div class='alert alert-info'>";
 		if ((EM_NEEDS_ACTIVATION == "AUTO"))  {

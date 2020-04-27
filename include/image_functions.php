@@ -136,14 +136,14 @@ function get_html_code( $BID ) {
 	$width = $b_row['grid_width'] * $b_row['block_width'];
 	$height = $b_row['grid_height'] * $b_row['block_height'];
 
-	return '<iframe style="border:0; border-bottom:1px solid; border-right:1px solid; border-color:#D4D4D4;" class="gridframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_map.php?BID=' . $BID . '" style="width:' . $width . 'px;height:' . $height . 'px;" width="' . $width . '" height="' . $height . '"></iframe>';
+    return '<iframe id="pixelgrid" class="gridframe gridframe-' . $BID . '" src="' . BASE_HTTP_PATH . 'display_map.php?BID=' . $BID . '" style="width:' . $width . 'px;height:' . $height . 'px;" width="' . $width . '" height="' . $height . '"></iframe>';
 }
 
 ####################################################
 function get_stats_html_code( $BID ) {
 	$BID = intval($BID);
 
-	return '<iframe style="border:0;" allowtransparency="true" class="statsframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_stats.php?BID=' . $BID . '" width="330" height="50"></iframe>';
+	return '<iframe style="border:0;" allowtransparency="true" class="statsframe' . $BID . '" src="' . BASE_HTTP_PATH . 'display_stats.php?BID=' . $BID . '" width="100%" height="40"></iframe>';
 }
 
 #########################################################

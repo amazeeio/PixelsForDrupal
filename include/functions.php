@@ -1179,7 +1179,7 @@ function display_order( $order_id, $BID ) {
 
 	?>
 
-    <table border="1" width="300">
+    <table class="table" width="300">
 		<?php if ( isset( $order_row['order_id'] ) && $order_row['order_id'] != '' ) { ?>
             <tr>
                 <td><b><?php echo $label['advertiser_ord_order_id']; ?></b></td>
@@ -2644,7 +2644,7 @@ function show_nav_status( $page_id ) {
 
     ?>
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ul class="form-pagelist">
 <?php
 	global $label;
 	for ( $i = 1; $i <= 5; $i ++ ) {
@@ -2652,10 +2652,10 @@ function show_nav_status( $page_id ) {
 		if ( $i == $page_id ) {
 			$active = "active";
 		}
-		echo "<li class='breadcrumb-item $active' aria-current='page'><strong>".$i.". </strong>".$label[ 'advertiser_nav_status' . $i ]."</li>";
+		echo "<li class='form-pagelist-item $active' aria-current='page'>".$label[ 'advertiser_nav_status' . $i ]."</li>";
 	}
 	?>
-    </ol>
+    </ul>
 </nav>
     <?php
 
@@ -2972,6 +2972,7 @@ function js_out_prep( $str ) {
 
 function echo_copyright() {
 	?>
+		Built with Love and Coffee by the Drupal Community. <br />
     Powered By <a target="_blank" href="https://milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date( "Y" ); ?>
 	<?php
 }

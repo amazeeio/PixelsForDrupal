@@ -1,0 +1,29 @@
+.main-top-header{
+  position: relative;
+  background-color: $blue;
+  color: $white;
+  border-radius: 0;
+  //overflow: hidden;
+
+  .logo{
+    max-width: 320px;
+  }
+
+  .main-top-header-content {
+    z-index: 30;
+    position: relative;
+  }
+
+  canvas{
+    position: absolute;
+    top:0;
+    bottom:0;
+    left: 0;
+    right: 0;
+    opacity:0;
+    transition:1s opacity cubic-bezier(.55,0,.1,1);
+    &.ready{
+      opacity:0.2;
+    }
+  }
+}

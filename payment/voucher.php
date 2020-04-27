@@ -109,7 +109,7 @@ class voucher {
         <input type="hidden" name="order_id" value="<?php echo $order_row['order_id']; ?>" />
           <div class="form-group mr-2">
               <label for="voucher_code" class="mr-1">Voucher code:</label>
-              <input type="input" class="form-control" name="voucher_code" id="voucher_code" required />
+              <input type="input" class="form-control" name="voucher_code" id="voucher_code" size="20" style="min-width:200px" required />
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>

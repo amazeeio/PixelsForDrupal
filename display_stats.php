@@ -71,11 +71,14 @@ if ($label['available_stats'] == '') {
             padding-bottom: 0;
             min-height: auto;
         }
+        .display-info {
+            justify-content: space-between;
+        }
 </style>
 </head>
 <body class="status_body">
-<div class="float-right">
-    <ul class="nav">
+<div>
+    <ul class="nav display-info">
         <li class="nav-item">
             <div class="nav-link"><?php echo $label['sold_stats']; ?>: <span class="badge badge-primary"><?php echo number_format($sold); ?></span></div>
         </li>

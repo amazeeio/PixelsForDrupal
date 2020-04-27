@@ -1179,7 +1179,7 @@ function display_order( $order_id, $BID ) {
 
 	?>
 
-    <table border="1" width="300">
+    <table class="table" width="300">
 		<?php if ( isset( $order_row['order_id'] ) && $order_row['order_id'] != '' ) { ?>
             <tr>
                 <td><b><?php echo $label['advertiser_ord_order_id']; ?></b></td>

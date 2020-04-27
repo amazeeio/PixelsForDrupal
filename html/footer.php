@@ -7,10 +7,10 @@
 <footer class="main-footer mt-3">
     <div class="container py-4">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-left col-md-6">
                 &copy; Copyright <?php echo date('Y') . " " . SITE_NAME; ?>
             </div>
-            <div class="col-sm-6 text-right">
+            <div class="col-right col-md-6">
                 Built with ❤️ and ☕ by the Drupal Community.
             </div>
         </div>

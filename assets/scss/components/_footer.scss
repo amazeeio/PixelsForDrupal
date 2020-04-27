@@ -5,4 +5,20 @@
   right: 0;
   bottom: 0;
   left: 0;
+
+  .col-left {
+    text-align: left;
+    @include bp(md){
+      text-align: center;
+    }
+  }
+
+  .col-right {
+    text-align: right;
+    margin-top: 0;
+    @include bp(md){
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+  }
 }

@@ -45,7 +45,7 @@ function display_edit_order_button ($order_id) {
 		$order_page = 'select.php';
 	}
 ?>
-	<input type='button' class='big_button' value="<?php echo $label['advertiser_o_edit_button']; ?>" Onclick="window.location='<?php echo $order_page; ?>?&BID=<?php echo $BID; ?>&order_id=<?php echo $order_id;?>'">
+	<input type='button' class='btn btn-info' value="<?php echo $label['advertiser_o_edit_button']; ?>" Onclick="window.location='<?php echo $order_page; ?>?&BID=<?php echo $BID; ?>&order_id=<?php echo $order_id;?>'">
 
 <?php
 
@@ -143,10 +143,11 @@ if ($_SESSION['MDS_ID'] == '') {   // not logged in..
 	?>
 
 <p>
+    <div class="container">
 <?php
 show_nav_status (3);
 ?>
-
+    </div>
 </p>
 
 
@@ -198,7 +199,7 @@ show_nav_status (3);
 
 	}
 
-
+    echo "<div class='container'>";
 	if (($has_packages) && ($_REQUEST['pack']=='')) {
 
 		echo "<form method='post' action='".$_SERVER['PHP_SELF']."'>";
@@ -256,14 +257,14 @@ show_nav_status (3);
 				//http://localhost/MillionDollarScript-2.0.13/users/publish.php?action=complete&BID=2&order_id=temp
 				?>
 
-				<input type='button' class='big_button' value="<?php echo htmlentities( $label['advertiser_o_completebutton']); ?>" Onclick="window.location='publish.php?action=complete&BID=<?php echo $BID; ?>&order_id=temp'">
+				<input type='button' class='btn btn-info' value="<?php echo htmlentities( $label['advertiser_o_completebutton']); ?>" Onclick="window.location='publish.php?action=complete&BID=<?php echo $BID; ?>&order_id=temp'">
 				<?php
 
 			} else { // go to payment
 
 				?>
 
-				<input type='button' class='big_button' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'">
+				<input type='button' class='btn btn-success float-right' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'">
 
 				<?php
 			}
@@ -271,6 +272,7 @@ show_nav_status (3);
 		}
 		?>
 		</p>
+        </div>
 		<hr>
 
 		<?php

@@ -63,8 +63,10 @@ $order_result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($
 if (mysqli_num_rows($order_result)==0) { // no order id found...
 require ("header.php");
 	?>
+    <div class="container">
 <h1><?php echo $label['no_order_in_progress']; ?></h1>
 <p><?php $label['no_order_in_progress_go_here'] = str_replace ('%ORDER_PAGE%', $order_page ,  $label['no_order_in_progress_go_here']); echo $label['no_order_in_progress_go_here']; ?></p>
+    </div>
 	<?php
 	require ("footer.php");
 	die();
@@ -77,9 +79,8 @@ require ("header.php");
 #################################
 require ("header.php");
 ?>
-<p>
-<?php echo $label['advertiser_pay_navmap']; ?>
-</p>
+<div class="container">
+<?php show_nav_status (4); ?>
 <h3><?php echo $label['advertiser_pay_sel_method']; ?></h3>
 <?php
 if (($_REQUEST['action']=='confirm') || (($_REQUEST['action']=='complete'))){
@@ -140,5 +141,7 @@ if ($_REQUEST['action']=='confirm') {
 	payment_option_list($order_id);
 
 }
-
+?>
+</div>
+<?php
 require ("footer.php");

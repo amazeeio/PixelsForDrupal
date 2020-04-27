@@ -60,16 +60,15 @@ $email  = $_REQUEST['email'];
 require( "header.php" );
 
 ?>
-    <div style='text-align:center;'>
+    <div class="container" style="width: 320px">
         <h3><?php echo $label["advertiser_forgot_title"]; ?></h3>
         <form method="post">
-            <label><?php echo $label["advertiser_forgot_enter_email"] ?>:
-                <input type="text" name="email" size="30"/>
-            </label>
-            <input class="form_submit_button" type="submit" name="submit" value="<?php echo $label["advertiser_forgot_submit"]; ?>">
-
+            <div class="form-group">
+                <label for="email"><?php echo $label["advertiser_forgot_enter_email"] ?></label>
+                <input type="text" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            </div>
+            <input class="btn btn-success btn-block" type="submit" name="submit" value="<?php echo $label["advertiser_forgot_submit"]; ?>">
         </form>
-    </div>
 <?php
 
 function make_password() {
@@ -82,7 +81,7 @@ function make_password() {
 }
 
 if ( $email != '' ) {
-
+    echo "<div class='alert alert-info mt-4'>";
 
 	$sql    = "select * from users where `Email`='" . mysqli_real_escape_string( $GLOBALS['connection'], $email ) . "'";
 	$result = mysqli_query( $GLOBALS['connection'], $sql );
@@ -141,10 +140,12 @@ if ( $email != '' ) {
 	} else {
 		echo "<div style='text-align:center;'>" . $label["advertiser_forgot_email_notfound"] . "</div>";
 	}
+    echo "</div>";
 }
 
 ?>
-    <h3 style='text-align:center;'><a href="../"><?php echo $label["advertiser_forgot_go_back"]; ?></a></h3>
+    </div>
+
 <?php
 
 require( "footer.php" );

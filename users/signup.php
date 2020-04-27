@@ -63,7 +63,6 @@ require ("header.php");
 $label["advertiser_signup_heading1"] = str_replace ("%SITE_NAME%", SITE_NAME , $label["advertiser_signup_heading1"]);
 
 ?>
-<h3 ><?php echo $label["advertiser_signup_heading1"]; ?></h3>
 <table width="60%" align="center" width="100%"  border="0" cellspacing="0" cellpadding="0" >
 	<tr>
 		<td width="35" height="26">&nbsp;</td>

@@ -52,6 +52,12 @@ $logourl = SITE_LOGO_URL;
     </div>
 </div>
 
+<div class="d-lg-none d-xl-none">
+    <div class="container text-center">
+        <?php echo get_stats_html_code($BID); ?>
+    </div>
+</div>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -71,7 +77,9 @@ $logourl = SITE_LOGO_URL;
                     <a class="nav-link" href='list.php'>List of Pixels</a>
                 </li>
             </ul>
-            <?php echo get_stats_html_code($BID); ?>
+            <div class="d-none d-lg-block d-xl-block d-xl-none">
+                <?php echo get_stats_html_code($BID); ?>
+            </div>
         </div>
     </div>
 </nav>

@@ -9959,6 +9959,12 @@ body {
   color: white;
 }
 
+.gridframe {
+  border: 0;
+  border-right: 1px solid #D4D4D4 !important;
+  border-bottom: 1px solid #D4D4D4 !important;
+}
+
 .main-top-header {
   position: relative;
   background-color: #0678be;
@@ -9992,6 +9998,24 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
+}
+.main-footer .col-left {
+  text-align: left;
+}
+@media (max-width: 768px) {
+  .main-footer .col-left {
+    text-align: center;
+  }
+}
+.main-footer .col-right {
+  text-align: right;
+  margin-top: 0;
+}
+@media (max-width: 768px) {
+  .main-footer .col-right {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -99,10 +99,11 @@ $label['advertiser_signup_last_name']='Last Name';
 $label['advertiser_signup_business_name']='Company Name';
 $label['advertiser_signup_business_name2']='Enter company name';
 $label['advertiser_signup_member_id']='Username';
-$label['advertiser_signup_member_id2']='(Choose a unique Username that you will use to log in, but do not use spaces)';
+$label['advertiser_signup_member_id2']='Can be your Drupal.org Username, but does not have to be. No spaces please.)';
 $label['advertiser_signup_password']='Password';
 $label['advertiser_signup_password_confirm']='Confirm Password';
-$label['advertiser_signup_your_email']='E-mail';
+$label['advertiser_signup_your_email']='E-Mail';
+$label['advertiser_signup_your_email2']='Can be your Drupal.org E-Mail, but does not have to be.';
 $label['advertiser_signup_newsletter']='Receive Newsletter?';
 $label['advertiser_signup_new_resumes']='Notification on new Resumes?';
 $label['advertiser_signup_submit']='Submit';
@@ -126,7 +127,7 @@ $label['advertiser_login_success']='Welcome back %firstname% %lastname%. You hav
 $label['advertiser_login_success2']='Welcome back %firstname% %lastname%. You have successfully signed in as \'%username%\' <br/>Processing Login... If this page appears for more than 5 seconds <a href=\'%target_page%\'>click here to reload.</a><p>';
 $label['advertiser_logging_in']='Logging in to %SITE_NAME% ...  ';
 $label['advertiser_new_user_created']='New user created';
-$label['advertiser_could_not_signup']='Could not sign up, try using another Member ID or contact bug support by clicking here';
+$label['advertiser_could_not_signup']='Could not sign up, try using another Username or contact bug support by clicking here';
 $label['advertiser_signup_goback']='<a href=\'index.php\'>Continue</a>';
 $label['yes_option']='Yes';
 $label['no_option']='No';
@@ -356,7 +357,7 @@ $label['payment_mab_btt']='Payment Button - Click to complete payment.';
 $label['payment_man_pt']='Payment Type';
 $label['payment_man_descr']='Description';
 $label['payment_return_thanks']='Thank you!';
-$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed when your payment has cleared.";
+$label['payment_return_thanks_manual']='Thank you! Your order will be manually processed when your payment has cleared.';
 $label['ad_save_error']='ERROR: Cannot save your ad for the following reasons: ';
 $label['ad_save_button']='Save Ad';
 $label['delete_image_button']='Delete Image';
@@ -562,12 +563,9 @@ following link:
 
 %VERIFY_URL%
 
-Your Validation Code is: %VALIDATION_CODE%
-
 
 Regards,
 
-Webmaster,
 %SITE_NAME%
 %SITE_URL%';
 $label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
@@ -582,12 +580,8 @@ following link:<p>
 <p>
 <a href="%VERIFY_URL%">%VERIFY_URL%</a>
 </p><p>
-Your Validation Code is: %VALIDATION_CODE%
-</p>
-<br><p>
 Regards,
 </p><p>
-Webmaster,<br>
 %SITE_NAME%<br>
 %SITE_URL%<br>';
 $label['forget_pass_email_template']='Dear %FNAME% %LNAME%,
@@ -596,7 +590,7 @@ Your %SITE_NAME% password has been reset!
 
 Here is your new password:
 
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 Password: %PASSWORD%
 
 
@@ -610,7 +604,7 @@ $label['publish_pixels_email_subject']='New published pixels on %SITE_NAME%';
 $label['publish_pixels_email_template']='New pixels published on %SITE_NAME%!
 
 Grid: %GRID_NAME%
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 
 URLS:
 %URL_LIST%
@@ -623,7 +617,7 @@ URLS:
 $label['publish_pixels_html_email_template']='<p>New pixels published on %SITE_NAME%!</p>
 
 Grid: %GRID_NAME%<br>
-Member ID: %MEMBERID%<br>
+Username: %MEMBERID%<br>
 
 URLS:<br>
 %URL_LIST%<br>

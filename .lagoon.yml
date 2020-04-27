@@ -1,5 +1,12 @@
 docker-compose-yaml: docker-compose.yml
 
+tasks:
+  post-rollout:
+    - run:
+        name: create upload folders
+        command: mkdir -p files/upload_files && mkdir -p files/pixels
+        service: php
+
 environments:
   master:
     routes:

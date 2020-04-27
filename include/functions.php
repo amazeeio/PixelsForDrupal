@@ -2972,6 +2972,7 @@ function js_out_prep( $str ) {
 
 function echo_copyright() {
 	?>
+		Built with Love and Coffee by the Drupal Community. <br />
     Powered By <a target="_blank" href="https://milliondollarscript.com/">Million Dollar Script</a> Copyright &copy; 2010-<?php echo date( "Y" ); ?>
 	<?php
 }

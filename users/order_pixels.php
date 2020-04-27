@@ -823,6 +823,7 @@ if ( ! $tmp_image_file ) {
 		$block_size                      = $pixel_count / ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] );
 		$label['advertiser_require_pur'] = str_replace( '%PIXEL_COUNT%', "<span class='badge badge-secondary'>".$pixel_count."</span>", $label['advertiser_require_pur'] );
 		$label['advertiser_require_pur'] = str_replace( '%BLOCK_COUNT%', "<span class='badge badge-secondary'>".$block_size."</span>", $label['advertiser_require_pur'] );
+		$label['advertiser_require_pur'] = str_replace( '%DONATION_AMOUNT%', "<span class='badge badge-secondary'>".($block_size * 5)." $/€</span>", $label['advertiser_require_pur'] );
 		echo "<p>".$label['advertiser_require_pur']."</p>";
 		?>
 	<?php //echo $label['advertiser_select_instructions']; ?>

@@ -5,7 +5,7 @@ tasks:
     - run:
         name: create upload folders
         command: mkdir -p files/upload_files && mkdir -p files/pixels
-        service: php
+        service: nginx
 
 environments:
   master:

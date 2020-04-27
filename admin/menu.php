@@ -35,14 +35,13 @@ require ('admin_common.php');
 <HTML>
 <HEAD>
 <style>
-a {
-	color:#000000;
-	text-decoration: none;
-}
-
-a:hover {
-	color:#3399FF;
-}
+  a {
+    color:#000000;
+    text-decoration: none;
+  }
+  a:hover {
+    color:#3399FF;
+  }
 </style>
 <TITLE> Menu </TITLE>
 <META NAME="Generator" CONTENT="EditPlus">

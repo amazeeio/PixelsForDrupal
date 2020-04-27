@@ -39,15 +39,18 @@ use PHPHtmlParser\Dom;
 <?php echo $f2->get_doc(); ?>
 
 <style>
-body {
-	font-family: 'Arial', sans-serif; 
-	font-size:10pt;
-}
-.form-submit-button-danger {
-    background: #a20100;
-    color: white;
-    border-color: #a20037;
-}
+    body {
+        font-family: 'Arial', sans-serif;
+        font-size:10pt;
+    }
+    th {
+        text-align: left;
+    }
+    .form-submit-button-danger {
+        background: #a20100;
+        color: white;
+        border-color: #a20037;
+    }
 </style>
 </head>
 <body>

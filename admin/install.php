@@ -86,10 +86,10 @@ if (is_writable("../pixels/")) {
 	echo "- pixels/ directory is not writable. Give write permissions (777) to pixels/ directory<br>";
 }
 
-if (is_writable("temp/")) {
-	echo "- admin/temp directory is writeable. (OK)<br>";
+if (is_writable(TEMP_PATH)) {
+	echo "- " . TEMP_PATH . " directory is writeable. (OK)<br>";
 } else {
-	echo "- admin/temp directory is not writable. Give write permissions (777) to admin/temp directory<br>";
+	echo "- " . TEMP_PATH . " directory is not writable. Give write permissions (777) to " . TEMP_PATH . " directory<br>";
 }
 
 if (is_writable("../lang/english.php")) {

@@ -621,7 +621,7 @@ if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 
 	global $f2;
 
-	$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+	$uploaddir = TEMP_PATH;
 
 	//$parts = split ('\.', $_FILES['graphic']['name']);
 	$parts = $file_parts = pathinfo( $_FILES['graphic']['name'] );

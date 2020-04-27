@@ -87,8 +87,8 @@ function output_grid( $show, $file, $BID, $types, $user_id = 0 ) {
 	foreach ( $types as $type ) {
 		switch ( $type ) {
 			case 'background':
-				if ( file_exists( SERVER_PATH_TO_ADMIN . "temp/background$BID.png" ) ) {
-					$background = $imagine->open( SERVER_PATH_TO_ADMIN . "temp/background$BID.png" );
+				if ( file_exists( TEMP_PATH . "background$BID.png" ) ) {
+					$background = $imagine->open( TEMP_PATH . "background$BID.png" );
 				}
 				break;
 			case 'orders':

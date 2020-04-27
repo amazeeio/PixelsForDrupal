@@ -64,10 +64,10 @@ $logourl = SITE_LOGO_URL;
                     <a class="nav-link" href='index.php'>Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href='users/'>Buy Pixels</a>
+                    <a class="nav-link" href='users/'>Upload Pixels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href='list.php'>Ads List</a>
+                    <a class="nav-link" href='list.php'>List of Pixels</a>
                 </li>
             </ul>
             <?php echo get_stats_html_code($BID); ?>
@@ -77,4 +77,3 @@ $logourl = SITE_LOGO_URL;
 
 <div class="container text-center">
 
-			

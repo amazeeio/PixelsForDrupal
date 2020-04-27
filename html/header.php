@@ -47,7 +47,7 @@ $logourl = SITE_LOGO_URL;
         <?php
         $slogan = SITE_SLOGAN;
         if (!empty($slogan)) { ?>
-            <p class="lead"> <?php echo htmlentities($slogan); ?></p>
+            <p class="lead"> <?php echo $slogan; ?></p>
         <?php } ?>
     </div>
 </div>

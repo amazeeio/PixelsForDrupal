@@ -37,8 +37,8 @@
             <div class="col-sm-6">
                 &copy; Copyright <?php echo date('Y') . " " . SITE_NAME; ?>
             </div>
-            <div class="col-sm-6">
-                Brought to you by:
+            <div class="col-sm-6 text-right">
+                Built with ❤️ and ☕ by the Drupal Community.
             </div>
         </div>
     </div>

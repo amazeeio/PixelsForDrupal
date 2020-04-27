@@ -40,6 +40,7 @@ include_once( MDSROOT . "/html/header.php" );
 
 global $label;
 ?>
+<div class="container">
 
 <?php include( MDSROOT . "/top_ads_js.php" ); ?>
 <?php include( 'mouseover_box.htm' ); ?>
@@ -99,7 +100,7 @@ global $label;
         ?>
         </tbody>
     </table>
-
+</div>
 <?php
 include_once( MDSROOT . "/html/footer.php" );
 ?>

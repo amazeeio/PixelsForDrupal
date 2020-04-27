@@ -76,5 +76,5 @@ $logourl = SITE_LOGO_URL;
     </div>
 </nav>
 
-<div class="container text-center">
+<div class="container-fluid text-center">
 

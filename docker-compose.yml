@@ -2,7 +2,7 @@ version: '2.3'
 
 x-lagoon-project:
   # Lagoon project name (leave `&lagoon-project` when you edit this)
-  &lagoon-project drupalcareshomepage
+  &lagoon-project pixelsfordrupal-com
 
 x-volumes:
   &default-volumes
@@ -14,7 +14,7 @@ x-environment:
   &default-environment
     LAGOON_PROJECT: *lagoon-project
     # Route that should be used locally, if you are using pygmy, this route *must* end with .docker.amazee.io
-    LAGOON_ROUTE: http://drupalcareshomepage.docker.amazee.io
+    LAGOON_ROUTE: http://pixelsfordrupal.docker.amazee.io
     # Uncomment if you like to have the system behave like in production
     #LAGOON_ENVIRONMENT_TYPE: production
     # Uncomment to enable xdebug and then restart via `docker-compose up -d`
@@ -32,12 +32,11 @@ services:
       dockerfile: lagoon/nginx.dockerfile
     labels:
       lagoon.type: nginx-php-persistent
-      lagoon.persistent: /app/web/sites/default/files/ # define where the persistent storage should be mounted too
+      lagoon.persistent: /app/files/ # define where the persistent storage should be mounted too
     << : *default-volumes # loads the defined volumes from the top
     << : *default-user # uses the defined user from top
     environment:
       << : *default-environment # loads the defined environment variables from the top
-      LAGOON_LOCALDEV_URL: nginx-drupalcareshomepage.docker.amazee.io # generate another route for nginx, by default we go to varnish
     networks:
       - amazeeio-network
       - default
@@ -49,7 +48,7 @@ services:
     labels:
       lagoon.type: nginx-php-persistent
       lagoon.name: nginx # we want this service be part of the nginx pod in Lagoon
-      lagoon.persistent: /app/web/sites/default/files/ # define where the persistent storage should be mounted too
+      lagoon.persistent: /app/files/ # define where the persistent storage should be mounted too
     << : *default-volumes # loads the defined volumes from the top
     << : *default-user # uses the defined user from top
     environment:

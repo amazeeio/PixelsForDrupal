@@ -1,0 +1,15 @@
+docker-compose-yaml: docker-compose.yml
+
+tasks:
+  post-rollout:
+    - run:
+        name: create upload folders
+        command: mkdir -p files/upload_files && mkdir -p files/pixels
+        service: nginx
+
+environments:
+  master:
+    routes:
+      - nginx:
+          - "pixelsfordrupal.com"
+          - "www.pixelsfordrupal.com"

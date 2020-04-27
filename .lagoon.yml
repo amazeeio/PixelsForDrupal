@@ -10,6 +10,6 @@ tasks:
 environments:
   master:
     routes:
-      - varnish:
+      - nginx:
           - "pixelsfordrupal.com"
           - "www.pixelsfordrupal.com"

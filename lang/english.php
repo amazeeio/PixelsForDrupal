@@ -102,8 +102,8 @@ $label['advertiser_signup_member_id']='Username';
 $label['advertiser_signup_member_id2']='Can be your Drupal.org Username, but does not have to be. No spaces please.)';
 $label['advertiser_signup_password']='Password';
 $label['advertiser_signup_password_confirm']='Confirm Password';
-$label['advertiser_signup_your_email']='E-Mail';
-$label['advertiser_signup_your_email2']='Can be your Drupal.org E-Mail, but does not have to be.';
+$label['advertiser_signup_your_email']='Email';
+$label['advertiser_signup_your_email2']='Can be your Drupal.org email, but does not have to be.';
 $label['advertiser_signup_newsletter']='Receive Newsletter?';
 $label['advertiser_signup_new_resumes']='Notification on new Resumes?';
 $label['advertiser_signup_submit']='Submit';
@@ -111,23 +111,23 @@ $label['advertiser_signup_reset']='Reset';
 $label['advertiser_signup_error']='Cannot continue due to the following errors:<p>';
 $label['advertiser_signup_error_name']='* Please fill in your first name<br/>';
 $label['advertiser_signup_error_ln']='* Please fill in your last name<br/>';
-$label['advertiser_signup_error_user']='* Please fill in your Member I.D.<br/>';
-$label['advertiser_signup_error_inuse']='* The Member I.D. \'%username%\' is in use. Please choose a different Member I.D. <br/>';
+$label['advertiser_signup_error_user']='* Please fill in your username.<br/>';
+$label['advertiser_signup_error_inuse']='* The username \'%username%\' is in use. Please choose a different Member I.D. <br/>';
 $label['advertiser_signup_error_p']='* Please fill in your password <br/>';
 $label['advertiser_signup_error_p2']='* Please fill in confirm your password <br/>';
-$label['advertiser_signup_error_email']='* Please fill in your Email <br/>';
+$label['advertiser_signup_error_email']='* Please fill in your email <br/>';
 $label['advertiser_signup_error_pmatch']='* Passwords do not match <br/>';
 $label['advertiser_forgot_subject']='Your password on %SITE_NAME%';
-$label['advertiser_signup_success_1']='%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%  Advertiser\'s System. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%';
-$label['advertiser_signup_success_2']='%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%  Advertiser\'s System. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to use contact  %SITE_CONTACT_EMAIL%';
-$label['advertiser_signup_email_in_use']='* Cannot create a new account: the Email address is already in use. ';
+$label["advertiser_signup_success_1"] = "%FirstName% %LastName%, You have successfully signed up for %SITE_NAME%. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php
+$label["advertiser_signup_success_2"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact us at %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php 
+$label['advertiser_signup_email_in_use']='* Cannot create a new account: the email address is already in use. ';
 $label['advertiser_login_error']='Error: Username/Password combination is incorrect. <a href="index.php">Try again...</a><p> If you have forgotten your password, please <a href=\'forgot.php\'>Click Here</a>.<br>Please <a href=\'signup.php\'>Sign Up</a> if you are a new user. ';
 $label['advertiser_login_disabled']='Note: this account is not validated. Please check your email for the validation message';
 $label['advertiser_login_success']='Welcome back %firstname% %lastname%. You have successfully signed in as \'%username%\' <br/>Processing Login... If this page appears for more than 5 seconds <a href=\'index.php\'>click here to reload.</a><p>';
 $label['advertiser_login_success2']='Welcome back %firstname% %lastname%. You have successfully signed in as \'%username%\' <br/>Processing Login... If this page appears for more than 5 seconds <a href=\'%target_page%\'>click here to reload.</a><p>';
 $label['advertiser_logging_in']='Logging in to %SITE_NAME% ...  ';
 $label['advertiser_new_user_created']='New user created';
-$label['advertiser_could_not_signup']='Could not sign up, try using another Username or contact bug support by clicking here';
+$label['advertiser_could_not_signup']='Could not sign up, try using another username or contact support by clicking here';
 $label['advertiser_signup_goback']='<a href=\'index.php\'>Continue</a>';
 $label['yes_option']='Yes';
 $label['no_option']='No';
@@ -169,10 +169,10 @@ $label['advertiser_sel_pixel_inv_head']='Available Grids';
 $label['advertiser_sel_select_intro']='There are <b>%IMAGE_COUNT%</b> different images served by this website! Select the image which you would like to publish your pixels to:';
 $label['advertiser_order_not_confirmed']='Note: You have placed some pixels on order but it was not confirmed (green blocks). <a href=\'orders.php\'>View Order History</a>';
 $label['advertiser_select_pixels_head']='Select Pixels';
-$label['advertiser_buy_button']='Buy Pixels Now';
+$label['advertiser_buy_button']='Redeem Pixels Now';
 $label['advertiser_write_ad_button']='Continue';
 $label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div><div class="alert alert-info" role="alert">Please wait with placing your image until the grid is loaded, it takes a bit.</div>';
-$label['write_ad_instructions']='Add Hover text & Link';
+$label['write_ad_instructions']="Add a link and hover text.";
 $label['write_ad_saved']='Hover text and Link saved!';
 $label['write_ad_continue_button']='Click here to continue';
 $label['advertiser_publish_free_order']='Your order was completed.';
@@ -632,13 +632,13 @@ $label['mouseover_ad_template']='%ALT_TEXT%<br>
 ';
 $label['advertiser_select_instructions2']='<h3>Instructions:</h3>
 <p>
-Each square represents a block of %PIXEL_C% pixels (%BLK_WIDTH%x%BLK_HEIGHT%). Select the blocks that you want, and then press the \'Buy Pixels Now\' button.<br><br>
+Each square represents a block of %PIXEL_C% pixels (%BLK_WIDTH%x%BLK_HEIGHT%). Select the blocks that you want, and then press the \'Redeem Pixels Now\' button.<br><br>
 - Click on a White block to select it.<br>
 - Green blocks are selected by you.<br>
 - Click on a Green block to un-select.<br>
 - Red blocks have been sold.<br>
 - Yellow blocks are reserved by someone else, Orange have been ordered by you.<br>
-- Click the \'Buy Pixels Now\' button at the bottom of the page when you are finished.<br>
+- Click the \'Redeem Pixels Now\' button at the bottom of the page when you are finished.<br>
 </p>';
 $label['advertiser_publish_select_init2']='You own pixels on <b>%GRID_COUNT%</b> different grids served by this website. Select the image which you would like to publish your pixels to:';
 $label['advertiser_publish_instructions2']='Your blocks are shown on the grid below. <br>

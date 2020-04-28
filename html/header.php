@@ -40,8 +40,8 @@ $logourl = SITE_LOGO_URL;
 <body>
 
 
-<div id="main-top-header" class="main-top-header jumbotron mb-0">
-    <canvas id="animation-canvas" data-image="/assets/images/drupal-icon.svg"></canvas>
+<div id="main-top-header" class="main-top-header fontend jumbotron mb-0">
+    <canvas id="animation-canvas"></canvas>
     <div class="main-top-header-content container text-center">
         <h1><?php echo SITE_NAME; ?></h1>
         <?php

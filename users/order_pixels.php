@@ -656,11 +656,11 @@ if (isset($_POST['voucher_code'])) {
           'blocks' => $total_debits['blocks'] - $total_credits['blocks'],
         ];
 
-        echo '<div class="alert alert-success" role="alert">Voucher code is valid, and has a total discount of $' . $row['price_discount'] . '.';
+        $voucher_info = '<div class="alert alert-success" role="alert">Voucher code is valid, and has a total discount of $' . $row['price_discount'] . '.';
         if ($total_used['price'] < $row['price_discount']) {
-          echo ' A total of $' . ($row['price_discount'] - $total_used['price']) . ' remaining in credit.';
+            $voucher_info .= ' A total of $' . ($row['price_discount'] - $total_used['price']) . ' remaining in credit.';
         }
-        echo '</div>';
+        $voucher_info .= '</div>';
         $_SESSION['voucher_id'] = $row['voucher_id'];
         $_SESSION['voucher_code'] = $code;
         $_SESSION['voucher_price_discount'] = $row['price_discount'];
@@ -785,6 +785,9 @@ else if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) 
         echo $error;
         unset($error);
     }
+    if(isset($voucher_info)){
+        echo $voucher_info;
+    }
     ?>
 
 
@@ -831,7 +834,6 @@ if ( $has_packages ) {
 }
 
 ?>
-
     <div>
         <h3>Voucher checker</h3>
         <p>Enter the voucher code you received. This will be used to ensure the image you upload is smaller than the voucher credit.</p>

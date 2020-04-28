@@ -35,6 +35,7 @@ $logourl = SITE_LOGO_URL;
     <meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/assets/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>

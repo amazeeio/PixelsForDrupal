@@ -57,8 +57,8 @@ $label['pixel_uploaded_head']='Upload your pixel image';
 $label['no_order_in_progress']='No new orders in progress';
 $label['no_order_in_progress_go_here']='You do not have have any new orders in progress. Please go <a href="%ORDER_PAGE%">here to select your pixels</a>.';
 $label['upload_image_size']='The uploaded image is %WIDTH% pixels wide and %HEIGHT% pixels high.';
-$label['your_uploaded_pix']='Your uploaded pixes:';
-$label['upload_pix_description']='- Upload a GIF, JPEG or PNG graphics file<br>
+$label['your_uploaded_pix']='Your uploaded image:';
+$label['upload_pix_description']='- Upload a GIF, JPEG or PNG image<br>
 - Click \'Browse\' to find your file on your computer, then click \'Upload\'.<br>
 - Once uploaded, you will be able to position your file over the grid.<br>';
 $label['upload_your_pix']='Upload your pixels:';
@@ -99,10 +99,11 @@ $label['advertiser_signup_last_name']='Last Name';
 $label['advertiser_signup_business_name']='Company Name';
 $label['advertiser_signup_business_name2']='Enter company name';
 $label['advertiser_signup_member_id']='Username';
-$label['advertiser_signup_member_id2']='(Choose a unique Username that you will use to log in, but do not use spaces)';
+$label['advertiser_signup_member_id2']='Can be your Drupal.org Username, but does not have to be. No spaces please.)';
 $label['advertiser_signup_password']='Password';
 $label['advertiser_signup_password_confirm']='Confirm Password';
-$label['advertiser_signup_your_email']='E-mail';
+$label['advertiser_signup_your_email']='E-Mail';
+$label['advertiser_signup_your_email2']='Can be your Drupal.org E-Mail, but does not have to be.';
 $label['advertiser_signup_newsletter']='Receive Newsletter?';
 $label['advertiser_signup_new_resumes']='Notification on new Resumes?';
 $label['advertiser_signup_submit']='Submit';
@@ -126,7 +127,7 @@ $label['advertiser_login_success']='Welcome back %firstname% %lastname%. You hav
 $label['advertiser_login_success2']='Welcome back %firstname% %lastname%. You have successfully signed in as \'%username%\' <br/>Processing Login... If this page appears for more than 5 seconds <a href=\'%target_page%\'>click here to reload.</a><p>';
 $label['advertiser_logging_in']='Logging in to %SITE_NAME% ...  ';
 $label['advertiser_new_user_created']='New user created';
-$label['advertiser_could_not_signup']='Could not sign up, try using another Member ID or contact bug support by clicking here';
+$label['advertiser_could_not_signup']='Could not sign up, try using another Username or contact bug support by clicking here';
 $label['advertiser_signup_goback']='<a href=\'index.php\'>Continue</a>';
 $label['yes_option']='Yes';
 $label['no_option']='No';
@@ -160,20 +161,20 @@ $label['advertiser_max_order']='Cannot place pixels on order. You have reached t
 $label['advertiser_max_order_html']='<b><font color="red">Cannot place pixels on order.</font> You have reached the order limit for this grid. Please review your <a href="orders.php">Order History.</a></b>';
 $label['advertiser_sel_trail']='1. <b>Select Your Pixels</b> -> 2. Confirm Order -> 3. Payment -> 4. Image Upload & Publish your pixels';
 $label['advertiser_nav_status1']='Upload Your pixels';
-$label['advertiser_nav_status2']='Write Your Ad';
+$label['advertiser_nav_status2']='Add Hover text & Link';
 $label['advertiser_nav_status3']='Confirm';
-$label['advertiser_nav_status4']='Payment';
+$label['advertiser_nav_status4']='Voucher';
 $label['advertiser_nav_status5']='Thank you!';
 $label['advertiser_sel_pixel_inv_head']='Available Grids';
 $label['advertiser_sel_select_intro']='There are <b>%IMAGE_COUNT%</b> different images served by this website! Select the image which you would like to publish your pixels to:';
 $label['advertiser_order_not_confirmed']='Note: You have placed some pixels on order but it was not confirmed (green blocks). <a href=\'orders.php\'>View Order History</a>';
 $label['advertiser_select_pixels_head']='Select Pixels';
 $label['advertiser_buy_button']='Buy Pixels Now';
-$label['advertiser_write_ad_button']='Write Your Add ->>';
-$label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <br /><div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div>';
-$label['write_ad_instructions']='Please write your advertisement and click \'Save Ad\' when done.';
-$label['write_ad_saved']='Ad Saved.';
-$label['write_ad_continue_button']='Continue ->>';
+$label['advertiser_write_ad_button']='Continue';
+$label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div><div class="alert alert-info" role="alert">Please wait with placing your image until the grid is loaded, it takes a bit.</div>';
+$label['write_ad_instructions']='Add Hover text & Link';
+$label['write_ad_saved']='Hover text and Link saved!';
+$label['write_ad_continue_button']='Click here to continue';
 $label['advertiser_publish_free_order']='Your order was completed.';
 $label['advertiser_publish_not_owner']='Error: you do not own this block! Please click on your block.';
 $label['advertiser_publish_fnf']='File not found / file upload error';
@@ -244,7 +245,7 @@ $label['order_min_blocks']='Not enough blocks selected';
 $label['order_min_blocks_req']='You are required to select at least %MIN_BLOCKS% blocks form the grid. Please go back to select more pixels.';
 $label['advertiser_o_navmap']='1. <a href=\'select.php?BID=%BID%\'>Select Your pixels</a> -> 2. <b>Confirm Order</b> -> 3. Payment -> 4. Image Upload & Publish your pixels';
 $label['advertiser_o_nopixels']='You have no pixels selected on order! Please <a href=\'select.php?BID=%BID%\'>select some pixels here';
-$label['advertiser_o_confpay_button']='Confirm & Pay >>';
+$label['advertiser_o_confpay_button']='Confirm';
 $label['advertiser_o_edit_button']='Edit Order';
 $label['advertiser_pack_select_button']='Next >>';
 $label['advertiser_pack_prev_button']='<< Previous';
@@ -356,9 +357,9 @@ $label['payment_mab_btt']='Payment Button - Click to complete payment.';
 $label['payment_man_pt']='Payment Type';
 $label['payment_man_descr']='Description';
 $label['payment_return_thanks']='Thank you!';
-$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed when your payment has cleared.";
+$label['payment_return_thanks_manual']='Thank you! Your order will be manually processed when your payment has cleared.';
 $label['ad_save_error']='ERROR: Cannot save your ad for the following reasons: ';
-$label['ad_save_button']='Save Ad';
+$label['ad_save_button']='Save';
 $label['delete_image_button']='Delete Image';
 $label['upload_image']='Upload an additional Image';
 $label['bytes']='bytes';
@@ -554,20 +555,16 @@ $label['confirmation_email_templaltev2']='Dear %FNAME% %LNAME%,
 
 Thank you for signing-up to %SITE_NAME%!
 
-
-IMPORTANT:
+Username: %USERNAME%
 
 To complete the sign up process, you will need to visit the
 following link:
 
 %VERIFY_URL%
 
-Your Validation Code is: %VALIDATION_CODE%
-
 
 Regards,
 
-Webmaster,
 %SITE_NAME%
 %SITE_URL%';
 $label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
@@ -575,19 +572,15 @@ $label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
 Thank you for signing-up to %SITE_NAME%! <br>
 </p>
 <p>
-IMPORTANT:
+Username: %USERNAME%
 </p><p>
 To complete the sign up process, you will need to visit the
 following link:<p>
 <p>
 <a href="%VERIFY_URL%">%VERIFY_URL%</a>
 </p><p>
-Your Validation Code is: %VALIDATION_CODE%
-</p>
-<br><p>
 Regards,
 </p><p>
-Webmaster,<br>
 %SITE_NAME%<br>
 %SITE_URL%<br>';
 $label['forget_pass_email_template']='Dear %FNAME% %LNAME%,
@@ -596,7 +589,7 @@ Your %SITE_NAME% password has been reset!
 
 Here is your new password:
 
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 Password: %PASSWORD%
 
 
@@ -610,7 +603,7 @@ $label['publish_pixels_email_subject']='New published pixels on %SITE_NAME%';
 $label['publish_pixels_email_template']='New pixels published on %SITE_NAME%!
 
 Grid: %GRID_NAME%
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 
 URLS:
 %URL_LIST%
@@ -623,7 +616,7 @@ URLS:
 $label['publish_pixels_html_email_template']='<p>New pixels published on %SITE_NAME%!</p>
 
 Grid: %GRID_NAME%<br>
-Member ID: %MEMBERID%<br>
+Username: %MEMBERID%<br>
 
 URLS:<br>
 %URL_LIST%<br>

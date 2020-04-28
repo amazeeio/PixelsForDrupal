@@ -67,7 +67,7 @@ $has_packages = banner_get_packages($BID);
 ?>
 <div class="container">
 <p>
-<?php 
+<?php
 show_nav_status (2);
 ?>
 </p>
@@ -104,7 +104,7 @@ if (isset($_REQUEST['save']) && $_REQUEST['save'] != "" ) {
 
 		?>
 		<div class='text-center mt-4 mb-2'>
-            <input type="button"  class='btn btn-primary' value="<?php echo $label['write_ad_saved']." ".$label['write_ad_continue_button']; ?>" onclick="window.location='confirm_order.php'">
+            <input type="button"  class='btn btn-success' value="<?php echo $label['write_ad_saved']." ".$label['write_ad_continue_button']; ?>" onclick="window.location='confirm_order.php'">
         </div>
 		<?php
 		display_ad_form (1, "user", $prams);

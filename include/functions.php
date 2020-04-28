@@ -1065,6 +1065,7 @@ function send_confirmation_email( $email ) {
 	$message = $label["confirmation_email_templaltev2"];
 	$message = str_replace( "%FNAME%", $row['FirstName'], $message );
 	$message = str_replace( "%LNAME%", $row['LastName'], $message );
+	$message = str_replace( "%USERNAME%", $row['Username'], $message );
 	$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
 	$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
 	$message = str_replace( "%VERIFY_URL%", $verify_url, $message );
@@ -1073,6 +1074,7 @@ function send_confirmation_email( $email ) {
 	$html_msg = $label["confirmation_email_templaltev2_html"];
 	$html_msg = str_replace( "%FNAME%", $row['FirstName'], $html_msg );
 	$html_msg = str_replace( "%LNAME%", $row['LastName'], $html_msg );
+	$html_msg = str_replace( "%USERNAME%", $row['Username'], $message );
 	$html_msg = str_replace( "%SITE_URL%", BASE_HTTP_PATH . "users/", $html_msg );
 	$html_msg = str_replace( "%SITE_NAME%", SITE_NAME, $html_msg );
 	$html_msg = str_replace( "%VERIFY_URL%", $verify_url, $html_msg );

@@ -122,22 +122,22 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
     <form class="mt-4" name="form1" method="post" action="login.php?lang=<?php echo get_lang(); ?>&target_page=<?php echo $target_page; ?>">
         <div class="form-group">
             <label for="username"><?php echo $label["advertiser_signup_member_id"]; ?></label>
-            <input type="text" class="form-control" id="username" aria-describedby="emailHelp" name="Username" placeholder="Member ID">
+            <input type="text" class="form-control" id="username" aria-describedby="emailHelp" name="Username" placeholder="Username">
         </div>
         <div class="form-group">
             <label for="password"><?php echo $label["advertiser_signup_password"]; ?></label>
-            <input type="password" class="form-control" id="password" name="Password" placeholder="Enter Password">
+            <input type="password" class="form-control" id="password" name="Password" placeholder="Password">
         </div>
         <button class="form_submit_button btn btn-primary" type="submit" name="Submit"><?php echo $label["advertiser_login"]; ?></button>
     </form>
 
     <div class="row mt-4">
         <div class="col-md-6">
-    <a class="btn btn-default btn-block" href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a>
+    <a class="btn btn-light btn-block" href='forgot.php'><?php echo $label["advertiser_pass_forgotten"]; ?></a>
         </div>
     <?php if ( $show_signup_link ) { ?>
                 <div class="col-md-6">
-        <a class="btn btn-default btn-block" href="signup.php"><?php echo $label["advertiser_join_now"]; ?></a>
+        <a class="btn btn-dark btn-block" href="signup.php"><?php echo $label["advertiser_join_now"]; ?></a>
                 </div>
     <?php } ?>
     </div>
@@ -301,6 +301,7 @@ function display_signup_form($FirstName, $LastName, $CompName, $Username, $passw
 		<div class="form-group">
             <label for="email"><?php echo $label["advertiser_signup_your_email"];?> *</label>
 			<input class="form-control" name="Email" type="text" id="email" value="<?php echo $Email; ?>" size="30"/>
+            <span class="text-muted"><small><?php echo $label["advertiser_signup_your_email2"];?></small></span>
 		</div>
 		<div class="text-left">
 		    <input class="btn btn-success" type="submit" class="form_submit_button" name="Submit" value="<?php echo $label["advertiser_signup_submit"]; ?>">

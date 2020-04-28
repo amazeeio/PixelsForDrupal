@@ -45,7 +45,7 @@ $dir = implode('/', $dir);
 $dh = opendir ($dir."/payment/");
 
 while (($file = readdir($dh)) !== false) {
-	
+
 	if (($file != '.') && ($file != '..') && (strpos($file, ".php")>0) && ($file != "payment_manager.php")){
 	   //echo $dir."/payment/"."$file<br>\n";
 	   include($dir."/payment/".$file);
@@ -58,7 +58,7 @@ if ($_REQUEST['action']== 'save') {
 
 	$obj = $_PAYMENT_OBJECTS[$_REQUEST['pay']];
 	$obj->save_config();
-	
+
 
 }
 
@@ -126,12 +126,12 @@ function list_avalable_payments () {
 				<td><b><font size="2">Description</b></font></td>
 				<td><b><font size="2">Status</b></font></td>
 				<td><b><font size="2">&nbsp;</b></font></td>
-				
+
 			</tr>
 	<?php
 
 	foreach ($_PAYMENT_OBJECTS as $obj_key => $obj) {
-		
+
 
 		?>
 
@@ -154,7 +154,7 @@ function list_avalable_payments () {
 					}
 
 				}
-			
+
 			?></font></td>
 			<td nowrap><font size="2"><?php
 
@@ -198,12 +198,12 @@ function list_avalable_payments () {
 
 
 			}
-				
-			
+
+
 			?></font></td>
-				
+
 		</tr>
-		
+
 		<?php
 
 	}
@@ -214,22 +214,22 @@ function list_avalable_payments () {
 	</td>
 		<td valign="top">
 		<?php
-			
+
 			if ($_REQUEST['pay']!='') {
-			
+
 				if ($_PAYMENT_OBJECTS[$_REQUEST['pay']]->is_installed()) {
 					$_PAYMENT_OBJECTS[$_REQUEST['pay']]->config_form();
-				}	
+				}
 
 			}
-				
+
 				?>
 		</td>
 		</tr>
 		</table>
 	<?php
 
-	
+
 
 
 }
@@ -238,23 +238,17 @@ function list_avalable_payments () {
 #######################################
 
 function payment_option_list($order_id) {
-	
+
 	global $_PAYMENT_OBJECTS, $label;
 
 	?>
     <table class="table">
-        <thead>
-        <tr>
-            <th><?php echo $label['payment_mab_btt'];?></th>
-            <th><?php echo $label['payment_man_pt']; ?></th>
-            <th><?php echo $label['payment_man_descr']; ?></th>
-	    </tr>
         <tbody>
 	<?php
 
 	foreach ($_PAYMENT_OBJECTS as $obj_key => $obj) {
 
-		
+
 		$alt_color = "#E9E9E9";
 
 		if ($obj->is_enabled()){
@@ -263,7 +257,6 @@ function payment_option_list($order_id) {
 			?>
 			<tr>
 			<td><?php echo $obj->payment_button($order_id); ?></td>
-			<td><small><?php echo $obj->name; ?></small></td>
 			<td><?php echo $obj->description; ?></td>
 			<tr>
 			<?php

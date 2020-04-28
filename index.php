@@ -57,7 +57,24 @@ include_once (MDSROOT . "/html/header.php");
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
 echo get_html_code( $BID );
 
-echo "<p>more infos</p>";
+echo "
+<div class='text-left'>
+<p><strong>What is this?</strong></p>
+<p>You might remember the <a href='http://www.milliondollarhomepage.com/'>Million Dollar Homepage</a> from way back when. You could buy pixels and use them to post whatever you wanted - and the guy who started it made a million dollars. We thought it would be fun to make a Half Million Dollar homepage to help the Drupal Association reach their goal. Donors can purchase pixels to support the DA. You’ll get 100 pixels for every $5 you donate. You can post images and links to your pixels.  </p>
+
+<p><strong>What do I need to do?</strong></p>
+<p>Donate to #DrupalCares at <a href='https://www.drupal.org/association/donate'>https://www.drupal.org/association/donate</a>.</p>
+
+<p>Create an account on <a href='https://pixelsfordrupal.com/'>pixelsfordrupal.com</a>.</p>
+
+<p>You’ll receive a verification email. Log in and verify your account. </p>
+
+<p>You can now upload your pixels. You don’t need to do this all at once. You can upload some now, some later - you can use the whole amount at once or divide it up - it’s all up to you! You can also donate more to increase the amount of pixels you can upload. After you upload your pixels, you’ll be asked for the voucher code that was sent to you. </p>
+
+<p><strong>What can I upload?</strong></p>
+It’s up to you! Uploads and links are subject to the <a href='https://www.drupal.org/dcoc'>Drupal Code of Conduct</a>, so keep it professional and kind. Upload a picture of yourself, your pet, your company logo - be creative! We will have a moderation team quickly reviewing each submission.</p> </div>
+"
+;
 
 // include footer
 include_once (MDSROOT . "/html/footer.php");

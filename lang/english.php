@@ -387,7 +387,7 @@ $label['sel_box_select']='[Select]';
 $label['sel_category_select']='[Select]';
 $label['sel_category_select_all']='Select All';
 $label['order_confirmed_email_subject']='Voucher Redeemed at %SITE_NAME%';
-$label['order_completed_email_subject']='Pixels Approved at %SITE_NAME%';
+$label['order_completed_email_subject']='Voucher Redeemed at %SITE_NAME%';
 $label['order_pending_email_subject']='Order Pending';
 $label['order_expired_email_subject']='Order Expired';
 $label['confirmation_email_subject']='Account Confirmation at %SITE_NAME%';
@@ -423,7 +423,9 @@ $label['order_completed_email_template']='
 
 Dear %FNAME% %LNAME%,
 
-Your pixels were approved at %SITE_NAME%. They will be published shortly, so check back and visit %SITE_URL% to see them live!
+You have successfully redeemed a voucher for pixels at %SITE_NAME%.
+
+Your pixels were approved and they will be published shortly, so check back and visit %SITE_URL% to see them live!
 
 Please be patient if you do not see your pixels right away. They may take some time to be published. 
 
@@ -598,7 +600,7 @@ The #DrupalCares Half Million Dollar Homepage Team
 
 %SITE_URL%
 ';
-$label['forget_pass_html_email_template']='Dear %FNAME% %LNAME%,
+$label['forget_pass_email_template_html']='Dear %FNAME% %LNAME%,
 <p>
 Your %SITE_NAME% password has been reset!
 </p>

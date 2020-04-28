@@ -67,7 +67,7 @@ define( 'INTERLACE_SWITCH', 'YES' );
 define( 'USE_LOCK_TABLES', 'Y' );
 define( 'BANNER_DIR', 'files/pixels/' );
 define( 'DISPLAY_PIXEL_BACKGROUND', 'NO' );
-define( 'EMAIL_USER_ORDER_CONFIRMED', 'YES' );
+define( 'EMAIL_USER_ORDER_CONFIRMED', 'NO' );
 define( 'EMAIL_ADMIN_ORDER_CONFIRMED', 'YES' );
 define( 'EMAIL_USER_ORDER_COMPLETED', 'YES' );
 define( 'EMAIL_ADMIN_ORDER_COMPLETED', 'YES' );

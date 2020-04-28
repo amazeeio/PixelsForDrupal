@@ -40,7 +40,7 @@ include_once( MDSROOT . "/html/header.php" );
 
 global $label;
 ?>
-<div class="container">
+<div class="container text-left">
 <p><strong>How do I get pixels?</strong></p>
 <p>Go to <a href="https://www.drupal.org/association/donate">https://www.drupal.org/association/donate</a> and donate!</p>
 

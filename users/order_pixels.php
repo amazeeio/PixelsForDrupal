@@ -34,7 +34,7 @@ include( "../config.php" );
 
 include( "login_functions.php" );
 
-//process_login();
+process_login();
 
 //echo "session id:".session_id();
 //echo " ".strlen(session_id());

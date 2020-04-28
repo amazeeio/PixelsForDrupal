@@ -70,7 +70,7 @@ $label['no_order_in_progress_go_here']='You do not have have any new orders in p
 
 $label['upload_image_size']="The uploaded image is %WIDTH% pixels wide and %HEIGHT% pixels high.";
 
-$label['your_uploaded_pix'] = "Your uploaded pixes:";
+$label['your_uploaded_pix'] = "Your uploaded pixels:";
 
 $label['upload_pix_description'] = "- Upload a GIF, JPEG or PNG graphics file<br>
 - Click 'Browse' to find your file on your computer, then click 'Upload'.<br>
@@ -94,7 +94,7 @@ $label['sorry_head2']='We are sorry, it looks like you took too long! Either you
 
 # check_selection.php
 
-$label['check_sel_notavailable'] =  "The are where you placed your pixels is not available! Please try to place your pixels in a different area.";
+$label['check_sel_notavailable'] =  "The area where you placed your pixels is not available! Please try to place your pixels in a different area.";
 
 ###########
 
@@ -154,9 +154,9 @@ $label["advertiser_signup_error_p2"] = "* Please fill in confirm your password <
 $label["advertiser_signup_error_email"] = "* Please fill in your Email <br/>"; # Advertiser's - signup.php
 $label["advertiser_signup_error_pmatch"] = "* Passwords do not match <br/>"; # Advertiser's - signup.php
 $label['advertiser_forgot_subject']='Your password on %SITE_NAME%';
-$label["advertiser_signup_success_1"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%  Advertiser's System. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php
-$label["advertiser_signup_success_2"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%  Advertiser's System. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to use contact  %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php 
-$label["advertiser_signup_email_in_use"] = "* Cannot create a new account: the Email address is already in use. "; # Advertiser's - signup.php
+$label["advertiser_signup_success_1"] = "%FirstName% %LastName%, You have successfully signed up for %SITE_NAME%. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php
+$label["advertiser_signup_success_2"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact us at %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php 
+$label["advertiser_signup_email_in_use"] = "* Cannot create a new account: the email address is already in use. "; # Advertiser's - signup.php
 
 
  
@@ -165,7 +165,7 @@ $label["advertiser_login_disabled"] = "Note: this account is not validated. Plea
 $label["advertiser_login_success"] = "Welcome back %firstname% %lastname%. You have successfully signed in as '%username%' <br/>Processing Login... If this page appears for more than 5 seconds <a href='index.php'>click here to reload.</a><p>"; # Advertiser's - login.php
 $label["advertiser_login_success2"] = "Welcome back %firstname% %lastname%. You have successfully signed in as '%username%' <br/>Processing Login... If this page appears for more than 5 seconds <a href='%target_page%'>click here to reload.</a><p>"; # Advertiser's - login.php
 $label["advertiser_logging_in"] = "Logging in to %SITE_NAME% ...  "; # Advertiser's - login.php
-$label["advertiser_loginform_title"] = "Advertiser's Login"; # Advertiser's - Login form (login_functions.php)
+$label["advertiser_loginform_title"] = "User's Login"; # Advertiser's - Login form (login_functions.php)
 $label['advertiser_new_user_created']= "New user created"; # Advertiser's - Signup (login_functions.php)
 $label['advertiser_could_not_signup'] = "Could not sign up, try using another Member ID or contact bug support by clicking here"; # Advertiser's - Signup error (login_functions.php)
 $label['advertiser_signup_goback']='<a href=\'index.php\'>Continue</a>'; 
@@ -211,10 +211,10 @@ $label['advertiser_max_order']='Cannot place pixels on order. You have reached t
 $label['advertiser_max_order_html']='<b><font color="red">Cannot place pixels on order.</font> You have reached the order limit for this grid. Please review your <a href="orders.php">Order History.</a></b>';
 $label['advertiser_sel_trail']="1. <b>Select Your Pixels</b> -> 2. Confirm Order -> 3. Payment -> 4. Image Upload & Publish your pixels";
 
-$label['advertiser_nav_status1'] = "Upload Your pixels";
-$label['advertiser_nav_status2'] = "Write Your Ad";
+$label['advertiser_nav_status1'] = "Upload Your Image";
+$label['advertiser_nav_status2'] = "Add a Link";
 $label['advertiser_nav_status3'] = "Confirm";
-$label['advertiser_nav_status4'] = "Payment";
+$label['advertiser_nav_status4'] = "Voucher";
 $label['advertiser_nav_status5'] = "Thank you!";
 
 
@@ -227,22 +227,22 @@ $label['advertiser_select_pixels_head']="Select Pixels";
 $label['advertiser_select_instructions2']=
 "<h3>Instructions:</h3>
 <p>
-Each square represents a block of %PIXEL_C% pixels (%BLK_WIDTH%x%BLK_HEIGHT%). Select the blocks that you want, and then press the 'Buy Pixels Now' button.<br><br>
+Each square represents a block of %PIXEL_C% pixels (%BLK_WIDTH%x%BLK_HEIGHT%). Select the blocks that you want, and then press the 'Redeem Pixels Now' button.<br><br>
 - Click on a White block to select it.<br>
 - Green blocks are selected by you.<br>
 - Click on a Green block to un-select.<br>
 - Red blocks have been sold.<br>
 - Yellow blocks are reserved by someone else, Orange have been ordered by you.<br>
-- Click the 'Buy Pixels Now' button at the bottom of the page when you are finished.<br>
+- Click the 'Redeem Pixels Now' button at the bottom of the page when you are finished.<br>
 </p>";
 
-$label['advertiser_buy_button']="Buy Pixels Now";
-$label['advertiser_write_ad_button']="Write Your Add -&gt;&gt;";
+$label['advertiser_buy_button']="Redeem Pixels Now";
+$label['advertiser_write_ad_button']="Continue -&gt;&gt;";
 $label['advertiser_require_pur'] = "The uploaded image will require you to purchase %PIXEL_COUNT% pixels from the map which is exactly %BLOCK_COUNT% blocks.";
 
 # write_ad
-$label['write_ad_instructions']="Please write your advertisement and click 'Save Ad' when done.";
-$label['write_ad_saved']="Ad Saved.";
+$label['write_ad_instructions']="Add a link and hover text.";
+$label['write_ad_saved']="Image Saved.";
 $label['write_ad_continue_button']="Continue -&gt;&gt;";
 
 # Publish pixels
@@ -285,7 +285,7 @@ $label['advertiser_file_type_not_supp'] = "File type not supported.";
 
 $label['adv_pub_sizewrong'] = "The size of the uploaded image is incorrect. It needs to be %SIZE_X% wide and %SIZE_Y% high (or less)";
 
-$label['adv_pub_editad_head']='Edit your Ad / Change your pixels'; 
+$label['adv_pub_editad_head']='Edit your Image / Change your pixels'; 
 
 $label['adv_pub_editad_desc'] = "Here you can edit your ad or change your pixels.";
 $label['adv_pub_yourpix'] = "Your Pixels:";
@@ -297,9 +297,9 @@ $label['adv_pub_pixtochng']='To change these pixels, select an image %SIZE_X% pi
 
 $label['adv_pub_pixupload'] = "Upload";
 
-$label['adv_pub_edityourad'] = "Edit Your Ad:";
-$label['adv_pub_adsaved'] = "Ad Saved";
-$label['adv_pub_yourads'] = "Your Ads";
+$label['adv_pub_edityourad'] = "Edit Your Pixels:";
+$label['adv_pub_adsaved'] = "Pixels Saved";
+$label['adv_pub_yourads'] = "Your Pixels";
 
 # payment.php    
 
@@ -519,16 +519,16 @@ $label['payment_liqpay_name']='LiqPay';
 $label['payment_liqpay_descr']='Instant payments worldwide';
 
 ## payment_manager.php
-$label['payment_mab_btt']="Payment Button - Click to complete payment.";
+$label['payment_mab_btt']="Enter the voucher code from your email";
 $label['payment_man_pt']="Payment Type";
 $label['payment_man_descr']="Description";
 
 $label['payment_return_thanks'] = 'Thank you!';
-$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed when your payment has cleared.";
+$label['payment_return_thanks_manual']="Thank you! Your order will be manually processed shortly.";
 
 # Ad form
-$label['ad_save_error'] = "ERROR: Cannot save your ad for the following reasons: ";
-$label['ad_save_button'] = "Save Ad";
+$label['ad_save_error'] = "ERROR: Cannot save your image for the following reasons: ";
+$label['ad_save_button'] = "Save";
 $label['delete_image_button'] = "Delete Image";
 $label['upload_image'] = "Upload an additional Image";
 $label['bytes'] = "bytes";
@@ -593,7 +593,7 @@ Thank you!
 
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
@@ -622,7 +622,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<
 <br />
 Thank you!<br />
 <br />
-%SITE_NAME% team.<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br />
 <br />
 Note: This is an automated email.<br />
@@ -653,7 +653,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
@@ -682,7 +682,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<
 <br />
 Thank you!<br />
 <br />
-%SITE_NAME% team.<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br />
 <br />
 Note: This is an automated email.<br />
@@ -731,7 +731,7 @@ Dear %FNAME% %LNAME%,<br />
 <br />
 Your order status changed to 'Pending' on %SITE_NAME%.<br />
 <br />
-This means that you payment was recived, and the funds<br />
+This means that your payment was recived, and the funds<br />
 are clearing. Once the funds are cleared, you will be<br />
 able to manage your pixels.<br />
 <br />
@@ -749,7 +749,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<
 <br />
 Thank you!<br />
 <br />
-%SITE_NAME% team.<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br />
 <br />
 Note: This is an automated email.<br />
@@ -793,7 +793,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
@@ -831,7 +831,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<
 <br />
 Thank you!<br />
 <br />
-%SITE_NAME% team.<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br />
 <br />
 Note: This is an automated email.<br />
@@ -855,7 +855,7 @@ Price: %PRICE%
 Status: Completed
 --------------------------.
 
-Please Log into your account and
+Please log in to your account and
 upload your pixels and link.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems. 
@@ -863,7 +863,7 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
@@ -905,12 +905,12 @@ $label["confirmation_email_templaltev2"]=
 
 "Dear %FNAME% %LNAME%,
 
-Thank you for signing-up to %SITE_NAME%! 
+Thank you for signing up to %SITE_NAME%! 
 
 
 IMPORTANT:
 
-To complete the sign up process, you will need to visit the
+To complete the signup process, you will need to visit the
 following link:
 
 %VERIFY_URL%
@@ -920,17 +920,16 @@ Your Validation Code is: %VALIDATION_CODE%
 
 Regards,
 
-Webmaster,
-%SITE_NAME%
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%";
 
 $label['confirmation_email_templaltev2_html']='Dear %FNAME% %LNAME%,<br />
 <br />
-Thank you for signing-up to %SITE_NAME%!<br />
+Thank you for signing up to %SITE_NAME%!<br />
 <br />
 IMPORTANT:<br />
 <br />
-To complete the sign up process, you will need to visit the<br />
+To complete the signup process, you will need to visit the<br />
 following link:<br />
 <br />
 <a href="%VERIFY_URL%">%VERIFY_URL%</a><br />
@@ -939,8 +938,7 @@ Your Validation Code is: %VALIDATION_CODE%<br />
 <br />
 Regards,
 <br />
-Webmaster,<br />
-%SITE_NAME%<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br />
 ';
 
@@ -954,14 +952,13 @@ Your %SITE_NAME% password has been reset!
 
 Here is your new password:
 
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 Password: %PASSWORD%
 
 
 Regards,
 
-Webmaster,
-%SITE_NAME%
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 ";
 
@@ -971,14 +968,13 @@ Your %SITE_NAME% password has been reset!<br />
 <br />
 Here is your new password:<br />
 <br />
-Member ID: %MEMBERID%<br />
+Username: %MEMBERID%<br />
 Password: %PASSWORD%<br />
 <br />
 Regards,<br />
 <br />
-Webmaster,<br />
-%SITE_NAME%<br />
-%SITE_URL%<br />
+The #DrupalCares Half Million Dollar Homepage Team<br />
+%SITE_URL%
 ";
 
 $label['publish_pixels_email_subject'] = "New published pixels on %SITE_NAME%";
@@ -991,7 +987,7 @@ $label['publish_pixels_email_template'] =
 New pixels published on %SITE_NAME%!
 
 Grid: %GRID_NAME%
-Member ID: %MEMBERID%
+Username: %MEMBERID%
 
 URLS: 
 %URL_LIST%
@@ -1005,7 +1001,7 @@ URLS:
 $label['publish_pixels_email_template_html'] = "New pixels published on %SITE_NAME%!<br />
 <br />
 Grid: %GRID_NAME%<br />
-Member ID: %MEMBERID%<br />
+Username: %MEMBERID%<br />
 <br />
 URLS:<br />
 %URL_LIST%<br />
@@ -1024,7 +1020,7 @@ $label['mouseover_ad_template']=
 # list.php page
 $label['list_date_of_purchase']='Date of Purchase';
 $label['list_name']='Name';
-$label['list_ads']='Ads(s)';
+$label['list_ads']='Uploads(s)';
 $label['list_pixels']='Pixels';
 
 $label['reserving_pixels']='Please Wait! Reserving Pixels...';

@@ -777,7 +777,7 @@ if ( $has_packages ) {
     <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
         <h4><?php $label['upload_your_pix']; ?></h4>
             <div class="form-group">
-                <label for="graphic">Select a graphic</label>
+                <label for="graphic">Image</label>
                 <input type='file' name='graphic' class="form-control-file" id="graphic">
             </div>
             <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>

@@ -68,13 +68,13 @@ function sum_transactions($total, $txn) {
 class voucher {
 
 	var $name = "Voucher";
-	var $description = "Pay for your order using a voucher.";
+	var $description = "Redeem the voucher code that we sent to you.";
 	var $className = "voucher";
 
 	function __construct() {
 		if ( $this->is_installed() ) {
 
-			$sql = "SELECT * FROM config WHERE 
+			$sql = "SELECT * FROM config WHERE
                            `key`='VOUCHER_ENABLED'
                            ";
 			$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
@@ -132,7 +132,7 @@ class voucher {
 	}
 
 	function save_config() {
-		
+
 	}
 
 	// true or false
@@ -183,7 +183,7 @@ class voucher {
 
 	function process_payment_return() {
     global $f2;
-    
+
 		if ( ( $_REQUEST['order_id'] != '' ) ) {
 
 			if ( $_SESSION['MDS_ID'] == '' ) {
@@ -198,7 +198,7 @@ class voucher {
         $sql = "SELECT * FROM vouchers WHERE code='" . $voucher_id . "'";
 				$result = mysqli_query( $GLOBALS['connection'], $sql ) or voucher_mail_error( mysqli_error( $GLOBALS['connection'] ) . $sql );
         $voucher = mysqli_fetch_array( $result );
-        
+
         if (empty($voucher)) {
           echo '<p>Invalid voucher code. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
           exit;
@@ -223,13 +223,13 @@ class voucher {
           if ($voucher['price_discount']) {
             if ($voucher['price_discount'] < $order['price']) {
               echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-              exit;  
+              exit;
             }
           } else if ($voucher['blocks_discount']) {
             $blocks = explode(',', $order['blocks']);
             if ($voucher['blocks_discount'] < count($blocks)) {
               echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-              exit;  
+              exit;
             }
           } else {
             echo '<p>Order exceeds voucher. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
@@ -238,7 +238,7 @@ class voucher {
 
           $sql = "UPDATE vouchers SET active=0 WHERE `voucher_id`=" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['voucher_id']);
           mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
-          
+
           echo "<p>Voucher has been redeemed.</p>";
         } else {
           $sql = "SELECT t.amount, o.blocks FROM transactions t LEFT JOIN orders o on t.order_id = o.order_id where t.reason='" . mysqli_real_escape_string( $GLOBALS['connection'], $voucher['code']) . "' and t.`type`='DEBIT' ";
@@ -260,16 +260,16 @@ class voucher {
             $voucher_left_over = $voucher['price_discount'] - $total_used['price'];
             if ($voucher_left_over < $order['price']) {
               echo '<p>Voucher price is less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-              exit;  
+              exit;
             }
-            
+
             echo '<p>Voucher has been redeemed for $' . htmlspecialchars($order['price']) . '. You have $' . htmlspecialchars($voucher_left_over - $order['price']) . ' left over.</p>';
           } else if ($voucher['blocks_discount']) {
             $blocks = explode(',', $order['blocks']);
             $voucher_left_over = $voucher['blocks_discount'] - $total_used['blocks'];
             if ($voucher_left_over < count($blocks)) {
               echo '<p>Voucher blocks are less than order total. <a href="' . BASE_HTTP_PATH . 'users/payment.php?order_id=' . $order_id . '&BID=1">Enter a different code</a>.</p>';
-              exit;  
+              exit;
             }
 
             echo '<p>Voucher has been redeemed for ' . htmlspecialchars($order['blocks']) . ' blocks. You have ' . htmlspecialchars($voucher_left_over - $order['blocks']) . ' blocks left over.</p>';
@@ -283,7 +283,8 @@ class voucher {
         $txn_id = $voucher['voucher_id'] . $order['order_id'];
         debit_transaction( $order_id, $order['price'], $order['currency'], $txn_id, $voucher['code'], 'voucher' );
 
-				echo "<p>Your order has been completed!</p>";
+				echo "<p>Your order has been completed! Your pixels will be reviewed and published shortly.</p>
+				<p>Thank you for supporting the Drupal Association.</p>";
 				exit;
 			}
 

@@ -48,8 +48,8 @@ function format_field_translation_table( $form_id ) {
 			$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( "SQL:" . $sql . "<br />ERROR: " . mysqli_error( $GLOBALS['connection'] ) );
 			if ( mysqli_num_rows( $result ) == 0 ) {
 				$sql = "INSERT INTO `form_field_translations` (`field_id`, `lang`, `field_label`, `error_message`, `field_comment`)
-VALUES ('" . $field_id . "', '" . $key . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['field_label'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['error_message'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['field_comment'] ) . "') 
-ON DUPLICATE KEY UPDATE 
+VALUES ('" . $field_id . "', '" . $key . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['field_label'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['error_message'] ) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['field_comment'] ) . "')
+ON DUPLICATE KEY UPDATE
 `field_id` = '" . $field_id . "',
 `lang` = '" . $key . "',
 `field_label` = '" . mysqli_real_escape_string( $GLOBALS['connection'], $f_row['field_label'] ) . "',
@@ -534,7 +534,7 @@ function display_form( $form_id, $mode, $prams, $section ) {
                                         }
 									}
 
-								    echo "<div class='input-group mb-3'>";
+								    echo "<div class='input-group'>";
                                     // avoid triggering mod_security by not posting http:// in the form fields
                                     if ( strtolower( $row['field_label'] ) == "url" ) {
                                         echo "<div class='input-group-prepend'>";
@@ -542,10 +542,10 @@ function display_form( $form_id, $mode, $prams, $section ) {
                                         echo "</div>";
                                     }
 									echo form_text_field( $row['field_id'], $textvalue, $row['field_width'] );
-									if ( $row['field_comment'] != '' ) {
-										echo " " . $purifier->purify( $row['field_comment'] ) . "";
-									}
 									echo "</div>";
+									if ( $row['field_comment'] != '' ) {
+										echo '<div class="text-muted"><small>' . $purifier->purify( $row['field_comment'] ) . '</small></div>';
+									}
 								}
 								break;
 							case "SEPERATOR":
@@ -770,7 +770,7 @@ function save_field( $error, $NEW_FIELD ) {
 
 	if ( $NEW_FIELD == "YES" ) {
 
-        $sql = "INSERT INTO `form_fields` ( `form_id` , `field_id` , `reg_expr` , `field_label` , `field_type` , `field_sort` , `is_required` , `display_in_list` , `error_message` , `field_init`, `field_width`, `field_height`, `is_in_search`, `list_sort_order`, `search_sort_order`, `template_tag`, `section`, `is_hidden`, `is_anon`, `field_comment`, `category_init_id`, `is_cat_multiple`, `cat_multiple_rows`, `is_blocked`, `multiple_sel_all`) 
+        $sql = "INSERT INTO `form_fields` ( `form_id` , `field_id` , `reg_expr` , `field_label` , `field_type` , `field_sort` , `is_required` , `display_in_list` , `error_message` , `field_init`, `field_width`, `field_height`, `is_in_search`, `list_sort_order`, `search_sort_order`, `template_tag`, `section`, `is_hidden`, `is_anon`, `field_comment`, `category_init_id`, `is_cat_multiple`, `cat_multiple_rows`, `is_blocked`, `multiple_sel_all`)
         VALUES (
             '$form_id',
             '',
@@ -853,8 +853,8 @@ function save_field( $error, $NEW_FIELD ) {
 		// update translations
 
 		$sql = "INSERT INTO `form_field_translations` (`field_id`, `lang`, `field_label`, `error_message`, `field_comment`)
-VALUES ('" . $field_id . "', '" . get_lang() . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $field_label) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $error_message) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $field_comment) . "') 
-ON DUPLICATE KEY UPDATE 
+VALUES ('" . $field_id . "', '" . get_lang() . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $field_label) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $error_message) . "', '" . mysqli_real_escape_string( $GLOBALS['connection'], $field_comment) . "')
+ON DUPLICATE KEY UPDATE
 `field_id` = '" . $field_id . "',
 `lang` = '" . get_lang() . "',
 `field_label` = '" . mysqli_real_escape_string( $GLOBALS['connection'], $field_label) . "',

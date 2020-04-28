@@ -81,8 +81,6 @@ $dir = preg_split ('%[/\\\]%', $dir);
 $blank = array_pop($dir);
 $dir = implode('/', $dir);
 
-echo "<h3 class='mt-4 mb-3'>Total: " . $order_row['price'] . " " . $order_row['currency'] . "</h3>";
-
 include $dir.'/payment/payment_manager.php';
 
 payment_option_list($order_id);

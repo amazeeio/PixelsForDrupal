@@ -1065,6 +1065,7 @@ function send_confirmation_email( $email ) {
 	$message = $label["confirmation_email_templaltev2"];
 	$message = str_replace( "%FNAME%", $row['FirstName'], $message );
 	$message = str_replace( "%LNAME%", $row['LastName'], $message );
+	$message = str_replace( "%USERNAME%", $row['Username'], $message );
 	$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
 	$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
 	$message = str_replace( "%VERIFY_URL%", $verify_url, $message );
@@ -1073,6 +1074,7 @@ function send_confirmation_email( $email ) {
 	$html_msg = $label["confirmation_email_templaltev2_html"];
 	$html_msg = str_replace( "%FNAME%", $row['FirstName'], $html_msg );
 	$html_msg = str_replace( "%LNAME%", $row['LastName'], $html_msg );
+	$html_msg = str_replace( "%USERNAME%", $row['Username'], $message );
 	$html_msg = str_replace( "%SITE_URL%", BASE_HTTP_PATH . "users/", $html_msg );
 	$html_msg = str_replace( "%SITE_NAME%", SITE_NAME, $html_msg );
 	$html_msg = str_replace( "%VERIFY_URL%", $verify_url, $html_msg );
@@ -1191,22 +1193,9 @@ function display_order( $order_id, $BID ) {
             <td><?php echo $order_row['order_date']; ?></td>
         </tr>
         <tr>
-            <td><b><?php echo $label['advertiser_ord_name']; ?></b></td>
-            <td><?php echo $b_row['name']; ?></td>
-        </tr>
-        <tr>
             <td><b><?php echo $label['advertiser_ord_quantity']; ?></b></td>
-            <td><?php echo $order_row['quantity']; ?><?php echo $label['advertiser_ord_pix']; ?></td>
+            <td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix']; ?></td>
         </tr>
-        <td><b><?php echo $label['advertiser_ord_expired']; ?></b></td>
-        <td><?php if ( $order_row['days_expire'] == 0 ) {
-				echo $label['advertiser_ord_never'];
-			} else {
-
-				$label['advertiser_ord_days_exp'] = str_replace( "%DAYS_EXPIRE%", $order_row['days_expire'], $label['advertiser_ord_days_exp'] );
-				echo $label['advertiser_ord_days_exp'];
-
-			} ?></td>
         </tr>
         <tr>
             <td><b><?php echo $label['advertiser_ord_price']; ?></b></td>

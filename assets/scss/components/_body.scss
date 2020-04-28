@@ -14,4 +14,7 @@ body{
   margin: 0;
   padding-bottom: 6rem;
   min-height: 100%;
+  @include bp(md) {
+    padding-bottom: 8rem;
+  }
 }

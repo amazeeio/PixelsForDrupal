@@ -2,4 +2,8 @@
   border: 0;
   border-right: 1px solid $bgray !important;
   border-bottom: 1px solid $bgray !important;
+  @include bp(lg) {
+    width: 100% !important;
+    height: 400px !important;
+  }
 }

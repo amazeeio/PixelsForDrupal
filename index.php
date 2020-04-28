@@ -53,7 +53,14 @@ include_once (MDSROOT . "/config.php");
 
 // include the header
 include_once (MDSROOT . "/html/header.php");
-
+?>
+    <div class="d-lg-none alert alert-warning alert-dismissible fade show" role="alert">
+        This site is best viewed on desktop.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
 echo get_html_code( $BID );
 

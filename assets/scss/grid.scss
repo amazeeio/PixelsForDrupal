@@ -1,0 +1,6 @@
+@import "components/mixins";
+.grid-body {
+  @include bp(lg) {
+    overflow: scroll;
+  }
+}

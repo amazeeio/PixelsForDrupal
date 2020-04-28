@@ -48,7 +48,7 @@ define( 'UPLOAD_PATH', __DIR__ . '/files/upload_files/' );
 define( 'UPLOAD_HTTP_PATH', $route . '/files/upload_files/' );
 define( 'SITE_CONTACT_EMAIL', 'hello@amazee.io' );
 define( 'SITE_LOGO_URL', $route . '/logo.gif' );
-define( 'SITE_NAME', 'Drupalcares Half Million Dollar Homepage');
+define( 'SITE_NAME', 'Pixels for Drupal');
 define( 'SITE_SLOGAN', 'The #DrupalCares campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19.<br>Every donation for <strong>#DrupalCares</strong> gives you the 20x amount of pixels! ' );
 define( 'MDS_RESIZE', 'YES' );
 define( 'MYSQL_HOST', getenv('MARIADB_HOST') ?: 'mariadb' );

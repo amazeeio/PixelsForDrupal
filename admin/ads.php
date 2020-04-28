@@ -124,7 +124,7 @@ if ( isset($_REQUEST['ad_id']) && is_numeric( $_REQUEST['ad_id'] ) ) {
 
 		// move the file
 
-		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+		$uploaddir = TEMP_PATH;
 
 		$parts = $file_parts = pathinfo( $_FILES['graphic']['name'] );
 		$ext   = $f2->filter( strtolower( $file_parts['extension'] ) );

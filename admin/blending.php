@@ -86,9 +86,9 @@ if ($_FILES['blend_image']['tmp_name']!='') {
 
 	} else {
 
-		echo "moving.. ".$_FILES['blend_image']['tmp_name']." to:".SERVER_PATH_TO_ADMIN."temp/background$BID.png"."<br>";
+		echo "moving.. ".$_FILES['blend_image']['tmp_name']." to:".TEMP_PATH."background$BID.png"."<br>";
 
-		move_uploaded_file ( $_FILES['blend_image']['tmp_name'], SERVER_PATH_TO_ADMIN."temp/background$BID.png" );
+		move_uploaded_file ( $_FILES['blend_image']['tmp_name'], TEMP_PATH."background$BID.png" );
 
 	}
 
@@ -97,8 +97,8 @@ if ($_FILES['blend_image']['tmp_name']!='') {
 
 if ($_REQUEST['action']=='delete') {
 
-	if (file_exists(SERVER_PATH_TO_ADMIN."temp/background$BID.png")) {
-		unlink (SERVER_PATH_TO_ADMIN."temp/background$BID.png");
+	if (file_exists(TEMP_PATH."background$BID.png")) {
+		unlink (TEMP_PATH."background$BID.png");
 	}
 	//print_r ($_REQUEST);
 

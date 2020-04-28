@@ -113,6 +113,7 @@ define( 'HIDE_TIMEOUT', '500' );
 define( 'MDS_AGRESSIVE_CACHE', 'NO' );
 define( 'ERROR_REPORTING', 0 );
 define( 'VOUCHER_IMPORT_HASH_SALT', getenv('VOUCHER_IMPORT_HASH_SALT') ?: 'or((|*D)9qa-weSwEP)>s"l-%5.^;{l');
+define( 'TEMP_PATH', __DIR__ . '/files/temp/' );
 
 if ( defined( 'MEMORY_LIMIT' ) ) {
 	ini_set( 'memory_limit', MEMORY_LIMIT );

@@ -440,8 +440,8 @@ function install_db() {
           KEY `field_id` (`field_id`)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
 
-        INSERT INTO `form_field_translations` VALUES (1, 'EN', 'Hover Text', 'was not filled in', 'This text is shown if somebody hover over your pixels.');;;
-        INSERT INTO `form_field_translations` VALUES (2, 'EN', 'Link', 'is not valid.', 'This link is shown if somebody hover over your pixels.');;;
+        INSERT INTO `form_field_translations` VALUES (1, 'EN', 'Hover Text', 'was not filled in', 'This text is shown if somebody hovers over your pixels.');;;
+        INSERT INTO `form_field_translations` VALUES (2, 'EN', 'Link', 'is not valid.', 'Your pixels will be linked to this URL.');;;
 
         CREATE TABLE `form_lists` (
           `form_id` int(11) NOT NULL default '0',

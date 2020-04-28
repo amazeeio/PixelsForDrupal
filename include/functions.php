@@ -1193,22 +1193,9 @@ function display_order( $order_id, $BID ) {
             <td><?php echo $order_row['order_date']; ?></td>
         </tr>
         <tr>
-            <td><b><?php echo $label['advertiser_ord_name']; ?></b></td>
-            <td><?php echo $b_row['name']; ?></td>
-        </tr>
-        <tr>
             <td><b><?php echo $label['advertiser_ord_quantity']; ?></b></td>
-            <td><?php echo $order_row['quantity']; ?><?php echo $label['advertiser_ord_pix']; ?></td>
+            <td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix']; ?></td>
         </tr>
-        <td><b><?php echo $label['advertiser_ord_expired']; ?></b></td>
-        <td><?php if ( $order_row['days_expire'] == 0 ) {
-				echo $label['advertiser_ord_never'];
-			} else {
-
-				$label['advertiser_ord_days_exp'] = str_replace( "%DAYS_EXPIRE%", $order_row['days_expire'], $label['advertiser_ord_days_exp'] );
-				echo $label['advertiser_ord_days_exp'];
-
-			} ?></td>
         </tr>
         <tr>
             <td><b><?php echo $label['advertiser_ord_price']; ?></b></td>

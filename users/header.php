@@ -70,6 +70,12 @@ if (USE_AJAX=='SIMPLE') {
                     <a class="nav-link" href='/'>Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href='/list.php'>List of Pixels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='/faq.php'>FAQ</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href='index.php'><?php echo $label['advertiser_header_nav1']; ?></a>
                 </li>
                 <li class="nav-item">

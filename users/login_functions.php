@@ -47,33 +47,12 @@ function process_login() {
 ?>
        <div class="login-methods container">
    <div class="row">
-       <div class="col-md-6 col-left">
+       <div class="col-md-6 offset-md-3 col-left">
            <h3><?php echo $label["advertiser_section_heading"];?></h3>
 		<?php
 		  login_form();
         ?>
        </div>
-<?php
-
-if (USE_AJAX=='SIMPLE') {
-
-?>
-<div class="col-md-6 col-right">
-<h3 class="mb-4"><?php echo $label["advertiser_section_newusr"];
-if (USE_AJAX=='SIMPLE') {
-		$order_page = 'order_pixels.php';
-	} else {
-		$order_page = 'select.php';
-	}
-?></h3>
-<a class="btn btn-success btn-block mb-2" href="<?php echo $order_page; ?>">
-    <?php echo $label["adv_login_new_link"]; ?>
-</a>
-    <div class="text-center text-muted"><small><?php echo $label["advertiser_go_buy_now"]; ?></small></div>
-</div>
-<?php
-}
-?>
    </div></div>
 <?php
 require ("footer.php");

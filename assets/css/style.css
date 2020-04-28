@@ -9894,15 +9894,8 @@ body {
 }
 
 .login-methods .col-left {
-  border-right: 1px solid #e9ecef;
   margin-bottom: 4rem;
   padding-bottom: 2rem;
-}
-@media (max-width: 768px) {
-  .login-methods .col-left {
-    border-right: 0;
-    border-bottom: 1px solid #e9ecef;
-  }
 }
 .login-methods .col-right {
   margin-bottom: 4rem;

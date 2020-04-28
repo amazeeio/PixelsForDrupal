@@ -668,12 +668,6 @@ if (isset($_POST['voucher_code'])) {
         $_SESSION['voucher_blocks_left'] = (int) $row['blocks_discount'] - $total_used['blocks'];
       }
     }
-
-    // Not valid code.
-    if (isset($error)) {
-        echo $error;
-        unset($error);
-    }
 }
 
 /**
@@ -785,6 +779,14 @@ else if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) 
 		?>
     </p>
 
+    <?php
+    // Not valid code.
+    if (isset($error)) {
+        echo $error;
+        unset($error);
+    }
+    ?>
+
 
     <p id="select_status"><?php echo( isset( $cannot_sel ) ? $cannot_sel : "" ); ?></p>
 
@@ -836,7 +838,7 @@ if ( $has_packages ) {
         <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="voucher_code">Code:</label>
-                <input type='text' name='voucher_code' id="voucher_code" size="20">
+                <input type='text' class="form-control" name='voucher_code' id="voucher_code" size="20">
             </div>
             <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
             <button type='submit' class="btn btn-primary mb-4">Check remaining credit</button>

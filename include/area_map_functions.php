@@ -572,8 +572,9 @@ if ( ! is_numeric( $BID ) ) {
 	var block_clicked=false; // did the user click a sold block? 
 		</script>
 		<title></title>
+        <link rel="stylesheet" href="/assets/css/grid.css">
 	</head>
-	<body>
+	<body class="grid-body">
 	<?php
 	include ('mouseover_box.htm'); // edit this file to change the style of the mouseover box!
 	?>

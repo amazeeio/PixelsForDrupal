@@ -103,13 +103,19 @@ class voucher {
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		$order_row = mysqli_fetch_array( $result );
 
+		// Attempt to see if there is a voucher code in the session.
+        $voucher_code = '';
+        if (isset($_SESSION['voucher_code']) && !empty($_SESSION['voucher_code'])) {
+            $voucher_code = $_SESSION['voucher_code'];
+        }
+
 		?>
         <form id="voucher" class="form-inline" action="<?php echo htmlspecialchars( BASE_HTTP_PATH . "users/thanks.php", ENT_QUOTES ); ?>" method="get">
         <input type="hidden" name="m" value="<?php echo $this->className; ?>" />
         <input type="hidden" name="order_id" value="<?php echo $order_row['order_id']; ?>" />
           <div class="form-group mr-2">
               <label for="voucher_code" class="mr-1">Voucher code:</label>
-              <input type="input" class="form-control" name="voucher_code" id="voucher_code" size="20" style="min-width:200px" required />
+              <input type="input" value="<?php echo $voucher_code ?>" class="form-control" name="voucher_code" id="voucher_code" size="20" style="min-width:200px" required />
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>

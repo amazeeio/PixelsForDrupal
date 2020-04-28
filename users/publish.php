@@ -282,7 +282,7 @@ if ( isset( $_REQUEST['ad_id'] ) && ! empty( $_REQUEST['ad_id'] ) ) {
 
 		// move the file
 
-		$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+		$uploaddir = TEMP_PATH;
 
 		$parts = explode( '.', $_FILES['pixels']['name'] );
 		$ext   = strtolower( array_pop( $parts ) );

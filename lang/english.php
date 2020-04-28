@@ -89,7 +89,7 @@ $label['navigation_next']='Next ->';
 $label['adv_login_new_link']='New users, start ordering your pixels here!';
 $label['adv_login_pay_later']='(Reserve and upload your pixels now, sign up and pay later)';
 $label['advertiser_loginform_title']='User\'s Login';
-$label['advertiser_section_heading']='Already got an account? Log in here:<br/> ';
+$label['advertiser_section_heading']='Already got an account?<br/> ';
 $label['advertiser_section_newusr']='New Users:';
 $label['advertiser_go_buy_now']='(Reserve and upload your pixels now, sign up and pay later!)';
 $label['advertiser_signup_heading1']='Welcome to %SITE_NAME% ';
@@ -163,7 +163,7 @@ $label['advertiser_sel_trail']='1. <b>Select Your Pixels</b> -> 2. Confirm Order
 $label['advertiser_nav_status1']='Upload Your pixels';
 $label['advertiser_nav_status2']='Add Hover text & Link';
 $label['advertiser_nav_status3']='Confirm';
-$label['advertiser_nav_status4']='Voucher';
+$label['advertiser_nav_status4']='Voucher debit';
 $label['advertiser_nav_status5']='Thank you!';
 $label['advertiser_sel_pixel_inv_head']='Available Grids';
 $label['advertiser_sel_select_intro']='There are <b>%IMAGE_COUNT%</b> different images served by this website! Select the image which you would like to publish your pixels to:';
@@ -171,7 +171,7 @@ $label['advertiser_order_not_confirmed']='Note: You have placed some pixels on o
 $label['advertiser_select_pixels_head']='Select Pixels';
 $label['advertiser_buy_button']='Redeem Pixels Now';
 $label['advertiser_write_ad_button']='Continue';
-$label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div><div class="alert alert-info" role="alert">Please wait with placing your image until the grid is loaded, it takes a bit.</div>';
+$label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div><div class="alert alert-info" role="alert">Please wait to place your image until the grid is loaded, it takes a bit.</div>';
 $label['write_ad_instructions']="Add a link and hover text.";
 $label['write_ad_saved']='Hover text and Link saved!';
 $label['write_ad_continue_button']='Click here to continue';
@@ -386,70 +386,71 @@ $label['sel_month_12']='Dec';
 $label['sel_box_select']='[Select]';
 $label['sel_category_select']='[Select]';
 $label['sel_category_select_all']='Select All';
-$label['order_confirmed_email_subject']='Order Confirmed';
-$label['order_completed_email_subject']='Order Completed';
+$label['order_confirmed_email_subject']='Voucher Redeemed at %SITE_NAME%';
+$label['order_completed_email_subject']='Voucher Redeemed at %SITE_NAME%';
 $label['order_pending_email_subject']='Order Pending';
 $label['order_expired_email_subject']='Order Expired';
-$label['confirmation_email_subject']='Account Confirmation';
+$label['confirmation_email_subject']='Account Confirmation at %SITE_NAME%';
 $label['order_confirmed_email_template']='Dear %FNAME% %LNAME%,
 
-You have successfully placed an order at %SITE_NAME%.
+You have successfully redeemed a voucher for pixels at %SITE_NAME%.
 
 ========================
 ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID%
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
-Price: %PRICE%
+Redeemed Voucher Amount: %PRICE%
 Status: Confirmed
 --------------------------
 
-Your order will be Completed as soon as the payment is cleared.
-
-Once your order is Completed, log into your account and
-upload your pixels and link.
+Your pixels have been uploaded. They will be reviewed and published shortly.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
 ';
-$label['order_completed_email_template']='RE: Order Status Change Notification.
+
+$label['order_completed_email_template']='
 
 Dear %FNAME% %LNAME%,
 
-Your order was completed on %SITE_NAME%.
+You have successfully redeemed a voucher for pixels at %SITE_NAME%.
+
+Your pixels were approved and they will be published shortly, so check back and visit %SITE_URL% to see them live!
+
+Please be patient if you do not see your pixels right away. They may take some time to be published. 
 
 ========================
 ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID%
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
-Price: %PRICE%
-Status: Completed
+Redeemed Voucher Amount: %PRICE%
+Status: Approved
 --------------------------.
 
-Please Log into your account and
-upload your pixels and link.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
 $label['order_pending_email_template']='RE: Order Status Change Notification.
 
 Dear %FNAME% %LNAME%,
@@ -466,18 +467,18 @@ ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID%
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
-Price: %PRICE%
+Redeemed Voucher Amount: %PRICE%
 Status: Pending
 --------------------------.
 
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -506,18 +507,18 @@ ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID%
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
-Price: %PRICE%
+Redeemed Voucher Amount: %PRICE%
 Status: Expired
 --------------------------.
 
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -533,8 +534,7 @@ ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID% (Carried over from %ORIGINAL_ORDER_ID%)
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
-Price: %PRICE%
+Redeemed Voucher Amount: %PRICE%
 Status: Completed
 --------------------------.
 
@@ -543,29 +543,29 @@ upload your pixels and link.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-%SITE_NAME% team.
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
 ';
 $label['confirmation_email_templaltev2']='Dear %FNAME% %LNAME%,
 
-Thank you for signing-up to %SITE_NAME%!
+Thank you for signing up for %SITE_NAME%!
 
 Username: %USERNAME%
 
-To complete the sign up process, you will need to visit the
-following link:
+To complete the sign up process, you will need to visit the following link:
 
 %VERIFY_URL%
 
 
 Regards,
 
-%SITE_NAME%
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%';
 $label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
 <p>
@@ -581,11 +581,12 @@ following link:<p>
 </p><p>
 Regards,
 </p><p>
-%SITE_NAME%<br>
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br>';
 $label['forget_pass_email_template']='Dear %FNAME% %LNAME%,
 
 Your %SITE_NAME% password has been reset!
+
 
 Here is your new password:
 
@@ -595,8 +596,26 @@ Password: %PASSWORD%
 
 Regards,
 
-Webmaster,
-%SITE_NAME%
+The #DrupalCares Half Million Dollar Homepage Team
+
+%SITE_URL%
+';
+$label['forget_pass_email_template_html']='Dear %FNAME% %LNAME%,
+<p>
+Your %SITE_NAME% password has been reset!
+</p>
+<p>
+Here is your new password:
+</p>
+<p>
+Username: %MEMBERID%br />
+Password: %PASSWORD%
+</p>
+<p>
+Regards,
+</p>
+<p>
+The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%
 ';
 $label['publish_pixels_email_subject']='New published pixels on %SITE_NAME%';

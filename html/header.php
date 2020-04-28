@@ -35,13 +35,14 @@ $logourl = SITE_LOGO_URL;
     <meta name="Description" content="<?php echo SITE_SLOGAN; ?>">
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/assets/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
 
 
-<div id="main-top-header" class="main-top-header jumbotron mb-0">
-    <canvas id="animation-canvas" data-image="/assets/images/drupal-icon.svg"></canvas>
+<div id="main-top-header" class="main-top-header fontend jumbotron mb-0">
+    <canvas id="animation-canvas"></canvas>
     <div class="main-top-header-content container text-center">
         <h1><?php echo SITE_NAME; ?></h1>
         <?php

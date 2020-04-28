@@ -617,11 +617,67 @@ require( "header.php" );
     </style>
 <?php
 
-if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
+function sum_transactions($total, $txn) {
+  return [
+    'price' => $total['price'] + $txn['amount'],
+    'blocks' => $total['blocks'] + count(explode(',', $txn['blocks'])),
+  ];
+};
+
+/**
+ * Voucher upload validation.
+ */
+if (isset($_POST['voucher_code'])) {
+    $code = (string) $_POST['voucher_code'];
+    $code = preg_replace("/[^A-Za-z0-9]/", '', $code);
+    $code = trim($code);
+    if (empty($code)) {
+      $error = '<div class="alert alert-danger" role="alert">Voucher code is invalid.</div>';
+    }
+    else {
+      $result = mysqli_query($GLOBALS['connection'], "SELECT * FROM vouchers WHERE code = '" . mysqli_real_escape_string( $GLOBALS['connection'], $code) . "'") or die (mysqli_error($GLOBALS['connection']));
+      $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+      if (empty($row)) {
+        $error = '<div class="alert alert-danger" role="alert">Voucher code is invalid.</div>';
+      }
+      else {
+        $sql = "SELECT t.amount, o.blocks FROM transactions t LEFT JOIN orders o on t.order_id = o.order_id where t.reason='" . mysqli_real_escape_string( $GLOBALS['connection'], $code) . "' and t.`type`='DEBIT' ";
+        $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+        $voucher_debits = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $total_debits = array_reduce($voucher_debits, "sum_transactions", ['price' => 0, 'blocks' => 0]);
+
+        $sql = "SELECT t.amount, o.blocks FROM transactions t LEFT JOIN orders o on t.order_id = o.order_id where t.reason='" . mysqli_real_escape_string( $GLOBALS['connection'], $code) . "' and t.`type`='CREDIT' ";
+        $result = mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
+        $voucher_credits = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $total_credits = array_reduce($voucher_credits, "sum_transactions", ['price' => 0, 'blocks' => 0]);
+
+        $total_used = [
+          'price' => $total_debits['price'] - $total_credits['price'],
+          'blocks' => $total_debits['blocks'] - $total_credits['blocks'],
+        ];
+
+        $voucher_info = '<div class="alert alert-success" role="alert">Voucher code is valid, and has a total discount of $' . $row['price_discount'] . '.';
+        if ($total_used['price'] < $row['price_discount']) {
+            $voucher_info .= ' A total of $' . ($row['price_discount'] - $total_used['price']) . ' remaining in credit.';
+        }
+        $voucher_info .= '</div>';
+        $_SESSION['voucher_id'] = $row['voucher_id'];
+        $_SESSION['voucher_code'] = $code;
+        $_SESSION['voucher_price_discount'] = $row['price_discount'];
+        $_SESSION['voucher_price_left'] = (int) $row['price_discount'] - $total_used['price'];
+        $_SESSION['voucher_blocks_left'] = (int) $row['blocks_discount'] - $total_used['blocks'];
+      }
+    }
+}
+
+/**
+ * Image upload validation.
+ */
+else if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 
 	global $f2;
 
-	$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+	$uploaddir = TEMP_PATH;
 
 	//$parts = split ('\.', $_FILES['graphic']['name']);
 	$parts = $file_parts = pathinfo( $_FILES['graphic']['name'] );
@@ -631,9 +687,8 @@ if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 	$ALLOWED_EXT = array( 'jpg', 'jpeg', 'gif', 'png' );
 
 	if ( ! in_array( $ext, $ALLOWED_EXT ) && file_exists( $label['advertiser_file_type_not_supp'] . $ext ) ) {
-		$error              .= "<strong><font color='red'>" . $label['advertiser_file_type_not_supp'] . " ($ext)</font></strong><br />";
+		$error = '<div class="alert alert-danger" role="alert">' . $label['advertiser_file_type_not_supp'] . " ($ext)</div>";
 		$image_changed_flag = false;
-
 	}
 	if ( isset( $error ) ) {
 		//echo "<font color='red'>Error, image upload failed</font>";
@@ -684,9 +739,9 @@ if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 
 				$label['max_pixels_required'] = str_replace( '%MAX_PIXELS%', $limit, $label['max_pixels_required'] );
 				$label['max_pixels_required'] = str_replace( '%COUNT%', $pixel_count, $label['max_pixels_required'] );
-				echo "<strong><font color='red'>";
+				echo '<div class="alert alert-danger" role="alert">';
 				echo $label['max_pixels_required'];
-				echo "</font></strong>";
+				echo '</div>';
 				unlink( $tmp_image_file );
 				unset( $tmp_image_file );
 
@@ -694,9 +749,9 @@ if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 
 				$label['min_pixels_required'] = str_replace( '%COUNT%', $pixel_count, $label['min_pixels_required'] );
 				$label['min_pixels_required'] = str_replace( '%MIN_PIXELS%', $banner_data['G_MIN_BLOCKS'] * $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'], $label['min_pixels_required'] );
-				echo "<strong><font color='red'>";
+				echo '<div class="alert alert-danger" role="alert">';
 				echo $label['min_pixels_required'];
-				echo "</font></strong>";
+				echo '</div>';
 				unlink( $tmp_image_file );
 				unset( $tmp_image_file );
 
@@ -723,6 +778,17 @@ if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) {
 		show_nav_status( 1 );
 		?>
     </p>
+
+    <?php
+    // Not valid code.
+    if (isset($error)) {
+        echo $error;
+        unset($error);
+    }
+    if(isset($voucher_info)){
+        echo $voucher_info;
+    }
+    ?>
 
 
     <p id="select_status"><?php echo( isset( $cannot_sel ) ? $cannot_sel : "" ); ?></p>
@@ -769,26 +835,40 @@ if ( $has_packages ) {
 
 ?>
     <div>
-    <h3><?php echo $label['pixel_uploaded_head']; ?></h3>
-    <p>
-		<?php echo $label['upload_pix_description']; ?>
-    </p>
-    <p>
-    <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
-        <h4><?php $label['upload_your_pix']; ?></h4>
+        <h3>Voucher checker</h3>
+        <p>Enter the voucher code you received. This will be used to ensure the image you upload is smaller than the voucher credit.</p>
+        <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
             <div class="form-group">
-                <label for="graphic">Image</label>
-                <input type='file' name='graphic' class="form-control-file" id="graphic">
+                <label for="voucher_code">Code:</label>
+                <input type='text' class="form-control" name='voucher_code' id="voucher_code" size="20">
             </div>
             <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
-            <button type='submit' class="btn btn-primary mt-4"><?php echo $f2->rmnl($label['pix_upload_button']); ?></button>
-
-		<?php
-
-		?>
-
-    </form>
+            <button type='submit' class="btn btn-primary mb-4">Check remaining credit</button>
+        </form>
     </div>
+
+  <?php
+   // Only show the upload form after the voucher is valid.
+   if (isset($_SESSION['voucher_id']) && !empty($_SESSION['voucher_id'])) {
+     ?>
+       <div>
+           <h3><?php echo $label['pixel_uploaded_head']; ?></h3>
+           <p><?php echo $label['upload_pix_description']; ?></p>
+           <form method='post'
+                 action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>"
+                 enctype="multipart/form-data">
+               <h4><?php $label['upload_your_pix']; ?></h4>
+               <div class="form-group">
+                   <label for="graphic">Image</label>
+                   <input type='file' name='graphic' class="form-control-file" id="graphic">
+               </div>
+               <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
+               <button type='submit' class="btn btn-primary mb-4"><?php echo $f2->rmnl($label['pix_upload_button']); ?></button>
+           </form>
+       </div>
+     <?php
+   }
+   ?>
 <?php
 
 if ( ! $tmp_image_file ) {
@@ -812,19 +892,36 @@ if ( ! $tmp_image_file ) {
 		?><?php
 		$label['upload_image_size'] = str_replace( "%WIDTH%", "<span class='badge badge-primary'>".$size[0]."</span>", $label['upload_image_size'] );
 		$label['upload_image_size'] = str_replace( "%HEIGHT%", "<span class='badge badge-primary'>".$size[1]."</span>", $label['upload_image_size'] );
-
 		echo "<p>".$label['upload_image_size']."</p>";
 		?>
 		<?php
 
 		$size = get_required_size( $size[0], $size[1], $banner_data );
 
+
+
 		$pixel_count                     = $size[0] * $size[1];
 		$block_size                      = $pixel_count / ( $banner_data['BLK_WIDTH'] * $banner_data['BLK_HEIGHT'] );
-		$label['advertiser_require_pur'] = str_replace( '%PIXEL_COUNT%', "<span class='badge badge-secondary'>".$pixel_count."</span>", $label['advertiser_require_pur'] );
-		$label['advertiser_require_pur'] = str_replace( '%BLOCK_COUNT%', "<span class='badge badge-secondary'>".$block_size."</span>", $label['advertiser_require_pur'] );
-		$label['advertiser_require_pur'] = str_replace( '%DONATION_AMOUNT%', "<span class='badge badge-secondary'>".($block_size * 5)." $/€</span>", $label['advertiser_require_pur'] );
-		echo "<p>".$label['advertiser_require_pur']."</p>";
+		$block_size_5 = $block_size * 5;
+        echo "<p>The uploaded image will require <span class='badge badge-secondary'>$pixel_count</span> 
+            pixels from the map which is a donation amount of <span class='badge badge-secondary'>$block_size_5 $/€</span>.</p>";
+
+        // Attempt to load current voucher amount.
+        if (isset($_SESSION['voucher_blocks_left'])) {
+          if ($_SESSION['voucher_blocks_left'] < $block_size) {
+              echo '<div class="alert alert-danger" role="alert">The remaining credit on your voucher cannot cover this amount of blocks. Perhaps you should use a smaller image?</div>';
+          }
+          else {
+              echo '<div class="alert alert-success" role="alert">Your voucher can cover this amount of blocks.</div>';
+          }
+        }
+        else {
+            echo "<div class='alert alert-warning' role='alert'>If you donated less than <span class='badge badge-secondary'>$block_size_5 $/€</span>,
+            please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div>";
+        }
+
+        echo "<div class='alert alert-info' role='alert'>Please wait to place your image until the grid is loaded, it takes a bit.</div>";
+
 		?>
 	<?php //echo $label['advertiser_select_instructions']; ?>
 

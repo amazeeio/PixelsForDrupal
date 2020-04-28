@@ -9892,17 +9892,15 @@ body {
   padding-bottom: 6rem;
   min-height: 100%;
 }
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 8rem;
+  }
+}
 
 .login-methods .col-left {
-  border-right: 1px solid #e9ecef;
   margin-bottom: 4rem;
   padding-bottom: 2rem;
-}
-@media (max-width: 768px) {
-  .login-methods .col-left {
-    border-right: 0;
-    border-bottom: 1px solid #e9ecef;
-  }
 }
 .login-methods .col-right {
   margin-bottom: 4rem;
@@ -9964,15 +9962,31 @@ body {
   border-right: 1px solid #D4D4D4 !important;
   border-bottom: 1px solid #D4D4D4 !important;
 }
+@media (max-width: 992px) {
+  .gridframe {
+    width: 100% !important;
+    height: 400px !important;
+  }
+}
 
 .main-top-header {
   position: relative;
-  background-color: #0678be;
+  background: #158fda;
+  background: -moz-linear-gradient(-45deg, #158fda 0% #1e9eec 100%);
+  background: -webkit-linear-gradient(-45deg, #158fda 0%, #1e9eec 100%);
+  background: linear-gradient(-45deg, #158fda 0%, #1e9eec 100%);
+  background-size: 350% 350%;
+  animation: waveColors 15s ease infinite;
   color: #FFFFFF;
+  text-shadow: 1px 1px 10px #064771;
   border-radius: 0;
 }
 .main-top-header .logo {
   max-width: 320px;
+}
+.main-top-header.fontend h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
 }
 .main-top-header .main-top-header-content {
   z-index: 30;
@@ -9985,12 +9999,34 @@ body {
   left: 0;
   right: 0;
   opacity: 0;
-  transition: 1s opacity cubic-bezier(0.55, 0, 0.1, 1);
+  transition: 3.5s opacity cubic-bezier(0.55, 0, 0.1, 1);
 }
 .main-top-header canvas.ready {
-  opacity: 0.2;
+  opacity: 1;
 }
 
+@-webkit-keyframes waveColors {
+  0% {
+    background-position: 0% 7%;
+  }
+  50% {
+    background-position: 100% 94%;
+  }
+  100% {
+    background-position: 0% 7%;
+  }
+}
+@keyframes waveColors {
+  0% {
+    background-position: 0% 7%;
+  }
+  50% {
+    background-position: 100% 94%;
+  }
+  100% {
+    background-position: 0% 7%;
+  }
+}
 .main-footer {
   background-color: #064771;
   color: #FFFFFF;

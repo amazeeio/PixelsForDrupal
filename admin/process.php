@@ -94,8 +94,8 @@ if ($_REQUEST['process']=='1') {
 	</p>
 	<?php
 
-if (!is_writable(SERVER_PATH_TO_ADMIN."temp/")) {
-	echo "<b>Warning:</b> The script does not have permission write to " . SERVER_PATH_TO_ADMIN. "admin/temp/ or the directory does not exist <br>";
+if (!is_writable(TEMP_PATH)) {
+	echo "<b>Warning:</b> The script does not have permission write to " . TEMP_PATH. " or the directory does not exist <br>";
 
 }
 $BANNER_PATH = BASE_PATH . "/" . get_banner_dir();
@@ -139,4 +139,3 @@ while ($row=mysqli_fetch_array($res)) {
 </select><br>
 <input type="submit" name='submit' value="Process Grids(s)" >
 </form>
-

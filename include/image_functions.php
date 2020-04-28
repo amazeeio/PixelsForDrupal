@@ -39,23 +39,16 @@ function publish_image( $BID ) {
 
 	$imagine = new Imagine\Gd\Imagine();
 
-	$BANNER_DIR = get_banner_dir();
+	$file_path = TEMP_PATH; // eg e:/apache/htdocs/ojo/admin/
+	$dest = BASE_PATH . "/" . get_banner_dir();
 
-	$file_path = SERVER_PATH_TO_ADMIN; // eg e:/apache/htdocs/ojo/admin/
-
-	$p = preg_split( '%[/\\\]%', $file_path );
-	array_pop( $p );
-	array_pop( $p );
-
-	$dest = implode( '/', $p );
-	$dest = $dest . "/" . $BANNER_DIR;
 
 	if ( OUTPUT_JPEG == 'Y' ) {
-		copy( $file_path . "temp/temp$BID.jpg", $dest . "main$BID.jpg" );
+		copy( $file_path . "temp$BID.jpg", $dest . "main$BID.jpg" );
 	} elseif ( OUTPUT_JPEG == 'N' ) {
-		copy( $file_path . "temp/temp$BID.png", $dest . "main$BID.png" );
+		copy( $file_path . "temp$BID.png", $dest . "main$BID.png" );
 	} elseif ( ( OUTPUT_JPEG == 'GIF' ) ) {
-		copy( $file_path . "temp/temp$BID.gif", $dest . "main$BID.gif" );
+		copy( $file_path . "temp$BID.gif", $dest . "main$BID.gif" );
 	}
 
 	// output the tile image
@@ -109,7 +102,7 @@ function process_image( $BID ) {
 
 	require_once( "output_grid.php" );
 
-	return output_grid(false, SERVER_PATH_TO_ADMIN . "temp/temp$BID", $BID, array(
+	return output_grid(false, TEMP_PATH . "temp$BID", $BID, array(
 		'background',
 		'orders',
 		'nfs_front',

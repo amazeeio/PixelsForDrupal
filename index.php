@@ -57,5 +57,7 @@ include_once (MDSROOT . "/html/header.php");
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
 echo get_html_code( $BID );
 
+echo "<p>more infos</p>";
+
 // include footer
 include_once (MDSROOT . "/html/footer.php");

@@ -163,7 +163,7 @@ $label['advertiser_sel_trail']='1. <b>Select Your Pixels</b> -> 2. Confirm Order
 $label['advertiser_nav_status1']='Upload Your pixels';
 $label['advertiser_nav_status2']='Add Hover text & Link';
 $label['advertiser_nav_status3']='Confirm';
-$label['advertiser_nav_status4']='Voucher';
+$label['advertiser_nav_status4']='Voucher debit';
 $label['advertiser_nav_status5']='Thank you!';
 $label['advertiser_sel_pixel_inv_head']='Available Grids';
 $label['advertiser_sel_select_intro']='There are <b>%IMAGE_COUNT%</b> different images served by this website! Select the image which you would like to publish your pixels to:';
@@ -171,7 +171,6 @@ $label['advertiser_order_not_confirmed']='Note: You have placed some pixels on o
 $label['advertiser_select_pixels_head']='Select Pixels';
 $label['advertiser_buy_button']='Buy Pixels Now';
 $label['advertiser_write_ad_button']='Continue';
-$label['advertiser_require_pur']='The uploaded image will require %PIXEL_COUNT% pixels from the map which is a donation amount of %DONATION_AMOUNT%. <div class="alert alert-warning" role="alert">If you donated less than %DONATION_AMOUNT%, please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div><div class="alert alert-info" role="alert">Please wait with placing your image until the grid is loaded, it takes a bit.</div>';
 $label['write_ad_instructions']='Add Hover text & Link';
 $label['write_ad_saved']='Hover text and Link saved!';
 $label['write_ad_continue_button']='Click here to continue';

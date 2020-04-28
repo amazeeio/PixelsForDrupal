@@ -263,7 +263,7 @@ function payment_option_list($order_id) {
 			?>
 			<tr>
 			<td><?php echo $obj->payment_button($order_id); ?></td>
-			<td><small><?php echo $obj->name; ?></small></td>
+			<td><?php echo $obj->name; ?></td>
 			<td><?php echo $obj->description; ?></td>
 			<tr>
 			<?php

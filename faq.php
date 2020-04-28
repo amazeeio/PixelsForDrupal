@@ -41,7 +41,20 @@ include_once( MDSROOT . "/html/header.php" );
 global $label;
 ?>
 <div class="container">
-hello world
+<p><strong>How do I get pixels?</strong></p>
+<p>Go to <a href="https://www.drupal.org/association/donate">https://www.drupal.org/association/donate</a> and donate!</p>
+
+<p><strong>Whose idea was this?</strong></p>
+<p>The folks at <a href="amazee.io">amazee.io</a> came up with the idea and hosted it. The site is <a href="https://milliondollarscript.com/">based on this script</a>.</p>
+
+<p><strong>Who built this?</strong></p>
+<p>The Drupal community pitched in to build this - it was a group effort!</p>
+
+<p><strong>What is #DrupalCares and why does the Drupal Association need support?</strong></p>
+<p>The short version is that DrupalCon will not be held as usual, and it’s the DA’s main source of revenue for the year. You can <a href="https://www.drupal.org/association/blog/drupalcares-sustaining-the-da-through-the-covid-19-crisis">read more in their blog post</a>. </p>
+
+<p><strong>I found a bug!</strong></p>
+<p>Thanks for catching that! Please post an issue in <a href="https://github.com/amazeeio/DrupalCaresHalfMillionDollarHomepage">our GitHub issue queue</a>.</p>
 </div>
 <?php
 include_once( MDSROOT . "/html/footer.php" );

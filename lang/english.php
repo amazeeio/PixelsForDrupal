@@ -408,11 +408,12 @@ Your pixels have been uploaded. They will be reviewed and published shortly.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -438,10 +439,11 @@ Status: Approved
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -470,10 +472,11 @@ Status: Pending
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -509,10 +512,11 @@ Status: Expired
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%
 
 Note: This is an automated email.
@@ -537,7 +541,7 @@ upload your pixels and link.
 
 Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 
-Thank you!
+Thank you for supporting the Drupal Association!
 
 
 The #DrupalCares Half Million Dollar Homepage Team<br />

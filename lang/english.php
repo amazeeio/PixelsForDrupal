@@ -118,8 +118,8 @@ $label['advertiser_signup_error_p2']='* Please fill in confirm your password <br
 $label['advertiser_signup_error_email']='* Please fill in your email <br/>';
 $label['advertiser_signup_error_pmatch']='* Passwords do not match <br/>';
 $label['advertiser_forgot_subject']='Your password on %SITE_NAME%';
-$label["advertiser_signup_success_1"] = "%FirstName% %LastName%, You have successfully signed up for %SITE_NAME%. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php
-$label["advertiser_signup_success_2"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact us at %SITE_CONTACT_EMAIL%"; # Advertiser's - signup.php 
+$label["advertiser_signup_success_1"] = "%FirstName% %LastName%, You have successfully signed up for %SITE_NAME%. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact %SITE_CONTACT_EMAIL%";
+$label["advertiser_signup_success_2"] = "%FirstName% %LastName%, You have successfully signed up to the %SITE_NAME%. You will soon receive a validation email to verify your email address. If you ever encounter any problems, bugs or just have any questions or suggestions, feel free to contact us at %SITE_CONTACT_EMAIL%";
 $label['advertiser_signup_email_in_use']='* Cannot create a new account: the email address is already in use. ';
 $label['advertiser_login_error']='Error: Username/Password combination is incorrect. <a href="index.php">Try again...</a><p> If you have forgotten your password, please <a href=\'forgot.php\'>Click Here</a>.<br>Please <a href=\'signup.php\'>Sign Up</a> if you are a new user. ';
 $label['advertiser_login_disabled']='Note: this account is not validated. Please check your email for the validation message';

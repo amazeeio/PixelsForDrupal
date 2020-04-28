@@ -463,7 +463,6 @@ ORDER DETAILS
 =========================
 Order ID: #%ORDER_ID%
 Pixels: %PIXEL_COUNT%
-Days: %PIXEL_DAYS%
 Redeemed Voucher Amount: %PRICE%
 Status: Pending
 --------------------------.
@@ -552,15 +551,15 @@ Thank you for signing up for %SITE_NAME%!
 
 Username: %USERNAME%
 
-To complete the sign up process, you will need to visit the
-following link:
+To complete the sign up process, you will need to visit the following link:
 
 %VERIFY_URL%
 
 
 Regards,
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The #DrupalCares Half Million Dollar Homepage Team
+
 %SITE_URL%';
 $label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
 <p>
@@ -579,6 +578,23 @@ Regards,
 The #DrupalCares Half Million Dollar Homepage Team<br />
 %SITE_URL%<br>';
 $label['forget_pass_email_template']='Dear %FNAME% %LNAME%,
+
+Your %SITE_NAME% password has been reset!
+
+
+Here is your new password:
+
+Username: %MEMBERID%
+Password: %PASSWORD%
+
+
+Regards,
+
+The #DrupalCares Half Million Dollar Homepage Team
+
+%SITE_URL%
+';
+$label['forget_pass_html_email_template']='Dear %FNAME% %LNAME%,
 <p>
 Your %SITE_NAME% password has been reset!
 </p>

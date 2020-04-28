@@ -76,6 +76,9 @@ $logourl = SITE_LOGO_URL;
                 <li class="nav-item">
                     <a class="nav-link" href='list.php'>List of Pixels</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='faq.php'>FAQ</a>
+                </li>
             </ul>
             <div class="d-none d-lg-block d-xl-block d-xl-none">
                 <?php echo get_stats_html_code($BID); ?>

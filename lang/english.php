@@ -767,14 +767,14 @@ Your %SITE_NAME% password has been reset!
 Here is your new password:
 </p>
 <p>
-Username: %MEMBERID%br />
+Username: %MEMBERID%<br>
 Password: %PASSWORD%
 </p>
 <p>
 Regards,
 </p>
 <p>
-The %SITE_NAME% Team<br />
+The %SITE_NAME% Team<br>
 %SITE_URL%
 ';
 $label['publish_pixels_email_subject']='New published pixels on PixelsforDrupal';

@@ -46,7 +46,7 @@ define( 'BASE_PATH', __DIR__ );
 define( 'SERVER_PATH_TO_ADMIN', __DIR__ . '/admin/' );
 define( 'UPLOAD_PATH', __DIR__ . '/files/upload_files/' );
 define( 'UPLOAD_HTTP_PATH', $route . '/files/upload_files/' );
-define( 'SITE_CONTACT_EMAIL', 'pixelsfordrupal@amazee.com' );
+define( 'SITE_CONTACT_EMAIL', 'pixelsfordrupal@amazee.io' );
 define( 'SITE_LOGO_URL', $route . '/logo.gif' );
 define( 'SITE_NAME', 'Pixels for Drupal');
 define( 'SITE_SLOGAN', 'The <strong>#DrupalCares</strong> campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19.<br>Every donation for <strong>#DrupalCares</strong> gives you the 20x amount of pixels! ' );

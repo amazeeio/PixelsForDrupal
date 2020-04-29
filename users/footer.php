@@ -38,7 +38,8 @@
                 &copy; Copyright <?php echo date('Y') . " " . SITE_NAME; ?>
             </div>
             <div class="col-sm-6 text-right">
-                Built with ❤️ and ☕ by the Drupal Community.
+            Built with ❤️ and ☕ by the Drupal Community. <br />
+            Free hosting by <a class="text-white" target="_blank" href="https://amazee.io">amazee.io</a>. Powered By <a class="text-white" target="_blank" href="https://milliondollarscript.com/">Million Dollar Script</a>.
             </div>
         </div>
     </div>

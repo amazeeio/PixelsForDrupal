@@ -386,11 +386,11 @@ $label['sel_month_12']='Dec';
 $label['sel_box_select']='[Select]';
 $label['sel_category_select']='[Select]';
 $label['sel_category_select_all']='Select All';
-$label['order_confirmed_email_subject']='Voucher Redeemed at %SITE_NAME%';
-$label['order_completed_email_subject']='Voucher Redeemed at %SITE_NAME%';
+$label['order_confirmed_email_subject']='Voucher Redeemed at Pixels for Drupal';
+$label['order_completed_email_subject']='Voucher Redeemed at Pixels for Drupal';
 $label['order_pending_email_subject']='Order Pending';
 $label['order_expired_email_subject']='Order Expired';
-$label['confirmation_email_subject']='Account Confirmation at %SITE_NAME%';
+$label['confirmation_email_subject']='Account Confirmation at Pixels for Drupal';
 $label['order_confirmed_email_template']='Dear %FNAME% %LNAME%,
 
 You have successfully redeemed a voucher for pixels at %SITE_NAME%.
@@ -412,12 +412,42 @@ Thank you for supporting the Drupal Association!
 
 
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
+$label["order_confirmed_email_template_html"]= "Dear %FNAME% %LNAME%,<br />
+<br />
+You have successfully placed an order at %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Confirmed<br />
+--------------------------<br />
+<br />
+Your order will be Completed as soon as the payment is cleared.<br />
+<br />
+Once your order is Completed, log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br />
+<br />
+Thank you!<br />
+<br />
+The %SITE_NAME% Team<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
+
 
 $label['order_completed_email_template']='
 
@@ -427,7 +457,7 @@ You have successfully redeemed a voucher for pixels at %SITE_NAME%.
 
 Your pixels were approved and they will be published shortly, so check back and visit %SITE_URL% to see them live!
 
-Please be patient if you do not see your pixels right away. They may take some time to be published. 
+Please be patient if you do not see your pixels right away. They may take some time to be published.
 
 ========================
 ORDER DETAILS
@@ -444,12 +474,41 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
+$label["order_completed_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order was completed on %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Completed<br />
+--------------------------.<br />
+<br />
+Please Log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br />
+<br />
+Thank you!<br />
+<br />
+The %SITE_NAME% Team<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
 
 $label['order_pending_email_template']='RE: Order Status Change Notification.
 
@@ -477,12 +536,43 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
+$label["order_pending_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order status changed to 'Pending' on %SITE_NAME%.<br />
+<br />
+This means that your payment was recived, and the funds<br />
+are clearing. Once the funds are cleared, you will be<br />
+able to manage your pixels.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Pending<br />
+--------------------------.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br />
+<br />
+Thank you!<br />
+<br />
+The %SITE_NAME% Team<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
+
 $label['order_expired_email_template']='RE: Order Status Change Notification.
 
 Dear %FNAME% %LNAME%,
@@ -517,12 +607,51 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
+$label["order_expired_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order status changed to 'Expired' on %SITE_NAME%.<br />
+<br />
+This means that your pixels have expired and will<br />
+no longer be show when the grid is next updated.<br />
+You may renew your order, Here is how to do it:<br />
+<br />
+1. Log in to your account<br />
+<br />
+2. Go to 'My Order History'<br />
+<br />
+3. Click on 'Renew' on the Order shown as 'expired'.<br />
+<br />
+4. Complete the payment<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID%<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Expired<br />
+--------------------------.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br />
+<br />
+Thank you!<br />
+<br />
+The %SITE_NAME% Team<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
+
 $label['order_completed_renewal_email_template']='RE: Order Status Change Notification.
 
 Dear %FNAME% %LNAME%,
@@ -546,11 +675,41 @@ Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.
 Thank you for supporting the Drupal Association!
 
 
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The %SITE_NAME% Team<br />
 %SITE_URL%
 
 Note: This is an automated email.
 ';
+
+$label["order_completed_renewal_email_template_html"]= "RE: Order Status Change Notification.<br />
+<br />
+Dear %FNAME% %LNAME%,<br />
+<br />
+Your order was renewed on %SITE_NAME%.<br />
+<br />
+========================<br />
+ORDER DETAILS<br />
+=========================<br />
+Order ID: #%ORDER_ID% (Carried over from %ORIGINAL_ORDER_ID%)<br />
+Pixels: %PIXEL_COUNT%<br />
+Days: %PIXEL_DAYS%<br />
+Price: %PRICE%<br />
+Status: Completed<br />
+--------------------------.<br />
+<br />
+Please Log into your account and<br />
+upload your pixels and link.<br />
+<br />
+Feel free to contact %SITE_CONTACT_EMAIL% if you have any questions / problems.<br />
+<br />
+Thank you!<br />
+<br />
+%SITE_NAME% team.<br />
+%SITE_URL%<br />
+<br />
+Note: This is an automated email.<br />
+";
+
 $label['confirmation_email_templaltev2']='Dear %FNAME% %LNAME%,
 
 Thank you for signing up for %SITE_NAME%!
@@ -564,10 +723,10 @@ To complete the sign up process, you will need to visit the following link:
 
 Regards,
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%';
-$label['confirmation_html_email_templaltev2']='Dear %FNAME% %LNAME%,
+$label['confirmation_email_templaltev2_html']='Dear %FNAME% %LNAME%,
 <p>
 Thank you for signing-up to %SITE_NAME%! <br>
 </p>
@@ -581,7 +740,7 @@ following link:<p>
 </p><p>
 Regards,
 </p><p>
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The %SITE_NAME% Team<br />
 %SITE_URL%<br>';
 $label['forget_pass_email_template']='Dear %FNAME% %LNAME%,
 
@@ -596,7 +755,7 @@ Password: %PASSWORD%
 
 Regards,
 
-The #DrupalCares Half Million Dollar Homepage Team
+The %SITE_NAME% Team
 
 %SITE_URL%
 ';
@@ -615,7 +774,7 @@ Password: %PASSWORD%
 Regards,
 </p>
 <p>
-The #DrupalCares Half Million Dollar Homepage Team<br />
+The %SITE_NAME% Team<br />
 %SITE_URL%
 ';
 $label['publish_pixels_email_subject']='New published pixels on %SITE_NAME%';
@@ -632,7 +791,7 @@ URLS:
 
 
 ';
-$label['publish_pixels_html_email_template']='<p>New pixels published on %SITE_NAME%!</p>
+$label['publish_pixels_email_template_html']='<p>New pixels published on %SITE_NAME%!</p>
 
 Grid: %GRID_NAME%<br>
 Username: %MEMBERID%<br>

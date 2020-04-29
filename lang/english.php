@@ -138,7 +138,7 @@ $label['advertiser_forgot_enter_email']='Enter your Email address';
 $label['advertiser_forgot_email_notfound']='Email not found on the system. Try again';
 $label['advertiser_forgot_submit']='Submit';
 $label['advertiser_forgot_error1']='You cannot reset your password because your account is not enabled. Please wait for your account to be validated. Contact %SITE_CONTACT_EMAIL% if you have any questions.';
-$label['advertiser_forgot_success1']='A new password was sent to your email address. Please allow some time for your new password to arrive. You will be able to log in with the new password here: <a href=\'%BASE_HTTP_PATH%users/\'>Advertiser\'s Login</a>';
+$label['advertiser_forgot_success1']='A new password was sent to your email address. Please allow some time for your new password to arrive. You will be able to <a href="%BASE_HTTP_PATH%users/">log in with the new password here</a>.';
 $label['advertiser_forgot_fail1']='Failed sending an email, please contact support by clicking here and  include your username, first name and last name in the error report.';
 $label['advertiser_forgot_go_back']='Main Page';
 $label['advertiser_login']='Login';

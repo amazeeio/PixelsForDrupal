@@ -973,7 +973,7 @@ function complete_renew_order( $order_id ) {
 			mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		}
 
-		$sql = "SELECT * from users where ID='" . intval( $order_row['user_id'] );
+		$sql = "SELECT * from users where ID='" . intval( $order_row['user_id'] . "'" );
 		$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
 		$user_row = mysqli_fetch_array( $result );
 

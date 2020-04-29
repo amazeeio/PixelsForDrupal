@@ -51,12 +51,12 @@ if ($_REQUEST['action']=='changepass') {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
-	$oldpass = md5 ($_REQUEST['oldpass']);
-	$newpass = md5 ($_REQUEST['password']);
+	$oldpass = getPasswordHash($_REQUEST['oldpass']);
+	$newpass = getPasswordHash($_REQUEST['password']);
 
-	if ($row['Password']==$oldpass) {
+	if ($row['Password'] == $oldpass) {
 
-		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
+		if (strcmp($_REQUEST['password'],$_REQUEST['password2']) == 0) {
 
 			$sql = "UPDATE users set password='$newpass' where ID='".intval($_SESSION['MDS_ID'])."'";
 			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));

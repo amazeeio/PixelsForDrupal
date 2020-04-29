@@ -125,23 +125,29 @@ function login_form( $show_signup_link = true, $target_page = 'index.php' ) {
 
 ////////////////////////////////////////////////////////////////////
 
+function getPasswordHash($password) {
+    return password_hash($password, PASSWORD_BCRYPT, [
+        'salt' => PASSWORD_SALT,
+        'cost' => 10,
+    ]);
+}
+
+////////////////////////////////////////////////////////////////////
 
 function create_new_account ($REMOTE_ADDR, $FirstName, $LastName, $CompName, $Username, $pass, $Email, $Newsletter, $Notification1, $Notification2, $lang ) {
 
 	if ($lang=='') {
 		$lang = "EN"; // default language is english
-
 	}
 
-   global $label;
+    global $label;
 
-   $Password = md5($pass);
-
+    $Password = getPasswordHash($pass);
     $validated = 0;
 
-   if ((EM_NEEDS_ACTIVATION == "AUTO"))  {
+    if ((EM_NEEDS_ACTIVATION == "AUTO"))  {
       $validated = 1;
-   }
+    }
 	$now = (gmdate("Y-m-d H:i:s"));
     // everything Ok, create account and send out emails.
     $sql = "Insert Into users(IP, SignupDate, FirstName, LastName, CompName, Username, Password, Email, Newsletter, Notification1, Notification2, Validated, Aboutme) values('".mysqli_real_escape_string($GLOBALS['connection'], $REMOTE_ADDR)."', '".mysqli_real_escape_string($GLOBALS['connection'], $now)."', '".mysqli_real_escape_string($GLOBALS['connection'], $FirstName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $LastName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $CompName)."', '".mysqli_real_escape_string($GLOBALS['connection'], $Username)."', '$Password', '".mysqli_real_escape_string($GLOBALS['connection'], $Email)."', '" . intval($Newsletter) . "', '" . intval($Notification1) . "', '" . intval($Notification2) . "', '$validated', '')";
@@ -304,8 +310,8 @@ function process_signup_form($target_page='index.php') {
 	$LastName = ($_POST['LastName']);
 	$CompName = ($_POST['CompName']);
 	$Username = ($_POST['Username']);
-	$Password = md5($_POST['Password']);
-	$Password2 = md5($_POST['Password2']);
+	$Password = getPasswordHash($_POST['Password']);
+	$Password2 = getPasswordHash($_POST['Password2']);
 	$Email = ($_POST['Email']);
 	$Newsletter = ($_POST['Newsletter']);
 	$Notification1 = ($_POST['Notification1']);
@@ -378,10 +384,8 @@ function process_signup_form($target_page='index.php') {
 function do_login() {
 
 	global $label;
-
 	$Username = ($_REQUEST['Username']);
-	$Password = md5($_REQUEST['Password']);
-
+	$Password = getPasswordHash($_REQUEST['Password']);
 
 	$result = mysqli_query($GLOBALS['connection'], "Select * From `users` Where username='" . mysqli_real_escape_string($GLOBALS['connection'], $Username) . "'") or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);

@@ -34,6 +34,13 @@ require ('admin_common.php');
 
 $user_id = $_REQUEST['user_id'];
 
+function getPasswordHash($password) {
+  return password_hash($password, PASSWORD_BCRYPT, [
+    'salt' => PASSWORD_SALT,
+    'cost' => 10,
+  ]);
+}
+
 ?>
 <h3>Edit User's Account Details</h3>
 <p>
@@ -48,29 +55,17 @@ if ($_REQUEST['action']=='changepass') {
 	$result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 
-	$oldpass = md5 ($_REQUEST['oldpass']);
-	$newpass = md5 ($_REQUEST['password']);
+	$newpass = getPasswordHash($_REQUEST['password']);
+    if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
+        $sql = "UPDATE users set password='$newpass' where ID=".intval($user_id);
+        mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
+        echo "<h3><font color=green>OK: Password was changed.</font></h3><br>";
 
-	//if ($row['Password']==$oldpass) {
+    } else {
 
-		if (strcmp($_REQUEST['password'],$_REQUEST['password2'])==0) {
+        echo "<h3><font color=red>Error: New passwords do not match</font></h3><br>";
 
-			$sql = "UPDATE users set password='$newpass' where ID=".intval($user_id);
-			mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
-			echo "<h3><font color=green>OK: Password was changed.</font></h3><br>";
-
-		} else {
-
-			echo "<h3><font color=red>Error: New passwords do not match</font></h3><br>";
-
-		}
-
-	//} else {
-	//	echo "<h3><font color=red>Error: Incorrect current password.</font></h3><br>";
-
-	//}
-
-
+    }
 }
 
 ?>

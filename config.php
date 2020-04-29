@@ -58,6 +58,7 @@ define( 'MYSQL_DB', getenv('MARIADB_DATABASE') ?: 'lagoon' );
 define( 'MYSQL_PORT', 3306 );
 define( 'MYSQL_SOCKET', '' );
 define( 'ADMIN_PASSWORD', getenv('ADMIN_PASSWORD') ?: 'serupas8f23or70abf98asfv979hr87jasf' );
+define( 'PASSWORD_SALT', getenv('PASSWORD_SALT') ?: 'gGCfmeO6kdMxS1Z1n2mKTIzZKD0oDThXyNfMJL4iYnj0PSIASRp1ZtVNwROB8gMtG0n2vJyq68bRw1jah8ngr7bMiNSOZBR1HND5' );
 define( 'DATE_FORMAT', 'Y-M-d' );
 define( 'GMT_DIF', '6' );
 define( 'DATE_INPUT_SEQ', 'YMD' );

@@ -143,21 +143,22 @@ while ($row=mysqli_fetch_array($result)) {
 
 }
 
+function getSizeOfColumn($table, $field) {
+  $result = mysqli_query($GLOBALS['connection'], "SELECT character_maximum_length FROM information_schema.columns WHERE TABLE_NAME = '$table' AND COLUMN_NAME = '$field'");
+  $row = mysqli_fetch_row($result);
+  return (int) $row[0];
+}
 
 function does_field_exist($table, $field) {
 	$result = mysqli_query($GLOBALS['connection'], "show columns from `$table`");
 	while ($row = mysqli_fetch_row($result)) {
 		//echo $row[0]." ";
 		if ($row[0] == $field) {
-
 			return true;
-
 		}
-
 	}
 
 	return false;
-
 }
 
     // compare MySQL version, versions newer than 5.6.5 require a different set of queries
@@ -1005,7 +1006,13 @@ function does_field_exist($table, $field) {
 
 	}
 
-	$sql = "SELECT * FROM `config` WHERE `key`='DELETE_CHECKED' ";
+	// Password md5 -> bcrypt migration.
+    if (getSizeOfColumn('users', 'Password') != 64) {
+        $sql = "ALTER TABLE `users` MODIFY `Password` VARCHAR(64);";
+        mysqli_query($GLOBALS['connection'], $sql) or die ("<p><b>CANNOT UPGRADE YOUR DATABASE!<br>" . mysqli_error($GLOBALS['connection']) . "<br>Please run the following query manually from PhpMyAdmin:</b><br><pre>$sql</pre><br>");
+    }
+
+    $sql = "SELECT * FROM `config` WHERE `key`='DELETE_CHECKED' ";
 	$res = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($res) ;
 	if ($row['val']=='') {

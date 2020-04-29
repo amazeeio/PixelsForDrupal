@@ -73,10 +73,9 @@ require( "header.php" );
 
 function make_password() {
 	$pass = "";
-	while ( strlen( $pass ) < 10 ) {
+	while ( strlen( $pass ) < 20 ) {
 		$pass .= chr( rand( 97, 122 ) );
 	}
-
 	return $pass;
 }
 
@@ -94,9 +93,9 @@ if ( $email != '' ) {
 			echo "<div style='text-align:center;'>" . $label["advertiser_forgot_error1"] . "</div>";
 
 		} else {
-			$pass    = make_password();
-			$md5pass = md5( $pass );
-			$sql     = "update `users` SET `Password`='$md5pass' where `ID`='" . mysqli_real_escape_string( $GLOBALS['connection'], $row['ID'] ) . "'";
+			$password    = make_password();
+			$passwordHashed = getPasswordHash($password);
+			$sql     = "update `users` SET `Password`='$passwordHashed' where `ID`='" . mysqli_real_escape_string( $GLOBALS['connection'], $row['ID'] ) . "'";
 			mysqli_query( $GLOBALS['connection'], $sql ) or die( mysqli_error( $GLOBALS['connection'] ) . $sql );
 
 			$to        = trim( $row['Email'] );
@@ -114,7 +113,7 @@ if ( $email != '' ) {
 			$message = str_replace( "%SITE_NAME%", SITE_NAME, $message );
 			$message = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $message );
 			$message = str_replace( "%MEMBERID%", $row['Username'], $message );
-			$message = str_replace( "%PASSWORD%", $pass, $message );
+			$message = str_replace( "%PASSWORD%", $password, $message );
 
         $html_msg = $label["forget_pass_email_template_html"];
         $html_msg = str_replace( "%FNAME%", $row['FirstName'], $html_msg );
@@ -123,7 +122,7 @@ if ( $email != '' ) {
         $html_msg = str_replace( "%SITE_NAME%", SITE_NAME, $html_msg );
         $html_msg = str_replace( "%SITE_URL%", BASE_HTTP_PATH, $html_msg );
         $html_msg = str_replace( "%MEMBERID%", $row['Username'], $html_msg );
-        $html_msg = str_replace( "%PASSWORD%", $pass, $html_msg );
+        $html_msg = str_replace( "%PASSWORD%", $password, $html_msg );
 
 			if ( USE_SMTP == 'YES' ) {
 				$mail_id = queue_mail( $to, $row['FirstName'] . " " . $row['LastName'], SITE_CONTACT_EMAIL, SITE_NAME, $subject, $message, $html_msg, 6 );

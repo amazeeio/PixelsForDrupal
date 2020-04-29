@@ -289,8 +289,8 @@ class voucher {
         $txn_id = $voucher['voucher_id'] . $order['order_id'];
         debit_transaction( $order_id, $order['price'], $order['currency'], $txn_id, $voucher['code'], 'voucher' );
 
-				echo "<p>Your order has been completed! Your pixels will be reviewed and published shortly.</p>
-				<p>Thank you for supporting the Drupal Association.</p>";
+				echo "<p>Your order has been completed! Thank you for supporting the Drupal Association.</p>
+				<p><strong>All pixels are manually approved.</strong> Your pixels will be reviewed and published shortly.</p>";
 				exit;
 			}
 

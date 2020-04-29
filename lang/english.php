@@ -825,7 +825,7 @@ $label['advertiser_publish_instructions2']='Your blocks are shown on the grid be
 </p>';
 $label['advertiser_home_youown']='You own %PIXEL_COUNT% pixels. <a href=\'publish.php\'>Manage my Pixels</a>';
 $label['advertiser_home_onorder']='You have %PIXEL_ORD_COUNT% pixels on order. <a href=\'select.php\'>Order Pixels</a> / <a href=\'orders.php\'>View Order History</a>';
-$label['list_date_of_purchase']='Date of Purchase';
+$label['list_date_of_purchase']='Date created';
 $label['list_name']='Name';
 $label['list_ads']='Image';
 $label['list_pixels']='Pixels';

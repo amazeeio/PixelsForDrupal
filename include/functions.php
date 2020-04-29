@@ -1392,7 +1392,7 @@ function move_uploaded_image( $img_key ) {
 
 	$t = time();
 
-	$new_name = SERVER_PATH_TO_ADMIN . "temp/" . $t . "$img_name";
+	$new_name = TEMP_PATH . $t . "$img_name";
 
 	move_uploaded_file( $img_tmp, $new_name );
 	chmod( $new_name, 0666 );
@@ -2605,7 +2605,7 @@ function get_tmp_img_name( $session_id = '' ) {
 	if ( $session_id == '' ) {
 		$session_id = addslashes( session_id() );
 	}
-	$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+	$uploaddir = TEMP_PATH;
 	$dh        = opendir( $uploaddir );
 	while ( ( $file = readdir( $dh ) ) !== false ) {
 		if ( strpos( $file, "tmp_" . md5( $session_id ) ) !== false ) {

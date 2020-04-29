@@ -236,9 +236,10 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 				mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']).$sql);
 			}
 
-			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$BID.".jpg");
-			@unlink (SERVER_PATH_TO_ADMIN."../banners/main".$BID.".png");
-			@unlink (SERVER_PATH_TO_ADMIN."temp/background".$BID.".png");
+			$BANNER_PATH = BASE_PATH . "/" . get_banner_dir();
+			@unlink ($BANNER_PATH."main".$BID.".jpg");
+			@unlink ($BANNER_PATH."main".$BID.".png");
+			@unlink (TEMP_PATH."background".$BID.".png");
 		} else {
 			echo "<font color='red'><b>Cannot delete</b></font> - this grid contains some orders in the database.<br>";
 
@@ -251,7 +252,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete') {
 
 function get_banner_image_data($b_row, $image_name) {
 
-	$uploaddir = SERVER_PATH_TO_ADMIN."temp/";
+	$uploaddir = TEMP_PATH;
 //print_r($_FILES);
 	if ($_FILES[$image_name]['tmp_name']) { 
 		// a new image was uploaded
@@ -539,7 +540,7 @@ function validate_block_size($image_name, $BID) {
 
 	$img = $imagine->load (base64_decode($b_row[$image_name]));
 
-	$temp_file = SERVER_PATH_TO_ADMIN."temp/temp_block".md5(session_id()).".png";
+	$temp_file = TEMP_PATH."temp_block".md5(session_id()).".png";
 	$img->save($temp_file);
 	$size = $img->getSize();
 

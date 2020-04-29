@@ -53,10 +53,17 @@ include_once (MDSROOT . "/config.php");
 
 // include the header
 include_once (MDSROOT . "/html/header.php");
-
+?>
+    <div class="d-lg-none alert alert-warning alert-dismissible fade show" role="alert">
+        This site is best viewed on desktop.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
 echo get_html_code( $BID );
-
+echo "<div class='container mt-4'>";
 echo "
 <div class='text-left'>
 <p><strong>What is this?</strong></p>
@@ -75,6 +82,7 @@ echo "
 It’s up to you! Uploads and links are subject to the <a href='https://www.drupal.org/dcoc'>Drupal Code of Conduct</a>, so keep it professional and kind. Upload a picture of yourself, your pet, your company logo - be creative! We will have a moderation team quickly reviewing each submission.</p> </div>
 "
 ;
+echo "</div>";
 
 // include footer
 include_once (MDSROOT . "/html/footer.php");

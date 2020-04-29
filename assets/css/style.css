@@ -9892,6 +9892,11 @@ body {
   padding-bottom: 6rem;
   min-height: 100%;
 }
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 8rem;
+  }
+}
 
 .login-methods .col-left {
   margin-bottom: 4rem;
@@ -9956,6 +9961,12 @@ body {
   border: 0;
   border-right: 1px solid #D4D4D4 !important;
   border-bottom: 1px solid #D4D4D4 !important;
+}
+@media (max-width: 992px) {
+  .gridframe {
+    width: 100% !important;
+    height: 400px !important;
+  }
 }
 
 .main-top-header {

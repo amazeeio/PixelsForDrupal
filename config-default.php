@@ -42,6 +42,7 @@ define( 'VERSION_INFO', 'Version 2.1 (Oct 2010)' );
 define( 'BASE_HTTP_PATH', '' );
 define( 'BASE_PATH', __DIR__ );
 define( 'SERVER_PATH_TO_ADMIN', __DIR__ . '/admin/' );
+define( 'TEMP_PATH', SERVER_PATH_TO_ADMIN . '/temp/' );
 define( 'UPLOAD_PATH', __DIR__ . '/upload_files/' );
 define( 'UPLOAD_HTTP_PATH', '' );
 define( 'SITE_CONTACT_EMAIL', 'test@example.com' );

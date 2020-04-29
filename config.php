@@ -46,7 +46,7 @@ define( 'BASE_PATH', __DIR__ );
 define( 'SERVER_PATH_TO_ADMIN', __DIR__ . '/admin/' );
 define( 'UPLOAD_PATH', __DIR__ . '/files/upload_files/' );
 define( 'UPLOAD_HTTP_PATH', $route . '/files/upload_files/' );
-define( 'SITE_CONTACT_EMAIL', 'hello@amazee.io' );
+define( 'SITE_CONTACT_EMAIL', 'pixelsfordrupal@amazee.com' );
 define( 'SITE_LOGO_URL', $route . '/logo.gif' );
 define( 'SITE_NAME', 'Pixels for Drupal');
 define( 'SITE_SLOGAN', 'The <strong>#DrupalCares</strong> campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19.<br>Every donation for <strong>#DrupalCares</strong> gives you the 20x amount of pixels! ' );
@@ -67,7 +67,7 @@ define( 'INTERLACE_SWITCH', 'YES' );
 define( 'USE_LOCK_TABLES', 'Y' );
 define( 'BANNER_DIR', 'files/pixels/' );
 define( 'DISPLAY_PIXEL_BACKGROUND', 'NO' );
-define( 'EMAIL_USER_ORDER_CONFIRMED', 'YES' );
+define( 'EMAIL_USER_ORDER_CONFIRMED', 'NO' );
 define( 'EMAIL_ADMIN_ORDER_CONFIRMED', 'YES' );
 define( 'EMAIL_USER_ORDER_COMPLETED', 'YES' );
 define( 'EMAIL_ADMIN_ORDER_COMPLETED', 'YES' );
@@ -113,6 +113,7 @@ define( 'HIDE_TIMEOUT', '500' );
 define( 'MDS_AGRESSIVE_CACHE', 'NO' );
 define( 'ERROR_REPORTING', 0 );
 define( 'VOUCHER_IMPORT_HASH_SALT', getenv('VOUCHER_IMPORT_HASH_SALT') ?: 'or((|*D)9qa-weSwEP)>s"l-%5.^;{l');
+define( 'TEMP_PATH', __DIR__ . '/files/temp/' );
 
 if ( defined( 'MEMORY_LIMIT' ) ) {
 	ini_set( 'memory_limit', MEMORY_LIMIT );

@@ -677,7 +677,7 @@ else if ( isset( $_FILES['graphic'] ) && $_FILES['graphic']['tmp_name'] != '' ) 
 
 	global $f2;
 
-	$uploaddir = SERVER_PATH_TO_ADMIN . "temp/";
+	$uploaddir = TEMP_PATH;
 
 	//$parts = split ('\.', $_FILES['graphic']['name']);
 	$parts = $file_parts = pathinfo( $_FILES['graphic']['name'] );
@@ -920,7 +920,7 @@ if ( ! $tmp_image_file ) {
             please upload a smaller image that fits the donation amount, as you will not be able to continue later!</div>";
         }
 
-        echo "<div class='alert alert-info' role='alert'>Please wait with placing your image until the grid is loaded, it takes a bit.</div>";
+        echo "<div class='alert alert-info' role='alert'>Please wait to place your image until the grid is loaded, it takes a bit.</div>";
 
 		?>
 	<?php //echo $label['advertiser_select_instructions']; ?>

@@ -386,7 +386,9 @@ function do_login() {
 	$result = mysqli_query($GLOBALS['connection'], "Select * From `users` Where username='" . mysqli_real_escape_string($GLOBALS['connection'], $Username) . "'") or die (mysqli_error($GLOBALS['connection']));
 	$row = mysqli_fetch_array($result);
 	if (!$row['Username']) {
-		echo "<div align='center' >".$label["advertiser_login_error"]."</div>";
+		echo '<div class="container">';
+		echo "<div class=\"alert alert-danger text-center\" role=\"alert\">".$label["advertiser_login_error"]."</div>";
+		echo '</div>';
 		return false;
 	}
 

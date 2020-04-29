@@ -36,7 +36,7 @@ class functions2 {
 <html>
 <head>
 	<title> ' . SITE_NAME . '</title>
-	<meta name="Description" content="' . SITE_SLOGAN . '">
+	<meta name="Description" content="' . strip_tags(SITE_SLOGAN) . '">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>';
 		return $doc;
 	}

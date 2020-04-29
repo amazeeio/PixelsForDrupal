@@ -79,9 +79,8 @@ echo "
 <p>You can now upload your pixels. You don’t need to do this all at once. You can upload some now, some later - you can use the whole amount at once or divide it up - it’s all up to you! You can also donate more to increase the amount of pixels you can upload. After you upload your pixels, you’ll be asked for the voucher code that was sent to you. </p>
 
 <p><strong>What can I upload?</strong></p>
-It’s up to you! Uploads and links are subject to the <a href='https://www.drupal.org/dcoc'>Drupal Code of Conduct</a>, so keep it professional and kind. Upload a picture of yourself, your pet, your company logo - be creative! We will have a moderation team quickly reviewing each submission.</p> </div>
-"
-;
+<p>It’s up to you! Uploads and links are subject to the <a href='https://www.drupal.org/dcoc'>Drupal Code of Conduct</a>, so keep it professional and kind. Upload a picture of yourself, your pet, your company logo - be creative! We will have a moderation team quickly reviewing each submission.</p>
+</div>";
 echo "</div>";
 
 // include footer

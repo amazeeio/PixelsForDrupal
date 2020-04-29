@@ -45,7 +45,7 @@ global $label;
 <?php include( MDSROOT . "/top_ads_js.php" ); ?>
 <?php include( 'mouseover_box.htm' ); ?>
 
-    <table class="table">
+    <table class="table table-striped text-left">
         <thead>
         <tr>
             <th scope="col"><?php echo $label['list_date_of_purchase']; ?></th>

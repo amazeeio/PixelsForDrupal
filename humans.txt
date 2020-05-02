@@ -1,0 +1,32 @@
+/* TEAM */
+	Contact: pixelsfordrupal [at] amazee.com
+
+	UI Developer: Eli Stone
+	Twitter: @3lifestone
+	From: Johns Creek, Georgia, United States of America
+
+	Developer: Michael Schmid
+  Twitter: @Schnitzel
+  From: Somewhere in an Airstream, United States of America
+
+	Communications and Copy: Alanna Burke
+  Twitter: @aburke626
+  From: Pottstown, Pennsylvania, United States of America
+
+  Developer: Brandon Williams
+  Twitter: @rocketeerbkw
+  From: Austin, Texas, United States of America
+
+	Developer: Sean Hamlin
+	Twitter: @wiifm
+	From: Wellington, New Zealand
+
+/* THANKS */
+  Software: https://milliondollarscript.com/ (GPLv3)
+
+/* SITE */
+	Last update: 2020/05/02
+	Language: English
+	Doctype: HTML5
+	IDE: PHPStorm, VisualStudio, SequelPro
+	Hosting: amazee.io

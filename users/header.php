@@ -75,19 +75,19 @@ if (USE_AJAX=='SIMPLE') {
                 <li class="nav-item">
                     <a class="nav-link" href='index.php'><?php echo $label['advertiser_header_nav1']; ?></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href='<?php echo $order_page; ?>'><?php echo $label['advertiser_header_nav2'];?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href='publish.php'><?php echo $label['advertiser_header_nav3'];?></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href='orders.php'><?php echo $label['advertiser_header_nav4'];?></a>
-                </li>
-                <?php if ($_SESSION['MDS_ID']!='') { ?>
-                <li class="nav-item">
-                    <a class="nav-link" href='logout.php'><?php echo $label['advertiser_header_nav5']; ?></a>
-                </li>
+                <?php if ($_SESSION['MDS_ID'] != '') { ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href='<?php echo $order_page; ?>'><?php echo $label['advertiser_header_nav2'];?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href='publish.php'><?php echo $label['advertiser_header_nav3'];?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href='orders.php'><?php echo $label['advertiser_header_nav4'];?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href='logout.php'><?php echo $label['advertiser_header_nav5']; ?></a>
+                    </li>
                 <?php } ?>
             </ul>
         </div>

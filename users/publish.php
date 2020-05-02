@@ -491,8 +491,11 @@ if (isset($_REQUEST['ad_id']) && !empty($_REQUEST['ad_id'])) {
 			//print_r($prams);
 
 			?>
-			<div class="text-center"><div class='text-success'><?php echo $label['adv_pub_adsaved']; ?></div></div>
-			<p>&nbsp;</p>
+			<div class="text-center">
+                <div class="alert alert-success" role="alert">
+                  <?php echo $label['adv_pub_adsaved']; ?>
+                </div>
+            </div>
 			<?php
 
 			$mode = "user";
@@ -566,17 +569,20 @@ if ($count > 0) {
 
 	if (mysqli_num_rows($result4)>0) {	
 		?>
-		<p><div width='100%' style="border-color:#FF9797; border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_pixwait']; ?></div></p>
+        <div class="alert alert-danger" role="alert">
+            <?php echo $label['advertiser_publish_pixwait']; ?>
+        </div>
 		<?php
 	} else {
 
 		$sql = "select * from orders where user_id='".intval($_SESSION['MDS_ID'])."' AND status='completed' and  approved='Y' and published='Y' and banner_id='".intval($BID)."' ";
-		//echo $sql;
 		$result4 = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection'])); 
 
 		if (mysqli_num_rows($result4)>0) {	
 			?>
-			<p><div width='100%' style="border-color:green;border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_published']; ?></div></p>
+            <div class="alert alert-success" role="alert">
+                <?php echo $label['advertiser_publish_published']; ?>
+            </div>
 			<?php
 		} else {
 
@@ -586,15 +592,15 @@ if ($count > 0) {
 
 			if (mysqli_num_rows($result4)>0) {	
 				?>
-				<p><div width='100%' style="border-color:yellow;border-style:solid;padding:5px;"><?php echo $label['advertiser_publish_waiting']; ?></div></p>
+                <div class="alert alert-warning" role="alert">
+                    <?php echo $label['advertiser_publish_waiting']; ?>
+                </div>
 				<?php
 			}
 
 		}
 
 	}
-
-	
 
 
 	?>

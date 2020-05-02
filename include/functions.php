@@ -1165,11 +1165,7 @@ function send_expiry_reminder( $order_id ) {
 #########################
 function display_order( $order_id, $BID ) {
 	global $label;
-	$BID = intval( $BID );
-	$sql = "select * from banners where banner_id='$BID'";
-	$result = mysqli_query( $GLOBALS['connection'], $sql ) or die ( mysqli_error( $GLOBALS['connection'] ) . $sql );
-	$b_row = mysqli_fetch_array( $result );
-
+	$BID = intval($BID);
 	if ( is_numeric( $order_id ) ) {
 		$sql = "SELECT * from orders where order_id='" . intval( $order_id ) . "' and banner_id='$BID'";
 	} else {
@@ -1195,7 +1191,6 @@ function display_order( $order_id, $BID ) {
         <tr>
             <td><b><?php echo $label['advertiser_ord_quantity']; ?></b></td>
             <td><?php echo $order_row['quantity']; ?> <?php echo $label['advertiser_ord_pix']; ?></td>
-        </tr>
         </tr>
         <tr>
             <td><b><?php echo $label['advertiser_ord_price']; ?></b></td>

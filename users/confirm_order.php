@@ -236,13 +236,14 @@ show_nav_status (3);
 
 		?>
 		<p>
-		<?php display_edit_order_button ('temp');?> &nbsp;
 		<?php
+        // Hide the edit button, if this is the first time through the checkout.
+        //display_edit_order_button ('temp');
 
 		//echo "can ordr:".can_user_order($b_row, $_SESSION['MDS_ID'], $_REQUEST['pack']);
 		if (!can_user_order($b_row, $_SESSION['MDS_ID'], (isset($_REQUEST['pack'])?$_REQUEST['pack']:""))) { // one more check before continue
 
-			if (!$p_max_ord) {
+			if (!isset($p_max_ord)) {
 				$max = $b_row['G_MAX_ORDERS'];
 			} else {
 				$max = $p_max_ord;
@@ -265,7 +266,7 @@ show_nav_status (3);
 
 				?>
 
-				<input type='button' class='btn btn-success float-right' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'">
+				<input type='button' class='btn btn-success float-right mt-4 mb-4' value="<?php echo htmlentities($label['advertiser_o_confpay_button']); ?>" Onclick="window.location='checkout.php?action=confirm&BID=<?php echo $BID; ?>'">
 
 				<?php
 			}

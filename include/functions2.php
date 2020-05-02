@@ -35,9 +35,10 @@ class functions2 {
 		$doc = '<!DOCTYPE html>
 <html>
 <head>
-	<title> ' . SITE_NAME . '</title>
+	<title>' . strip_tags(SITE_NAME) . '</title>
 	<meta name="Description" content="' . strip_tags(SITE_SLOGAN) . '">
-	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>';
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<link type="text/plain" rel="author" href="/humans.txt" />';
 		return $doc;
 	}
 

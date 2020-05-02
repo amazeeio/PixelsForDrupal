@@ -841,7 +841,7 @@ if ( $has_packages ) {
         <form method='post' action="<?php echo htmlentities( $_SERVER['PHP_SELF'] ); ?>" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="voucher_code">Code:</label>
-                <input type='text' class="form-control" name='voucher_code' id="voucher_code" size="20">
+                <input type='text' class="" name='voucher_code' id="voucher_code" size="20">
             </div>
             <input type='hidden' name='BID' value='<?php echo $BID; ?>'/>
             <button type='submit' class="btn btn-primary mb-4">Check remaining credit</button>

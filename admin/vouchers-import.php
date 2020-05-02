@@ -82,13 +82,27 @@ function remove_emoji($text){
 ?>
 
 <h1>Scrape drupal.org</h1>
-<p>Re-import data from fresh from drupal.org. This action can be done as often as needed to update the voucher list. It will import only a delta if you have already run the importer.</p>
+<p>Re-import data from fresh from <a href="https://www.drupal.org/association/sustain-da-covid-19">drupal.org</a>. This action can be done as often as needed to update the voucher list. It will import only a delta if you have already run it in the past.</p>
 
 <form enctype="multipart/form-data" method="post">
-  <label for="banner_id">Banner ID:</label>
-  <input type="number" name="banner_id" value="1" id="banner_id" size="2" style="width: 25px">
+  <label for="banner_id">Banner:</label>
+  <select name="banner_id" required>
+    <?php
+    $sql = "SELECT banner_id, name FROM banners";
+    $result = mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    foreach ($rows as $banner) {
+      $selected = $_REQUEST['banner_id'] == $banner['banner_id'] ? ' selected' : '';
+      echo '<option value="' . $banner['banner_id'] . '" ' . $selected . '>' . $banner['name'] . '</option>';
+    }
+    ?>
+  </select>
+  <br>
   <label for="dollars_per_block">Dollars per block $</label>
   <input type="number" name="dollars_per_block" value="5" id="dollars_per_block" size="3" style="width: 30px">
+  <br>
+  <label for="dollars_per_membership">Amount for people who renewed or donated through their membership. If set to '0', then they will be skipped. $</label>
+  <input type="number" name="dollars_per_membership" value="0" id="dollars_per_membership" size="3" style="width: 30px">
   <br>
   <br>
   <input type="submit" name="submit" value="Import new donations">
@@ -107,6 +121,8 @@ if ($_POST['submit'] == 'Import new donations') {
   $dom = new Dom;
   $dom->loadFromUrl('https://www.drupal.org/association/sustain-da-covid-19');
   $contents = $dom->find('.pane-donors li');
+  $dollarsPerMembership = (int) $_POST['dollars_per_membership'];
+  $today = gmdate("Y-m-d H:i:s");
   $donationCount = count($contents);
   $amountTotal = 0;
 
@@ -120,9 +136,15 @@ if ($_POST['submit'] == 'Import new donations') {
     $currency = $matches[1] === '€' ? 'euro' : 'usd';
     $amount = (int) str_replace(',', '', $matches[2]);
 
+    // Membership renewal or donation, if this is > $0, then generate a voucher
+    // for them too.
     if ($amount < 5) {
-      // Likely a member just signing back up, skip them.
-      continue;
+      if ($dollarsPerMembership > 0) {
+        $amount = $dollarsPerMembership;
+      }
+      else {
+        continue;
+      }
     }
 
     // Attempt to find the d.o username (hyperlinked).
@@ -176,21 +198,17 @@ if ($_POST['submit'] == 'Import new donations') {
 
     $amountTotal += $amount;
     $count++;
-    //  if ($count > 10) {
-    //    break;
-    //  }
   }
 
   $donerCount = count($doners);
-
   foreach ($doners as $doner_key => $doner) {
       $code = voucherCodeHash($doner_key);
       $banner_id = (int) $_POST['banner_id'];
       $dollars_per_block = (int) $_POST['dollars_per_block'];
       $blocks_discount = (int) $doner['amount'] / $dollars_per_block;
       $price_discount = (int) $doner['amount'];
-      $do_name = mysqli_real_escape_string( $GLOBALS['connection'], $doner['doName']);
-      $name = mysqli_real_escape_string( $GLOBALS['connection'], $doner['friendlyName']);
+      $do_name = mysqli_real_escape_string($GLOBALS['connection'], $doner['doName']);
+      $name = mysqli_real_escape_string($GLOBALS['connection'], $doner['friendlyName']);
       $sql = <<<EOL
         INSERT INTO `vouchers`
         (
@@ -204,7 +222,7 @@ if ($_POST['submit'] == 'Import new donations') {
           `do_username`,
           `name`
         ) VALUES (
-          'Imported by the scraper',
+          'Imported {$today}',
           0,
           1,
           '$banner_id',
@@ -222,10 +240,15 @@ EOL;
   echo "<p>Parsed $donationCount donations, totalling $amountTotal dollars from {$donerCount} distinct doners.</p>";
 }
 
+// Last imported date.
+$result = mysqli_query($GLOBALS['connection'], "SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = 'lagoon' AND TABLE_NAME = 'vouchers'") or die (mysqli_error($GLOBALS['connection']));
+$rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$lastImported = $rows[0]['UPDATE_TIME'] ?: 'never';
+
 ?>
 
 <h1>Current vouchers</h1>
-<p>Last imported some time ago.</p>
+<p>Last imported <?php echo $lastImported ?> UTC.</p>
 
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
     <tr bgColor="#eaeaea">

@@ -51,10 +51,12 @@ if (!$b_row['block_height']) { $b_row['block_height'] = 10;}
 $sql = "select block_id from blocks where user_id='".intval($_SESSION['MDS_ID'])."' and status='sold' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $pixels = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
+$pixels = number_format($pixels);
 
 $sql = "select block_id from blocks where user_id='".intval($_SESSION['MDS_ID'])."' and status='ordered' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
 $ordered = mysqli_num_rows($result) * ($b_row['block_width'] * $b_row['block_height']);
+$ordered = number_format($ordered);
 
 $sql = "select * from users where ID='".intval($_SESSION['MDS_ID'])."' ";
 $result = mysqli_query($GLOBALS['connection'], $sql) or die(mysqli_error($GLOBALS['connection']));
@@ -63,9 +65,7 @@ $user_row = mysqli_fetch_array($result);
 ?>
 <div class="container">
 <h3><?php echo $label['advertiser_home_welcome'];?></h3>
-<p>
-<?php echo $label['advertiser_home_line2']."<br>"; ?>
-<p>
+<p><?php echo $label['advertiser_home_line2']; ?></p>
 <p>
 <?php
 $label['advertiser_home_blkyouown'] = str_replace("%PIXEL_COUNT%", $pixels, $label['advertiser_home_blkyouown']);
@@ -85,21 +85,19 @@ echo $label['advertiser_home_click_count']."<br>";
 </p>
 
 <h3><?php echo $label['advertiser_home_sub_head']; ?></h3>
-<p>
-<?php 
+<?php
+    if (USE_AJAX=='SIMPLE') {
+        $label['advertiser_home_selectlink'] = str_replace('select.php', 'order_pixels.php', $label['advertiser_home_selectlink']);
+    }
+?>
+    <ul>
+        <li><?php echo $label['advertiser_home_selectlink']; ?></li>
+        <li><?php echo $label['advertiser_home_managelink']; ?></li>
+        <li><?php echo $label['advertiser_home_ordlink']; ?></li>
+        <li><?php echo $label['advertiser_home_editlink']; ?></li>
+    </ul>
 
-if (USE_AJAX=='SIMPLE') {
-	$label['advertiser_home_selectlink'] = str_replace('select.php', 'order_pixels.php', $label['advertiser_home_selectlink']);
-} 
-
-echo $label['advertiser_home_selectlink']; ?><br>
-<?php echo $label['advertiser_home_managelink']; ?><br>
-<?php echo $label['advertiser_home_ordlink']; ?><br>
-<?php echo $label['advertiser_home_editlink']; ?><br>
-</p>
-<p>
-<?php echo $label['advertiser_home_quest']; ?> <?php echo SITE_CONTACT_EMAIL; ?>
-</p>
+<p><?php echo $label['advertiser_home_quest']; ?> <?php echo SITE_CONTACT_EMAIL; ?></p>
 </div>
 <?php
 require ("footer.php");

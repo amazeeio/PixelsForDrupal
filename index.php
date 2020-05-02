@@ -63,7 +63,7 @@ include_once (MDSROOT . "/html/header.php");
 <?php
 // Note: Below is the iframe which displays the image map. Use Process Pixels in the admin to update the image map.
 echo get_html_code( $BID );
-echo "<div class='container mt-4'>";
+echo "<div class='container mt-4 mb-5 px-0' style='max-width: 1000px'>";
 echo "
 <div class='text-left'>
 <p><strong>What is this?</strong></p>

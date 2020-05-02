@@ -40,7 +40,7 @@ include_once( MDSROOT . "/html/header.php" );
 
 global $label;
 ?>
-<div class="container text-left">
+<div class="container mt-4 mb-5 text-left">
 
 <p><strong>What is this?</strong></p>
 <p>You might remember the <a href='http://www.milliondollarhomepage.com/'>Million Dollar Homepage</a> from way back when. You could buy pixels and use them to post whatever you wanted - and the guy who started it made a million dollars. We thought it would be fun to make a Half Million Dollar homepage to help the Drupal Association reach their goal. Donors can purchase pixels to support the DA. You’ll get 100 pixels for every $5 you donate. You can post images and links to your pixels.  </p>

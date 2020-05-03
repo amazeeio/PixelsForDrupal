@@ -1066,7 +1066,7 @@ function install_db() {
           `notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT 'Notes field for admins to track who/what/why/etc',
           PRIMARY KEY (`voucher_id`),
           UNIQUE KEY `voucher_code` (`code`)
-        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;;;
 
         CREATE TABLE `sessions` (
           `id` varchar(255) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
@@ -1078,7 +1078,6 @@ function install_db() {
     }
 
 	/* You can use it like this */
-
 	$queries=multiple_query($sql);
 
 	for($i=0;$i<count($queries);$i++)

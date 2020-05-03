@@ -217,24 +217,19 @@ $label['advertiser_pay_sel_method']='Enter your voucher code:';
 $label['advertiser_ord_cancel']='Cancel, are you sure?';
 $label['advertiser_ord_cancel_button']='Cancel';
 $label['advertiser_ord_history']='My Order History';
-$label['advertiser_ord_explain']='\'Completed\' Orders - Orders where the transaction was sucessfully completed.<br>
-\'Confirmed\' Orders - Orders confirmed by you, but the transaction has not been completed.<br>
-\'Pending\' Orders - Orders confirmed by you, but the transaction has not been approved.<br>
-\'Cancelled\' Orders - Cancelled by the administrator.<br>
-\'Expired\' Orders - Pixels were expired after the specified term. You can renew this order.<br>';
 $label['advertiser_ord_hist_list']='Order History';
-$label['advertiser_ord_prderdate']='Order Date';
-$label['advertiser_ord_custname']='Customer Name';
-$label['advertiser_ord_usernid']='Username & ID';
-$label['advertiser_ord_orderid']='OrderID';
+$label['advertiser_ord_prderdate']='Order date';
+$label['advertiser_ord_custname']='Customer name';
+$label['advertiser_ord_usernid']='Username';
+$label['advertiser_ord_orderid']='Order ID';
 $label['advertiser_ord_quantity']='Quantity';
 $label['advertiser_ord_image']='Grid';
 $label['advertiser_ord_amount']='Amount';
 $label['advertiser_status']='Status';
 $label['advertiser_ord_noordfound']='No orders found.';
-$label['advertiser_ord_confnow']='Confirm now..';
-$label['advertiser_ord_awaiting']='Awaiting Payment..';
-$label['advertiser_ord_manage_pix']='Manage..';
+$label['advertiser_ord_confnow']='Confirm now';
+$label['advertiser_ord_awaiting']='Awaiting payment';
+$label['advertiser_ord_manage_pix']='Manage';
 $label['advertiser_ord_renew']='Renew Now! %DAYS_TO_RENEW% days left to renew';
 $label['adv_ord_inprogress']='In progress';
 $label['completed']='Completed';

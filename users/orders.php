@@ -86,7 +86,7 @@ if ( isset( $_REQUEST['cancel'] ) && $_REQUEST['cancel'] == 'yes' && isset( $_RE
 ?>
 <div class="container">
 
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript">
 
 function confirmLink(theLink, theConfirmMsg)
    {
@@ -105,13 +105,16 @@ function confirmLink(theLink, theConfirmMsg)
 
 </script>
 
-<h3><?php echo $label['advertiser_ord_history']; ?></h3>
+    <h3><?php echo $label['advertiser_ord_history']; ?></h3>
+    <ul>
+        <li><span class="badge badge-success">Completed</span> orders: orders where the transaction was successfully completed.</li>
+        <li><span class="badge badge-warning">Confirmed</span> orders: orders confirmed by you, but the transaction has not been completed.</li>
+        <li><span class="badge badge-warning">Pending</span> orders: orders confirmed by you, but the transaction has not been approved.</li>
+        <li><span class="badge badge-danger">Cancelled</span> orders: cancelled by the site administrators.</li>
+        <li><span class="badge badge-danger">Expired</span> orders: pixels were expired after the specified term. You can renew this order.</li>
+    </ul>
 
-<p>
-<?php echo $label['advertiser_ord_explain']; ?>
-</p>
-
-<h4><?php echo $label['advertiser_ord_hist_list']; ?></h4>
+    <h4><?php echo $label['advertiser_ord_hist_list']; ?></h4>
 
 <?php
 
@@ -139,17 +142,17 @@ usort( $orders, "date_sort" );
 ?>
 
     <table class="table mt-4">
-        <thead>
-        <tr>
-            <th scope="col"><?php echo $label['advertiser_ord_prderdate']; ?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_custname']; ?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_usernid'];?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_orderid']; ?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_quantity']; ?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_image']; ?></th>
-            <th scope="col"><?php echo $label['advertiser_ord_amount'];?></th>
-            <th scope="col"><?php echo $label['advertiser_status']; ?></th>
-        </tr>
+        <thead class="thead-light">
+            <tr>
+                <th scope="col"><?php echo $label['advertiser_ord_prderdate']; ?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_custname']; ?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_usernid'];?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_orderid']; ?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_quantity']; ?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_image']; ?></th>
+                <th scope="col"><?php echo $label['advertiser_ord_amount'];?></th>
+                <th scope="col"><?php echo $label['advertiser_status']; ?></th>
+            </tr>
         </thead>
         <tbody>
 <?php
@@ -163,7 +166,7 @@ usort( $orders, "date_sort" );
 <tr>
 			<td><?php echo get_local_time($order['order_date']);?></td>
 			<td><?php echo isset($order['FirstName']) ? $order['FirstName']." ".$order['LastName'] : "";?></td>
-			<td><?php echo isset($order['Username']) ? $order['Username'] : "";?> (#<?php echo $order['ID'];?>)</td>
+			<td><?php echo isset($order['Username']) ? $order['Username'] : "";?></td>
 			<td>#<?php echo isset($order['order_id']) ? $order['order_id'] : "";?></td>
 			<td><?php echo $order['quantity'];?></td>
 	<td><?php
@@ -177,28 +180,28 @@ usort( $orders, "date_sort" );
 		?></td>
 			<td><?php echo convert_to_default_currency_formatted($order['currency'], $order['price']); ?></td>
 			<td><?php
-			    if(isset($order['status'])) {
+if (isset($order['status'])) {
 
-					echo $label[$order['status']];?><br><?php
-	if (USE_AJAX=='SIMPLE') {
+	if (USE_AJAX == 'SIMPLE') {
 		$order_page = 'order_pixels.php';
 		$temp_var = '&order_id=temp';
 	} else {
 		$order_page = 'select.php';
 	}
 
-                    switch ( $order['status'] ) {
-		case "new":
-			echo $label['adv_ord_inprogress'].'<br>';
-                            echo "<a href='" . $order_page . "?BID=" . $order['banner_id'] . "$temp_var'>(" . $label['advertiser_ord_confnow'] . ")</a>";
-                            echo "<br><input type='button' value='" . $label['advertiser_ord_cancel_button'] . "' onclick='if (!confirmLink(this, \"" . $label['advertiser_ord_cancel'] . "\")) return false; window.location=\"orders.php?cancel=yes&order_id=" . $order['order_id'] . "\"' >";
+    switch ( $order['status'] ) {
+        case "new":
+            echo $label['adv_ord_inprogress'].'<br>';
+            echo "<a href='" . $order_page . "?BID=" . $order['banner_id'] . "$temp_var'>" . $label['advertiser_ord_confnow'] . "</a>";
+            echo "<br><input type='button' value='" . $label['advertiser_ord_cancel_button'] . "' onclick='if (!confirmLink(this, \"" . $label['advertiser_ord_cancel'] . "\")) return false; window.location=\"orders.php?cancel=yes&order_id=" . $order['order_id'] . "\"' >";
 			break;
 		case "confirmed":
-                            echo "<a href='payment.php?order_id=" . $order['order_id'] . "&BID=" . $order['banner_id'] . "'>(" . $label['advertiser_ord_awaiting'] . ")</a>";
-                            //echo "<br><input type='button' value='".$label['advertiser_ord_cancel_button']."' onclick='if (!confirmLink(this, \"".$label['advertiser_ord_cancel']."\")) return false; window.location=\"orders.php?cancel=yes&order_id=".$order['order_id']."\"' >";
+		    echo '<span class="badge badge-warning">Confirmed</span><br>';
+            echo "<a class='btn btn-outline-warning btn-sm' href='payment.php?order_id=" . $order['order_id'] . "&BID=" . $order['banner_id'] . "'>" . $label['advertiser_ord_awaiting'] . "</a>";
 			break;
 		case "completed":
-			echo "<a href='publish.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'>(".$label['advertiser_ord_manage_pix'].")</a>";
+            echo '<span class="badge badge-success">✅ Completed</span><br>';
+			echo "<a class='btn btn-outline-success btn-sm' href='publish.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'>".$label['advertiser_ord_manage_pix']."</a>";
 
 			if ($order['days_expire'] > 0) {
 
@@ -228,7 +231,7 @@ usort( $orders, "date_sort" );
 
 			break;
 		case "expired":
-
+            echo '<span class="badge badge-danger">Expired</span><br>';
 			$time_expired = strtotime($order['date_stamp']);
 
 			$time_when_cancel = $time_expired + (DAYS_RENEW * 24 * 60 * 60);
@@ -242,12 +245,14 @@ usort( $orders, "date_sort" );
 			if (mysqli_num_rows($res_c)==0) {
  
 				$label['advertiser_ord_renew'] = str_replace("%DAYS_TO_RENEW%", $days, $label['advertiser_ord_renew']);
-				echo "<a href='payment.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'><span class='text-danger'><small>(".$label['advertiser_ord_renew'].")</small></span></a>";
+				echo "<a href='payment.php?order_id=".$order['order_id']."&BID=".$order['banner_id']."'><span class='text-danger'><small>".$label['advertiser_ord_renew']."</small></span></a>";
 			}
 			break;
 		case "cancelled":
+            echo '<span class="badge badge-danger">Cancelled</span><br>';
 			break;
 		case "pending":
+            echo '<span class="badge badge-warning">Pending</span><br>';
 			break;
 
 	}

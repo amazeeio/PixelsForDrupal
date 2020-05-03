@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<url>
+  <loc>https://pixelsfordrupal.com/</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/list.php</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/faq.php</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/users/</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/humans.txt</loc>
+  <lastmod>2020-05-03T05:18:03+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/users/forgot.php</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://pixelsfordrupal.com/users/signup.php</loc>
+  <lastmod>2020-05-03T09:51:45+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+</urlset>

@@ -36,33 +36,120 @@ require ('admin_common.php');
 <?php echo $f2->get_doc(); ?>
 
 <style>
-body {
-
-	font-family: 'Arial', sans-serif; 
-	font-size:10pt;
-
-}
+    body {
+        font-family: 'Arial', sans-serif;
+        font-size:10pt;
+    }
+    th {
+        text-align: left;
+    }
+    th.limited {
+        word-wrap: break-word;
+        width: 150px;
+    }
+    thead th {
+        background-color: #e2e3e5;
+    }
+    tbody td {
+        background-color: #ffffff;
+    }
+    .form-submit-button-danger {
+        background: #a20100;
+        color: white;
+        border-color: #a20037;
+    }
 </style>
 
-<script language="JavaScript" type="text/javascript">
-
-function confirmLink(theLink, theConfirmMsg)
-   {
-
-       if (theConfirmMsg == '' || typeof(window.opera) != 'undefined') {
+<script type="text/javascript">
+    function confirmLink(theLink, theConfirmMsg) {
+        if (theConfirmMsg == '' || typeof(window.opera) != 'undefined') {
            return true;
-       }
+        }
 
-       var is_confirmed = confirm(theConfirmMsg + '\n');
-       if (is_confirmed) {
+        var is_confirmed = confirm(theConfirmMsg + '\n');
+        if (is_confirmed) {
            theLink.href += '&is_js_confirmed=1';
-       }
+        }
 
-       return is_confirmed;
-   } // end of the 'confirmLink()' function
+        return is_confirmed;
+    }
+    function copyTextToClipboard(text) {
+      var textArea = document.createElement("textarea");
 
+      //
+      // *** This styling is an extra step which is likely not required. ***
+      //
+      // Why is it here? To ensure:
+      // 1. the element is able to have focus and selection.
+      // 2. if element was to flash render it has minimal visual impact.
+      // 3. less flakyness with selection and copying which **might** occur if
+      //    the textarea element is not visible.
+      //
+      // The likelihood is the element won't even render, not even a
+      // flash, so some of these are just precautions. However in
+      // Internet Explorer the element is visible whilst the popup
+      // box asking the user for permission for the web page to
+      // copy to the clipboard.
+      //
+
+      // Place in top-left corner of screen regardless of scroll position.
+      textArea.style.position = 'fixed';
+      textArea.style.top = 0;
+      textArea.style.left = 0;
+
+      // Ensure it has a small width and height. Setting to 1px / 1em
+      // doesn't work as this gives a negative w/h on some browsers.
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+
+      // We don't need padding, reducing the size if it does flash render.
+      textArea.style.padding = 0;
+
+      // Clean up any borders.
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+
+      // Avoid flash of white box if rendered for any reason.
+      textArea.style.background = 'transparent';
+
+      textArea.value = "Thank you for donating to #DrupalCares! We’ve started a fun new campaign called Pixels for Drupal, and since you’ve already donated, we’re sending you a voucher code to claim your pixels. \n" +
+        "\n" +
+        "How does it work?\n" +
+        "-----------------\n" +
+        "You might remember the Million Dollar Homepage (http://www.milliondollarhomepage.com/) from way back when. You could buy pixels and use them to post whatever you wanted - and the guy who started it made a million dollars. We thought it would be fun to make a Half Million Dollar homepage to help the Drupal Association reach their goal. Donors can purchase pixels to support the DA. You’ll get 100 pixels for every $5 you donate. You can post images and links to your pixels. \n" +
+        "\n" +
+        "What do I need to do?\n" +
+        "---------------------\n" +
+        "1. Create an account on https://pixelsfordrupal.com/.\n" +
+        "2. You’ll receive a verification email. Log in and verify your account. \n" +
+        "3. Click “Upload Pixels” and enter your voucher code. \n" +
+        "\n" +
+        "Your voucher code is: " + text + "\n" +
+        "\n" +
+        "You’ll see how many pixels you can upload based on the amount of your donation. \n" +
+        "\n" +
+        "You can now upload your pixels. You don’t need to do this all at once. You can upload some now, some later - you can use the whole amount at once or divide it up - it’s all up to you! You can also donate more to increase the amount of pixels you can upload. \n" +
+        "\n" +
+        "What can I upload?\n" +
+        "------------------\n" +
+        "It’s up to you! Uploads and links are subject to the Drupal Code of Conduct (https://www.drupal.org/dcoc), so keep it professional and kind. Upload a picture of yourself, your pet, your company logo, a DrupalCon memory - be creative! We will have a moderation team quickly reviewing each submission. \n"
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copying text command was ' + msg);
+      } catch (err) {
+        console.log('Oops, unable to copy');
+      }
+
+      document.body.removeChild(textArea);
+    }
 </script>
-
 </head>
 
 <body>
@@ -219,28 +306,28 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 <input type="hidden" value="<?php echo $_REQUEST['action']?>" name="action" >
 <input type="hidden" value="<?php echo $_REQUEST['voucher']?>" name="voucher" >
 <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9">
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Code *:</font></td>
+<tr >
+	<td>Code *:</td>
 	<td><input size="30" type="text" name="code" required value="<?php echo $_REQUEST['code']; ?>"></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">$ Discount:</font></td>
+<tr >
+	<td>$ Discount:</td>
 	<td><input size="4" type="text" name="price_discount" value="<?php echo $_REQUEST['price_discount']; ?>"></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Block Discount:</font></td>
+<tr >
+	<td>Block Discount:</td>
 	<td><input size="4" type="text" name="blocks_discount" value="<?php echo $_REQUEST['blocks_discount']; ?>"></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Name:</font></td>
+<tr >
+	<td>Name:</td>
 	<td><input size="30" type="text" name="name" value="<?php echo $_REQUEST['name']; ?>"></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">D.O Username:</font></td>
+<tr >
+	<td>D.O Username:</td>
 	<td><input size="30" type="text" name="do_username" value="<?php echo $_REQUEST['do_username']; ?>"></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Banner *:</font></td>
+<tr >
+	<td>Banner *:</td>
 	<td>
 		<select name="banner_id" required>
 		<?php
@@ -256,92 +343,85 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
 		</select>
 	</td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Notes:</font></td>
+<tr >
+	<td>Notes:</td>
 	<td><textarea name="notes"><?php echo $_REQUEST['notes']; ?></textarea></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Single Use:</font></td>
+<tr >
+	<td>Single Use:</td>
 	<td><input type="checkbox" name="single_use" value="1" <?php echo $single_use_checked; ?>></td>
 </tr>
-<tr bgcolor="#ffffff" >
-	<td><font size="2">Active:</font></td>
+<tr >
+	<td>Active:</td>
 	<td><input type="checkbox" name="active" value="1" <?php echo $active_checked; ?>></td>
 </tr>
 </table>
 <input type="submit" name="submit" value="Submit">
 </form>
+<hr />
 <?php
 
 	if ($error !='') {
-		echo "<b><font color='red'>ERROR:</font></b> Cannot save voucher into database.<br>";
+		echo "<b><font color='red'>ERROR:</b> Cannot save voucher into database.<br>";
 		echo $error;
 	}
 
 }
 
 ?>
-<hr />
 
-<input type="button" value="New Voucher..." onclick="window.location='vouchers.php?new=1'">
-<table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
-			<tr bgColor="#eaeaea">
-				<td><b><font size="2">ID</b></font></td>
-				<td><b><font size="2">Code</b></font></td>
-				<td><b><font size="2">$ Discount</b></font></td>
-				<td><b><font size="2">Block Discount</b></font></td>
-				<td><b><font size="2">Name</b></font></td>
-				<td><b><font size="2">D.O Username</b></font></td>
-				<td><b><font size="2">Banner</b></font></td>
-				<td><b><font size="2">Notes</b></font></td>
-				<td><b><font size="2">Single Use</b></font></td>
-				<td><b><font size="2">Active</b></font></td>
-				<td><b><font size="2">Tools</b></font></td>
-			</tr>
-<?php
-			$result = mysqli_query($GLOBALS['connection'], "select v.*, b.name as banner_name FROM vouchers v LEFT JOIN banners b on v.banner_id = b.banner_id order by voucher_id desc") or die (mysqli_error($GLOBALS['connection']));
-			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+    <input type="button" value="New Voucher..." onclick="window.location='vouchers.php?new=1'">
+    <table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9"
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>$ Discount</th>
+                <th>Block Discount</th>
+                <th class="limited">Name</th>
+                <th>D.O Username</th>
+                <th>Banner</th>
+                <th>Notes</th>
+                <th>Single Use</th>
+                <th>Active</th>
+                <th>Tools</th>
+            </tr>
+        </thead>
+        <tbody>
 
-				?>
-
-				<tr bgcolor="#ffffff">
-
-				<td><font size="2"><?php echo $row['voucher_id']; ?></font></td>
-				<td><font size="2"><?php echo $row['code']; ?></font></td>
-				<td><font size="2"><?php echo $row['price_discount']; ?></font></td>
-				<td><font size="2"><?php echo $row['blocks_discount']; ?></font></td>
-				<td><font size="2"><?php echo $row['name']; ?></font></td>
-				<td><font size="2"><?php echo $row['do_username']; ?></font></td>
-				<td><font size="2"><a href="inventory.php?action=edit&BID=<?php echo $row['banner_id']; ?>"><?php echo $row['banner_name']; ?></a></font></td>
-				<td><font size="2"><?php echo $row['notes']; ?></font></td>
-				<td><font size="2"><?php echo $row['single_use'] ? 'Y' : 'N'; ?></font></td>
-				<td><font size="2">
-					<?php if ($row['active']) { ?><IMG SRC="active.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } else { ?><IMG SRC="notactive.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT=""><?php } ;?></font>
-					<?php if (!$row['active']) {?>
-					[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=activate&voucher=<?php echo $row['voucher_id'];?>">Activate</a>]
-					<?php } if ($row['active']) {?>
-					[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=deactivate&voucher=<?php echo $row['voucher_id'];?>">Deactivate</a>]
-					<?php }?>
-				</td>
-
-				<td>
-					<font size="2">
-					[<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=edit&voucher=<?php echo $row['voucher_id'];?>">Edit</a>]
-					[<a onclick=" return confirmLink(this, 'Delete, are you sure?') " href="<?php echo $_SERVER['PHP_SELF'];?>?action=delete&voucher=<?php echo $row['voucher_id'];?>">Delete</a>]
-					</font>
-				</td>
-				
-
-				</tr>
-
-
-				<?php
-
-			}
-?>
-</table>
-
+        <?php
+            $result = mysqli_query($GLOBALS['connection'], "select v.*, b.name as banner_name FROM vouchers v LEFT JOIN banners b on v.banner_id = b.banner_id order by voucher_id desc") or die (mysqli_error($GLOBALS['connection']));
+            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+        ?>
+            <tr>
+                <td><?php echo $row['voucher_id']; ?></td>
+                <td><?php echo $row['code']; ?></td>
+                <td><?php echo $row['price_discount']; ?></td>
+                <td><?php echo $row['blocks_discount']; ?></td>
+                <td><?php echo $row['name']; ?></td>
+                <td><a href="https://www.drupal.org/u/<?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?></a></td>
+                <td><a href="inventory.php?action=edit&BID=<?php echo $row['banner_id']; ?>"><?php echo $row['banner_name']; ?></a></td>
+                <td><?php echo htmlspecialchars($row['notes'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo $row['single_use'] ? 'Y' : 'N'; ?></td>
+                <td>
+                    <?php if ($row['active']) { ?> <img src="active.gif" width="16" height="16" border="0" alt=""><?php } else { ?><img src="notactive.gif" width="16" height="16" border="0" alt=""><?php } ;?>
+                    <?php if (!$row['active']) {?>
+                    [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=activate&voucher=<?php echo $row['voucher_id'];?>">Activate</a>]
+                    <?php } if ($row['active']) {?>
+                    [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=deactivate&voucher=<?php echo $row['voucher_id'];?>">Deactivate</a>]
+                    <?php }?>
+                </td>
+                <td>
+                    [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=edit&voucher=<?php echo $row['voucher_id'];?>">Edit</a>]
+                    [<a onclick="return confirmLink(this, 'Delete, are you sure?')" href="<?php echo $_SERVER['PHP_SELF'];?>?action=delete&voucher=<?php echo $row['voucher_id'];?>">Delete</a>]
+                    [<a title="Copy the voucher plain text invite" onclick="copyTextToClipboard('<?php echo $row['code']; ?>'); return false" href="#">Text</a>]
+                </td>
+            </tr>
+        <?php
+            }
+        ?>
+        </tbody>
+    </table>
 
 </body>
-
 </html>

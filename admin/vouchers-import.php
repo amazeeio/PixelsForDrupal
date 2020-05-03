@@ -43,9 +43,6 @@ use PHPHtmlParser\Dom;
         font-family: 'Arial', sans-serif;
         font-size:10pt;
     }
-    th {
-        text-align: left;
-    }
     .form-submit-button-danger {
         background: #a20100;
         color: white;
@@ -130,6 +127,7 @@ if ($_POST['submit'] == 'Import new donations') {
   $count = 0;
   foreach ($contents as $content) {
     $html = $content->innerHtml;
+    $isMembershipDonation = FALSE;
 
     // Extract out the dollar amount and currency.
     preg_match('#([€|\$])([\d\.,]+)#u', $html, $matches);
@@ -141,6 +139,7 @@ if ($_POST['submit'] == 'Import new donations') {
     if ($amount < 5) {
       if ($dollarsPerMembership > 0) {
         $amount = $dollarsPerMembership;
+        $isMembershipDonation = TRUE;
       }
       else {
         continue;
@@ -193,6 +192,7 @@ if ($_POST['submit'] == 'Import new donations') {
         'friendlyName' => remove_emoji($friendlyName),
         'doName' => $doName,
         'doUrl' => $doUrl,
+        'isMembershipDonation' => $isMembershipDonation,
       ];
     }
 
@@ -209,7 +209,38 @@ if ($_POST['submit'] == 'Import new donations') {
       $price_discount = (int) $doner['amount'];
       $do_name = mysqli_real_escape_string($GLOBALS['connection'], $doner['doName']);
       $name = mysqli_real_escape_string($GLOBALS['connection'], $doner['friendlyName']);
-      $sql = <<<EOL
+
+      // We only want to insert new memberships, and not alter the existing
+      // values (in case someone has manually updated the amount.
+      if ($doner['isMembershipDonation']) {
+        $sql = <<<EOL
+        INSERT IGNORE INTO `vouchers`
+        (
+          `notes`,
+          `single_use`,
+          `active`,
+          `banner_id`,
+          `code`,
+          `blocks_discount`,
+          `price_discount`,
+          `do_username`,
+          `name`
+        ) VALUES (
+          'Imported DA {$today}',
+          0,
+          1,
+          '$banner_id',
+          '$code',
+          '$blocks_discount',
+          '$price_discount',
+          '$do_name',
+          '$name'
+        )
+EOL;
+      }
+      // Regular donation.
+      else {
+        $sql = <<<EOL
         INSERT INTO `vouchers`
         (
           `notes`,
@@ -234,6 +265,8 @@ if ($_POST['submit'] == 'Import new donations') {
         )
         ON DUPLICATE KEY UPDATE blocks_discount = VALUES(blocks_discount), price_discount = VALUES(price_discount)
 EOL;
+      }
+
       mysqli_query($GLOBALS['connection'], $sql) or die (mysqli_error($GLOBALS['connection']));
   }
 
@@ -248,39 +281,7 @@ $lastImported = $rows[0]['UPDATE_TIME'] ?: 'never';
 ?>
 
 <h1>Current vouchers</h1>
-<p>Last imported <?php echo $lastImported ?> UTC.</p>
-
-<table border="0" cellSpacing="1" cellPadding="3" bgColor="#d9d9d9" >
-    <tr bgColor="#eaeaea">
-        <th>ID</th>
-        <th>Code</th>
-        <th>Banner ID</th>
-        <th>Order ID</th>
-        <th>Price discount</th>
-        <th>Block discount</th>
-        <th>Name</th>
-        <th>Drupal.org username</th>
-        <th>Notes</th>
-    </tr>
-<?php
-    $result = mysqli_query($GLOBALS['connection'], "SELECT * FROM vouchers") or die (mysqli_error($GLOBALS['connection']));
-    while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-?>
-    <tr bgcolor="#ffffff">
-        <td><?php echo $row['voucher_id']; ?></td>
-        <td><?php echo $row['code']; ?></td>
-        <td><?php echo $row['banner_id']; ?></td>
-        <td><?php echo $row['order_id']; ?></td>
-        <td><?php echo $row['price_discount']; ?></td>
-        <td><?php echo $row['blocks_discount']; ?></td>
-        <td><?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td><a href="https://www.drupal.org/u/<?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?></a></td>
-        <td><?php echo htmlspecialchars($row['notes'], ENT_QUOTES, 'UTF-8'); ?></td>
-    </tr>
-<?php
-    }
-?>
-</table>
+<p>Last imported <?php echo $lastImported ?> UTC. See the <a href="vouchers.php">voucher list</a> for more details.</p>
 
 
 </body>

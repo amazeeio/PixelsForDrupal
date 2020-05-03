@@ -73,7 +73,7 @@ require ('admin_common.php');
 
         return is_confirmed;
     }
-    function copyTextToClipboard(text) {
+    function copyTextToClipboard(name, code) {
       var textArea = document.createElement("textarea");
 
       //
@@ -113,7 +113,7 @@ require ('admin_common.php');
       // Avoid flash of white box if rendered for any reason.
       textArea.style.background = 'transparent';
 
-      textArea.value = "Thank you for donating to #DrupalCares! We’ve started a fun new campaign called Pixels for Drupal, and since you’ve already donated, we’re sending you a voucher code to claim your pixels. \n" +
+      textArea.value = "Hi " + name + ", thank you for donating to #DrupalCares! We’ve started a fun new campaign called Pixels for Drupal, and since you’ve already donated, we’re sending you a voucher code to claim your pixels. \n" +
         "\n" +
         "How does it work?\n" +
         "-----------------\n" +
@@ -125,7 +125,7 @@ require ('admin_common.php');
         "2. You’ll receive a verification email. Log in and verify your account. \n" +
         "3. Click “Upload Pixels” and enter your voucher code. \n" +
         "\n" +
-        "Your voucher code is: " + text + "\n" +
+        "Your voucher code is: " + code + "\n" +
         "\n" +
         "You’ll see how many pixels you can upload based on the amount of your donation. \n" +
         "\n" +
@@ -398,7 +398,7 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
                 <td><?php echo $row['code']; ?></td>
                 <td><?php echo $row['price_discount']; ?></td>
                 <td><?php echo $row['blocks_discount']; ?></td>
-                <td><?php echo $row['name']; ?></td>
+                <td><?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><a href="https://www.drupal.org/u/<?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($row['do_username'], ENT_QUOTES, 'UTF-8'); ?></a></td>
                 <td><a href="inventory.php?action=edit&BID=<?php echo $row['banner_id']; ?>"><?php echo $row['banner_name']; ?></a></td>
                 <td><?php echo htmlspecialchars($row['notes'], ENT_QUOTES, 'UTF-8'); ?></td>
@@ -414,7 +414,7 @@ if (($_REQUEST['new']!='') || ($_REQUEST['action']=='edit')) {
                 <td>
                     [<a href="<?php echo $_SERVER['PHP_SELF'];?>?action=edit&voucher=<?php echo $row['voucher_id'];?>">Edit</a>]
                     [<a onclick="return confirmLink(this, 'Delete, are you sure?')" href="<?php echo $_SERVER['PHP_SELF'];?>?action=delete&voucher=<?php echo $row['voucher_id'];?>">Delete</a>]
-                    [<a title="Copy the voucher plain text invite" onclick="copyTextToClipboard('<?php echo $row['code']; ?>'); return false" href="#">Text</a>]
+                    [<a title="Copy the voucher plain text invite" onclick="copyTextToClipboard('<?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?>', '<?php echo $row['code']; ?>'); return false" href="#">Text</a>]
                 </td>
             </tr>
         <?php

@@ -28,7 +28,6 @@ Temporary Items
 #IDE
 .idea
 
-config.php
-
-# Uploads/generated files
-/files
+upload_files
+files/upload_files
+files/temp

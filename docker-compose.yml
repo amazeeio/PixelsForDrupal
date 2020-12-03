@@ -26,29 +26,13 @@ x-user:
     user: '1000'
 
 services:
-  cli: # cli container, will be used for executing composer and any local commands (drush, drupal, etc.)
-    build:
-      context: .
-      dockerfile: lagoon/cli.dockerfile
-    image: *lagoon-project # this image will be reused as `CLI_IMAGE` in subsequent Docker builds
-    labels:
-      # Lagoon Labels
-      lagoon.type: cli-persistent
-      lagoon.persistent.name: nginx # mount the persistent storage of nginx into this container
-      lagoon.persistent: /app/files/ # location where the persistent storage should be mounted
-    << : *default-volumes # loads the defined volumes from the top
-    user: root
-    volumes_from: # mount the ssh-agent from the pygmy or cachalot ssh-agent
-      - container:amazeeio-ssh-agent
-    environment:
-      << : *default-environment # loads the defined environment variables from the top
 
   nginx:
     build:
       context: .
       dockerfile: lagoon/nginx.dockerfile
     labels:
-      lagoon.type: nginx-php-persistent
+      lagoon.type: nginx-persistent
       lagoon.persistent: /app/files/ # define where the persistent storage should be mounted too
     << : *default-volumes # loads the defined volumes from the top
     << : *default-user # uses the defined user from top
@@ -57,30 +41,6 @@ services:
     networks:
       - amazeeio-network
       - default
-
-  php:
-    build:
-      context: .
-      dockerfile: lagoon/php.dockerfile
-    labels:
-      lagoon.type: nginx-php-persistent
-      lagoon.name: nginx # we want this service be part of the nginx pod in Lagoon
-      lagoon.persistent: /app/files/ # define where the persistent storage should be mounted too
-    << : *default-volumes # loads the defined volumes from the top
-    << : *default-user # uses the defined user from top
-    environment:
-      << : *default-environment # loads the defined environment variables from the top
-
-
-  mariadb:
-    image: amazeeio/mariadb
-    labels:
-      lagoon.type: mariadb
-    ports:
-      - "3306" # exposes the port 3306 with a random local port, find it with `docker-compose port mariadb 3306`
-    << : *default-user # uses the defined user from top
-    environment:
-      << : *default-environment
 
 networks:
   amazeeio-network:

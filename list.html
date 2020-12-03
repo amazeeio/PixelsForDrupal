@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pixels for Drupal</title>
+    <meta name="Description" content="The #DrupalCares campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19. Each donation for #DrupalCares gives you 20x that amount in pixels! ">
+    <link type="text/plain" rel="author" href="humans.txt" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+    <link rel="mask-icon" href="assets/images/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+
+
+<div id="main-top-header" class="main-top-header fontend jumbotron mb-0">
+    <canvas id="animation-canvas"></canvas>
+    <div class="main-top-header-content container text-center">
+        <h1>Pixels for Drupal</h1>
+                    <p class="lead"> The <strong>#DrupalCares</strong> campaign is a fundraiser to protect the Drupal Association from the financial impact of COVID-19. <br>Each donation for <strong>#DrupalCares</strong> gives you 20x that amount in pixels! </p>
+            </div>
+</div>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-fill w-100 align-items-start">
+                <li class="nav-item">
+                    <a class="nav-link" href='/'>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='list.html'>List of Pixels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='faq.html'>FAQ</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid text-center">
+
+<div class="container px-0">
+
+<script>
+	var h_padding=10;
+	var v_padding=10;
+
+	var winWidth = 0;
+	var winHeight = 0;
+		
+	var pos = 'right';
+
+	var strCache = [];
+
+	var lastStr;
+	var trip_count = 0;
+
+	function initialize() {
+		bubblebox();
+		initFrameSize();
+	}
+
+	function bubblebox() {
+		window.bubblebox = document.getElementById('bubble');
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initialize);
+	} else {
+		initialize();
+	}
+
+	function initFrameSize() {
+
+		winWidth =1000;
+		winHeight =1000;
+	}
+
+	function is_right_available(e) {
+		if ((window.bubblebox.clientWidth + e.clientX + h_padding) >= winWidth) {
+// not available
+			return false;
+		}
+		return true;
+	}
+
+	function is_top_available(e) {
+		if ((e.clientY - window.bubblebox.clientHeight - v_padding) < 0) {
+			return false;
+		}
+		return true;
+
+	}
+
+	function is_bot_available(e) {
+		if ((e.clientY + window.bubblebox.clientHeight + v_padding) > winHeight) {
+			return false;
+		}
+		return true;
+	}
+
+	function is_left_available(e) {
+		if ((e.clientX - window.bubblebox.clientWidth - h_padding) < 0) {
+			return false;
+		}
+		return true;
+
+	}
+
+	function boxFinishedMoving() {
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
+
+//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
+		if ((y < window.bubblebox.ypos) || (y > window.bubblebox.ypos) || (x < window.bubblebox.xpos) || (x > window.bubblebox.xpos)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	function moveBox() {
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
+
+		var diffx = Math.abs(x - window.bubblebox.xpos);
+		var diffy = Math.abs(y - window.bubblebox.ypos);
+
+		if (!boxFinishedMoving()) {
+			if (y < window.bubblebox.ypos) {
+				y += Math.round(diffy * (0.01)) + 1; // calculate acceleration
+				window.bubblebox.style.top = y + "px";
+			}
+
+			if (y > window.bubblebox.ypos) {
+				y-=Math.round(diffy*(0.01))+1;
+				window.bubblebox.style.top = y + "px";
+			}
+
+			if (x < window.bubblebox.xpos) {
+				x+=Math.round(diffx*(0.01))+1; 
+				window.bubblebox.style.left = x + "px";
+			}
+
+			if (x > window.bubblebox.xpos) {
+				x -= Math.round(diffx * (0.01)) + 1;
+				window.bubblebox.style.left = x + "px";
+			}
+			  }
+		} 
+
+	///////////////
+
+	// This function is used for the instant pop-up box
+	function moveBox2() {
+
+		var y = window.bubblebox.offsetTop;
+		var x = window.bubblebox.offsetLeft;
+
+		var diffx = Math.abs(x - window.bubblebox.xpos);
+		var diffy = Math.abs(y - window.bubblebox.ypos);
+
+		if (!boxFinishedMoving()) {
+			if (y < window.bubblebox.ypos) {
+				y=y+diffy;
+				window.bubblebox.style.top = y + "px";
+			}
+
+			if (y > window.bubblebox.ypos) {
+				y=y-diffy;
+				window.bubblebox.style.top = y + "px";
+			}
+
+			if (x < window.bubblebox.xpos) {
+				x=x+diffx;
+				window.bubblebox.style.left = x + "px";
+			}
+
+			if (x > window.bubblebox.xpos) {
+				x=x-diffx;
+				window.bubblebox.style.left = x + "px";
+			  }
+		} 
+	}
+
+	function isBrowserCompatible() {
+
+// check if we can XMLHttpRequest
+
+		var xmlhttp=false;
+		/*@cc_on @*/
+		/*@if (@_jscript_version >= 5)
+		// JScript gives us Conditional compilation, we can cope with old IE versions.
+		// and security blocked creation of the objects.
+		try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+		try {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+		xmlhttp = false;
+		}
+		}
+		@end @*/
+		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		  xmlhttp = new XMLHttpRequest();
+		}
+
+		if (!xmlhttp) {
+			return false
+		}
+		return true;
+
+	}
+
+	////////////////////
+
+	function fillAdContent(aid, bubble) {
+
+		if (!isBrowserCompatible()) {
+			return false;
+		}
+
+		if (strCache[aid])
+		{
+			bubble.innerHTML = strCache[aid];
+			return true;
+		}
+
+//////////////////////////////////////////////////
+// AJAX Magic.
+//////////////////////////////////////////////////
+
+		var xmlhttp=false;
+		/*@cc_on @*/
+		/*@if (@_jscript_version >= 5)
+		// JScript gives us Conditional compilation, we can cope with old IE versions.
+		// and security blocked creation of the objects.
+		try {
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+		try {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} catch (E) {
+		xmlhttp = false;
+		}
+		}
+		@end @*/
+		if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+		  xmlhttp = new XMLHttpRequest();
+		}
+
+		xmlhttp.open("GET", "/popups/"+aid+".html", true);
+
+//alert("before trup_count:"+trip_count);
+
+		if (trip_count !== 0) { // trip_count: global variable counts how many times it goes to the server
+// waiting state...
+
+		}
+
+
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState===4) {
+//
+
+
+//alert(xmlhttp.responseText);
+
+
+				if (xmlhttp.responseText.length > 0) {
+					bubble.innerHTML = xmlhttp.responseText;
+					strCache[''+aid] = xmlhttp.responseText
+				} else {
+					
+					bubble.innerHTML = bubble.innerHTML.replace('<img src="periods.gif" border="0">','');
+				}
+				trip_count--;
+
+//document.getElementById('submit_button1').disabled=false;
+//document.getElementById('submit_button2').disabled=false;
+
+//var pointer = document.getElementById('block_pointer');
+//pointer.style.cursor='pointer';
+//var pixelimg = document.getElementById('pixelimg');
+//pixelimg.style.cursor='pointer';
+
+			}
+
+		};
+
+		xmlhttp.send(null)
+	}
+
+	////////////////
+
+	function sB(e, str, area, aid) {
+		window.clearTimeout(timeoutId);
+
+		if(window.bubblebox === undefined) {
+			window.bubblebox = document.getElementById('bubble');
+		}
+
+		var relTarg;
+		if (!e) e = window.event;
+		if (e.relatedTarget) relTarg = e.relatedTarget;
+		else if (e.fromElement) relTarg = e.fromElement;
+
+		if (lastStr !== str) {
+
+			lastStr=str;
+			
+			hideBubble(e);
+
+//window.status="x:"+x+" y:"+y+" box.ypos:"+box.ypos+" box.xpos:"+box.xpos;
+//	window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY;
+//str=str+"hello: "+bubble.clientWidth;
+//b.filter="progid:DXImageTransform.Microsoft.Blinds(Duration=0.5)";
+
+			document.getElementById('content').innerHTML=str;
+			trip_count++;
+			
+			fillAdContent(aid, document.getElementById('content'));
+
+//alert(document.getElementById('bubble').innerHTML);
+		}
+
+		var mytop = is_top_available(e);
+		var mybot = is_bot_available(e);
+		var myright = is_right_available(e);
+		var myleft = is_left_available(e);
+
+//window.status="e.clientX"+e.clientX+" e.clientY:"+e.clientY+" mytop:"+mytop+" mybot:"+mybot+" myright:"+myright+" myleft:"+myleft+" | clientWidth:"+bubble.clientWidth+" clientHeight:"+bubble.clientHeight+" ww:"+winWidth+" wh:"+winHeight;
+
+		if (mytop) {
+// move to the top
+//b.top=e.clientY-bubble.clientHeight-v_padding;
+			window.bubblebox.ypos = e.clientY - window.bubblebox.clientHeight - v_padding;
+//alert(bubble.xpos);
+		}
+
+		if (myright) {
+// move to the right
+//b.left=e.clientX+h_padding;//+bubble.clientWidth;
+			window.bubblebox.xpos = e.clientX + h_padding;
+		}
+
+		if (myleft) {
+// move to the left
+//b.left=e.clientX-bubble.clientWidth-h_padding ;
+			window.bubblebox.xpos = e.clientX - window.bubblebox.clientWidth - h_padding;
+		}
+
+
+		if (mybot) {
+// move to the bottom
+//b.top=e.clientY+v_padding;
+			window.bubblebox.ypos = e.clientY + v_padding;
+		}
+
+		window.bubblebox.style.visibility = 'visible';
+
+//ChangeBgd(bubble);
+
+					moveBox2();
+			}
+
+	function hBTimeout(e) {
+		lastStr='';
+		hideBubble(e);
+	}
+
+	function hideBubble(e) {
+		window.clearTimeout(timeoutId);
+		window.bubblebox.style.visibility = 'hidden';
+	}
+
+	var timeoutId=0;
+
+	function hI() {
+
+		if (timeoutId===0) {
+
+			timeoutId = window.setTimeout('hBTimeout()', '500')
+		}
+	}
+
+	function cI() {
+
+		if (timeoutId!==0) {
+			timeoutId=0;
+		}
+	}
+
+	function po(block_id) {
+
+	  block_clicked=true;
+	  window.open('click.php?block_id=' + block_id + '&BID=1','','');
+	  return false;
+	}
+	
+	var block_clicked = false; // did the user click a sold block?
+</script><!--
+This HTML file should only contain the SPAN element below.
+Please do not add anything else.
+The DIV element is displayed when a mouse is positioned over a block.
+You may change the colors, etc, inside the style tag.
+You *MUST* edit the template from the Admin. Go to Admin -> Ad Form -> Edit Template
+-->
+<style type="text/css">
+    #bubble {
+        position: absolute;
+        left: 0;
+        top: 0;
+        visibility: hidden;
+        background-color: #FFFFFF;
+        border-color: #33CCFF;
+        border-style: solid;
+        border-width: 1px;
+        padding: 5px;
+        margin: 0;
+        width: 200px;
+        filter: revealtrans();
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+    }
+
+    #content {
+        padding: 0;
+        margin: 0
+    }
+</style>
+<div onmouseout="hideBubble()" id="bubble">
+<span id="content">
+</span>
+</div>
+    <table class="table table-striped text-left">
+        <thead>
+        <tr>
+            <th scope="col">Date created</th>
+            <th scope="col">Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Pixels</th>
+        </tr>
+        </thead>
+        <tbody>
+                <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '#1xTeam cares - 1xINTERNET', this, 190)" onmousemove="sB(event, '#1xTeam cares - 1xINTERNET', this, 190)" onmouseout="hI()"  href="http://www.1xinternet.de">#1xTeam cares - 1xINTERNET</a>                </td>
+                <td>
+                    28000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 194)" onmousemove="sB(event, 'Appnovation', this, 194)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    24000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Todd Nienkerk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'The Web Chefs LOVE Drupal!', this, 177)" onmousemove="sB(event, 'The Web Chefs LOVE Drupal!', this, 177)" onmouseout="hI()"  href="http://www.fourkitchens.com">The Web Chefs LOVE Drupal!</a>                </td>
+                <td>
+                    20000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Chris Jorgenson                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Phase2', this, 192)" onmousemove="sB(event, 'Phase2', this, 192)" onmouseout="hI()"  href="http://www.phase2technology.com">Phase2</a>                </td>
+                <td>
+                    20000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Murray Woodman                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Morpht - Every day we’re Drupalin’ ♫', this, 106)" onmousemove="sB(event, 'Morpht - Every day we’re Drupalin’ ♫', this, 106)" onmouseout="hI()"  href="http://www.morpht.com">Morpht - Every day we’re Drupalin’ ♫</a>                </td>
+                <td>
+                    19600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-10                </td>
+                <td>
+                    David Pratt                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zoocha', this, 230)" onmousemove="sB(event, 'Zoocha', this, 230)" onmouseout="hI()"  href="http://www.zoocha.com">Zoocha</a>                </td>
+                <td>
+                    12800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Palantir.net', this, 188)" onmousemove="sB(event, 'Palantir.net', this, 188)" onmouseout="hI()"  href="http://www.palantir.net/blog/supporting-drupal-community-through-drupalcares ">Palantir.net</a>                </td>
+                <td>
+                    12500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Suzanne Dergacheva                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Evolving Web Cares', this, 133)" onmousemove="sB(event, 'Evolving Web Cares', this, 133)" onmouseout="hI()"  href="http://evolvingweb.ca">Evolving Web Cares</a>                </td>
+                <td>
+                    10800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-29                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'geerlingguy', this, 2)" onmousemove="sB(event, 'geerlingguy', this, 2)" onmouseout="hI()"  href="http://www.jeffgeerling.com">geerlingguy</a>                </td>
+                <td>
+                    10000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Adam Hermsdorfer                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'BigTuna Interactive', this, 39)" onmousemove="sB(event, 'BigTuna Interactive', this, 39)" onmouseout="hI()"  href="http://www.bigtunainteractive.com">BigTuna Interactive</a>                </td>
+                <td>
+                    10000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Aubrey Sambor                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'starshaped', this, 128)" onmousemove="sB(event, 'starshaped', this, 128)" onmouseout="hI()"  href="http://drupal.org/u/starshaped">starshaped</a>                </td>
+                <td>
+                    10000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Jeremy Andrews                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Tag1 for Drupal!', this, 117)" onmousemove="sB(event, 'Tag1 for Drupal!', this, 117)" onmouseout="hI()"  href="http://tag1.com">Tag1 for Drupal!</a>                </td>
+                <td>
+                    9800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Mikko Hämäläinen                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Delivering magic :) and sometimes t-shirts!', this, 64)" onmousemove="sB(event, 'Delivering magic :) and sometimes t-shirts!', this, 64)" onmouseout="hI()"  href="http://www.druid.fi/en">Delivering magic :) and sometimes t-shirts!</a>                </td>
+                <td>
+                    9600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Lee Walker                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Code Journeymen LLC', this, 12)" onmousemove="sB(event, 'Code Journeymen LLC', this, 12)" onmouseout="hI()"  href="http://www.codejourneymen.com">Code Journeymen LLC</a>                </td>
+                <td>
+                    8800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-11                </td>
+                <td>
+                    QED42 Engineering                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Strong! ', this, 234)" onmousemove="sB(event, 'Drupal Strong! ', this, 234)" onmouseout="hI()"  href="http://www.qed42.com/services/decoupled-drupal">Drupal Strong! </a>                </td>
+                <td>
+                    8400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-09                </td>
+                <td>
+                    Jeremy Andrews                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal 7 Extended Support, Drupal 6 Long Term Support', this, 228)" onmousemove="sB(event, 'Drupal 7 Extended Support, Drupal 6 Long Term Support', this, 228)" onmouseout="hI()"  href="http://quo.tag1.com">Drupal 7 Extended Support, Drupal 6 Long Term Support</a>                </td>
+                <td>
+                    7200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Kristen Pol                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Special #DrupalCares image created by Aaron Deutsch (uploaded by proud mom, Kristen Pol). Thanks Drupal community!', this, 71)" onmousemove="sB(event, 'Special #DrupalCares image created by Aaron Deutsch (uploaded by proud mom, Kristen Pol). Thanks Drupal community!', this, 71)" onmouseout="hI()"  href="http://www.drupal.org/u/aarondeutsch">Special #DrupalCares image created by Aaron Deutsch (uploaded by proud mom, Kristen Pol). Thanks Drupal community!</a>                </td>
+                <td>
+                    7000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-11                </td>
+                <td>
+                    QED42 Engineering                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'In love with Drupal since 2009', this, 235)" onmousemove="sB(event, 'In love with Drupal since 2009', this, 235)" onmouseout="hI()"  href="http://www.qed42.com/blog/events">In love with Drupal since 2009</a>                </td>
+                <td>
+                    6600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Michael Anello                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'DrupalEasy', this, 73)" onmousemove="sB(event, 'DrupalEasy', this, 73)" onmouseout="hI()"  href="http://www.drupaleasy.com">DrupalEasy</a>                </td>
+                <td>
+                    6400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Patrick Muzyk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Fractal Solutions', this, 118)" onmousemove="sB(event, 'Fractal Solutions', this, 118)" onmouseout="hI()"  href="http://www.fractalsolutions.com.au">Fractal Solutions</a>                </td>
+                <td>
+                    6000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-19                </td>
+                <td>
+                    Saud F                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Saud', this, 270)" onmousemove="sB(event, 'Saud', this, 270)" onmouseout="hI()"  href="http://drupal.org/u/samaphp">Saud</a>                </td>
+                <td>
+                    6000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'St. Louis Drupal Users Group', this, 170)" onmousemove="sB(event, 'St. Louis Drupal Users Group', this, 170)" onmouseout="hI()"  href="http://www.drupalstl.org">St. Louis Drupal Users Group</a>                </td>
+                <td>
+                    5600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Midwestern Mac, LLC', this, 171)" onmousemove="sB(event, 'Midwestern Mac, LLC', this, 171)" onmouseout="hI()"  href="http://www.midwesternmac.com">Midwestern Mac, LLC</a>                </td>
+                <td>
+                    4900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Petr Illek                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thank you Drupal.', this, 9)" onmousemove="sB(event, 'Thank you Drupal.', this, 9)" onmouseout="hI()"  href="http://www.drupal.org/u/petr-illek">Thank you Drupal.</a>                </td>
+                <td>
+                    4900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Jerad Bitner                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Love one another', this, 19)" onmousemove="sB(event, 'Love one another', this, 19)" onmouseout="hI()"  href="http://jeradbitner.com">Love one another</a>                </td>
+                <td>
+                    4900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Stella Power                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Annertech', this, 38)" onmousemove="sB(event, 'Annertech', this, 38)" onmouseout="hI()"  href="http://www.annertech.com">Annertech</a>                </td>
+                <td>
+                    4900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Audra Martin Merrick                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thank you from Audra!', this, 191)" onmousemove="sB(event, 'Thank you from Audra!', this, 191)" onmouseout="hI()"  href="http://www.drupal.org/association/board">Thank you from Audra!</a>                </td>
+                <td>
+                    4900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal VM', this, 172)" onmousemove="sB(event, 'Drupal VM', this, 172)" onmouseout="hI()"  href="http://www.drupalvm.com">Drupal VM</a>                </td>
+                <td>
+                    4800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-11                </td>
+                <td>
+                    QED42 Engineering                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'DrupalIndia Cares ', this, 237)" onmousemove="sB(event, 'DrupalIndia Cares ', this, 237)" onmouseout="hI()"  href="http://www.qed42.com/blog/story-behind-our-hindi-drupal-t-shirt">DrupalIndia Cares </a>                </td>
+                <td>
+                    4500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'LadyBird paws Drupal!', this, 94)" onmousemove="sB(event, 'LadyBird paws Drupal!', this, 94)" onmouseout="hI()"  href="http://www.instagram.com/southernswissy/">LadyBird paws Drupal!</a>                </td>
+                <td>
+                    4000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Gus Childs                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Gus Childs', this, 21)" onmousemove="sB(event, 'Gus Childs', this, 21)" onmouseout="hI()"  href="http://guschilds.com">Gus Childs</a>                </td>
+                <td>
+                    4000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Chris Davis                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Yoshi!', this, 42)" onmousemove="sB(event, 'Yoshi!', this, 42)" onmouseout="hI()"  href="http://cdchris12.com">Yoshi!</a>                </td>
+                <td>
+                    4000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Ed Reel                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'uberhacker', this, 141)" onmousemove="sB(event, 'uberhacker', this, 141)" onmouseout="hI()"  href="http://www.drupal.org/u/uberhacker">uberhacker</a>                </td>
+                <td>
+                    4000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-14                </td>
+                <td>
+                    Allison Manley                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Kanopi Studios', this, 243)" onmousemove="sB(event, 'Kanopi Studios', this, 243)" onmouseout="hI()"  href="http://www.kanopi.com">Kanopi Studios</a>                </td>
+                <td>
+                    4000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'The Drupal Song', this, 173)" onmousemove="sB(event, 'The Drupal Song', this, 173)" onmouseout="hI()"  href="http://www.youtube.com/watch?v=lZ-s3DRZJKY">The Drupal Song</a>                </td>
+                <td>
+                    3600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Vijaya Chandran Mani                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'vijaycs85', this, 7)" onmousemove="sB(event, 'vijaycs85', this, 7)" onmouseout="hI()"  href="http://www.drupal.org/u/vijaycs85">vijaycs85</a>                </td>
+                <td>
+                    3600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Andrew Mellenger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Mellenger is WFH\ing in Canada, with our maple syrup, beavers and subsidies to keep us warm. ', this, 35)" onmousemove="sB(event, 'Mellenger is WFH\ing in Canada, with our maple syrup, beavers and subsidies to keep us warm. ', this, 35)" onmouseout="hI()"  href="http://mellenger.com">Mellenger is WFH\'ing in Canada, with our maple syrup, beavers and subsidies to keep us warm. </a>                </td>
+                <td>
+                    3600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-04                </td>
+                <td>
+                    John Picozzi                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Talking Drupal - We love Drupal!', this, 165)" onmousemove="sB(event, 'Talking Drupal - We love Drupal!', this, 165)" onmouseout="hI()"  href="http://talkingdrupal.com">Talking Drupal - We love Drupal!</a>                </td>
+                <td>
+                    3600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-08                </td>
+                <td>
+                    Stephan Luckow                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '#drupallove', this, 224)" onmousemove="sB(event, '#drupallove', this, 224)" onmouseout="hI()"  href="http://www.gesellschaft-zur-entwicklung-von-dingen.de">#drupallove</a>                </td>
+                <td>
+                    3600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Dragos Dumitrescu                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'dragos-dumi', this, 116)" onmousemove="sB(event, 'dragos-dumi', this, 116)" onmouseout="hI()"  href="http://linkedin.com/in/dragos-dumi">dragos-dumi</a>                </td>
+                <td>
+                    3000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Greg Anderson                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'g1a', this, 135)" onmousemove="sB(event, 'g1a', this, 135)" onmouseout="hI()"  href="http://www.drupal.org/u/greg1anderson">g1a</a>                </td>
+                <td>
+                    3000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Stenta                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'farmOS - Drupal distribution for farm recordkeeping', this, 127)" onmousemove="sB(event, 'farmOS - Drupal distribution for farm recordkeeping', this, 127)" onmouseout="hI()"  href="http://farmOS.org">farmOS - Drupal distribution for farm recordkeeping</a>                </td>
+                <td>
+                    3000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    April Sides                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Camp Asheville - The Drupal Bear Cares', this, 14)" onmousemove="sB(event, 'Drupal Camp Asheville - The Drupal Bear Cares', this, 14)" onmouseout="hI()"  href="http://www.drupalasheville.com">Drupal Camp Asheville - The Drupal Bear Cares</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Baddy Breidert                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '1xINTERNET ', this, 29)" onmousemove="sB(event, '1xINTERNET ', this, 29)" onmouseout="hI()"  href="http://www.1xinternet.de">1xINTERNET </a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Owen Lansbury                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'PreviousNext', this, 41)" onmousemove="sB(event, 'PreviousNext', this, 41)" onmouseout="hI()"  href="http://www.previousnext.com.au">PreviousNext</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Jürgen Haas                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Jürgen Haas', this, 72)" onmousemove="sB(event, 'Jürgen Haas', this, 72)" onmouseout="hI()"  href="http://www.paragon-es.de">Jürgen Haas</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Oliver Davies                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Oliver Davies (opdavies)', this, 125)" onmousemove="sB(event, 'Oliver Davies (opdavies)', this, 125)" onmouseout="hI()"  href="http://www.oliverdavies.uk">Oliver Davies (opdavies)</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 193)" onmousemove="sB(event, 'Appnovation', this, 193)" onmouseout="hI()"  href="http://www.appnovation.com/">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 195)" onmousemove="sB(event, 'Appnovation', this, 195)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 196)" onmousemove="sB(event, 'Appnovation', this, 196)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 197)" onmousemove="sB(event, 'Appnovation', this, 197)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 198)" onmousemove="sB(event, 'Appnovation', this, 198)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 199)" onmousemove="sB(event, 'Appnovation', this, 199)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 200)" onmousemove="sB(event, 'Appnovation', this, 200)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 201)" onmousemove="sB(event, 'Appnovation', this, 201)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 202)" onmousemove="sB(event, 'Appnovation', this, 202)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 203)" onmousemove="sB(event, 'Appnovation', this, 203)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 204)" onmousemove="sB(event, 'Appnovation', this, 204)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 205)" onmousemove="sB(event, 'Appnovation', this, 205)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 206)" onmousemove="sB(event, 'Appnovation', this, 206)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 207)" onmousemove="sB(event, 'Appnovation', this, 207)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 208)" onmousemove="sB(event, 'Appnovation', this, 208)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 209)" onmousemove="sB(event, 'Appnovation', this, 209)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 210)" onmousemove="sB(event, 'Appnovation', this, 210)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 211)" onmousemove="sB(event, 'Appnovation', this, 211)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 212)" onmousemove="sB(event, 'Appnovation', this, 212)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 213)" onmousemove="sB(event, 'Appnovation', this, 213)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 214)" onmousemove="sB(event, 'Appnovation', this, 214)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 215)" onmousemove="sB(event, 'Appnovation', this, 215)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 216)" onmousemove="sB(event, 'Appnovation', this, 216)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 217)" onmousemove="sB(event, 'Appnovation', this, 217)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 218)" onmousemove="sB(event, 'Appnovation', this, 218)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 219)" onmousemove="sB(event, 'Appnovation', this, 219)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 220)" onmousemove="sB(event, 'Appnovation', this, 220)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 221)" onmousemove="sB(event, 'Appnovation', this, 221)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 222)" onmousemove="sB(event, 'Appnovation', this, 222)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-07                </td>
+                <td>
+                    Arnold Leung                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Appnovation', this, 223)" onmousemove="sB(event, 'Appnovation', this, 223)" onmouseout="hI()"  href="http://appnovation.com">Appnovation</a>                </td>
+                <td>
+                    2500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Mori Sugimoto                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Mori Sugimoto (dokumori)', this, 67)" onmousemove="sB(event, 'Mori Sugimoto (dokumori)', this, 67)" onmouseout="hI()"  href="http://drupal.org/u/dokumori">Mori Sugimoto (dokumori)</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Andrew Mallis                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Kalamuna - indebted to the community, contributors to the culture', this, 31)" onmousemove="sB(event, 'Kalamuna - indebted to the community, contributors to the culture', this, 31)" onmouseout="hI()"  href="http://www.kalamuna.com">Kalamuna - indebted to the community, contributors to the culture</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Peter Davis                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Fuzion - loving Drupal + CiviCRM', this, 47)" onmousemove="sB(event, 'Fuzion - loving Drupal + CiviCRM', this, 47)" onmouseout="hI()"  href="http://fuzion.co.nz">Fuzion - loving Drupal + CiviCRM</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Vincenzo De Naro Papa                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vito loves Drupal', this, 70)" onmousemove="sB(event, 'Vito loves Drupal', this, 70)" onmouseout="hI()"  href="http://www.amazee.io/about-us/people/vincenzo-de-naro-papa">Vito loves Drupal</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Christoph Breidert                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Christoph Breidert - 1xINTERNET', this, 130)" onmousemove="sB(event, 'Christoph Breidert - 1xINTERNET', this, 130)" onmouseout="hI()"  href="http://www.1xinternet.de">Christoph Breidert - 1xINTERNET</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-12                </td>
+                <td>
+                    Damien McKenna                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Damien McKenna', this, 239)" onmousemove="sB(event, 'Damien McKenna', this, 239)" onmouseout="hI()"  href="http://www.drupal.org/u/damienmckenna">Damien McKenna</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Alanna Burke                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Guinea pigs need rescue, too! This is Ada, named for Ada Lovelace. Adopt, foster, or donate!', this, 79)" onmousemove="sB(event, 'Guinea pigs need rescue, too! This is Ada, named for Ada Lovelace. Adopt, foster, or donate!', this, 79)" onmouseout="hI()"  href="http://halfrescue.com">Guinea pigs need rescue, too! This is Ada, named for Ada Lovelace. Adopt, foster, or donate!</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Radim Klaška                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Czech Drupal Association', this, 111)" onmousemove="sB(event, 'Czech Drupal Association', this, 111)" onmouseout="hI()"  href="http://www.drupal.cz">Czech Drupal Association</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-06                </td>
+                <td>
+                    Richard Sheppard                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'siliconmeadow', this, 185)" onmousemove="sB(event, 'siliconmeadow', this, 185)" onmouseout="hI()"  href="http://www.drupal.org/u/siliconmeadow">siliconmeadow</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-04                </td>
+                <td>
+                    Taco Potze                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Open Social - Online community software - Connect, Activate, Collaborate, Innovate, and Grow', this, 163)" onmousemove="sB(event, 'Open Social - Online community software - Connect, Activate, Collaborate, Innovate, and Grow', this, 163)" onmouseout="hI()"  href="http://www.getopensocial.com">Open Social - Online community software - Connect, Activate, Collaborate, Innovate, and Grow</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-14                </td>
+                <td>
+                    Matthew Obert                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Hot Web Matter loves Drupal!', this, 242)" onmousemove="sB(event, 'Hot Web Matter loves Drupal!', this, 242)" onmouseout="hI()"  href="http://hotwebmatter.com">Hot Web Matter loves Drupal!</a>                </td>
+                <td>
+                    2000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Gunnar Neef                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Tojio - Full Service Digital Agency, Germany', this, 58)" onmousemove="sB(event, 'Tojio - Full Service Digital Agency, Germany', this, 58)" onmouseout="hI()"  href="http://www.tojio.com">Tojio - Full Service Digital Agency, Germany</a>                </td>
+                <td>
+                    1800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Leslie Glynn                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Redfin Solutions', this, 76)" onmousemove="sB(event, 'Redfin Solutions', this, 76)" onmouseout="hI()"  href="http://redfinsolutions.com">Redfin Solutions</a>                </td>
+                <td>
+                    1800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Sean Hamlin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '❤️Drupal', this, 28)" onmousemove="sB(event, '❤️Drupal', this, 28)" onmouseout="hI()"  href="http://www.pixelite.co.nz">❤️Drupal</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Todd Nienkerk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'The Web Chefs love Drupal!', this, 3)" onmousemove="sB(event, 'The Web Chefs love Drupal!', this, 3)" onmouseout="hI()"  href="http://www.fourkitchens.com">The Web Chefs love Drupal!</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Franz Karlsberger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'We care!', this, 11)" onmousemove="sB(event, 'We care!', this, 11)" onmouseout="hI()"  href="http://www.amazee.io">We care!</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Matt Glaman                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Centarro', this, 10)" onmousemove="sB(event, 'Centarro', this, 10)" onmouseout="hI()"  href="http://www.centarro.io">Centarro</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Osman Gormus                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Lazy-load', this, 23)" onmousemove="sB(event, 'Lazy-load', this, 23)" onmouseout="hI()"  href="http://drupal.org/project/lazy">Lazy-load</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Fredric Mitchell                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Bright Plum - Specializing in D8 migrations, performance, and custom module dev', this, 24)" onmousemove="sB(event, 'Bright Plum - Specializing in D8 migrations, performance, and custom module dev', this, 24)" onmouseout="hI()"  href="http://brightplum.com">Bright Plum - Specializing in D8 migrations, performance, and custom module dev</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Lisa Streeter                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Centarro - Commerce with confidence', this, 27)" onmousemove="sB(event, 'Centarro - Commerce with confidence', this, 27)" onmouseout="hI()"  href="http://www.centarro.io">Centarro - Commerce with confidence</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Greg Knaddison                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'greggles', this, 32)" onmousemove="sB(event, 'greggles', this, 32)" onmouseout="hI()"  href="http://twitter.com/greggles">greggles</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    John Picozzi                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Oomph loves Drupal!', this, 36)" onmousemove="sB(event, 'Oomph loves Drupal!', this, 36)" onmouseout="hI()"  href="http://oomphinc.com">Oomph loves Drupal!</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Murray Woodman                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Murray Woodman', this, 45)" onmousemove="sB(event, 'Murray Woodman', this, 45)" onmouseout="hI()"  href="http://www.drupal.org/u/murrayw">Murray Woodman</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    David Thorne                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'David Thorne (Cferthorney)', this, 49)" onmousemove="sB(event, 'David Thorne (Cferthorney)', this, 49)" onmouseout="hI()"  href="http://www.cferthorney.com">David Thorne (Cferthorney)</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Nic Rodgers                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Nic Rodgers', this, 59)" onmousemove="sB(event, 'Nic Rodgers', this, 59)" onmouseout="hI()"  href="http://www.drupal.org/u/nicrodgers">Nic Rodgers</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Dan Moriarty                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Electric Citizen loves Drupal', this, 167)" onmousemove="sB(event, 'Electric Citizen loves Drupal', this, 167)" onmouseout="hI()"  href="http://www.electriccitizen.com">Electric Citizen loves Drupal</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Vit Hovezak                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vit Hovezak for Drupal !', this, 153)" onmousemove="sB(event, 'Vit Hovezak for Drupal !', this, 153)" onmouseout="hI()"  href="http://drupal.org/u/kyberman">Vit Hovezak for Drupal !</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Ken Colwell                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Ken Colwell', this, 129)" onmousemove="sB(event, 'Ken Colwell', this, 129)" onmouseout="hI()"  href="http://www.kcolwell.com">Ken Colwell</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Thom Toogood                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '8thom amazee.io', this, 156)" onmousemove="sB(event, '8thom amazee.io', this, 156)" onmouseout="hI()"  href="http://twitter.com/thomtoogood">8thom amazee.io</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Dean Valentine                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'RIP Odin 2008 - 2018', this, 148)" onmousemove="sB(event, 'RIP Odin 2008 - 2018', this, 148)" onmouseout="hI()"  href="http://deans.page">RIP Odin 2008 - 2018</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-10                </td>
+                <td>
+                    Enrique Worwa                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Comfort zone is a nice place where nothing grows', this, 231)" onmousemove="sB(event, 'Comfort zone is a nice place where nothing grows', this, 231)" onmouseout="hI()"  href="http://www.linkedin.com/in/enrique-worwa">Comfort zone is a nice place where nothing grows</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-13                </td>
+                <td>
+                    AmyJune Hineline                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'volkswagenchick', this, 240)" onmousemove="sB(event, 'volkswagenchick', this, 240)" onmouseout="hI()"  href="http://www.drupal.org/u/volkswagenchick">volkswagenchick</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-28                </td>
+                <td>
+                    Nathaniel Dobbin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thanks Drupal', this, 262)" onmousemove="sB(event, 'Thanks Drupal', this, 262)" onmouseout="hI()"  href="http://twitter.com/natted">Thanks Drupal</a>                </td>
+                <td>
+                    1600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Donna Benjamin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Donna Benjamin', this, 140)" onmousemove="sB(event, 'Donna Benjamin', this, 140)" onmouseout="hI()"  href="http://red.ht/labs">Donna Benjamin</a>                </td>
+                <td>
+                    1500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-14                </td>
+                <td>
+                    Jurgen van Hoof                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'React online', this, 241)" onmousemove="sB(event, 'React online', this, 241)" onmouseout="hI()"  href="http://www.reactonline.nl">React online</a>                </td>
+                <td>
+                    1500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Pedro Cambra                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Cambrico', this, 75)" onmousemove="sB(event, 'Cambrico', this, 75)" onmouseout="hI()"  href="http://cambrico.net">Cambrico</a>                </td>
+                <td>
+                    1200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-04                </td>
+                <td>
+                    Surabhi Gokte                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Srijan Technologies', this, 164)" onmousemove="sB(event, 'Srijan Technologies', this, 164)" onmouseout="hI()"  href="http://www.srijan.net">Srijan Technologies</a>                </td>
+                <td>
+                    1200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-27                </td>
+                <td>
+                    Daniel Schoone                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'd-Media web professionals', this, 260)" onmousemove="sB(event, 'd-Media web professionals', this, 260)" onmouseout="hI()"  href="http://d-media.nl">d-Media web professionals</a>                </td>
+                <td>
+                    1000                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Dan Lemon                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ██░▄▄▀█░▄▄▀█░▄▄▀███░████░▄▄█░▄▀▄░█▀▄▄▀█░▄▄▀██▀█▄▀█ ██░██░█░▀▀░█░██░███░████░▄▄█░█▄█░█░██░█░██░█████░█ ██░▀▀░█▄██▄█▄██▄███░▀▀░█▄▄▄█▄███▄██▄▄██▄██▄██▄█▀▄█ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀', this, 40)" onmousemove="sB(event, '▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ██░▄▄▀█░▄▄▀█░▄▄▀███░████░▄▄█░▄▀▄░█▀▄▄▀█░▄▄▀██▀█▄▀█ ██░██░█░▀▀░█░██░███░████░▄▄█░█▄█░█░██░█░██░█████░█ ██░▀▀░█▄██▄█▄██▄███░▀▀░█▄▄▄█▄███▄██▄▄██▄██▄██▄█▀▄█ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀', this, 40)" onmouseout="hI()"  href="http://danlemon.com">▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ ██░▄▄▀█░▄▄▀█░▄▄▀███░████░▄▄█░▄▀▄░█▀▄▄▀█░▄▄▀██▀█▄▀█ ██░██░█░▀▀░█░██░███░████░▄▄█░█▄█░█░██░█░██░█████░█ ██░▀▀░█▄██▄█▄██▄███░▀▀░█▄▄▄█▄███▄██▄▄██▄██▄██▄█▀▄█ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Anatolii Pazhyn                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Amplify your Drupal capacity with AnyforSoft', this, 69)" onmousemove="sB(event, 'Amplify your Drupal capacity with AnyforSoft', this, 69)" onmouseout="hI()"  href="http://anyforsoft.com">Amplify your Drupal capacity with AnyforSoft</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Hosted Apache Solr search for Drupal', this, 174)" onmousemove="sB(event, 'Hosted Apache Solr search for Drupal', this, 174)" onmouseout="hI()"  href="http://hostedapachesolr.com">Hosted Apache Solr search for Drupal</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Christophe Jossart                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'colorfield', this, 5)" onmousemove="sB(event, 'colorfield', this, 5)" onmouseout="hI()"  href="http://colorfield.eu">colorfield</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Danny Lufkin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Danny Lufkin', this, 37)" onmousemove="sB(event, 'Danny Lufkin', this, 37)" onmouseout="hI()"  href="http://dannylufkin.com">Danny Lufkin</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    April Sides                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'April Sides (weekbeforenext)', this, 26)" onmousemove="sB(event, 'April Sides (weekbeforenext)', this, 26)" onmouseout="hI()"  href="http://www.drupal.org/u/weekbeforenext">April Sides (weekbeforenext)</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    George Hazlewood                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'ʕ•ᴥ•ʔ', this, 60)" onmousemove="sB(event, 'ʕ•ᴥ•ʔ', this, 60)" onmouseout="hI()"  href="http://www.drupal.org/u/ghazlewood">ʕ•ᴥ•ʔ</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Tara King                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Diversity &amp; Inclusion', this, 43)" onmousemove="sB(event, 'Drupal Diversity &amp; Inclusion', this, 43)" onmouseout="hI()"  href="http://www.drupaldiversity.com">Drupal Diversity &amp; Inclusion</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Ken Rickard                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Palantir.net', this, 18)" onmousemove="sB(event, 'Palantir.net', this, 18)" onmouseout="hI()"  href="http://palantir.net">Palantir.net</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Florent Torregrosa                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Grimreaper - Drupal changed my life!', this, 22)" onmousemove="sB(event, 'Grimreaper - Drupal changed my life!', this, 22)" onmouseout="hI()"  href="http://www.drupal.org/u/grimreaper">Grimreaper - Drupal changed my life!</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    michael böker                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'michael', this, 48)" onmousemove="sB(event, 'michael', this, 48)" onmouseout="hI()"  href="http://drupal.org/u/mmbk">michael</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Henrik Kierbaum                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Build a better world together', this, 50)" onmousemove="sB(event, 'Build a better world together', this, 50)" onmouseout="hI()"  href="http://k1-mediendesign.de">Build a better world together</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Marcos Cano                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Marcos Cano', this, 54)" onmousemove="sB(event, 'Marcos Cano', this, 54)" onmouseout="hI()"  href="http://www.drupal.org/u/marcoscano">Marcos Cano</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    George Boobyer                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'George @ Blue-bag', this, 136)" onmousemove="sB(event, 'George @ Blue-bag', this, 136)" onmouseout="hI()"  href="http://www.blue-bag.com">George @ Blue-bag</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    raphael khaiat                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'bacardi55', this, 81)" onmousemove="sB(event, 'bacardi55', this, 81)" onmouseout="hI()"  href="http://bacardi55.io">bacardi55</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Radim Klaška                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Radim Klaška', this, 110)" onmousemove="sB(event, 'Radim Klaška', this, 110)" onmouseout="hI()"  href="http://www.drupal.org/u/radimklaska">Radim Klaška</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Jan Polzer                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Jan Polzer, Drupal developer and writer', this, 122)" onmousemove="sB(event, 'Jan Polzer, Drupal developer and writer', this, 122)" onmouseout="hI()"  href="http://www.polzer-sw.com">Jan Polzer, Drupal developer and writer</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Tomas Olivera                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Solucionex', this, 124)" onmousemove="sB(event, 'Solucionex', this, 124)" onmouseout="hI()"  href="http://www.solucionex.com">Solucionex</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Richard Dewick                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Centric', this, 252)" onmousemove="sB(event, 'Drupal Centric', this, 252)" onmouseout="hI()"  href="http://www.drupalcentric.solutions">Drupal Centric</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Toby Bellwood                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'GovCMS (Australian Government)', this, 151)" onmousemove="sB(event, 'GovCMS (Australian Government)', this, 151)" onmouseout="hI()"  href="http://www.drupal.org/govcms-australian-government-department-of-finance">GovCMS (Australian Government)</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-04                </td>
+                <td>
+                    Max Starkenburg                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Max Starkenburg', this, 160)" onmousemove="sB(event, 'Max Starkenburg', this, 160)" onmouseout="hI()"  href="http://maxwell.fyi">Max Starkenburg</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-04                </td>
+                <td>
+                    Brynn McGarry                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'annex', this, 161)" onmousemove="sB(event, 'annex', this, 161)" onmouseout="hI()"  href="http://www.annex.com.au">annex</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-08                </td>
+                <td>
+                    Stephan Luckow                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'we take care', this, 227)" onmousemove="sB(event, 'we take care', this, 227)" onmouseout="hI()"  href="http://www.drupal.org/u/luckow">we take care</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-10                </td>
+                <td>
+                    Queenie Robertson                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Queenie Robertson', this, 229)" onmousemove="sB(event, 'Queenie Robertson', this, 229)" onmouseout="hI()"  href="http://queenie.com.au">Queenie Robertson</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-11                </td>
+                <td>
+                    Guy Schneerson                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'guy @ blue-bag.com', this, 233)" onmousemove="sB(event, 'guy @ blue-bag.com', this, 233)" onmouseout="hI()"  href="http://www.blue-bag.com">guy @ blue-bag.com</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-18                </td>
+                <td>
+                    Vasilis Papoutsakis                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zekvyrin', this, 245)" onmousemove="sB(event, 'Zekvyrin', this, 245)" onmouseout="hI()"  href="http://www.drupal.org/u/zekvyrin">Zekvyrin</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Anja Schirwinski                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'undpaul', this, 247)" onmousemove="sB(event, 'undpaul', this, 247)" onmouseout="hI()"  href="http://www.undpaul.de">undpaul</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Lucas Torres                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Luke', this, 255)" onmousemove="sB(event, 'Luke', this, 255)" onmouseout="hI()"  href="http://agileana.com">Luke</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-21                </td>
+                <td>
+                    Vladimir R                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Tomato Elephant Studio ❤️ Drupal', this, 257)" onmousemove="sB(event, 'Tomato Elephant Studio ❤️ Drupal', this, 257)" onmouseout="hI()"  href="http://www.tomato-elephant-studio.com">Tomato Elephant Studio ❤️ Drupal</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-22                </td>
+                <td>
+                    V J                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'vaish', this, 258)" onmousemove="sB(event, 'vaish', this, 258)" onmouseout="hI()"  href="http://www.drupal.org/u/vaish">vaish</a>                </td>
+                <td>
+                    900                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Miro Michalicka                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Slovakia', this, 6)" onmousemove="sB(event, 'Drupal Slovakia', this, 6)" onmouseout="hI()"  href="http://drupal.sk">Drupal Slovakia</a>                </td>
+                <td>
+                    800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-18                </td>
+                <td>
+                    Paul McKibben                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Turbojet Technologies: Web Solutions to Let Your Ideas Take Flight!', this, 244)" onmousemove="sB(event, 'Turbojet Technologies: Web Solutions to Let Your Ideas Take Flight!', this, 244)" onmouseout="hI()"  href="http://www.turbojettech.com">Turbojet Technologies: Web Solutions to Let Your Ideas Take Flight!</a>                </td>
+                <td>
+                    800                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Ed Reel                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal Connect', this, 149)" onmousemove="sB(event, 'Drupal Connect', this, 149)" onmouseout="hI()"  href="http://drupalconnect.com">Drupal Connect</a>                </td>
+                <td>
+                    700                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Brandon Williams                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Free puzzle :)', this, 123)" onmousemove="sB(event, 'Free puzzle :)', this, 123)" onmouseout="hI()"  href="http://www.drupal.org/u/rocketeerbkw">Free puzzle :)</a>                </td>
+                <td>
+                    600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Nicole DeAngelis                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Alfie Doodle Cares', this, 168)" onmousemove="sB(event, 'Alfie Doodle Cares', this, 168)" onmouseout="hI()"  href="http://joeyro.com">Alfie Doodle Cares</a>                </td>
+                <td>
+                    600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Manuel Adan                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Arcovía Digital', this, 121)" onmousemove="sB(event, 'Arcovía Digital', this, 121)" onmouseout="hI()"  href="http://www.arcovia.com">Arcovía Digital</a>                </td>
+                <td>
+                    600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-11                </td>
+                <td>
+                    Christopher Snyder                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Chris Snyder - Drupal/PHP Developer', this, 238)" onmousemove="sB(event, 'Chris Snyder - Drupal/PHP Developer', this, 238)" onmouseout="hI()"  href="http://chrissnyder.org">Chris Snyder - Drupal/PHP Developer</a>                </td>
+                <td>
+                    600                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Radosław Ługowicz                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '13 years, and I still love Drupal. Drupal is awesome. Radek', this, 159)" onmousemove="sB(event, '13 years, and I still love Drupal. Drupal is awesome. Radek', this, 159)" onmouseout="hI()"  href="http://netmachina.com">13 years, and I still love Drupal. Drupal is awesome. Radek</a>                </td>
+                <td>
+                    500                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Thomas Narres                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'NOW Solutions', this, 62)" onmousemove="sB(event, 'NOW Solutions', this, 62)" onmouseout="hI()"  href="http://www.xing.com/profile/Thomas_Narres">NOW Solutions</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    JF Cartier                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Kiwad (Montreal/Quebec)', this, 4)" onmousemove="sB(event, 'Kiwad (Montreal/Quebec)', this, 4)" onmouseout="hI()"  href="http://kiwad.com">Kiwad (Montreal/Quebec)</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Matt Glaman                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'ContribKanban', this, 15)" onmousemove="sB(event, 'ContribKanban', this, 15)" onmouseout="hI()"  href="http://contribkanban.com">ContribKanban</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Žan Vidmar                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zan Vidmar', this, 16)" onmousemove="sB(event, 'Zan Vidmar', this, 16)" onmouseout="hI()"  href="http://www.zanvidmar.com?sl=dp3">Zan Vidmar</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    John Sterni                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'John Sterni - Thanks Drupal! ', this, 17)" onmousemove="sB(event, 'John Sterni - Thanks Drupal! ', this, 17)" onmouseout="hI()"  href="http://www.sterni.xyz">John Sterni - Thanks Drupal! </a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Alan Oakden                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Alan Oakden', this, 134)" onmousemove="sB(event, 'Alan Oakden', this, 134)" onmouseout="hI()"  href="http://alanoakden.com">Alan Oakden</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    David Rodríguez                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.therussianlullaby.com', this, 25)" onmousemove="sB(event, 'www.therussianlullaby.com', this, 25)" onmouseout="hI()"  href="http://www.therussianlullaby.com">www.therussianlullaby.com</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Salah Messaoud                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'salahmessaoud', this, 33)" onmousemove="sB(event, 'salahmessaoud', this, 33)" onmouseout="hI()"  href="http://www.drupal.org/u/salah-messaoud">salahmessaoud</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Andrew Mellenger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Mellenger Interactive makes pixel perfect websites.', this, 34)" onmousemove="sB(event, 'Mellenger Interactive makes pixel perfect websites.', this, 34)" onmouseout="hI()"  href="http://mellenger.com">Mellenger Interactive makes pixel perfect websites.</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Mikko Hämäläinen                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Suddenly, a wild mini-druid appears!', this, 65)" onmousemove="sB(event, 'Suddenly, a wild mini-druid appears!', this, 65)" onmouseout="hI()"  href="http://www.druid.fi/en">Suddenly, a wild mini-druid appears!</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    David Peherstorfer                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Whitespace', this, 51)" onmousemove="sB(event, 'Whitespace', this, 51)" onmouseout="hI()"  href="http://www.drupal.org/u/cryt1c">Whitespace</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Aljoša Furlanič                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, '........Aljosa Furlanic........ Let us keep Drupal alive! Stay safe! :)', this, 55)" onmousemove="sB(event, '........Aljosa Furlanic........ Let us keep Drupal alive! Stay safe! :)', this, 55)" onmouseout="hI()"  href="http://aljosafoto.si">........Aljosa Furlanic........ Let us keep Drupal alive! Stay safe! :)</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Tassos Koutlas                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thanks Drupal!', this, 63)" onmousemove="sB(event, 'Thanks Drupal!', this, 63)" onmouseout="hI()"  href="http://www.drupal.org/u/tassos">Thanks Drupal!</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Stathis Papadopoulos                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'efpapado', this, 61)" onmousemove="sB(event, 'efpapado', this, 61)" onmouseout="hI()"  href="http://drupal.org/u/efpapado">efpapado</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Tarek Djebali                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'tarekdj', this, 66)" onmousemove="sB(event, 'tarekdj', this, 66)" onmouseout="hI()"  href="http://www.drupal.org/u/tarekdj">tarekdj</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Adrian Cid Almaguer                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Adrian Cid', this, 78)" onmousemove="sB(event, 'Adrian Cid', this, 78)" onmouseout="hI()"  href="http://www.drupal.org/u/adriancid">Adrian Cid</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Ben                 </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Never gonna give you up', this, 113)" onmousemove="sB(event, 'Never gonna give you up', this, 113)" onmouseout="hI()"  href="http://www.youtube.com/watch?v=VIYs1ZXrYwg">Never gonna give you up</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Ben                 </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thanks Drupal', this, 114)" onmousemove="sB(event, 'Thanks Drupal', this, 114)" onmouseout="hI()"  href="http://shreddedbacon.com">Thanks Drupal</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Victor Polanco                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Unleashed Technologies', this, 112)" onmousemove="sB(event, 'Unleashed Technologies', this, 112)" onmouseout="hI()"  href="http://www.unleashed-technologies.com">Unleashed Technologies</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Boris Böhne                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'drubb\s profile on drupal.org', this, 132)" onmousemove="sB(event, 'drubb\s profile on drupal.org', this, 132)" onmouseout="hI()"  href="http://www.drupal.org/u/drubb">drubb\'s profile on drupal.org</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Mike Rastiello                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'When in doubt, blame Roger', this, 137)" onmousemove="sB(event, 'When in doubt, blame Roger', this, 137)" onmouseout="hI()"  href="http://whosfaultwasit.co.uk/">When in doubt, blame Roger</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Will Huggins                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zoocha Loves Drupal', this, 248)" onmousemove="sB(event, 'Zoocha Loves Drupal', this, 248)" onmouseout="hI()"  href="http://www.zoocha.com/">Zoocha Loves Drupal</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Will Huggins                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zoocha Drupal Agency', this, 249)" onmousemove="sB(event, 'Zoocha Drupal Agency', this, 249)" onmouseout="hI()"  href="http://www.zoocha.com">Zoocha Drupal Agency</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-20                </td>
+                <td>
+                    Jordi Mateu Besançon                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Jordi Mateu Besançon', this, 256)" onmousemove="sB(event, 'Jordi Mateu Besançon', this, 256)" onmouseout="hI()"  href="http://www.instagram.com/jordimateubesancon">Jordi Mateu Besançon</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-27                </td>
+                <td>
+                    Preethi Prabhakaran                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'prethiee', this, 261)" onmousemove="sB(event, 'prethiee', this, 261)" onmouseout="hI()"  href="http://drupal.org/u/prethiee">prethiee</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-03                </td>
+                <td>
+                    Niraj Meegama                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Contract Web developer', this, 263)" onmousemove="sB(event, 'Contract Web developer', this, 263)" onmouseout="hI()"  href="http://niraj-meegama.info">Contract Web developer</a>                </td>
+                <td>
+                    400                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-29                </td>
+                <td>
+                    Miro Michalicka                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Made It Digital', this, 1)" onmousemove="sB(event, 'Made It Digital', this, 1)" onmouseout="hI()"  href="http://madeit.digital">Made It Digital</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Martin Kolář                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Like a cactus!', this, 20)" onmousemove="sB(event, 'Like a cactus!', this, 20)" onmouseout="hI()"  href="http://www.drupal.org/u/michalsec">Like a cactus!</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Philip Norton                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Phil Norton | #! code', this, 120)" onmousemove="sB(event, 'Phil Norton | #! code', this, 120)" onmouseout="hI()"  href="http://www.hashbangcode.com">Phil Norton | #! code</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Ed Reel                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'RightWorks', this, 150)" onmousemove="sB(event, 'RightWorks', this, 150)" onmouseout="hI()"  href="http://www.rightworksinc.com">RightWorks</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Swarad Mokal                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Swarad Mokal', this, 152)" onmousemove="sB(event, 'Swarad Mokal', this, 152)" onmouseout="hI()"  href="http://www.drupal.org/u/swarad07">Swarad Mokal</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-10                </td>
+                <td>
+                    Quentin Fahrner                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Renrhaf was here', this, 232)" onmousemove="sB(event, 'Renrhaf was here', this, 232)" onmouseout="hI()"  href="http://drupal.org/u/renrhaf">Renrhaf was here</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-15                </td>
+                <td>
+                    Bohdan Artemchuk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal web development team — DevBranch of your business!', this, 265)" onmousemove="sB(event, 'Drupal web development team — DevBranch of your business!', this, 265)" onmouseout="hI()"  href="http://dev-branch.com">Drupal web development team — DevBranch of your business!</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-15                </td>
+                <td>
+                    Bohdan Artemchuk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal web development team — DevBranch of your business!', this, 266)" onmousemove="sB(event, 'Drupal web development team — DevBranch of your business!', this, 266)" onmouseout="hI()"  href="http://dev-branch.com">Drupal web development team — DevBranch of your business!</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-15                </td>
+                <td>
+                    Bohdan Artemchuk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal web development team — DevBranch of your business!', this, 267)" onmousemove="sB(event, 'Drupal web development team — DevBranch of your business!', this, 267)" onmouseout="hI()"  href="http://dev-branch.com">Drupal web development team — DevBranch of your business!</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-15                </td>
+                <td>
+                    Bohdan Artemchuk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal web development team — DevBranch of your business!', this, 268)" onmousemove="sB(event, 'Drupal web development team — DevBranch of your business!', this, 268)" onmouseout="hI()"  href="http://dev-branch.com">Drupal web development team — DevBranch of your business!</a>                </td>
+                <td>
+                    200                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Sean Hamlin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Sean Hamlin', this, 139)" onmousemove="sB(event, 'Sean Hamlin', this, 139)" onmouseout="hI()"  href="http://www.drupal.org/u/wiifm">Sean Hamlin</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Sean Hamlin                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Blast off with Kubernetes + Lagoon', this, 146)" onmousemove="sB(event, 'Blast off with Kubernetes + Lagoon', this, 146)" onmouseout="hI()"  href="http://www.amazee.io/blast-off-with-lagoon-and-kubernetes/">Blast off with Kubernetes + Lagoon</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'We\re hiring!', this, 82)" onmousemove="sB(event, 'We\re hiring!', this, 82)" onmouseout="hI()"  href="http://www.amazee.io/careers">We\'re hiring!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Meet the amazee.io team!', this, 83)" onmousemove="sB(event, 'Meet the amazee.io team!', this, 83)" onmouseout="hI()"  href="http://www.amazee.io/about-us?scrollTo=people">Meet the amazee.io team!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Our Services at amazee.io', this, 84)" onmousemove="sB(event, 'Our Services at amazee.io', this, 84)" onmouseout="hI()"  href="http://www.amazee.io/managed-hosting-services">Our Services at amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io - our Success Stories', this, 85)" onmousemove="sB(event, 'amazee.io - our Success Stories', this, 85)" onmouseout="hI()"  href="http://www.amazee.io/blog/categories/success-stories/page/1">amazee.io - our Success Stories</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io Blog', this, 86)" onmousemove="sB(event, 'amazee.io Blog', this, 86)" onmouseout="hI()"  href="http://www.amazee.io/blog/page/1">amazee.io Blog</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io - Learn more about Lagoon ', this, 87)" onmousemove="sB(event, 'amazee.io - Learn more about Lagoon ', this, 87)" onmouseout="hI()"  href="http://www.amazee.io/lagoon">amazee.io - Learn more about Lagoon </a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io', this, 88)" onmousemove="sB(event, 'amazee.io', this, 88)" onmouseout="hI()"  href="http://www.amazee.io">amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io', this, 89)" onmousemove="sB(event, 'amazee.io', this, 89)" onmouseout="hI()"  href="http://www.amazee.io">amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io', this, 90)" onmousemove="sB(event, 'amazee.io', this, 90)" onmouseout="hI()"  href="http://www.amazee.io">amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io', this, 91)" onmousemove="sB(event, 'amazee.io', this, 91)" onmouseout="hI()"  href="http://www.amazee.io">amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'amazee.io', this, 92)" onmousemove="sB(event, 'amazee.io', this, 92)" onmouseout="hI()"  href="http://www.amazee.io">amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 93)" onmousemove="sB(event, 'www.amazee.io', this, 93)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 95)" onmousemove="sB(event, 'www.amazee.io', this, 95)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 96)" onmousemove="sB(event, 'www.amazee.io', this, 96)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 97)" onmousemove="sB(event, 'www.amazee.io', this, 97)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 98)" onmousemove="sB(event, 'www.amazee.io', this, 98)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 99)" onmousemove="sB(event, 'www.amazee.io', this, 99)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 100)" onmousemove="sB(event, 'www.amazee.io', this, 100)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 101)" onmousemove="sB(event, 'www.amazee.io', this, 101)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 102)" onmousemove="sB(event, 'www.amazee.io', this, 102)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 103)" onmousemove="sB(event, 'www.amazee.io', this, 103)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 104)" onmousemove="sB(event, 'www.amazee.io', this, 104)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 105)" onmousemove="sB(event, 'www.amazee.io', this, 105)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 107)" onmousemove="sB(event, 'www.amazee.io', this, 107)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 108)" onmousemove="sB(event, 'www.amazee.io', this, 108)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Michael Schmid                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'www.amazee.io', this, 109)" onmousemove="sB(event, 'www.amazee.io', this, 109)" onmouseout="hI()"  href="http://www.amazee.io">www.amazee.io</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'The First Node!', this, 175)" onmousemove="sB(event, 'The First Node!', this, 175)" onmouseout="hI()"  href="http://drupal.org/node/1">The First Node!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Jeff Geerling                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'TWO! Ahahahahaha... [The Count]', this, 176)" onmousemove="sB(event, 'TWO! Ahahahahaha... [The Count]', this, 176)" onmouseout="hI()"  href="http://www.youtube.com/watch?v=E-kMsBMh6Ng">TWO! Ahahahahaha... [The Count]</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-05                </td>
+                <td>
+                    Petr Illek                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal thanks', this, 178)" onmousemove="sB(event, 'Drupal thanks', this, 178)" onmouseout="hI()"  href="http://www.drupal.org/u/petr-illek">Drupal thanks</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Ayesh K                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'PHP.Watch', this, 8)" onmousemove="sB(event, 'PHP.Watch', this, 8)" onmouseout="hI()"  href="http://php.watch">PHP.Watch</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Franz Karlsberger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'An open source container-based hosting platform', this, 142)" onmousemove="sB(event, 'An open source container-based hosting platform', this, 142)" onmouseout="hI()"  href="http://www.amazee.io/lagoon">An open source container-based hosting platform</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Franz Karlsberger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Built for Flexibility &amp; Robustness', this, 143)" onmousemove="sB(event, 'Built for Flexibility &amp; Robustness', this, 143)" onmouseout="hI()"  href="http://www.amazee.io/lagoon">Built for Flexibility &amp; Robustness</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Franz Karlsberger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Compatible with any Open Source Framework', this, 144)" onmousemove="sB(event, 'Compatible with any Open Source Framework', this, 144)" onmouseout="hI()"  href="http://www.amazee.io/lagoon">Compatible with any Open Source Framework</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Franz Karlsberger                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Integrates with Powerful Tools', this, 145)" onmousemove="sB(event, 'Integrates with Powerful Tools', this, 145)" onmouseout="hI()"  href="http://www.amazee.io/lagoon">Integrates with Powerful Tools</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Žan Vidmar                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zan Vidmar', this, 52)" onmousemove="sB(event, 'Zan Vidmar', this, 52)" onmouseout="hI()"  href="http://www.zanvidmar.com?sl=dp1">Zan Vidmar</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Žan Vidmar                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zan Vidmar', this, 53)" onmousemove="sB(event, 'Zan Vidmar', this, 53)" onmouseout="hI()"  href="http://www.zanvidmar.com?sl=dp2">Zan Vidmar</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Tuan Nguyen                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Brainium Labs', this, 44)" onmousemove="sB(event, 'Brainium Labs', this, 44)" onmouseout="hI()"  href="http://www.brainiumlabs.com.au">Brainium Labs</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Kostya Shupenko                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Kostya Shupenko (ಠ_ಠ) ', this, 46)" onmousemove="sB(event, 'Kostya Shupenko (ಠ_ಠ) ', this, 46)" onmouseout="hI()"  href="http://www.drupal.org/u/kostyashupenko">Kostya Shupenko (ಠ_ಠ) </a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Eli Stone                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Pixels for Drupal!', this, 56)" onmousemove="sB(event, 'Pixels for Drupal!', this, 56)" onmouseout="hI()"  href="http://www.drupal.org/u/elistone">Pixels for Drupal!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Apr-30                </td>
+                <td>
+                    Eli Stone                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Pixels for Drupal!', this, 57)" onmousemove="sB(event, 'Pixels for Drupal!', this, 57)" onmouseout="hI()"  href="http://www.drupal.org/u/elistone">Pixels for Drupal!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Cory Highfield                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Nerivon', this, 74)" onmousemove="sB(event, 'Nerivon', this, 74)" onmouseout="hI()"  href="http://nerivon.com">Nerivon</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Ben                 </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Lagoon', this, 115)" onmousemove="sB(event, 'Lagoon', this, 115)" onmouseout="hI()"  href="http://github.com/amazeeio/lagoon">Lagoon</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Naresh Bavaskar                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Naresh Bavaskar', this, 119)" onmousemove="sB(event, 'Naresh Bavaskar', this, 119)" onmouseout="hI()"  href="http://www.drupal.org/u/naresh_bavaskar">Naresh Bavaskar</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Vit Hovezak                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vit Hovezak for Drupal !', this, 154)" onmousemove="sB(event, 'Vit Hovezak for Drupal !', this, 154)" onmouseout="hI()"  href="http://drupal.org/u/kyberman">Vit Hovezak for Drupal !</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Vit Hovezak                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vit Hovezak for Drupal !', this, 155)" onmousemove="sB(event, 'Vit Hovezak for Drupal !', this, 155)" onmouseout="hI()"  href="http://drupal.org/u/kyberman">Vit Hovezak for Drupal !</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Vit Hovezak                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vit Hovezak for Drupal !', this, 157)" onmousemove="sB(event, 'Vit Hovezak for Drupal !', this, 157)" onmouseout="hI()"  href="http://drupal.org/u/kyberman">Vit Hovezak for Drupal !</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-03                </td>
+                <td>
+                    Vit Hovezak                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Vit Hovezak for Drupal !', this, 158)" onmousemove="sB(event, 'Vit Hovezak for Drupal !', this, 158)" onmouseout="hI()"  href="http://drupal.org/u/kyberman">Vit Hovezak for Drupal !</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-01                </td>
+                <td>
+                    Kang Jie Goh                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'KJie', this, 126)" onmousemove="sB(event, 'KJie', this, 126)" onmouseout="hI()"  href="http://www.drupal.org/u/kjiedrupal">KJie</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-02                </td>
+                <td>
+                    Layal Khatib                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Thank you Drupal &lt;3', this, 138)" onmousemove="sB(event, 'Thank you Drupal &lt;3', this, 138)" onmouseout="hI()"  href="http://twitter.com/nights">Thank you Drupal &lt;3</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Will Huggins                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zoocha - Drupal through and through', this, 250)" onmousemove="sB(event, 'Zoocha - Drupal through and through', this, 250)" onmouseout="hI()"  href="http://www.zoocha.com">Zoocha - Drupal through and through</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-May-19                </td>
+                <td>
+                    Will Huggins                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Zoocha - Drupal makes us happy', this, 251)" onmousemove="sB(event, 'Zoocha - Drupal makes us happy', this, 251)" onmouseout="hI()"  href="http://www.zoocha.com">Zoocha - Drupal makes us happy</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    <tr>
+                <td>
+                    2020-Jun-15                </td>
+                <td>
+                    Bohdan Artemchuk                </td>
+                <td>
+                    <a target="_blank" onmouseover="sB(event, 'Drupal web development team — DevBranch of your business!', this, 269)" onmousemove="sB(event, 'Drupal web development team — DevBranch of your business!', this, 269)" onmouseout="hI()"  href="http://dev-branch.com">Drupal web development team — DevBranch of your business!</a>                </td>
+                <td>
+                    100                </td>
+        </tr>
+                    </tbody>
+    </table>
+</div>
+</div>
+
+<footer class="main-footer mt-3">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-left col-md-6">
+                &copy; Copyright 2020 Pixels for Drupal            </div>
+            <div class="col-right col-md-6">
+                Built with ❤️ and ☕ by the <a href="humans.txt" class="text-white">Drupal Community</a>.<br>
+                Free hosting by <a class="text-white" target="_blank" href="https://amazee.io">amazee.io</a>. Powered By <a class="text-white" target="_blank" href="https://milliondollarscript.com/">Million Dollar Script</a>.
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="assets/js/jquery-3.0.0.slim.min.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/header.js"></script>
+</body>
+</html>

@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: lagoon/nginx.dockerfile
     labels:
-      lagoon.type: nginx-php-persistent
+      lagoon.type: node-persistent
       lagoon.persistent: /app/files/ # define where the persistent storage should be mounted too
     << : *default-volumes # loads the defined volumes from the top
     << : *default-user # uses the defined user from top
